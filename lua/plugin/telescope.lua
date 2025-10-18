@@ -220,6 +220,7 @@ local Keys = {
 ---@type table<string, TelExtension>
 local known_exts = {
     ['telescope._extensions.file_browser'] = { 'file_browser' },
+    ['telescope._extensions.heading'] = { 'heading' },
     ['telescope._extensions.undo'] = {
         'undo',
         keys = {

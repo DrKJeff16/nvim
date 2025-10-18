@@ -19,6 +19,7 @@ return {
             { 'debugloop/telescope-undo.nvim', version = false },
             { 'OliverChao/telescope-picker-list.nvim', version = false },
             { 'nvim-telescope/telescope-file-browser.nvim', version = false },
+            { 'crispgm/telescope-heading.nvim', version = false },
             {
                 'nvim-telescope/telescope-fzf-native.nvim',
                 version = false,
