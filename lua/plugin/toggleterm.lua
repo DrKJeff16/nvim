@@ -8,14 +8,9 @@ local function set_terminal_keymaps(ev) ---@param ev vim.api.keyset.create_autoc
     local desc = require('user_api.maps').desc
     require('user_api.config').keymaps({
         t = {
-            ['<Esc>'] = {
-                [[<C-\><C-n>]],
-                desc('Escape Terminal', true, bufnr),
-            },
-            ['<C-e>'] = {
-                [[<C-\><C-n>]],
-                desc('Escape Terminal', true, bufnr),
-            },
+            ['<Esc>'] = { [[<C-\><C-n>]], desc('Escape Terminal', true, bufnr) },
+            ['<C-e>'] = { [[<C-\><C-n>]], desc('Escape Terminal', true, bufnr) },
+            ['<C-w>'] = { [[<C-\><C-n><C-w>w]], desc('Switch Window', true, bufnr) },
             ['<C-h>'] = {
                 function()
                     vim.cmd.wincmd('h')
@@ -40,10 +35,6 @@ local function set_terminal_keymaps(ev) ---@param ev vim.api.keyset.create_autoc
                 end,
                 desc('Goto Right Window', true, bufnr),
             },
-            ['<C-w>'] = {
-                [[<C-\><C-n><C-w>w]],
-                desc('Switch Window', true, bufnr),
-            },
         },
     }, bufnr)
 end
@@ -55,7 +46,7 @@ return {
     version = false,
     keys = {
         {
-            '<C-t>',
+            '<A-t>',
             '<CMD>exe v:count1 . "ToggleTerm"<CR>',
             mode = { 'n', 'i', 't' },
             desc = 'ToggleTerm',
@@ -70,7 +61,7 @@ return {
                     return math.floor(vim.o.columns * 0.85)
                 end)()
         end,
-        open_mapping = [[<C-t>]],
+        open_mapping = [[<A-t>]],
         autochdir = true,
         hide_numbers = true,
         direction = 'float', ---@type 'float'|'tab'|'horizontal'|'vertical'

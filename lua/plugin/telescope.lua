@@ -220,7 +220,10 @@ local Keys = {
 ---@type table<string, TelExtension>
 local known_exts = {
     ['telescope._extensions.file_browser'] = { 'file_browser' },
-    ['telescope._extensions.heading'] = { 'heading' },
+    ['telescope._extensions.heading'] = {
+        'heading',
+        keys = { ['<leader><C-t>eh'] = { '<CMD>Telescope heading<CR>', desc('Heading Picker') } },
+    },
     ['telescope._extensions.undo'] = {
         'undo',
         keys = {
@@ -245,8 +248,8 @@ local known_exts = {
         'scope',
         keys = {
             ['<leader>S'] = { group = '+Scope' },
-            ['<leader><C-t>eS'] = { '<CMD>Telescope buffers<CR>', desc('Scope Buffers Picker') },
             ['<leader>Sb'] = { '<CMD>Telescope buffers<CR>', desc('Scope Buffers (Telescope)') },
+            ['<leader><C-t>eS'] = { '<CMD>Telescope buffers<CR>', desc('Scope Buffers Picker') },
         },
     },
     persisted = {
@@ -259,8 +262,8 @@ local known_exts = {
         'make',
         keys = {
             ['<leader>fM'] = { group = '+Make' },
-            ['<leader><C-t>eM'] = { '<CMD>Telescope make<CR>', desc('Makefile Picker') },
             ['<leader>fMT'] = { '<CMD>Telescope make<CR>', desc('Makefile Telescope Picker') },
+            ['<leader><C-t>eM'] = { '<CMD>Telescope make<CR>', desc('Makefile Picker') },
         },
     },
     aerial = {
