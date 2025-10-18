@@ -333,9 +333,12 @@ local AllOpts = {
     writedelay = 'wd',
 }
 
-return setmetatable(AllOpts, {
+local M = setmetatable(AllOpts, { ---@type User.Opts.AllOpts
     __index = AllOpts,
     __newindex = function(_, _, _)
-        error('AllOpts is read only!', vim.log.levels.ERROR)
+        vim.notify('AllOpts is read only!', vim.log.levels.ERROR)
     end,
 })
+
+return M
+--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
