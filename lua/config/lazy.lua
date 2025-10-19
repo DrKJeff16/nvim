@@ -93,6 +93,7 @@ Lazy.setup({
         { import = 'plugin.nvim-test' },
         { import = 'plugin.mini.test' },
         { import = 'plugin.dooku' },
+        { import = 'plugin.markdoc' },
     },
     root = LAZY_DATA,
     defaults = { lazy = false, version = false },
