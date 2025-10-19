@@ -1,14 +1,11 @@
 name: Selene Lint
-
 on: [push, pull_request]
-
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-
       - name: Lint Lua code with Selene
         uses: AlejandroSuero/selene-linter-action@v1.0.0
         with:

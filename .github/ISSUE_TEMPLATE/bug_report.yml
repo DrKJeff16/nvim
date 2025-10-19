@@ -3,7 +3,6 @@ description: File a bug/issue
 title: "[BUG]: Bug Title"
 labels: [bug]
 assignees: DrKJeff16
-
 body:
   - type: markdown
     attributes:

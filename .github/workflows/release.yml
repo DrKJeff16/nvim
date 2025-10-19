@@ -1,5 +1,4 @@
 name: Action Release
-
 on:
   push:
     tags:
@@ -10,11 +9,9 @@ on:
       - main
   release:
     types: [created]
-
 jobs:
   release:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v5
       - name: Build project assets
@@ -27,7 +24,6 @@ jobs:
           sha512sum Jnvim.zip >| Jnvim.zip.sha512sum
           sha512sum Jnvim.tar.xz >| Jnvim.tar.xz.sha512sum
           rm -rfv Jnvim
-
       - name: Get Release
         id: get_current_release
         uses: joutvhu/get-release@v1.0.3
@@ -44,12 +40,10 @@ jobs:
           throwing: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build Release File
         run: echo ${{ github.sha }} >| Release.txt
       - name: Test Release
         run: cat Release.txt
-
       - name: Release
         uses: softprops/action-gh-release@v2
         if: github.ref_type == 'tag'
