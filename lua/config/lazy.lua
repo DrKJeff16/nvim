@@ -1,7 +1,6 @@
 local MODSTR = 'config.lazy'
 local uv = vim.uv or vim.loop
 local stdpath = vim.fn.stdpath
-local Keymaps = require('user_api.config.keymaps')
 local Archlinux = require('user_api.distro.archlinux')
 local Termux = require('user_api.distro.termux')
 local desc = require('user_api.maps').desc
@@ -13,212 +12,121 @@ local LAZY_DATA = stdpath('data') .. '/lazy'
 local LAZY_STATE = stdpath('state') .. '/lazy'
 local LAZYPATH = LAZY_DATA .. '/lazy.nvim'
 local README_PATH = LAZY_STATE .. '/readme'
-if not uv.fs_stat(LAZYPATH) then
-    local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-    local out = vim.fn.system({ 'git', 'clone', '--filter=blob:none', lazyrepo, LAZYPATH })
-    if vim.v.shell_error ~= 0 then
-        vim.api.nvim_echo({
-            { ('(%s): Failed to clone lazy.nvim:\n'):format(MODSTR), 'ErrorMsg' },
-            { out, 'WarningMsg' },
-            { '\nPress any key to exit...' },
-        }, true, {})
-        vim.fn.getchar()
-        os.exit(1)
-    end
-end
-if not vim.o.rtp:find(LAZYPATH) then
-    vim.o.rtp = ('%s,%s'):format(LAZYPATH, vim.o.rtp)
-end
-local Lazy = require('lazy')
-Lazy.setup({
-    spec = {
-        { import = 'plugin.startuptime' },
-        { import = 'plugin._spec.colorschemes' },
-        { import = 'plugin._spec' },
-        { import = 'plugin.notify' },
-        { import = 'plugin.web_devicons' },
-        { import = 'plugin.mini.basics' },
-        { import = 'plugin.mini.extra' },
-        { import = 'plugin.mini.icons' },
-        { import = 'plugin.mini.starter' },
-        { import = 'plugin.mini.splitjoin' },
-        { import = 'plugin.mini.move' },
-        { import = 'plugin.lspkind' },
-        { import = 'plugin.which_key' },
-        { import = 'plugin.blink_cmp' },
-        { import = 'plugin.project' },
-        { import = 'plugin.fzf-lua' },
-        { import = 'plugin.lazydev' },
-        -- { import = 'plugin.undotree' },
-        { import = 'plugin.ibl' },
-        { import = 'plugin.Comment' },
-        { import = 'plugin.autopairs' },
-        { import = 'plugin.yanky' },
-        { import = 'plugin.paredit' },
-        { import = 'plugin.persistence' },
-        { import = 'plugin.scope' },
-        { import = 'plugin.possession' },
-        { import = 'plugin.noice' },
-        { import = 'plugin.markdown' },
-        { import = 'plugin.markdown.render' },
-        -- { import = 'plugin.refactoring' },
-        -- { import = 'plugin.checkmate' },
-        { import = 'plugin.ts-comments' },
-        { import = 'plugin.neo_tree' },
-        { import = 'plugin.snacks' },
-        { import = 'plugin.lsp.clangd' },
-        { import = 'plugin.git.gitsigns' },
-        { import = 'plugin.mini.diff' },
-        { import = 'plugin.mini.bufremove' },
-        { import = 'plugin.mini.trailspace' },
-        { import = 'plugin.toggleterm' },
-        { import = 'plugin.screenkey' },
-        -- { import = 'plugin.fyler' },
-        { import = 'plugin.hoversplit' },
-        { import = 'plugin.outline' },
-        { import = 'plugin.helpview' },
-        { import = 'plugin.buffer-sticks' },
-        { import = 'plugin.lualine' },
-        { import = 'plugin.bufferline' },
-        { import = 'plugin.fzf-nerdfont' },
-        { import = 'plugin.zen-mode' },
-        { import = 'plugin.todo_comments' },
-        -- { import = 'plugin.a_vim' },
-        -- { import = 'plugin.twilight' },
-        -- { import = 'plugin.qwahl' },
-        { import = 'plugin.doxygen' },
-        { import = 'plugin.log-highlight' },
-        { import = 'plugin.pomo' },
-        { import = 'plugin.gh-co' },
-        { import = 'plugin.nvim-test' },
-        { import = 'plugin.mini.test' },
-        { import = 'plugin.dooku' },
-        { import = 'plugin.markdoc' },
-    },
-    root = LAZY_DATA,
-    defaults = { lazy = false, version = false },
-    install = { colorscheme = { 'habamax' }, missing = true },
-    dev = { path = '~/Projects/nvim', patterns = {}, fallback = true },
-    change_detection = { enabled = true, notify = Archlinux.validate() },
-    performance = {
-        reset_packpath = true,
-        rtp = {
-            reset = true,
-            disabled_plugins = {
-                -- 'gzip',
-                -- 'matchit',
-                -- 'matchparen',
-                'netrwPlugin',
-                -- 'tarPlugin',
-                'tohtml',
-                'tutor',
-                -- 'zipPlugin',
-            },
-        },
-    },
-    rocks = {
-        enabled = luarocks_check(),
-        root = stdpath('data') .. '/lazy-rocks',
-        server = 'https://nvim-neorocks.github.io/rocks-binaries/',
-    },
-    pkg = {
-        enabled = true,
-        cache = LAZY_STATE .. '/pkg-cache.lua',
-        versions = true,
-        sources = luarocks_check() and { 'lazy', 'packspec' } or { 'lazy', 'packspec', 'rockspec' },
-    },
-    checker = {
-        enabled = not Termux.validate(),
-        notify = Archlinux.validate(),
-        frequency = 600,
-        check_pinned = false,
-    },
-    ui = {
-        backdrop = not require('user_api.check').in_console() and 60 or 100,
-        border = 'double',
-        title = 'L        A        Z        Y',
-        title_pos = 'center',
-        wrap = true,
-        pills = true,
-    },
-    readme = {
-        enabled = false,
-        root = README_PATH,
-        files = { 'README.md', 'lua/**/README.md' },
-        skip_if_doc_exists = true,
-    },
-    state = LAZY_STATE .. '/state.json',
-    profiling = { loader = true, require = true },
-})
 
-Keymaps({
-    n = {
-        ['<leader>L'] = { group = '+Lazy' },
-        ['<leader>Le'] = { group = '+Edit Lazy File' },
-
-        ['<leader>Lee'] = {
-            key_variant('ed'),
-            desc('Open `Lazy` File'),
-        },
-        ['<leader>Les'] = {
-            key_variant('split'),
-            desc('Open `Lazy` File Horizontal Window'),
-        },
-        ['<leader>Let'] = {
-            key_variant('tabnew'),
-            desc('Open `Lazy` File Tab'),
-        },
-        ['<leader>Lev'] = {
-            key_variant('vsplit'),
-            desc('Open `Lazy`File Vertical Window'),
-        },
-        ['<leader>Ll'] = {
-            Lazy.show,
-            desc('Show Lazy Home'),
-        },
-        ['<leader>Ls'] = {
-            Lazy.sync,
-            desc('Sync Lazy Plugins'),
-        },
-        ['<leader>Lx'] = {
-            Lazy.clear,
-            desc('Clear Lazy Plugins'),
-        },
-        ['<leader>Lc'] = {
-            Lazy.check,
-            desc('Check Lazy Plugins'),
-        },
-        ['<leader>Li'] = {
-            Lazy.install,
-            desc('Install Lazy Plugins'),
-        },
-        ['<leader>Lh'] = {
-            Lazy.health,
-            desc('Run Lazy checkhealth'),
-        },
-        ['<leader>vhL'] = {
-            Lazy.health,
-            desc('Run Lazy checkhealth'),
-        },
-        ['<leader>L<CR>'] = {
-            ':Lazy ',
-            desc('Select `Lazy` Operation (Interactively)', false),
-        },
-        ['<leader>Lb'] = {
-            ':Lazy build ',
-            desc('Prompt To Build', false),
-        },
-        ['<leader>Lr'] = {
-            ':Lazy reload ',
-            desc('Prompt To Build', false),
-        },
-    },
-})
-
----List of manually-callable plugins.
---- ---
 ---@class Config.Lazy
 local M = {}
+
+---Sets up `lazy.nvim`. Only runs once!
+--- ---
+---@param specs LazySpec[]
+function M.setup(specs)
+    if vim.g.lazy_did_setup then
+        return
+    end
+
+    if not uv.fs_stat(LAZYPATH) then
+        local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
+        local out = vim.fn.system({ 'git', 'clone', '--filter=blob:none', lazyrepo, LAZYPATH })
+        if vim.v.shell_error ~= 0 then
+            vim.api.nvim_echo({
+                { ('(%s): Failed to clone lazy.nvim:\n'):format(MODSTR), 'ErrorMsg' },
+                { out, 'WarningMsg' },
+                { '\nPress any key to exit...' },
+            }, true, {})
+            vim.fn.getchar()
+            os.exit(1)
+        end
+    end
+    if not vim.o.rtp:find(LAZYPATH) then
+        vim.o.rtp = ('%s,%s'):format(LAZYPATH, vim.o.rtp)
+    end
+    local Lazy = require('lazy')
+    Lazy.setup({
+        spec = specs or {
+            { import = 'plugin.startuptime' },
+            { import = 'plugin._spec.colorschemes' },
+            { import = 'plugin._spec' },
+            { import = 'plugin.notify' },
+            { import = 'plugin.mini.icons' },
+        },
+        root = LAZY_DATA,
+        defaults = { lazy = false, version = false },
+        install = { colorscheme = { 'habamax' }, missing = true },
+        dev = { path = '~/Projects/nvim', patterns = {}, fallback = true },
+        change_detection = { enabled = true, notify = Archlinux.validate() },
+        performance = {
+            reset_packpath = true,
+            rtp = {
+                reset = true,
+                disabled_plugins = {
+                    -- 'gzip',
+                    -- 'matchit',
+                    -- 'matchparen',
+                    'netrwPlugin',
+                    -- 'tarPlugin',
+                    'tohtml',
+                    'tutor',
+                    -- 'zipPlugin',
+                },
+            },
+        },
+        rocks = {
+            enabled = luarocks_check(),
+            root = stdpath('data') .. '/lazy-rocks',
+            server = 'https://nvim-neorocks.github.io/rocks-binaries/',
+        },
+        pkg = {
+            enabled = true,
+            cache = LAZY_STATE .. '/pkg-cache.lua',
+            versions = true,
+            sources = luarocks_check() and { 'lazy', 'packspec' }
+                or { 'lazy', 'packspec', 'rockspec' },
+        },
+        checker = {
+            enabled = not Termux.validate(),
+            notify = Archlinux.validate(),
+            frequency = 600,
+            check_pinned = false,
+        },
+        ui = {
+            backdrop = not require('user_api.check').in_console() and 60 or 100,
+            border = 'double',
+            title = 'L        A        Z        Y',
+            title_pos = 'center',
+            wrap = true,
+            pills = true,
+        },
+        readme = {
+            enabled = false,
+            root = README_PATH,
+            files = { 'README.md', 'lua/**/README.md' },
+            skip_if_doc_exists = true,
+        },
+        state = LAZY_STATE .. '/state.json',
+        profiling = { loader = true, require = true },
+    })
+
+    require('user_api.config').keymaps({
+        n = {
+            ['<leader>L'] = { group = '+Lazy' },
+            ['<leader>Le'] = { group = '+Edit Lazy File' },
+            ['<leader>Lee'] = { key_variant('ed'), desc('Open `Lazy` File') },
+            ['<leader>Les'] = { key_variant('split'), desc('Open `Lazy` File Horizontal Window') },
+            ['<leader>Let'] = { key_variant('tabnew'), desc('Open `Lazy` File Tab') },
+            ['<leader>Lev'] = { key_variant('vsplit'), desc('Open `Lazy`File Vertical Window') },
+            ['<leader>Ll'] = { Lazy.show, desc('Show Lazy Home') },
+            ['<leader>Ls'] = { Lazy.sync, desc('Sync Lazy Plugins') },
+            ['<leader>Lx'] = { Lazy.clear, desc('Clear Lazy Plugins') },
+            ['<leader>Lc'] = { Lazy.check, desc('Check Lazy Plugins') },
+            ['<leader>Li'] = { Lazy.install, desc('Install Lazy Plugins') },
+            ['<leader>Lh'] = { Lazy.health, desc('Run Lazy checkhealth') },
+            ['<leader>vhL'] = { Lazy.health, desc('Run Lazy checkhealth') },
+            ['<leader>L<CR>'] = { ':Lazy ', desc('Select `Lazy` Operation (Interactively)', false) },
+            ['<leader>Lb'] = { ':Lazy build ', desc('Prompt To Build', false) },
+            ['<leader>Lr'] = { ':Lazy reload ', desc('Prompt To Build', false) },
+        },
+    })
+end
 
 function M.colorschemes()
     if exists('plugin.colorschemes') then
