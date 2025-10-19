@@ -10,6 +10,7 @@
 ---|GruvboxSubMod
 ---|KanagawaSubMod
 ---|KPSubMod
+---|KurayamiSubMod
 ---|MolokaiSubMod
 ---|NFoxSubMod
 ---|ODSubMod
@@ -33,6 +34,7 @@ local Colorschemes = {}
 
 ---@enum AllCsc
 Colorschemes.OPTIONS = {
+    'Kurayami',
     'Conifer',
     'Tokyonight',
     'Tokyodark',
@@ -70,6 +72,7 @@ Colorschemes.Gruvbox        = require('plugin.colorschemes.gruvbox')
 Colorschemes.Gruvdark       = require('plugin.colorschemes.gruvdark')
 Colorschemes.Kanagawa       = require('plugin.colorschemes.kanagawa')
 Colorschemes.KanagawaPaper  = require('plugin.colorschemes.kanagawa_paper')
+Colorschemes.Kurayami       = require('plugin.colorschemes.kurayami')
 Colorschemes.Molokai        = require('plugin.colorschemes.molokai')
 Colorschemes.Nightfox       = require('plugin.colorschemes.nightfox')
 Colorschemes.Oak            = require('plugin.colorschemes.oak')

@@ -56,6 +56,13 @@ return {
         cond = not in_console(),
     },
     {
+        'kevinm6/kurayami.nvim',
+        lazy = false,
+        priority = 1000,
+        init = colorscheme_init('installed_kurayami'),
+        cond = not in_console(),
+    },
+    {
         'catppuccin/nvim',
         lazy = false,
         name = 'catppuccin',
