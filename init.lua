@@ -12,7 +12,7 @@ local INFO = vim.log.levels.INFO
 local in_list = vim.list_contains
 local curr_buf = vim.api.nvim_get_current_buf
 
--- [SOURCE](https://stackoverflow.com/questions/7183998/in-lua-what-is-the-right-way-to-handle-varargs-which-contains-nil)
+---[SOURCE](https://stackoverflow.com/questions/7183998/in-lua-what-is-the-right-way-to-handle-varargs-which-contains-nil).
 ---@type fun(...: any)
 function _G.notify_inspect(...)
     vim.notify(vim.inspect(...), INFO)
