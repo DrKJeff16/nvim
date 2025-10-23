@@ -1,5 +1,5 @@
 _G.MYVIMRC = vim.fn.stdpath('config') .. '/init.lua'
-_G.is_windows = (vim.uv or vim.loop).os_uname().version:match('Windows') ~= nil
+_G.is_windows = vim.fn.has('win32') == 1
 _G.inspect = vim.inspect
 
 local ft_get = require('user_api.util').ft_get
@@ -115,6 +115,8 @@ L.setup({
     { import = 'plugin.picker' },
     { import = 'plugin.lsp.clangd' },
     { import = 'plugin.gitsigns' },
+    { import = 'plugin.lazygit' },
+    { import = 'plugin.diffview' },
     { import = 'plugin.mini.diff' },
     { import = 'plugin.mini.bufremove' },
     { import = 'plugin.mini.trailspace' },
