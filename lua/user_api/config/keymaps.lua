@@ -14,10 +14,9 @@ local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
 local INFO = vim.log.levels.INFO
 
-local validate = vim.validate
 local copy = vim.deepcopy
 local curr_buf = vim.api.nvim_get_current_buf
-local in_tbl = vim.tbl_contains
+local in_list = vim.list_contains
 local d_extend = vim.tbl_deep_extend
 local optset = vim.api.nvim_set_option_value
 
@@ -60,8 +59,11 @@ end
 ---@param vertical? boolean
 ---@return fun()
 local function gen_fun_blank(vertical)
-    validate('vertical', vertical, 'boolean', true)
-
+    if vim.fn.has('nvim-0.11') then
+        vim.validate('vertical', vertical, 'boolean', true)
+    else
+        vim.validate({ vertical = { vertical, { 'boolean', 'nil' } } })
+    end
     vertical = vertical ~= nil and vertical or false
 
     return function()
@@ -83,8 +85,11 @@ end
 ---@param force? boolean
 ---@return fun()
 local function buf_del(force)
-    validate('force', force, 'boolean', true)
-
+    if vim.fn.has('nvim-0.11') then
+        vim.validate('force', force, 'boolean', true)
+    else
+        vim.validate({ force = { force, { 'boolean', 'nil' } } })
+    end
     force = force ~= nil and force or false
 
     local ft_triggers = {
@@ -113,14 +118,12 @@ local function buf_del(force)
             force = prev_bt == 'terminal'
         end
 
-        -- # HACK: Special workaround for `terminal` buffers
         vim.cmd.bdelete({ bang = force })
-
-        if in_tbl(pre_exc.ft, prev_ft) or in_tbl(pre_exc.bt, prev_bt) then
+        if in_list(pre_exc.ft, prev_ft) or in_list(pre_exc.bt, prev_bt) then
             return
         end
 
-        if in_tbl(ft_triggers, ft_get(curr_buf())) then
+        if in_list(ft_triggers, ft_get(curr_buf())) then
             vim.cmd.bprevious()
         end
     end
@@ -208,7 +211,6 @@ local NOP = {
     'o',
     'p',
     'q',
-    'r',
     's',
     't',
     'u',
@@ -772,9 +774,9 @@ Keymaps.Keys = {
 ---@param local_leader? string _`<localleader>`_ string (defaults to `<Space>`)
 ---@param force? boolean Force leader switch (defaults to `false`)
 function Keymaps.set_leader(leader, local_leader, force)
-    validate('leader', leader, 'string', false)
-    validate('local_leader', local_leader, 'string', true)
-    validate('force', force, 'boolean', true)
+    vim.validate('leader', leader, 'string', false)
+    vim.validate('local_leader', local_leader, 'string', true)
+    vim.validate('force', force, 'boolean', true)
 
     leader = leader ~= '' and leader or '<Space>'
     local_leader = (local_leader ~= nil and local_leader ~= '') and local_leader or leader
@@ -827,8 +829,8 @@ end
 ---@param bufnr? integer
 ---@return table<('n'|'i'|'v'|'t'|'o'|'x'), nil[]>|nil
 function Keymaps.delete(K, bufnr)
-    validate('K', K, 'table', false, "{ [('n'|'i'|'v'|'t'|'o'|'x')]: string[] }|string[]")
-    validate('bufnr', bufnr, 'number', true, 'integer')
+    vim.validate('K', K, 'table', false, "{ [('n'|'i'|'v'|'t'|'o'|'x')]: string[] }|string[]")
+    vim.validate('bufnr', bufnr, 'number', true, 'integer')
 
     bufnr = bufnr or nil
 
@@ -870,9 +872,9 @@ local M = setmetatable({}, {
     ---@param bufnr? integer
     ---@param load_defaults? boolean
     __call = function(_, keys, bufnr, load_defaults)
-        validate('keys', keys, 'table', false, 'AllModeMaps')
-        validate('bufnr', bufnr, 'number', true, 'integer')
-        validate('load_defaults', load_defaults, 'boolean', true)
+        vim.validate('keys', keys, 'table', false, 'AllModeMaps')
+        vim.validate('bufnr', bufnr, 'number', true, 'integer')
+        vim.validate('load_defaults', load_defaults, 'boolean', true)
 
         if vim.tbl_isempty(keys) then
             return
@@ -884,21 +886,17 @@ local M = setmetatable({}, {
         if not vim.g.leader_set then
             vim.notify('`keymaps.set_leader()` not called!', WARN)
         end
-
         bufnr = bufnr or nil
         load_defaults = load_defaults ~= nil and load_defaults or false
 
-        ---@type AllModeMaps
-        local parsed_keys = {}
-
+        local parsed_keys = {} ---@type AllModeMaps
         for k, v in pairs(keys) do
-            if not in_tbl(MODES, k) then
+            if not in_list(MODES, k) then
                 vim.notify(fmt('Ignoring badly formatted table\n`%s`', insp(keys)), WARN)
             else
                 parsed_keys[k] = v
             end
         end
-
         if Keymaps.no_oped == nil then
             Keymaps.no_oped = false
         end
@@ -908,8 +906,7 @@ local M = setmetatable({}, {
             if Keymaps.no_oped then
                 break
             end
-
-            if in_tbl({ 'n', 'v' }, mode) then
+            if in_list({ 'n', 'v' }, mode) then
                 nop(NOP, { noremap = false, silent = true }, mode, '<leader>')
             end
         end
