@@ -16,7 +16,9 @@ return {
         'ProjectRoot',
         'ProjectSession',
     },
-    dependencies = { 'nvim-telescope/telescope.nvim' },
+    init = function()
+        vim.g.project_lsp_nowarn = 1
+    end,
     opts = { ---@type Project.Config.Options
         -- manual_mode = true
         log = { enabled = true, logpath = vim.fn.stdpath('state') },
@@ -33,6 +35,7 @@ return {
             '.pre-commit-config.yml',
             'Pipfile',
         },
+        detection_methods = { 'pattern' },
         telescope = { enabled = false, sort = 'newest', prefer_file_browser = true },
         show_hidden = true,
         fzf_lua = { enabled = true },
@@ -52,38 +55,22 @@ return {
         scope_chdir = 'tab',
     },
     config = function(_, opts) ---@param opts Project.Config.Options
-        local Keymaps = require('user_api.config.keymaps')
-        local desc = require('user_api.maps').desc
         require('project').setup(opts)
-        Keymaps({
+
+        local desc = require('user_api.maps').desc
+        require('user_api.config').keymaps({
             n = {
                 ['<leader>p'] = { group = '+Project' },
-
-                ['<leader>pp'] = {
-                    vim.cmd.Project,
-                    desc('Open Project UI'),
-                },
+                ['<leader>pp'] = { vim.cmd.Project, desc('Open Project UI') },
+                ['<leader>pC'] = { vim.cmd.ProjectConfig, desc('Print Project Config') },
+                ['<leader>pr'] = { vim.cmd.ProjectRecents, desc('Print Recent Projects') },
+                ['<leader>pl'] = { vim.cmd.ProjectLog, desc('Open Project Log Window') },
+                ['<leader>pf'] = { require('project').run_fzf_lua, desc('Run Fzf-Lua') },
                 ['<leader>ph'] = {
                     function()
                         vim.cmd.checkhealth('project')
                     end,
                     desc('Attempt to run `:checkhealth project`'),
-                },
-                ['<leader>pC'] = {
-                    vim.cmd.ProjectConfig,
-                    desc('Print Project Config'),
-                },
-                ['<leader>pr'] = {
-                    vim.cmd.ProjectRecents,
-                    desc('Print Recent Projects'),
-                },
-                ['<leader>pf'] = {
-                    require('project').run_fzf_lua,
-                    desc('Run Fzf-Lua'),
-                },
-                ['<leader>pl'] = {
-                    vim.cmd.ProjectLog,
-                    desc('Open Project Log Window'),
                 },
             },
         })
