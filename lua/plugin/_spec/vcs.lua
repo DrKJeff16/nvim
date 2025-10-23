@@ -11,7 +11,7 @@ return {
         'sindrets/diffview.nvim',
         event = 'VeryLazy',
         version = false,
-        config = CfgUtil.require('plugin.git.diffview'),
+        config = CfgUtil.require('plugin.diffview'),
         enabled = executable('git'),
     },
     {
@@ -22,12 +22,11 @@ return {
             'nvim-lua/plenary.nvim',
             'nvim-telescope/telescope.nvim',
         },
-        config = CfgUtil.require('plugin.git.lazygit'),
+        config = CfgUtil.require('plugin.lazygit'),
         enabled = executable({ 'git', 'lazygit' }),
     },
     {
         'ttibsi/pre-commit.nvim',
-        dev = true,
         event = 'VeryLazy',
         version = false,
         enabled = executable({ 'git', 'pre-commit' }),

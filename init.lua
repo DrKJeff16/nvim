@@ -2,15 +2,11 @@ _G.MYVIMRC = vim.fn.stdpath('config') .. '/init.lua'
 _G.is_windows = (vim.uv or vim.loop).os_uname().version:match('Windows') ~= nil
 _G.inspect = vim.inspect
 
-local Keymaps = require('user_api.config').keymaps
-local Opts = require('user_api').opts
-local desc = require('user_api.maps').desc
 local ft_get = require('user_api.util').ft_get
 local bt_get = require('user_api.util').bt_get
 
 local INFO = vim.log.levels.INFO
 local in_list = vim.list_contains
-local curr_buf = vim.api.nvim_get_current_buf
 
 ---[SOURCE](https://stackoverflow.com/questions/7183998/in-lua-what-is-the-right-way-to-handle-varargs-which-contains-nil).
 ---@type fun(...: any)
@@ -20,7 +16,7 @@ end
 
 vim.g.loaded_perl_provider = 0
 
-Opts({
+require('user_api').opts({
     autoread = true,
     background = 'dark',
     backspace = 'indent,eol,start',
@@ -71,10 +67,10 @@ Opts({
     wrap = require('user_api.distro.termux').validate(),
 })
 
-Opts.set_cursor_blink()
+require('user_api.opts').set_cursor_blink()
 
 ---Set `<Leader>` key.
-Keymaps.set_leader('<Space>')
+require('user_api.config.keymaps').set_leader('<Space>')
 
 ---Disable `netrw` regardless of whether `nvim_tree/neo_tree` exist or not.
 vim.g.loaded_netrw = 1
@@ -83,9 +79,7 @@ vim.g.loaded_netrwPlugin = 1
 ---Uncomment to use system clipboard
 -- vim.o.clipboard = 'unnamedplus'
 
----Call Lazy Plugins
 local L = require('config.lazy')
-
 L.setup({
     { import = 'plugin.startuptime' },
     { import = 'plugin._spec.colorschemes' },
@@ -120,7 +114,7 @@ L.setup({
     { import = 'plugin.snacks' },
     { import = 'plugin.picker' },
     { import = 'plugin.lsp.clangd' },
-    { import = 'plugin.git.gitsigns' },
+    { import = 'plugin.gitsigns' },
     { import = 'plugin.mini.diff' },
     { import = 'plugin.mini.bufremove' },
     { import = 'plugin.mini.trailspace' },
@@ -153,7 +147,8 @@ L.setup({
     { import = 'plugin.markdoc' },
 })
 
-Keymaps({
+local desc = require('user_api.maps').desc
+require('user_api.config').keymaps({
     n = {
         ['<leader>vM'] = { vim.cmd.messages, desc('Run `:messages`') },
         ['<leader>vN'] = { vim.cmd.Notifications, desc('Run `:Notifications`') },
@@ -186,8 +181,8 @@ local Color = L.colorschemes()
 -- Color('Nightfox', 'nightfox')
 -- Color('Nightfox', 'carbonfox')
 -- Color('Nightfox', 'duskfox')
-Color('Tokyonight', 'storm')
--- Color('Tokyonight', 'moon')
+-- Color('Tokyonight', 'storm')
+Color('Tokyonight', 'moon')
 -- Color('Conifer', 'lunar')
 -- Color('Tokyodark')
 -- Color('Catppuccin', 'mocha')
@@ -205,6 +200,7 @@ vim.g.markdown_minlines = 500
 
 L.lsp().setup()
 
+local DISABLE_BT = { 'help', 'prompt', 'quickfix', 'terminal' }
 local DISABLE_FT = {
     'help',
     'lazy',
@@ -215,20 +211,13 @@ local DISABLE_FT = {
     'TelescopeResults',
 }
 
-local DISABLE_BT = {
-    'help',
-    'prompt',
-    'quickfix',
-    'terminal',
-}
-
-local bufnr = curr_buf()
+local bufnr = vim.api.nvim_get_current_buf()
+local win = vim.api.nvim_get_current_win()
 if not (in_list(DISABLE_FT, ft_get(bufnr)) or in_list(DISABLE_BT, bt_get(bufnr))) then
     return
 end
 
 vim.keymap.set('n', 'q', vim.cmd.bdelete, { noremap = true, silent = true, buffer = bufnr })
-local win = vim.api.nvim_get_current_win()
 vim.wo[win].number = false
 vim.wo[win].signcolumn = 'no'
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
