@@ -1,21 +1,18 @@
 ---@module 'lazy'
 
-local CfgUtil = require('config.util')
-local flag_installed = CfgUtil.flag_installed
-
 ---@type LazySpec[]
 return {
     {
         'rhysd/vim-syntax-codeowners',
         lazy = false,
         version = false,
-        init = flag_installed('codeowners'),
+        init = require('config.util').flag_installed('codeowners'),
     },
     {
         'nvim-orgmode/orgmode',
         ft = 'org',
         version = false,
-        config = CfgUtil.require('plugin.orgmode'),
+        config = require('config.util').require('plugin.orgmode'),
         cond = not require('user_api.check').in_console(),
     },
 }

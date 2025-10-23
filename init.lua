@@ -140,6 +140,7 @@ L.setup({
     -- { import = 'plugin.qwahl' },
     -- { import = 'plugin.undotree' },
     { import = 'plugin.doxygen' },
+    { import = 'plugin.doxygen-previewer' },
     { import = 'plugin.log-highlight' },
     { import = 'plugin.pomo' },
     { import = 'plugin.gh-co' },
