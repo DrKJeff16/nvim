@@ -160,7 +160,7 @@ Keymaps({
         ['<C-/>'] = { ':normal gcc<CR>', desc('Toggle Comment') },
     },
     v = {
-        ['<C-/>'] = { ":'<,'>normal gcc<CR>", desc('Toggle Comment') },
+        ['<C-/>'] = { [[:'<,'>normal gcc<CR>]], desc('Toggle Comment') },
     },
     x = {
         ['<M-m>'] = {
