@@ -38,12 +38,6 @@ return {
         open_files_do_not_replace_types = { 'terminal', 'trouble', 'qf' },
         open_files_using_relative_paths = false,
         sort_case_insensitive = false,
-        sort_function = function(a, b)
-            if a.type == b.type then
-                return a.path > b.path
-            end
-            return a.type > b.type
-        end,
         sources = { 'filesystem', 'buffers', 'git_status', 'diagnostics' },
         event_handlers = {
             {
