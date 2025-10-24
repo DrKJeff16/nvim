@@ -142,6 +142,7 @@ L.setup({
     { import = 'plugin.doxygen' },
     { import = 'plugin.doxygen-previewer' },
     { import = 'plugin.log-highlight' },
+    { import = 'plugin.orgmode' },
     { import = 'plugin.pomo' },
     { import = 'plugin.gh-co' },
     { import = 'plugin.nvim-test' },
