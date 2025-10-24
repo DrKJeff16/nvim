@@ -3,25 +3,18 @@
 ---@type LazySpec
 return {
     'DrKJeff16/project.nvim',
-    event = 'VeryLazy',
     dev = true,
     version = false,
-    cmd = {
-        'Project',
-        'ProjectAdd',
-        'ProjectConfig',
-        'ProjectDelete',
-        'ProjectHistory',
-        'ProjectRecents',
-        'ProjectRoot',
-        'ProjectSession',
-    },
     init = function()
         vim.g.project_lsp_nowarn = 1
     end,
     opts = { ---@type Project.Config.Options
-        -- manual_mode = true
         log = { enabled = true, logpath = vim.fn.stdpath('state') },
+        scope_chdir = 'tab',
+        detection_methods = { 'pattern' },
+        telescope = { enabled = false, prefer_file_browser = true },
+        show_hidden = true,
+        fzf_lua = { enabled = true },
         patterns = {
             '!^/usr',
             '!=' .. vim.fn.environ()['HOME'],
@@ -35,28 +28,26 @@ return {
             '.pre-commit-config.yml',
             'Pipfile',
         },
-        detection_methods = { 'pattern' },
-        telescope = { enabled = false, sort = 'newest', prefer_file_browser = true },
-        show_hidden = true,
-        fzf_lua = { enabled = true },
         exclude_dirs = {
             '/usr/*',
             '~/.build/*',
             '~/.cache/*',
             '~/.cargo/*',
             '~/.conda/*',
+            '~/.gnupg/*',
             '~/.local/*',
             '~/.luarocks/*',
+            '~/.rustup/*',
+            '~/.ssh/*',
             '~/.tmux/*',
+            '~/.wine64/*',
             '~/Desktop/*',
             '~/Public/*',
             '~/Templates/*',
         },
-        scope_chdir = 'tab',
     },
     config = function(_, opts) ---@param opts Project.Config.Options
         require('project').setup(opts)
-
         local desc = require('user_api.maps').desc
         require('user_api.config').keymaps({
             n = {
@@ -65,13 +56,8 @@ return {
                 ['<leader>pC'] = { vim.cmd.ProjectConfig, desc('Print Project Config') },
                 ['<leader>pr'] = { vim.cmd.ProjectRecents, desc('Print Recent Projects') },
                 ['<leader>pl'] = { vim.cmd.ProjectLog, desc('Open Project Log Window') },
+                ['<leader>ph'] = { vim.cmd.ProjectHealth, desc('Run `:checkhealth project`') },
                 ['<leader>pf'] = { require('project').run_fzf_lua, desc('Run Fzf-Lua') },
-                ['<leader>ph'] = {
-                    function()
-                        vim.cmd.checkhealth('project')
-                    end,
-                    desc('Attempt to run `:checkhealth project`'),
-                },
             },
         })
     end,
