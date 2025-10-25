@@ -114,11 +114,8 @@ Autocmd.autocommands = {
     ['LspAttach'] = {
         {
             group = augroup('UserLsp', { clear = true }),
-
-            ---@param args vim.api.keyset.create_autocmd.callback_args
             callback = function(args)
                 local client = vim.lsp.get_client_by_id(args.data.client_id)
-
                 if client == nil then
                     return
                 end
