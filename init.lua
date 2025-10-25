@@ -142,6 +142,7 @@ L.setup({
     { import = 'plugin.mini.test' },
     { import = 'plugin.dooku' },
     { import = 'plugin.markdoc' },
+    { import = 'plugin.code-runner' },
     -- { import = 'plugin.scrollbar' },
     -- { import = 'plugin.refactoring' },
     -- { import = 'plugin.checkmate' },
