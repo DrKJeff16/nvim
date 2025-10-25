@@ -9,7 +9,7 @@ local INFO = vim.log.levels.INFO
 local in_list = vim.list_contains
 
 ---[SOURCE](https://stackoverflow.com/questions/7183998/in-lua-what-is-the-right-way-to-handle-varargs-which-contains-nil).
----@type fun(...: any)
+---@param ... any
 function _G.notify_inspect(...)
     vim.notify(vim.inspect(...), INFO)
 end
