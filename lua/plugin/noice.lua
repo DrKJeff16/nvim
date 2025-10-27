@@ -4,7 +4,6 @@
 ---@type LazySpec
 return {
     'folke/noice.nvim',
-    event = 'VeryLazy',
     version = false,
     dependencies = {
         'MunifTanjim/nui.nvim',

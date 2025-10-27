@@ -21,7 +21,7 @@ return {
     },
     config = function(_, opts)
         require('notify').setup(opts)
-        vim.notify = require('notify')
+        vim.notify = require('notify').notify
         local set_hl = vim.schedule_wrap(function()
             require('user_api.highlight').hl_from_dict({
                 ['NotifyDEBUGBody'] = { link = 'Normal' },

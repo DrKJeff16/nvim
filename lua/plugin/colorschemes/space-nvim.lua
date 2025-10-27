@@ -1,27 +1,15 @@
-local User = require('user_api')
-local Check = User.check
-
-local exists = Check.exists.module
-
----A submodule class for the `<NAME>` colorscheme.
+---A submodule class for the `space-nvim` colorscheme.
 --- ---
 ---@class SpaceNvimSubMod
-local Template = {}
+local SpaceNvim = {}
 
----@class SpaceNvimSubMod.Variants
-Template.variants = {}
-
-Template.mod_cmd = 'silent! colorscheme space-nvim'
-
----@return boolean
-function Template.valid()
-    return exists('space-nvim')
+function SpaceNvim.valid()
+    return require('user_api.check.exists').module('space-nvim')
 end
 
-function Template.setup()
-    vim.cmd(Template.mod_cmd)
+function SpaceNvim.setup()
+    vim.cmd.colorscheme('space-nvim')
 end
 
-return Template
-
+return SpaceNvim
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

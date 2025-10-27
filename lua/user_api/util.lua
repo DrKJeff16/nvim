@@ -388,7 +388,6 @@ function Util.setup_autocmd()
                         local Keymaps = require('user_api.config.keymaps')
                         local executable = require('user_api.check.exists').executable
                         local desc = require('user_api.maps').desc
-                        local notify = Util.notify.notify
 
                         local bt = Util.bt_get(ev.buf)
                         local ft = Util.ft_get(ev.buf)
@@ -430,7 +429,7 @@ function Util.setup_autocmd()
                                             if not ok then
                                                 return
                                             end
-                                            notify('Formatted successfully!', INFO, {
+                                            vim.notify('Formatted successfully!', INFO, {
                                                 title = 'StyLua',
                                                 animate = true,
                                                 timeout = 200,
@@ -452,7 +451,7 @@ function Util.setup_autocmd()
                                             if not ok then
                                                 return
                                             end
-                                            notify('Formatted successfully!', INFO, {
+                                            vim.notify('Formatted successfully!', INFO, {
                                                 title = 'isort',
                                                 animate = true,
                                                 timeout = 200,
@@ -527,9 +526,8 @@ function Util.discard_dups(data)
     local Value = require('user_api.check.value')
     local is_str = Value.is_str
     local type_not_empty = Value.type_not_empty
-    local notify = Util.notify.notify
     if not (type_not_empty('string', data) or type_not_empty('table', data)) then
-        notify('Input is not valid!', 'error', {
+        vim.notify('Input is not valid!', ERROR, {
             animate = true,
             hide_from_history = false,
             timeout = 2750,

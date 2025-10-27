@@ -4,8 +4,6 @@
 ---|CpcSubMod
 ---|DraculaSubMod
 ---|EmbarkSubMod
----|FlexokiSubMod
----|GloombuddySubMod
 ---|GruvDarkSubMod
 ---|GruvboxSubMod
 ---|KanagawaSubMod
@@ -14,7 +12,6 @@
 ---|MolokaiSubMod
 ---|NFoxSubMod
 ---|ODSubMod
----|OakSubMod
 ---|SpaceDuckSubMod
 ---|SpaceNvimSubMod
 ---|SpaceVimSubMod
@@ -51,10 +48,7 @@ Colorschemes.OPTIONS = {
     'Vscode',
     'Ariake',
     'Dracula',
-    'Flexoki',
-    'Gloombuddy',
     'Molokai',
-    'Oak',
     'SpaceVimDark',
     'SpaceNvim',
 }
@@ -66,8 +60,6 @@ Colorschemes.Catppuccin     = require('plugin.colorschemes.catppuccin')
 Colorschemes.Conifer        = require('plugin.colorschemes.conifer')
 Colorschemes.Dracula        = require('plugin.colorschemes.dracula')
 Colorschemes.Embark         = require('plugin.colorschemes.embark')
-Colorschemes.Flexoki        = require('plugin.colorschemes.flexoki')
-Colorschemes.Gloombuddy     = require('plugin.colorschemes.gloombuddy')
 Colorschemes.Gruvbox        = require('plugin.colorschemes.gruvbox')
 Colorschemes.Gruvdark       = require('plugin.colorschemes.gruvdark')
 Colorschemes.Kanagawa       = require('plugin.colorschemes.kanagawa')
@@ -75,7 +67,6 @@ Colorschemes.KanagawaPaper  = require('plugin.colorschemes.kanagawa_paper')
 Colorschemes.Kurayami       = require('plugin.colorschemes.kurayami')
 Colorschemes.Molokai        = require('plugin.colorschemes.molokai')
 Colorschemes.Nightfox       = require('plugin.colorschemes.nightfox')
-Colorschemes.Oak            = require('plugin.colorschemes.oak')
 Colorschemes.Onedark        = require('plugin.colorschemes.onedark')
 Colorschemes.SpaceNvim      = require('plugin.colorschemes.space-nvim')
 Colorschemes.SpaceVimDark   = require('plugin.colorschemes.space_vim_dark')
@@ -87,14 +78,12 @@ Colorschemes.Vscode         = require('plugin.colorschemes.vscode')
 
 -- stylua: ignore end
 
----@type CscMod|fun(color?: string|AllCsc, ...: any)
+---@type CscMod|fun(color?: string|AllCsc)
 local M = setmetatable({}, {
     __index = Colorschemes,
-
     ---@param self CscMod
-    ---@param color? string|AllCsc
-    ---@param ... any
-    __call = function(self, color, ...)
+    ---@param color string|AllCsc
+    __call = function(self, color)
         local Keys = { ---@type AllMaps
             ['<leader>u'] = { group = '+UI' },
             ['<leader>uc'] = { group = '+Colorschemes' },
@@ -106,30 +95,12 @@ local M = setmetatable({}, {
             local TColor = self[name] ---@type AllColorSubMods
             if TColor and TColor.valid and TColor.valid() then
                 table.insert(valid, name)
-                Keys['<leader>uc' .. csc_group] = {
-                    group = '+Group ' .. csc_group,
-                }
+                Keys['<leader>uc' .. csc_group] = { group = '+Group ' .. csc_group }
                 local i_str = tostring(i)
-                if type_not_empty('table', TColor.variants) then
-                    local v = 'a'
-                    for _, variant in ipairs(TColor.variants) do
-                        Keys['<leader>uc' .. csc_group .. i_str] = {
-                            group = ('+%s'):format(name),
-                        }
-                        Keys['<leader>uc' .. csc_group .. i_str .. v] = {
-                            function()
-                                TColor.setup(variant)
-                            end,
-                            desc(('Set Colorscheme `%s` (%s)'):format(name, variant)),
-                        }
-                        v = displace_letter(v, 'next')
-                    end
-                else
-                    Keys['<leader>uc' .. csc_group .. i_str] = {
-                        TColor.setup,
-                        desc(('Set Colorscheme `%s`'):format(name)),
-                    }
-                end
+                Keys['<leader>uc' .. csc_group .. i_str] = {
+                    TColor.setup,
+                    desc(('Set Colorscheme `%s`'):format(name)),
+                }
                 if i == 9 then
                     i = 1
                     csc_group = displace_letter(csc_group, 'next')
@@ -146,10 +117,9 @@ local M = setmetatable({}, {
             color = valid[1]
         end
 
-        ---@type AllColorSubMods
-        local Color = self[color]
+        local Color = self[color] ---@type AllColorSubMods
         if Color ~= nil and Color.valid() then
-            Color.setup(...)
+            Color.setup()
             return
         end
         for _, csc in ipairs(valid) do

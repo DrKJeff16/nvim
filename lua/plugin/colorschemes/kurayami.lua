@@ -1,20 +1,14 @@
-local exists = require('user_api.check.exists').module
-
----A submodule class for the `<NAME>` colorscheme.
+---A submodule class for the `kurayami.nvim` colorscheme.
 --- ---
 ---@class KurayamiSubMod
 local Kurayami = {}
 
-Kurayami.mod_cmd = 'silent! colorscheme kurayami'
-
----@return boolean
 function Kurayami.valid()
-    return exists('kurayami')
+    return require('user_api.check.exists').module('kurayami')
 end
 
 function Kurayami.setup()
-    require('kurayami').setup()
-    vim.cmd(Kurayami.mod_cmd)
+    vim.cmd.colorscheme('kurayami')
 end
 
 return Kurayami

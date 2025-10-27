@@ -11,6 +11,9 @@ return {
         priority = 1000,
         version = false,
         init = colorscheme_init('installed_conifer'),
+        config = function()
+            require('conifer').setup({ variant = 'lunar', transparent = false })
+        end,
         cond = not in_console(),
     },
     {
@@ -19,6 +22,45 @@ return {
         priority = 1000,
         version = false,
         init = colorscheme_init('installed_tokyonight'),
+        config = function()
+            require('tokyonight').setup({
+                cache = true,
+                on_colors = function(colors) ---@param colors ColorScheme
+                    colors.error = '#df4f4f'
+                    colors.info = colors.teal
+                end,
+                terminal_colors = true,
+                transparent = false,
+                sidebars = {
+                    'NvimTree',
+                    'TelescopePrompt',
+                    'diffview',
+                    'help',
+                    'lazy',
+                    'noice',
+                    'packer',
+                    'qf',
+                    'terminal',
+                    'toggleterm',
+                    'trouble',
+                    'vista_kind',
+                },
+                style = 'storm',
+                live_reload = true,
+                use_background = true,
+                hide_inactive_statusline = true,
+                lualine_bold = false,
+                styles = {
+                    comments = { italic = false },
+                    keywords = { italic = false, bold = true },
+                    functions = { bold = true, italic = false },
+                    variables = { italic = false },
+                    sidebars = 'dark',
+                    floats = 'dark',
+                },
+                plugins = { all = package.loaded.lazy ~= nil, auto = true },
+            })
+        end,
         cond = not in_console(),
     },
     {
@@ -37,6 +79,9 @@ return {
         priority = 1000,
         version = false,
         init = colorscheme_init('installed_ariake'),
+        config = function()
+            require('ariake').setup()
+        end,
         cond = not in_console(),
     },
     {
@@ -45,6 +90,22 @@ return {
         priority = 1000,
         version = false,
         init = colorscheme_init('installed_tokyodark'),
+        config = function()
+            require('tokyodark').setup({
+                transparent_background = false,
+                gamma = 1.00,
+                terminal_colors = vim.o.termguicolors,
+                styles = {
+                    comments = { italic = false }, -- style for comments
+                    keywords = { italic = false }, -- style for keywords
+                    identifiers = { bold = true, italic = false }, -- style for identifiers
+                    functions = { bold = true }, -- style for functions
+                    variables = {}, -- style for variables
+                },
+                custom_highlights = {},
+                custom_palette = {},
+            })
+        end,
         cond = not in_console(),
     },
     {
@@ -53,6 +114,9 @@ return {
         priority = 1000,
         version = false,
         init = colorscheme_init('installed_gruvdark'),
+        config = function()
+            require('gruvdark').setup({ transparent = false, colors = {}, highlights = {} })
+        end,
         cond = not in_console(),
     },
     {
@@ -60,6 +124,9 @@ return {
         lazy = false,
         priority = 1000,
         init = colorscheme_init('installed_kurayami'),
+        config = function()
+            require('kurayami').setup()
+        end,
         cond = not in_console(),
     },
     {
@@ -69,6 +136,91 @@ return {
         priority = 1000,
         version = false,
         init = colorscheme_init('installed_catppuccin'),
+        config = function()
+            require('catppuccin').setup({
+                flavour = 'auto',
+                background = { light = 'latte', dark = 'mocha' },
+                default_integrations = true,
+                float = { solid = true, transparent = true },
+                transparent_background = false,
+                show_end_of_buffer = true,
+                term_colors = true,
+                dim_inactive = { enabled = true, shade = 'dark', percentage = 0.20 },
+                no_italic = true,
+                no_bold = false,
+                no_underline = false,
+                styles = {
+                    comments = { 'altfont' },
+                    conditionals = { 'bold' },
+                    loops = { 'bold' },
+                    functions = { 'bold' },
+                    keywords = { 'altfont' },
+                    strings = { 'altfont' },
+                    variables = { 'altfont' },
+                    numbers = { 'altfont' },
+                    booleans = { 'bold' },
+                    properties = { 'bold' },
+                    types = { 'altfont' },
+                    operators = { 'altfont' },
+                    -- miscs = {}, -- Uncomment to turn off hard-coded styles
+                },
+                color_overrides = {},
+                custom_highlights = function(colors)
+                    return {
+                        NvimTreeNormal = { fg = colors.none },
+                        CmpBorder = { fg = colors.surface2 },
+                        Pmenu = { bg = colors.none },
+                        TabLineSel = { bg = colors.pink },
+                    }
+                end,
+                integrations = {
+                    alpha = true,
+                    barbar = true,
+                    blink_cmp = { style = 'bordered' },
+                    cmp = false,
+                    diffview = true,
+                    fzf = true,
+                    gitsigns = true,
+                    headlines = false,
+                    indent_blankline = {
+                        enabled = true,
+                        scope_color = 'teal',
+                        colored_indent_levels = true,
+                    },
+                    lsp_trouble = true,
+                    markdown = true,
+                    mini = { enabled = true, indentscope_color = 'lavender' },
+                    native_lsp = {
+                        enabled = true,
+                        inlay_hints = { background = true },
+                        virtual_text = {
+                            errors = { 'bold', 'underdouble' },
+                            warnings = { 'bold', 'underline' },
+                            hints = { 'bold', 'underline' },
+                            information = { 'altfont', 'underline' },
+                            ok = { 'bold' },
+                        },
+                        underlines = {
+                            errors = { 'underdouble' },
+                            hints = { 'underline' },
+                            warnings = { 'underline' },
+                            information = { 'underline' },
+                            ok = { 'underline' },
+                        },
+                    },
+                    neotree = true,
+                    noice = true,
+                    notify = true,
+                    nvimtree = false,
+                    rainbow_delimiters = true,
+                    render_markdown = true,
+                    telescope = { enabled = true },
+                    treesitter = true,
+                    treesitter_context = true,
+                    which_key = true,
+                },
+            })
+        end,
         cond = not in_console(),
     },
     {
@@ -77,6 +229,33 @@ return {
         priority = 1000,
         version = false,
         init = colorscheme_init('installed_onedark'),
+        config = function()
+            require('onedark').setup({
+                style = 'warm',
+                transparent = false,
+                term_colors = true,
+                ending_tildes = true,
+                cmp_itemkind_reverse = true,
+                toggle_style_key = nil,
+                toggle_style_list = { 'deep', 'warmer', 'darker' },
+                code_style = {
+                    comments = 'altfont',
+                    conditionals = 'bold',
+                    loops = 'bold',
+                    functions = 'bold',
+                    keywords = 'bold',
+                    strings = 'altfont',
+                    variables = 'altfont',
+                    numbers = 'altfont',
+                    booleans = 'bold',
+                    properties = 'bold',
+                    types = 'bold',
+                    operators = 'altfont',
+                },
+                lualine = { transparent = false },
+                diagnostics = { darker = false, undercurl = false, background = true },
+            })
+        end,
         cond = not in_console(),
     },
     {
@@ -85,6 +264,62 @@ return {
         priority = 1000,
         version = false,
         init = colorscheme_init('installed_nightfox'),
+        config = function()
+            local compile_path = vim.fn.stdpath('state') .. '/nightfox'
+            require('nightfox').setup({
+                options = {
+                    compile_path = compile_path,
+                    compile_file_suffix = '_compiled',
+                    transparent = false,
+                    terminal_colors = true,
+                    dim_inactive = false,
+                    module_default = false,
+                    colorblind = { enable = false },
+                    styles = {
+                        comments = 'altfont',
+                        conditionals = 'bold',
+                        constants = 'bold',
+                        functions = 'bold',
+                        keywords = 'bold',
+                        numbers = 'NONE',
+                        operators = 'NONE',
+                        preprocs = 'bold',
+                        strings = 'altfont',
+                        types = 'bold',
+                        variables = 'altfont',
+                    },
+                    inverse = { match_paren = false, visual = false, search = false },
+                    modules = {
+                        barbar = false,
+                        blink = true,
+                        coc = { enable = false, background = true },
+                        cmp = true,
+                        dashboard = true,
+                        diagnostic = { enable = true, background = true },
+                        fern = false,
+                        fidget = false,
+                        gitgutter = false,
+                        gitsigns = true,
+                        glyph_palette = true,
+                        hop = false,
+                        illuminate = false,
+                        indent_blanklines = true,
+                        lazy = true,
+                        leap = { enable = false, background = true, harsh = false },
+                        lsp_semantic_tokens = true,
+                        mini = true,
+                        native_lsp = { enable = true, background = true },
+                        notify = true,
+                        nvimtree = true,
+                        neotree = true,
+                        pounce = true,
+                        telescope = true,
+                        treesitter = true,
+                        whichkey = true,
+                    },
+                },
+            })
+        end,
         cond = not in_console(),
     },
     {
@@ -93,6 +328,44 @@ return {
         priority = 1000,
         version = false,
         init = colorscheme_init('installed_kanagawa'),
+        config = function()
+            require('kanagawa').setup({
+                compile = true,
+                undercurl = not in_console(),
+                commentStyle = { italic = false },
+                functionStyle = { bold = true, italic = false },
+                keywordStyle = { bold = true, italic = false },
+                statementStyle = { bold = true, italic = false },
+                typeStyle = { italic = false, bold = true },
+                transparent = false,
+                dimInactive = not in_console(),
+                terminalColors = true,
+                colors = {
+                    palette = {},
+                    theme = { wave = {}, lotus = {}, dragon = {}, all = {} },
+                },
+                overrides = function(colors)
+                    local theme = colors.theme
+                    return {
+                        NormalFloat = { bg = 'none' },
+                        FloatBoarder = { bg = 'none' },
+                        FloatTitle = { bg = 'none' },
+                        NormalDark = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m3 },
+                        LazyNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+                        MasonNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+                        TelescopeTitle = { fg = theme.ui.special, bold = true },
+                        TelescopePromptNormal = { bg = theme.ui.bg_p1 },
+                        TelescopePromptBorder = { fg = theme.ui.bg_p1, bg = theme.ui.bg_p1 },
+                        TelescopeResultsNormal = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m1 },
+                        TelescopeResultsBorder = { fg = theme.ui.bg_m1, bg = theme.ui.bg_m1 },
+                        TelescopePreviewNormal = { bg = theme.ui.bg_dim },
+                        TelescopePreviewBorder = { bg = theme.ui.bg_dim, fg = theme.ui.bg_dim },
+                    }
+                end,
+                theme = 'wave',
+                background = { dark = 'wave', light = 'lotus' },
+            })
+        end,
         cond = not in_console(),
     },
     {
@@ -101,6 +374,73 @@ return {
         priority = 1000,
         version = false,
         init = colorscheme_init('installed_vague'),
+        config = function()
+            require('vague').setup({
+                transparent = false,
+                bold = true,
+                italic = true,
+                style = {
+                    boolean = 'bold',
+                    number = 'none',
+                    float = 'none',
+                    error = 'bold',
+                    comments = 'none',
+                    conditionals = 'none',
+                    functions = 'none',
+                    headings = 'bold',
+                    operators = 'none',
+                    strings = 'none',
+                    variables = 'none',
+                    keywords = 'bold',
+                    keyword_return = 'bold',
+                    keywords_loop = 'bold',
+                    keywords_label = 'bold',
+                    keywords_exception = 'bold',
+                    builtin_constants = 'bold',
+                    builtin_functions = 'none',
+                    builtin_types = 'bold',
+                    builtin_variables = 'none',
+                },
+                plugins = {
+                    cmp = { match = 'bold', match_fuzzy = 'bold' },
+                    dashboard = { footer = 'none' },
+                    lsp = {
+                        diagnostic_error = 'bold',
+                        diagnostic_hint = 'none',
+                        diagnostic_info = 'bold',
+                        diagnostic_ok = 'none',
+                        diagnostic_warn = 'bold',
+                    },
+                    neotest = { focused = 'bold', adapter_name = 'bold' },
+                    telescope = { match = 'bold' },
+                },
+                colors = {
+                    bg = '#141415',
+                    inactiveBg = '#1c1c24',
+                    fg = '#cdcdcd',
+                    floatBorder = '#878787',
+                    line = '#252530',
+                    comment = '#606079',
+                    builtin = '#b4d4cf',
+                    func = '#c48282',
+                    string = '#e8b589',
+                    number = '#e0a363',
+                    property = '#c3c3d5',
+                    constant = '#aeaed1',
+                    parameter = '#bb9dbd',
+                    visual = '#333738',
+                    error = '#d8647e',
+                    warning = '#f3be7c',
+                    hint = '#7e98e8',
+                    operator = '#90a0b5',
+                    keyword = '#6e94b2',
+                    type = '#9bb4bc',
+                    search = '#405065',
+                    plus = '#7fa563',
+                    delta = '#f3be7c',
+                },
+            })
+        end,
         cond = not in_console(),
     },
     {
@@ -109,6 +449,37 @@ return {
         priority = 1000,
         version = false,
         init = colorscheme_init('installed_kanagawa_paper'),
+        config = function()
+            require('kanagawa-paper').setup({
+                _theme = 'auto',
+                transparent = false,
+                undercurl = true,
+                gutter = true,
+                diag_background = true,
+                dim_inactive = true,
+                terminal_colors = true,
+                cache = true,
+                styles = {
+                    comment = { italic = false },
+                    functions = { italic = false, bold = true },
+                    keyword = { italic = false, bold = true },
+                    statement = { italic = false, bold = true },
+                    type = { italic = false },
+                },
+                color_balance = {
+                    ink = { brightness = 0, saturation = 0 },
+                    canvas = { brightness = 0, saturation = 0 },
+                },
+                auto_plugins = true,
+                all_plugins = true,
+                integrations = {
+                    wezterm = {
+                        enabled = true,
+                        path = (os.getenv('TEMP') or '/tmp') .. '/nvim-theme',
+                    },
+                },
+            })
+        end,
         cond = not in_console(),
     },
     {
@@ -117,6 +488,20 @@ return {
         priority = 1000,
         version = false,
         init = colorscheme_init('installed_vscode'),
+        config = function()
+            local C = require('vscode.colors').get_colors()
+            require('vscode').setup({
+                style = 'dark',
+                transparent = false,
+                italic_comments = false,
+                underline_links = true,
+                disable_nvimtree_bg = false,
+                color_overrides = {},
+                group_overrides = {
+                    Cursor = { fg = C.vscDarkBlue, bg = C.vscLightGreen, bold = true },
+                },
+            })
+        end,
         cond = not in_console(),
     },
     {
@@ -126,6 +511,15 @@ return {
         priority = 1000,
         version = false,
         init = colorscheme_init('installed_dracula'),
+        config = function()
+            require('dracula').setup({
+                show_end_of_buffer = false,
+                transparent_bg = false,
+                lualine_bg_color = '#44475a',
+                italic_comment = false,
+                overrides = {},
+            })
+        end,
         cond = not in_console(),
     },
     {
@@ -134,6 +528,32 @@ return {
         priority = 1000,
         version = false,
         init = colorscheme_init('installed_gruvbox'),
+        config = function()
+            require('gruvbox').setup({
+                transparent_mode = false,
+                dim_inactive = true,
+                terminal_colors = true,
+                undercurl = true,
+                underline = true,
+                bold = true,
+                italic = {
+                    comments = false,
+                    emphasis = false,
+                    folds = false,
+                    operators = false,
+                    strings = false,
+                },
+                strikethrough = true,
+                invert_selection = false,
+                invert_signs = false,
+                invert_tabline = false,
+                invert_intend_guides = false,
+                inverse = false,
+                contrast = 'soft',
+                overrides = {},
+                palette_overrides = {},
+            })
+        end,
         cond = not in_console(),
     },
     {
@@ -144,31 +564,6 @@ return {
         version = false,
         init = colorscheme_init('installed_flexoki'),
         cond = not in_console(),
-    },
-    {
-        'bkegley/gloombuddy',
-        lazy = false,
-        priority = 1000,
-        version = false,
-        dependencies = {
-            {
-                'tjdevries/colorbuddy.vim',
-                lazy = false,
-                priority = 1000,
-                version = false,
-                init = colorscheme_init('installed_colorbuddy'),
-                cond = not in_console(),
-            },
-        },
-        init = colorscheme_init('installed_gloombuddy'),
-        cond = not in_console(),
-    },
-    {
-        'vigoux/oak',
-        lazy = false,
-        priority = 1000,
-        version = false,
-        init = colorscheme_init({ installed_oak = 1, oak_virtualtext_bg = 1 }),
     },
     {
         'pineapplegiant/spaceduck',
