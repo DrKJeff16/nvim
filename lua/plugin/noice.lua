@@ -3,7 +3,7 @@
 
 ---@type LazySpec
 return {
-    'cameronr/noice.nvim',
+    'folke/noice.nvim',
     event = 'VeryLazy',
     version = false,
     dependencies = {
