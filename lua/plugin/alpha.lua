@@ -2,6 +2,10 @@
 
 ---@type LazySpec
 return {
+    'goolord/alpha-nvim',
+    priority = 1000,
+    version = false,
+    dependencies = { 'nvim-mini/mini.icons' },
     config = function()
         local Theta = require('alpha.themes.theta')
         Theta.header = {
@@ -17,6 +21,7 @@ return {
         }
         Theta.config.layout[2] = Theta.header
         Theta.file_icons.provider = 'mini'
+
         require('alpha').setup(Theta.config)
     end,
 }
