@@ -1,12 +1,6 @@
 local MODSTR = 'config.lazy'
-local uv = vim.uv or vim.loop
 local stdpath = vim.fn.stdpath
-local Archlinux = require('user_api.distro.archlinux')
-local Termux = require('user_api.distro.termux')
-local desc = require('user_api.maps').desc
-local exists = require('user_api.check.exists').module
 local key_variant = require('config.util').key_variant
-local luarocks_check = require('config.util').luarocks_check
 
 local LAZY_DATA = stdpath('data') .. '/lazy'
 local LAZY_STATE = stdpath('state') .. '/lazy'
@@ -16,15 +10,12 @@ local README_PATH = LAZY_STATE .. '/readme'
 ---@class Config.Lazy
 local M = {}
 
----Sets up `lazy.nvim`. Only runs once!
---- ---
----@param specs LazySpec[]
-function M.setup(specs)
-    if vim.g.lazy_did_setup then
+function M.bootstrap()
+    if vim.g.lazy_bootstrapped == 1 then
         return
     end
 
-    if not uv.fs_stat(LAZYPATH) then
+    if not (vim.uv or vim.loop).fs_stat(LAZYPATH) then
         local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
         local out = vim.fn.system({ 'git', 'clone', '--filter=blob:none', lazyrepo, LAZYPATH })
         if vim.v.shell_error ~= 0 then
@@ -37,75 +28,16 @@ function M.setup(specs)
             os.exit(1)
         end
     end
-    if not vim.o.rtp:find(LAZYPATH) then
-        vim.o.rtp = ('%s,%s'):format(LAZYPATH, vim.o.rtp)
+    if not vim.o.runtimepath:find(LAZYPATH) then
+        vim.o.runtimepath = ('%s,%s'):format(LAZYPATH, vim.o.runtimepath)
     end
-    local Lazy = require('lazy')
-    Lazy.setup({
-        spec = specs or {
-            { import = 'plugin.startuptime' },
-            { import = 'plugin._spec.colorschemes' },
-            { import = 'plugin._spec' },
-            { import = 'plugin.notify' },
-            { import = 'plugin.mini.icons' },
-        },
-        root = LAZY_DATA,
-        defaults = { lazy = false, version = false },
-        install = { colorscheme = { 'habamax' }, missing = true },
-        dev = { path = '~/Projects/nvim', patterns = {}, fallback = true },
-        change_detection = { enabled = true, notify = Archlinux.validate() },
-        performance = {
-            reset_packpath = true,
-            rtp = {
-                reset = true,
-                disabled_plugins = {
-                    -- 'gzip',
-                    -- 'matchit',
-                    -- 'matchparen',
-                    'netrwPlugin',
-                    -- 'tarPlugin',
-                    'tohtml',
-                    'tutor',
-                    -- 'zipPlugin',
-                },
-            },
-        },
-        rocks = {
-            enabled = luarocks_check(),
-            root = stdpath('data') .. '/lazy-rocks',
-            server = 'https://nvim-neorocks.github.io/rocks-binaries/',
-        },
-        pkg = {
-            enabled = true,
-            cache = LAZY_STATE .. '/pkg-cache.lua',
-            versions = true,
-            sources = luarocks_check() and { 'lazy', 'packspec' }
-                or { 'lazy', 'packspec', 'rockspec' },
-        },
-        checker = {
-            enabled = not Termux.validate(),
-            notify = Archlinux.validate(),
-            frequency = 600,
-            check_pinned = false,
-        },
-        ui = {
-            backdrop = not require('user_api.check').in_console() and 60 or 100,
-            border = 'double',
-            title = 'L        A        Z        Y',
-            title_pos = 'center',
-            wrap = true,
-            pills = true,
-        },
-        readme = {
-            enabled = false,
-            root = README_PATH,
-            files = { 'README.md', 'lua/**/README.md' },
-            skip_if_doc_exists = true,
-        },
-        state = LAZY_STATE .. '/state.json',
-        profiling = { loader = true, require = true },
-    })
 
+    vim.g.lazy_bootstrapped = 1
+end
+
+function M.setup_keys()
+    local desc = require('user_api.maps').desc
+    local Lazy = require('lazy')
     require('user_api.config').keymaps({
         n = {
             ['<leader>L'] = { group = '+Lazy' },
@@ -128,14 +60,95 @@ function M.setup(specs)
     })
 end
 
+---Sets up `lazy.nvim`. Only runs once!
+--- ---
+---@param specs LazySpec[]
+function M.setup(specs)
+    M.bootstrap()
+
+    require('lazy').setup({
+        spec = specs or {
+            { import = 'plugin.startuptime' },
+            { import = 'plugin._spec.colorschemes' },
+            { import = 'plugin._spec' },
+            { import = 'plugin.notify' },
+            { import = 'plugin.mini.icons' },
+        },
+        root = LAZY_DATA,
+        defaults = { lazy = false, version = false },
+        install = { colorscheme = { 'habamax' }, missing = true },
+        dev = { path = '~/Projects/nvim', patterns = {}, fallback = true },
+        change_detection = {
+            enabled = true,
+            notify = require('user_api.distro.archlinux').validate(),
+        },
+        performance = {
+            reset_packpath = true,
+            rtp = {
+                reset = true,
+                disabled_plugins = {
+                    -- 'gzip',
+                    -- 'matchit',
+                    -- 'matchparen',
+                    'netrwPlugin',
+                    -- 'tarPlugin',
+                    'tohtml',
+                    'tutor',
+                    -- 'zipPlugin',
+                },
+            },
+        },
+        rocks = {
+            enabled = require('config.util').luarocks_check(),
+            root = stdpath('data') .. '/lazy-rocks',
+            server = 'https://nvim-neorocks.github.io/rocks-binaries/',
+        },
+        pkg = {
+            enabled = true,
+            cache = LAZY_STATE .. '/pkg-cache.lua',
+            versions = true,
+            sources = (function()
+                if require('config.util').luarocks_check() then
+                    return { 'lazy', 'packspec' }
+                end
+                return { 'lazy', 'packspec', 'rockspec' }
+            end)(),
+        },
+        checker = {
+            enabled = not require('user_api.distro.termux').validate(),
+            notify = require('user_api.distro.archlinux').validate(),
+            frequency = 600,
+            check_pinned = false,
+        },
+        ui = {
+            backdrop = not require('user_api.check').in_console() and 60 or 100,
+            border = 'double',
+            title = 'L        A        Z        Y',
+            title_pos = 'center',
+            wrap = true,
+            pills = true,
+        },
+        readme = {
+            enabled = false,
+            root = README_PATH,
+            files = { 'README.md', 'lua/**/README.md' },
+            skip_if_doc_exists = true,
+        },
+        state = LAZY_STATE .. '/state.json',
+        profiling = { loader = true, require = true },
+    })
+
+    M.setup_keys()
+end
+
 function M.colorschemes()
-    if exists('plugin.colorschemes') then
+    if require('user_api.check.exists').module('plugin.colorschemes') then
         return require('plugin.colorschemes')
     end
 end
 
 function M.lsp()
-    if exists('plugin.lsp') then
+    if require('user_api.check.exists').module('plugin.lsp') then
         return require('plugin.lsp')
     end
 end
