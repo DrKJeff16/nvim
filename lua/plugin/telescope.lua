@@ -1,32 +1,7 @@
----@class TelAuData
----@field title string
----@field filetype string
----@field bufname string
-
----@class TelAuArgs
----@field data? TelAuData
-
----@class TelExtension
----@field [1] string
----@field keys? AllMaps
-
 local floor = math.floor
+local exists = require('user_api.check.exists').module
+local desc = require('user_api.maps').desc
 
-local User = require('user_api')
-local Check = User.check
-
-local exists = Check.exists.module
-local Keymaps = require('user_api.config.keymaps')
-local desc = User.maps.desc
-
-if not exists('telescope') then
-    return
-end
-
-local au = vim.api.nvim_create_autocmd
-local augroup = vim.api.nvim_create_augroup
-
-local Telescope = require('telescope')
 local Actions = require('telescope.actions')
 local ActionsLayout = require('telescope.actions.layout')
 local Config = require('telescope.config')
@@ -34,7 +9,7 @@ local Config = require('telescope.config')
 local vimgrep_arguments = { unpack(Config.values.vimgrep_arguments) }
 local extra_args = { '--hidden', '--glob', '!**/.git/*', '!**/.ropeproject/*', '!**/.mypy_cache/*' }
 
-for _, arg in next, extra_args do
+for _, arg in ipairs(extra_args) do
     table.insert(vimgrep_arguments, arg)
 end
 
@@ -44,18 +19,17 @@ local Opts = {
         layout_config = {
             vertical = {
                 width = floor(vim.o.columns * 3 / 4),
-                height = floor(vim.o.lines * 4 / 5),
+                height = floor(vim.o.lines * 5 / 6),
             },
             horizontal = {
                 width = floor(vim.o.columns * 4 / 5),
-                height = floor(vim.o.lines * 3 / 4),
+                height = floor(vim.o.lines * 4 / 5),
             },
         },
         mappings = {
             i = {
-                ['<C-h>'] = 'which_key',
                 ['<C-?>'] = 'which_key',
-                ['<C-u>'] = false, -- Clear prompt
+                ['<C-u>'] = false,
                 ['<C-d>'] = Actions.delete_buffer + Actions.move_to_top,
                 ['<Esc>'] = Actions.close,
                 ['<C-e>'] = Actions.close,
@@ -98,13 +72,12 @@ local Opts = {
             },
         },
     },
-
     pickers = {
         autocommands = { theme = 'dropdown' },
         buffers = { theme = 'dropdown' },
         colorscheme = { theme = 'dropdown' },
         commands = { theme = 'ivy' },
-        current_buffer_fuzzy_find = { theme = 'cursor' },
+        current_buffer_fuzzy_find = { theme = 'dropdown' },
         fd = { theme = 'ivy' },
         find_files = {
             theme = 'ivy',
@@ -153,10 +126,10 @@ if exists('plugin.telescope.tabs') then
     end
 end
 
-Telescope.setup(Opts)
+require('telescope').setup(Opts)
 
 local function load_ext(name) ---@param name string
-    Telescope.load_extension(name)
+    require('telescope').load_extension(name)
     -- Make sure `picker_list` doesn't load itself
     if name == 'picker_list' then
         _G.telescope_picker_list_loaded = true
@@ -168,79 +141,65 @@ local function load_ext(name) ---@param name string
     end
 end
 
----@type AllMaps
-local Keys = {
+local Keys = { ---@type AllMaps
     ['<leader><C-t>'] = { group = '+Telescope' },
     ['<leader><C-t>b'] = { group = '+Builtins' },
     ['<leader><C-t>e'] = { group = '+Extensions' },
-    ['<leader><leader>'] = {
-        '<CMD>Telescope<CR>',
-        desc('Default Telescope Picker', true, nil, false),
-    },
-    ['<leader>HH'] = { '<CMD>Telescope help_tags<CR>', desc('Telescope Help Tags') },
-    ['<leader>HM'] = { '<CMD>Telescope man_pages<CR>', desc('Telescope Man Pages') },
-    ['<leader>GB'] = { '<CMD>Telescope git_branches<CR>', desc('Telescope Git Branches') },
-    ['<leader>GS'] = { '<CMD>Telescope git_stash<CR>', desc('Telescope Git Stash') },
-    ['<leader>Gs'] = { '<CMD>Telescope git_status<CR>', desc('Telescope Git Status') },
-    ['<leader>bB'] = { '<CMD>Telescope buffers<CR>', desc('Telescope Buffers') },
-    ['<leader>fD'] = { '<CMD>Telescope diagnostics<CR>', desc('Telescope Diagnostics') },
-    ['<leader>ff'] = { '<CMD>Telescope find_files<CR>', desc('Telescope File Picker') },
-    ['<leader>lD'] = {
-        '<CMD>Telescope lsp_document_symbols<CR>',
-        desc('Telescope Document Symbols'),
-    },
-    ['<leader>lT'] = { '<CMD>Telescope lsp_type_definitions<CR>', desc('Telescope Definitions') },
-    ['<leader>ld'] = { '<CMD>Telescope lsp_definitions<CR>', desc('Telescope Definitions') },
-    ['<leader>li'] = {
-        '<CMD>Telescope lsp_implementations<CR>',
-        desc('Telelcope Lsp Implementations'),
-    },
+    ['<leader><leader>'] = { ':Telescope<CR>', desc('Default Telescope Picker', true, nil, false) },
+    ['<leader>HH'] = { ':Telescope help_tags<CR>', desc('Telescope Help Tags') },
+    ['<leader>HM'] = { ':Telescope man_pages<CR>', desc('Telescope Man Pages') },
+    ['<leader>GB'] = { ':Telescope git_branches<CR>', desc('Telescope Git Branches') },
+    ['<leader>GS'] = { ':Telescope git_stash<CR>', desc('Telescope Git Stash') },
+    ['<leader>Gs'] = { ':Telescope git_status<CR>', desc('Telescope Git Status') },
+    ['<leader>bB'] = { ':Telescope buffers<CR>', desc('Telescope Buffers') },
+    ['<leader>fD'] = { ':Telescope diagnostics<CR>', desc('Telescope Diagnostics') },
+    ['<leader>ff'] = { ':Telescope find_files<CR>', desc('Telescope File Picker') },
+    ['<leader>lD'] = { ':Telescope lsp_document_symbols<CR>', desc('Telescope Document Symbols') },
+    ['<leader>lT'] = { ':Telescope lsp_type_definitions<CR>', desc('Telescope Definitions') },
+    ['<leader>ld'] = { ':Telescope lsp_definitions<CR>', desc('Telescope Definitions') },
+    ['<leader>li'] = { ':Telescope lsp_implementations<CR>', desc('Telelcope Lsp Implementations') },
     ['<leader>lwD'] = {
-        '<CMD>Telescope lsp_dynamic_workspace_symbols<CR>',
+        ':Telescope lsp_dynamic_workspace_symbols<CR>',
         desc('Telescope Dynamic Workspace Symbols'),
     },
     ['<leader>lwd'] = {
-        '<CMD>Telescope lsp_workspace_symbols<CR>',
+        ':Telescope lsp_workspace_symbols<CR>',
         desc('Telescope Workspace Symbols'),
     },
-    ['<leader>vK'] = { '<CMD>Telescope keymaps<CR>', desc('Telescope Keymaps') },
-    ['<leader>vO'] = { '<CMD>Telescope vim_options<CR>', desc('Telescope Vim Options') },
-    ['<leader>uC'] = { '<CMD>Telescope colorscheme<CR>', desc('Telescope Colorschemes') },
-    ['<leader><C-t>b/'] = {
-        '<CMD>Telescope current_buffer_fuzzy_find<CR>',
-        desc('Buffer Fuzzy-Find'),
-    },
-    ['<leader><C-t>bA'] = { '<CMD>Telescope autocommands<CR>', desc('Autocommands') },
-    ['<leader><C-t>bC'] = { '<CMD>Telescope commands<CR>', desc('Commands') },
-    ['<leader><C-t>bg'] = { '<CMD>Telescope live_grep<CR>', desc('Live Grep') },
-    ['<leader><C-t>bh'] = { '<CMD>Telescope highlights<CR>', desc('Highlights') },
-    ['<leader><C-t>bp'] = { '<CMD>Telescope pickers<CR>', desc('Pickers') },
+    ['<leader>vK'] = { ':Telescope keymaps<CR>', desc('Telescope Keymaps') },
+    ['<leader>vO'] = { ':Telescope vim_options<CR>', desc('Telescope Vim Options') },
+    ['<leader>uC'] = { ':Telescope colorscheme<CR>', desc('Telescope Colorschemes') },
+    ['<leader><C-t>b/'] = { ':Telescope current_buffer_fuzzy_find<CR>', desc('Buffer Fuzzy-Find') },
+    ['<leader><C-t>bA'] = { ':Telescope autocommands<CR>', desc('Autocommands') },
+    ['<leader><C-t>bC'] = { ':Telescope commands<CR>', desc('Commands') },
+    ['<leader><C-t>bg'] = { ':Telescope live_grep<CR>', desc('Live Grep') },
+    ['<leader><C-t>bh'] = { ':Telescope highlights<CR>', desc('Highlights') },
+    ['<leader><C-t>bp'] = { ':Telescope pickers<CR>', desc('Pickers') },
 }
 
----@type table<string, TelExtension>
-local known_exts = {
+local known_exts = { ---@type table<string, { [1]: string, keys?: AllMaps }>
     ['telescope._extensions.file_browser'] = { 'file_browser' },
     ['telescope._extensions.heading'] = {
         'heading',
-        keys = { ['<leader><C-t>eh'] = { '<CMD>Telescope heading<CR>', desc('Heading Picker') } },
+        keys = { ['<leader><C-t>eh'] = { ':Telescope heading<CR>', desc('Heading Picker') } },
     },
     ['telescope._extensions.undo'] = {
         'undo',
         keys = {
-            ['<leader><C-t>eu'] = { '<CMD>Telescope undo<CR>', desc('Undo Picker') },
-            ['<leader>fu'] = { '<CMD>Telescope undo<CR>', desc('Undo Telescope Picker') },
+            ['<leader><C-t>eu'] = { ':Telescope undo<CR>', desc('Undo Picker') },
+            ['<leader>fu'] = { ':Telescope undo<CR>', desc('Undo Telescope Picker') },
         },
     },
     ['plugin.telescope.cc'] = {
         'conventional_commits',
         keys = {
             ['<leader><C-t>eC'] = {
-                '<CMD>Telescope conventional_commits<CR>',
+                ':Telescope conventional_commits<CR>',
                 desc('Conventional Commits'),
             },
             ['<leader>GC'] = {
-                '<CMD>Telescope conventional_commits<CR>',
-                desc('Conventional Commits Telescope Picker'),
+                ':Telescope conventional_commits<CR>',
+                desc('Conventional Commits (Telescope)'),
             },
         },
     },
@@ -248,44 +207,42 @@ local known_exts = {
         'scope',
         keys = {
             ['<leader>S'] = { group = '+Scope' },
-            ['<leader>Sb'] = { '<CMD>Telescope buffers<CR>', desc('Scope Buffers (Telescope)') },
-            ['<leader><C-t>eS'] = { '<CMD>Telescope buffers<CR>', desc('Scope Buffers Picker') },
+            ['<leader>Sb'] = { ':Telescope buffers<CR>', desc('Scope Buffers (Telescope)') },
+            ['<leader><C-t>eS'] = { ':Telescope buffers<CR>', desc('Scope Buffers Picker') },
         },
     },
     persisted = {
         'persisted',
-        keys = {
-            ['<leader><C-t>ef'] = { '<CMD>Telescope persisted<CR>', desc('Persisted Picker') },
-        },
+        keys = { ['<leader><C-t>ef'] = { ':Telescope persisted<CR>', desc('Persisted Picker') } },
     },
     ['telescope-makefile'] = {
         'make',
         keys = {
             ['<leader>fM'] = { group = '+Make' },
-            ['<leader>fMT'] = { '<CMD>Telescope make<CR>', desc('Makefile Telescope Picker') },
-            ['<leader><C-t>eM'] = { '<CMD>Telescope make<CR>', desc('Makefile Picker') },
+            ['<leader>fMT'] = { ':Telescope make<CR>', desc('Makefile Telescope Picker') },
+            ['<leader><C-t>eM'] = { ':Telescope make<CR>', desc('Makefile Picker') },
         },
     },
     aerial = {
         'aerial',
         keys = {
-            ['<leader><C-t>ea'] = { '<CMD>Telescope aerial<CR>', desc('Aerial Picker') },
-            ['<leader>laT'] = { '<CMD>Telescope aerial<CR>', desc('Aerial Telescope Picker') },
+            ['<leader><C-t>ea'] = { ':Telescope aerial<CR>', desc('Aerial Picker') },
+            ['<leader>laT'] = { ':Telescope aerial<CR>', desc('Aerial Telescope Picker') },
         },
     },
     ['telescope._extensions.projects'] = {
         'projects',
         keys = {
-            ['<leader><C-t>ep'] = { '<CMD>Telescope projects<CR>', desc('Project Picker') },
-            ['<leader>pT'] = { '<CMD>Telescope projects<CR>', desc('Project Telescope Picker') },
+            ['<leader><C-t>ep'] = { ':Telescope projects<CR>', desc('Project Picker') },
+            ['<leader>pT'] = { ':Telescope projects<CR>', desc('Project Telescope Picker') },
         },
     },
     notify = {
         'notify',
         keys = {
             ['<leader>N'] = { group = '+Notify' },
-            ['<leader>NT'] = { '<CMD>Telescope notify<CR>', desc('Notify Telescope Picker') },
-            ['<leader><C-t>eN'] = { '<CMD>Telescope notify<CR>', desc('Notify Picker') },
+            ['<leader>NT'] = { ':Telescope notify<CR>', desc('Notify Telescope Picker') },
+            ['<leader><C-t>eN'] = { ':Telescope notify<CR>', desc('Notify Picker') },
         },
     },
     noice = {
@@ -309,26 +266,20 @@ local known_exts = {
     ['lazygit.utils'] = {
         'lazygit',
         keys = {
-            ['<leader><C-t>eG'] = { '<CMD>Telescope lazygit<CR>', desc('LazyGit Picker') },
-            ['<leader>GlT'] = { '<CMD>Telescope lazygit<CR>', desc('LazyGit Telescope Picker') },
+            ['<leader><C-t>eG'] = { ':Telescope lazygit<CR>', desc('LazyGit Picker') },
+            ['<leader>GlT'] = { ':Telescope lazygit<CR>', desc('LazyGit Telescope Picker') },
         },
     },
     ['telescope._extensions.picker_list'] = {
         'picker_list',
         keys = {
-            ['<leader><C-t>eP'] = { '<CMD>Telescope picker_list<CR>', desc('Picker List') },
-            ['<leader><C-t>bp'] = {
-                '<CMD>Telescope picker_list<CR>',
-                desc('Picker List (Extension)'),
-            },
-            ['<leader><leader>'] = {
-                '<CMD>Telescope picker_list<CR>',
-                desc('Telescope Picker List'),
-            },
+            ['<leader><C-t>eP'] = { ':Telescope picker_list<CR>', desc('Picker List') },
+            ['<leader><C-t>bp'] = { ':Telescope picker_list<CR>', desc('Picker List (Extension)') },
+            ['<leader><leader>'] = { ':Telescope picker_list<CR>', desc('Telescope Picker List') },
         },
     },
 }
-for mod, ext in next, known_exts do
+for mod, ext in pairs(known_exts) do
     local extension = ext[1] or ''
     if exists(mod) and extension ~= '' then
         load_ext(extension)
@@ -339,10 +290,10 @@ for mod, ext in next, known_exts do
         end
     end
 end
-Keymaps({ n = Keys })
+require('user_api.config').keymaps({ n = Keys })
 
-au('User', {
-    group = augroup('UserTelescope', { clear = true }),
+vim.api.nvim_create_autocommand('User', {
+    group = vim.api.nvim_create_augroup('UserTelescope', { clear = true }),
     pattern = 'TelescopePreviewerLoaded',
     callback = function(ev)
         local wo = vim.wo[vim.api.nvim_get_current_win()]
