@@ -11,7 +11,19 @@ local in_list = vim.list_contains
 ---[SOURCE](https://stackoverflow.com/questions/7183998/in-lua-what-is-the-right-way-to-handle-varargs-which-contains-nil).
 ---@param ... any
 function _G.notify_inspect(...)
-    vim.notify(vim.inspect(...), INFO)
+    local nargs = select('#', ...)
+    local txt = ''
+    local i = 1
+    while i <= nargs do
+        local selection = select(i, ...)
+        if not in_list({ 'string', 'number', 'boolean' }, type(selection)) then
+            selection = vim.inspect(selection)
+        end
+
+        txt = ('%s' .. (i == 1 and '' or '\n') .. '%s'):format(txt, selection)
+        i = i + 1
+    end
+    vim.notify(txt, INFO)
 end
 
 vim.g.loaded_perl_provider = 0
