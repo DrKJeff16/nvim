@@ -122,7 +122,7 @@ L.setup({
     { import = 'plugin.markdown' },
     { import = 'plugin.markdown.render' },
     { import = 'plugin.ts-comments' },
-    { import = 'plugin.neo_tree' },
+    { import = 'plugin.neo-tree' },
     { import = 'plugin.snacks' },
     { import = 'plugin.picker' },
     { import = 'plugin.lsp.clangd' },
