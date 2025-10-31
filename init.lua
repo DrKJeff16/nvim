@@ -150,6 +150,7 @@ L.setup({
     { import = 'plugin.orgmode' },
     { import = 'plugin.pomo' },
     { import = 'plugin.gh-co' },
+    { import = 'plugin.co-author' },
     -- { import = 'plugin.dooku' },
     -- { import = 'plugin.nvim-test' },
     -- { import = 'plugin.mini.test' },
