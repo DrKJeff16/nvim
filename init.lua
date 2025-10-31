@@ -95,6 +95,7 @@ local L = require('config.lazy')
 L.setup({
     { import = 'plugin.startuptime' },
     { import = 'plugin.which_key' },
+    { import = 'plugin.luaref' },
     { import = 'plugin._spec.colorschemes' },
     { import = 'plugin._spec' },
     { import = 'plugin.notify' },
