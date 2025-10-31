@@ -5,8 +5,7 @@ return {
     'nvim-mini/mini.starter',
     version = false,
     config = function()
-        local starter = require('mini.starter')
-        starter.setup({
+        require('mini.starter').setup({
             autoopen = true,
             header = nil,
             footer = nil,
@@ -16,12 +15,13 @@ return {
             items = {
                 { name = 'Projects', action = 'Project', section = 'Projects' },
                 { name = 'Recent Projects', action = 'ProjectRecents', section = 'Projects' },
-                starter.sections.telescope(),
+                require('mini.starter').sections.telescope(),
             },
             content_hooks = {
-                starter.gen_hook.adding_bullet(),
-                starter.gen_hook.aligning('center', 'center'),
+                require('mini.starter').gen_hook.adding_bullet(),
+                require('mini.starter').gen_hook.aligning('center', 'center'),
             },
         })
     end,
 }
+--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

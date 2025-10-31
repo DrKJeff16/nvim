@@ -17,22 +17,15 @@ return {
         max_file_size = 10.0,
         debounce = 100,
         restart_highlighter = true,
-
         win_options = {
             conceallevel = { default = vim.o.conceallevel, rendered = 3 },
             concealcursor = { default = vim.o.concealcursor, rendered = '' },
         },
-
         overrides = {
             buflisted = {},
-            buftype = {
-                nofile = {
-                    code = { left_pad = 0, right_pad = 0 },
-                },
-            },
+            buftype = { nofile = { code = { left_pad = 0, right_pad = 0 } } },
             filetype = {},
         },
-
         markdown = {
             disable = true,
             directives = {
@@ -40,7 +33,6 @@ return {
                 { id = 18, name = 'conceal_lines' },
             },
         },
-
         injections = {
             gitcommit = {
                 enabled = true,
@@ -52,7 +44,6 @@ return {
             ]],
             },
         },
-
         anti_conceal = {
             enabled = true,
             disabled_modes = false,
@@ -82,5 +73,4 @@ return {
         },
     },
 }
-
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

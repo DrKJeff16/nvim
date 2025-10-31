@@ -7,8 +7,7 @@ return {
     dependencies = { 'ibhagwan/fzf-lua' },
     config = function()
         local desc = require('user_api.maps').desc
-        local PSSN = require('nvim-possession')
-        PSSN.setup({
+        require('nvim-possession').setup({
             sessions = {
                 -- sessions_path = ... -- folder to look for sessions, must be a valid existing path
                 -- sessions_variable = ... -- defines vim.g[sessions_variable] when a session is loaded
@@ -46,21 +45,23 @@ return {
                 border = 'Todo',
                 preview_border = 'Constant',
             },
-            fzf_winopts = { ---@type possession.Winopts
-                width = 0.5,
-                preview = { vertical = 'right:30%' },
-            },
+            ---@type possession.Winopts
+            fzf_winopts = { width = 0.5, preview = { vertical = 'right:30%' } },
             sort = require('nvim-possession.sorting').time_sort,
-            -- sort = require('nvim-possession.sorting').alpha_sort,
-            -- to sort by last updated instead
         })
         require('user_api.config').keymaps({
             n = {
                 ['<leader>s'] = { group = '+Session' },
-                ['<leader>sl'] = { PSSN.list, desc('📌 List Sessions') },
-                ['<leader>sn'] = { PSSN.new, desc('📌 Create New Session') },
-                ['<leader>su'] = { PSSN.update, desc('📌 Update Current Session') },
-                ['<leader>sd'] = { PSSN.delete, desc('📌 Delete Selected Session') },
+                ['<leader>sl'] = { require('nvim-possession').list, desc('📌 List Sessions') },
+                ['<leader>sn'] = { require('nvim-possession').new, desc('📌 Create New Session') },
+                ['<leader>su'] = {
+                    require('nvim-possession').update,
+                    desc('📌 Update Current Session'),
+                },
+                ['<leader>sd'] = {
+                    require('nvim-possession').delete,
+                    desc('📌 Delete Selected Session'),
+                },
             },
         })
     end,

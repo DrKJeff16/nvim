@@ -2,18 +2,11 @@
 
 ---@type LazySpec[]
 return {
-    { 'neovim/nvim-lspconfig', version = false },
-    { 'b0o/SchemaStore.nvim', lazy = true, version = false },
-    {
-        'folke/trouble.nvim',
-        dev = true,
-        event = 'VeryLazy',
-        version = false,
-        dependencies = { 'nvim-tree/nvim-web-devicons' },
-    },
+    'neovim/nvim-lspconfig',
+    'folke/trouble.nvim',
+    'b0o/SchemaStore.nvim',
     {
         'NeoSahadeo/lsp-toggle.nvim',
-        dev = true,
         version = false,
         config = function()
             require('lsp-toggle').setup({

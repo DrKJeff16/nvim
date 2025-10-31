@@ -4,18 +4,17 @@
 return {
     'nvim-mini/mini.splitjoin',
     version = false,
-    opts = {
-        mappings = { toggle = '<leader>mst', split = '<leader>mss', join = '<leader>msj' },
-        detect = {
-            brackets = { '%b()', '%b[]', '%b{}' },
-            separator = '[,;]',
-            exclude_regions = { '%b()', '%b[]', '%b{}', '%b""', "%b''" },
-        },
-        split = { hooks_pre = {}, hooks_post = {} },
-        join = { hooks_pre = {}, hooks_post = {} },
-    },
-    config = function(_, opts)
-        require('mini.splitjoin').setup(opts)
+    config = function()
+        require('mini.splitjoin').setup({
+            mappings = { toggle = '<leader>mst', split = '<leader>mss', join = '<leader>msj' },
+            detect = {
+                brackets = { '%b()', '%b[]', '%b{}' },
+                separator = '[,;]',
+                exclude_regions = { '%b()', '%b[]', '%b{}', '%b""', "%b''" },
+            },
+            split = { hooks_pre = {}, hooks_post = {} },
+            join = { hooks_pre = {}, hooks_post = {} },
+        })
         require('user_api.config').keymaps({ n = { ['<leader>ms'] = { group = '+Splitjoin' } } })
 
         vim.api.nvim_create_autocmd({ 'BufNew', 'BufAdd', 'BufEnter', 'BufCreate', 'WinEnter' }, {

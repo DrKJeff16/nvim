@@ -4,29 +4,28 @@
 return {
     'folke/twilight.nvim',
     version = false,
-    enabled = not require('user_api.check').in_console(),
-    opts = {
-        dimming = {
-            alpha = 0.4,
-            color = { 'Normal', '#ffffff' },
-            term_bg = '#000000',
-            inactive = true,
-        },
-        context = 10,
-        treesitter = true,
-        expand = { 'function', 'method', 'table', 'if_statement' },
-        exclude = {},
-    },
-    config = function(_, opts)
-        local Twilight = require('twilight')
+    cond = not require('user_api.check').in_console(),
+    config = function()
+        require('twilight').setup({
+            dimming = {
+                alpha = 0.4,
+                color = { 'Normal', '#ffffff' },
+                term_bg = '#000000',
+                inactive = true,
+            },
+            context = 10,
+            treesitter = true,
+            expand = { 'function', 'method', 'table', 'if_statement' },
+            exclude = {},
+        })
+
         local desc = require('user_api.maps').desc
-        Twilight.setup(opts)
         require('user_api.config').keymaps({
             n = {
                 ['<leader>ut'] = { group = '+Twilight' },
-                ['<leader>utt'] = { Twilight.toggle, desc('Toggle Twilight') },
-                ['<leader>ute'] = { Twilight.enable, desc('Enable Twilight') },
-                ['<leader>utd'] = { Twilight.disable, desc('Disable Twilight') },
+                ['<leader>utt'] = { require('twilight').toggle, desc('Toggle Twilight') },
+                ['<leader>ute'] = { require('twilight').enable, desc('Enable Twilight') },
+                ['<leader>utd'] = { require('twilight').disable, desc('Disable Twilight') },
             },
         })
     end,

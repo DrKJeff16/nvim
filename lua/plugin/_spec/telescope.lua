@@ -1,12 +1,5 @@
 ---@module 'lazy'
 
-local CfgUtil = require('config.util')
-local User = require('user_api')
-local Check = User.check
-
-local tel_fzf_build = CfgUtil.tel_fzf_build
-local executable = Check.exists.executable
-
 ---@type LazySpec[]
 return {
     {
@@ -15,38 +8,32 @@ return {
         version = false,
         dependencies = {
             'nvim-treesitter/nvim-treesitter',
-            { 'nvim-lua/plenary.nvim', version = false },
-            { 'debugloop/telescope-undo.nvim', version = false },
-            { 'OliverChao/telescope-picker-list.nvim', version = false },
-            { 'nvim-telescope/telescope-file-browser.nvim', version = false },
-            { 'crispgm/telescope-heading.nvim', version = false },
+            'nvim-lua/plenary.nvim',
+            'debugloop/telescope-undo.nvim',
+            'OliverChao/telescope-picker-list.nvim',
+            'nvim-telescope/telescope-file-browser.nvim',
+            'crispgm/telescope-heading.nvim',
             {
                 'nvim-telescope/telescope-fzf-native.nvim',
                 version = false,
-                build = tel_fzf_build(),
-                enabled = executable('fzf'),
+                build = require('config.util').tel_fzf_build(),
+                cond = require('user_api.check.exists').executable('fzf'),
             },
             {
                 'LukasPietzschmann/telescope-tabs',
                 version = false,
-                config = CfgUtil.require('plugin.telescope.tabs'),
+                config = require('config.util').require('plugin.telescope.tabs'),
             },
             {
                 'DrKJeff16/telescope-makefile',
                 ft = 'make',
                 version = false,
                 dependencies = { 'akinsho/toggleterm.nvim' },
-                config = CfgUtil.require('plugin.telescope.makefile'),
-                enabled = executable('make') or executable('mingw32-make'),
+                config = require('config.util').require('plugin.telescope.makefile'),
             },
-            {
-                'olacin/telescope-cc.nvim',
-                ft = 'gitcommit',
-                version = false,
-                enabled = executable('git'),
-            },
+            { 'olacin/telescope-cc.nvim', ft = 'gitcommit', version = false },
         },
-        config = CfgUtil.require('plugin.telescope'),
+        config = require('config.util').require('plugin.telescope'),
     },
 }
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

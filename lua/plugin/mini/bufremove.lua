@@ -13,10 +13,10 @@ end
 return {
     'nvim-mini/mini.bufremove',
     version = false,
-    opts = { silent = true },
-    config = function(_, opts)
+    config = function()
+        require('mini.bufremove').setup({ silent = true })
+
         local desc = require('user_api.maps').desc
-        require('mini.bufremove').setup(opts)
         require('user_api.config').keymaps({
             n = {
                 ['<leader>bd'] = { gen_bdel(false), desc('Close Buffer (Mini)') },

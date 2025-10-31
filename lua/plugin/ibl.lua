@@ -29,48 +29,32 @@ return {
     main = 'ibl',
     version = false,
     dependencies = { 'HiPhish/rainbow-delimiters.nvim' },
-    opts = {
-        enabled = true,
-        debounce = 200,
-        indent = {
-            highlight = highlight,
-            repeat_linebreak = (
-                vim.fn.has('nvim-0.10') == 1
-                and vim.o.breakindent
-                and vim.o.breakindentopt ~= ''
-            ),
-            smart_indent_cap = false,
-            char = {
-                '╎',
-                '╏',
-                '┆',
-                '┇',
-                '┊',
-                '┋',
-            },
-            tab_char = {
-                '▏',
-                '▎',
-                '▍',
-                '▌',
-                '▋',
-                '▊',
-                '▉',
-                '█',
-            },
-        },
-        whitespace = {
-            highlight = { 'Whitespace', 'NonText' },
-            remove_blankline_trail = false,
-        },
-
-        scope = { highlight = highlight },
-    },
-    config = function(_, cfg_opts)
+    cond = not require('user_api.check').in_console(),
+    config = function()
         reg(require('ibl.hooks').type.HIGHLIGHT_SETUP, function()
             require('user_api.highlight').hl_from_dict(Hilite)
         end)
-        require('ibl').setup(cfg_opts)
+        require('ibl').setup({
+            enabled = true,
+            debounce = 200,
+            indent = {
+                highlight = highlight,
+                repeat_linebreak = (
+                    vim.fn.has('nvim-0.10') == 1
+                    and vim.o.breakindent
+                    and vim.o.breakindentopt ~= ''
+                ),
+                smart_indent_cap = false,
+                char = { '╎', '╏', '┆', '┇', '┊', '┋' },
+                tab_char = { '▏', '▎', '▍', '▌', '▋', '▊', '▉', '█' },
+            },
+            whitespace = {
+                highlight = { 'Whitespace', 'NonText' },
+                remove_blankline_trail = false,
+            },
+
+            scope = { highlight = highlight },
+        })
 
         ---@type { [1]: string, [2]: (fun(...: any): any), [3]?: ibl.hooks.options }[]
         local arg_tbl = {
@@ -102,10 +86,14 @@ return {
             end
         end
 
-        if require('user_api.check.value').type_not_empty('table', vim.g.rainbow_delimiters) then
-            vim.g.rainbow_delimiters =
-                vim.tbl_deep_extend('force', vim.g.rainbow_delimiters, { highlight = highlight })
+        if not vim.g.rainbow_delimiters or vim.tbl_isempty(vim.g.rainbow_delimiters) then
+            return
         end
+
+        local d_extend = vim.tbl_deep_extend
+        vim.g.rainbow_delimiters = d_extend('force', vim.g.rainbow_delimiters, {
+            highlight = highlight,
+        })
     end,
 }
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

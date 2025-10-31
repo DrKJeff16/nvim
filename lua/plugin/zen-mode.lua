@@ -1,11 +1,8 @@
 ---@module 'lazy'
 
-local executable = require('user_api.check.exists').executable
-
 ---@type LazySpec
 return {
     'folke/zen-mode.nvim',
-    lazy = true,
     version = false,
     cmd = 'ZenMode',
     cond = not require('user_api.check').in_console(),
@@ -66,9 +63,9 @@ return {
             ---To make this work, you need to set the following kitty options:
             --- - allow_remote_control socket-only
             --- - listen_on unix:/tmp/kitty
-            kitty = { enabled = executable('kitty'), font = '+2' },
-            alacritty = { enabled = executable('alacritty') },
-            wezterm = { enabled = executable('wezterm'), font = '+4' },
+            kitty = { enabled = true, font = '+2' },
+            alacritty = { enabled = true },
+            wezterm = { enabled = true, font = '+4' },
         },
     },
     config = function(_, opts)

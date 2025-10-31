@@ -6,6 +6,7 @@ return {
     dev = true,
     lazy = false,
     version = false,
+    cond = not require('user_api.check').in_console(),
     opts = { ---@type screenkey.config
         win_opts = {
             row = 0,

@@ -3,8 +3,8 @@
 ---@type LazySpec
 return {
     'HiPhish/rainbow-delimiters.nvim',
-    event = 'VeryLazy',
     version = false,
+    cond = not require('user_api.check').in_console(),
     config = function()
         require('rainbow-delimiters.setup').setup({
             strategy = {
@@ -22,10 +22,7 @@ return {
                 lua = 'rainbow-blocks',
                 python = 'rainbow-blocks',
             },
-            priority = {
-                [''] = 110,
-                lua = 210,
-            },
+            priority = { [''] = 110, lua = 210 },
             highlight = {
                 'RainbowRed',
                 'RainbowYellow',

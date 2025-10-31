@@ -15,14 +15,6 @@ return {
             'logcat.*',
             '.*%.log',
         },
-        ---This allows you to define custom keywords to be highlighted based on
-        ---the group.
-        ---
-        ---The following highlight groups are supported:
-        ---    'error', 'warning', 'info', 'debug' and 'pass'.
-        ---
-        ---The value for each group can be a string or a list of strings.
-        ---All groups are empty by default. Keywords are case-sensitive.
         keyword = { ---@type table<string, string|string[]>
             error = 'ERROR_MSG',
             warning = { 'WARN_X', 'WARN_Y' },
@@ -32,3 +24,4 @@ return {
         },
     },
 }
+--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

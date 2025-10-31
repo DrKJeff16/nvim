@@ -5,6 +5,7 @@ return {
     'OXY2DEV/helpview.nvim',
     lazy = false,
     version = false,
+    cond = not require('user_api.check').in_console(),
     opts = {
         renderers = {},
         preview = {

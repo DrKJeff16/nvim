@@ -1,19 +1,16 @@
 ---@module 'lazy'
 
+---@type LazySpec
 return {
     'ibhagwan/fzf-lua',
     version = false,
-    dependencies = {
-        'nvim-tree/nvim-web-devicons',
-        'nvim-mini/mini.icons',
-    },
+    dependencies = { 'nvim-tree/nvim-web-devicons', 'nvim-mini/mini.icons' },
     cond = require('user_api.check.exists').executable('fzf'),
     config = function()
-        local Fzf = require('fzf-lua')
-        local actions = Fzf.actions
+        local actions = require('fzf-lua').actions
         actions = {
             files = {
-                true, -- uncomment to inherit all the below in your custom config
+                true,
                 enter = actions.file_edit_or_qf,
                 ['ctrl-s'] = actions.file_split,
                 ['ctrl-v'] = actions.file_vsplit,
@@ -25,10 +22,8 @@ return {
                 ['alt-f'] = actions.toggle_follow,
             },
         }
-        Fzf.setup({
+        require('fzf-lua').setup({
             globals = { file_icon_padding = '', help_open_win = vim.api.nvim_open_win },
-            -- use `defaults` (table or function) if you wish to set "global-picker" defaults
-            -- for example, using "mini.icons" globally and open the quickfix list at the top
             defaults = { file_icons = 'mini', copen = 'topleft copen' },
             files = {
                 previewer = 'bat',
@@ -37,7 +32,7 @@ return {
                 git_icons = true,
                 file_icons = true,
                 color_icons = true,
-                -- path_shorten   = 1,              -- 'true' or number, shorten path?
+                path_shorten = true,
                 formatter = 'path.filename_first',
                 cmd = 'rg --files',
                 find_opts = [[-type f \! -path '*/.git/*']],
@@ -46,26 +41,24 @@ return {
                 dir_opts = [[/s/b/a:-d]],
                 cwd_header = true,
                 cwd_prompt = true,
-                cwd_prompt_shorten_len = 32, -- shorten prompt beyond this length
-                cwd_prompt_shorten_val = 1, -- shortened path parts length
-                toggle_ignore_flag = '--no-ignore', -- flag toggled in `actions.toggle_ignore`
-                toggle_hidden_flag = '--hidden', -- flag toggled in `actions.toggle_hidden`
-                toggle_follow_flag = '-L', -- flag toggled in `actions.toggle_follow`
-                hidden = true, -- enable hidden files by default
-                follow = false, -- do not follow symlinks by default
-                no_ignore = false, -- respect ".gitignore"  by default
+                cwd_prompt_shorten_len = 32,
+                cwd_prompt_shorten_val = 1,
+                toggle_ignore_flag = '--no-ignore',
+                toggle_hidden_flag = '--hidden',
+                toggle_follow_flag = '-L',
+                hidden = true,
+                follow = false,
+                no_ignore = false,
                 actions = { enter = actions.file_edit },
             },
             git = {
                 files = {
                     prompt = 'GitFiles❯ ',
                     cmd = 'git ls-files --exclude-standard',
-                    multiprocess = true, -- run command in a separate process
-                    git_icons = true, -- show git icons?
-                    file_icons = true, -- show file icons (true|"devicons"|"mini")?
-                    color_icons = true, -- colorize file|git icons
-                    -- force display the cwd header line regardless of your current working
-                    -- directory can also be used to hide the header when not wanted
+                    multiprocess = true,
+                    git_icons = true,
+                    file_icons = true,
+                    color_icons = true,
                     cwd_header = true,
                 },
                 status = {
@@ -95,11 +88,7 @@ return {
                     ref = 'HEAD',
                     file_icons = true,
                     color_icons = true,
-                    fzf_opts = {
-                        ['--multi'] = true,
-                        ['--delimiter'] = ':',
-                        ['--nth'] = '3..',
-                    },
+                    fzf_opts = { ['--multi'] = true, ['--delimiter'] = ':', ['--nth'] = '3..' },
                 },
                 commits = {
                     prompt = 'Commits❯ ',
@@ -108,7 +97,6 @@ return {
                     preview = 'git show --color {1}',
                     actions = {
                         enter = actions.git_checkout,
-                        -- remove `exec_silent` or set to `false` to exit after yank
                         ['ctrl-y'] = { fn = actions.git_yank_commit, exec_silent = true },
                     },
                 },
@@ -129,8 +117,6 @@ return {
                     prompt = 'Blame> ',
                     cmd = [[git blame --color-lines {file}]],
                     preview = 'git show --color {1} -- {file}',
-                    -- git-delta is automatically detected as pager, uncomment to disable
-                    -- preview_pager = false,
                     actions = {
                         enter = actions.git_goto_line,
                         ['ctrl-s'] = actions.git_buf_split,
@@ -143,7 +129,7 @@ return {
                     prompt = 'Branches❯ ',
                     cmd = 'git branch --all --color',
                     preview = 'git log --graph --pretty=oneline --abbrev-commit --color {1}',
-                    remotes = 'local', -- "detach|local", switch behavior for remotes
+                    remotes = 'local',
                     actions = {
                         enter = actions.git_switch,
                         ['ctrl-x'] = { fn = actions.git_branch_del, reload = true },
@@ -176,14 +162,10 @@ return {
                     },
                 },
                 icons = {
-                    -- M = { icon = 'M', color = 'yellow' },
-                    -- D = { icon = 'D', color = 'red' },
-                    -- A = { icon = 'A', color = 'green' },
                     R = { icon = 'R', color = 'yellow' },
                     C = { icon = 'C', color = 'yellow' },
                     T = { icon = 'T', color = 'magenta' },
                     ['?'] = { icon = '?', color = 'magenta' },
-                    -- override git icons?
                     M = { icon = '★', color = 'red' },
                     D = { icon = '✗', color = 'red' },
                     A = { icon = '+', color = 'green' },
@@ -192,41 +174,26 @@ return {
             grep = {
                 prompt = 'Rg❯ ',
                 input_prompt = 'Grep For❯ ',
-                multiprocess = true, -- run command in a separate process
-                git_icons = false, -- show git icons?
-                file_icons = true, -- show file icons (true|"devicons"|"mini")?
-                color_icons = true, -- colorize file|git icons
+                multiprocess = true,
+                git_icons = false,
+                file_icons = true,
+                color_icons = true,
                 cmd = 'rg --vimgrep',
                 grep_opts = '--binary-files=without-match --line-number --recursive --color=auto --perl-regexp -e',
                 rg_opts = '--column --line-number --no-heading --color=always --smart-case --max-columns=4096 -e',
-                hidden = true, -- disable hidden files by default
-                follow = false, -- do not follow symlinks by default
-                no_ignore = false, -- respect ".gitignore"  by default
-                -- Uncomment to use the rg config file `$RIPGREP_CONFIG_PATH`
-                -- RIPGREP_CONFIG_PATH = vim.env.RIPGREP_CONFIG_PATH
-                --
-                -- Set to 'true' to always parse globs in both 'grep' and 'live_grep'
-                -- search strings will be split using the 'glob_separator' and translated
-                -- to '--iglob=' arguments, requires 'rg'
-                -- can still be used when 'false' by calling 'live_grep_glob' directly
-                rg_glob = true, -- default to glob parsing with `rg`
-                glob_flag = '--iglob', -- for case sensitive globs use '--glob'
-                glob_separator = '%s%-%-', -- query separator pattern (lua): ' --'
-                -- advanced usage: for custom argument parsing define
-                -- 'rg_glob_fn' to return a pair:
-                --   first returned argument is the new search query
-                --   second returned argument are additional rg flags
-                -- rg_glob_fn = function(query, opts)
-                --   ...
-                --   return new_query, flags
-                -- end,
-                multiline = 2, -- Display as: PATH:LINE:COL\nTEXT\n
+                hidden = true,
+                follow = false,
+                no_ignore = false,
+                rg_glob = true,
+                glob_flag = '--iglob',
+                glob_separator = '%s%-%-',
+                multiline = 2,
+                no_header = false,
+                no_header_i = false,
                 actions = {
                     ['ctrl-g'] = { actions.grep_lgrep },
                     ['ctrl-r'] = { actions.toggle_ignore },
                 },
-                no_header = false,
-                no_header_i = false,
             },
             args = {
                 prompt = 'Args❯ ',
@@ -247,14 +214,7 @@ return {
                 show_unloaded = true,
                 cwd_only = false,
                 cwd = nil,
-                actions = {
-                    -- actions inherit from 'actions.files' and merge
-                    -- by supplying a table of functions we're telling
-                    -- fzf-lua to not close the fzf window, this way we
-                    -- can resume the buffers picker on the same window
-                    -- eliminating an otherwise unaesthetic win "flash"
-                    ['ctrl-x'] = { fn = actions.buf_del, reload = true },
-                },
+                actions = { ['ctrl-x'] = { fn = actions.buf_del, reload = true } },
             },
             tabs = {
                 prompt = 'Tabs❯ ',
@@ -263,28 +223,22 @@ return {
                 locate = true,
                 file_icons = 'mini',
                 color_icons = true,
+                fzf_opts = { ['--delimiter'] = '[\\):]', ['--with-nth'] = '2..' },
                 actions = {
                     enter = actions.buf_switch,
                     ['ctrl-x'] = { fn = actions.buf_del, reload = true },
-                },
-                fzf_opts = {
-                    -- hide tabnr
-                    ['--delimiter'] = '[\\):]',
-                    ['--with-nth'] = '2..',
                 },
             },
             lines = {
                 prompt = 'Lines❯ ',
                 file_icons = 'mini',
-                show_bufname = true, -- display buffer name
-                show_unloaded = true, -- show unloaded buffers
-                show_unlisted = false, -- exclude 'help' buffers
-                no_term_buffers = true, -- exclude 'term' buffers
-                sort_lastused = true, -- sort by most recent
-                winopts = { treesitter = true }, -- enable TS highlights
+                show_bufname = true,
+                show_unloaded = true,
+                show_unlisted = false,
+                no_term_buffers = true,
+                sort_lastused = true,
+                winopts = { treesitter = true },
                 fzf_opts = {
-                    -- do not include bufnr in fuzzy matching
-                    -- tiebreak by line no.
                     ['--multi'] = true,
                     ['--delimiter'] = '[\t]',
                     ['--tabstop'] = '1',
@@ -295,45 +249,37 @@ return {
             },
             tags = {
                 prompt = 'Tags❯ ',
-                ctags_file = nil, -- auto-detect from tags-option
+                ctags_file = nil,
                 multiprocess = true,
                 file_icons = true,
                 color_icons = true,
-                -- 'tags_live_grep' options, `rg` prioritizes over `grep`
                 rg_opts = '--no-heading --color=always --smart-case',
                 grep_opts = '--color=auto --perl-regexp',
                 fzf_opts = { ['--tiebreak'] = 'begin' },
-                actions = {
-                    -- actions inherit from 'actions.files' and merge
-                    -- this action toggles between 'grep' and 'live_grep'
-                    ['ctrl-g'] = { actions.grep_lgrep },
-                },
-                no_header = false, -- hide grep|cwd header?
-                no_header_i = false, -- hide interactive header?
+                actions = { ['ctrl-g'] = { actions.grep_lgrep } },
+                no_header = false,
+                no_header_i = false,
             },
             btags = {
                 prompt = 'BTags❯ ',
-                ctags_file = nil, -- auto-detect from tags-option
-                ctags_autogen = true, -- dynamically generate ctags each call
+                ctags_file = nil,
+                ctags_autogen = true,
                 multiprocess = true,
                 file_icons = false,
                 rg_opts = '--color=never --no-heading',
                 grep_opts = '--color=never --perl-regexp',
                 fzf_opts = { ['--tiebreak'] = 'begin' },
-                -- actions inherit from 'actions.files'
             },
             colorschemes = {
                 prompt = 'Colorschemes❯ ',
-                live_preview = true, -- apply the colorscheme on preview?
+                live_preview = true,
                 actions = { enter = actions.colorscheme },
                 winopts = { height = 0.55, width = 0.30 },
-                -- uncomment to ignore colorschemes names (lua patterns)
-                -- ignore_patterns   = { "^delek$", "^blue$" },
             },
             awesome_colorschemes = {
                 prompt = 'Colorschemes❯ ',
-                live_preview = true, -- apply the colorscheme on preview?
-                max_threads = 5, -- max download/update threads
+                live_preview = true,
+                max_threads = 5,
                 winopts = { row = 0, col = 0.99, width = 0.50 },
                 fzf_opts = {
                     ['--multi'] = true,
@@ -352,8 +298,6 @@ return {
                 prompt = 'Keymaps> ',
                 winopts = { preview = { layout = 'vertical' } },
                 fzf_opts = { ['--tiebreak'] = 'index' },
-                -- by default, we ignore <Plug> and <SNR> mappings
-                -- set `ignore_patterns = false` to disable filtering
                 ignore_patterns = { '^<SNR>', '^<Plug>' },
                 show_desc = true,
                 show_details = true,
@@ -366,21 +310,15 @@ return {
             },
             nvim_options = {
                 prompt = 'Nvim Options> ',
-                separator = '│', -- separator between option name and value
-                color_values = true, -- colorize boolean values
+                separator = '│',
+                color_values = true,
                 actions = {
                     enter = { fn = actions.nvim_opt_edit_local, reload = true },
                     ['alt-enter'] = { fn = actions.nvim_opt_edit_global, reload = true },
                 },
             },
-            quickfix = {
-                file_icons = 'mini',
-                valid_only = false, -- select among only the valid quickfix entries
-            },
-            quickfix_stack = {
-                prompt = 'Quickfix Stack> ',
-                marker = '>',
-            },
+            quickfix = { file_icons = 'mini', valid_only = false },
+            quickfix_stack = { prompt = 'Quickfix Stack> ', marker = '>' },
             lsp = {
                 prompt_postfix = '❯ ',
                 cwd_only = true,
@@ -389,11 +327,8 @@ return {
                 git_icons = false,
                 jump1 = true,
                 jump1_action = actions.file_edit,
-                includeDeclaration = true, -- include current declaration in LSP context
-                -- settings for 'lsp_{document|workspace|lsp_live_workspace}_symbols'
+                includeDeclaration = true,
                 symbols = {
-                    -- lsp_query      = "foo"       -- query passed to the LSP directly
-                    -- query          = "bar"       -- query passed to fzf prompt for fuzzy matching
                     locate = true,
                     async_or_timeout = true,
                     symbol_style = 1,
@@ -437,9 +372,6 @@ return {
                 code_actions = {
                     prompt = 'Code Actions> ',
                     async_or_timeout = 5000,
-                    -- when git-delta is installed use "codeaction_native" for beautiful diffs
-                    -- try it out with `:FzfLua lsp_code_actions previewer=codeaction_native`
-                    -- scroll up to `previewers.codeaction{_native}` for more previewer options
                     previewer = 'codeaction',
                 },
                 finder = {
@@ -532,21 +464,20 @@ return {
                     fzf_colors = { hl = '-1:reverse', ['hl+'] = '-1:reverse' },
                 },
                 preview = {
-                    default = 'bat', -- override the default previewer?
-                    border = 'rounded', -- preview border: accepts both `nvim_open_win`
-                    wrap = vim.o.wrap, -- preview line wrap (fzf's 'wrap|nowrap')
-                    hidden = false, -- start preview hidden
-                    vertical = 'down:45%', -- up|down:size
-                    horizontal = 'right:60%', -- right|left:size
-                    layout = 'flex', -- horizontal|vertical|flex
-                    flip_columns = 100, -- #cols to switch to horizontal on flex
-                    -- Only used with the builtin previewer:
-                    title = true, -- preview border title (file/buf)?
-                    title_pos = 'center', -- left|center|right, title alignment
-                    scrollbar = 'border', -- `false` or string:'float|border'
-                    scrolloff = -1, -- float scrollbar offset from right
-                    delay = 20, -- delay(ms) displaying the preview
-                    winopts = { -- builtin previewer window options
+                    default = 'bat',
+                    border = 'rounded',
+                    wrap = vim.o.wrap,
+                    hidden = false,
+                    vertical = 'down:45%',
+                    horizontal = 'right:60%',
+                    layout = 'flex',
+                    flip_columns = 100,
+                    title = true,
+                    title_pos = 'center',
+                    scrollbar = 'border',
+                    scrolloff = -1,
+                    delay = 20,
+                    winopts = {
                         number = vim.o.number,
                         relativenumber = vim.o.relativenumber,
                         cursorline = vim.o.cursorline,
@@ -633,11 +564,7 @@ return {
                     cmd_modified = 'git diff --color HEAD',
                     cmd_untracked = 'git diff --color --no-index /dev/null',
                 },
-                man = {
-                    -- NOTE: remove the `-c` flag when using man-db
-                    -- replace with `man -P cat %s | col -bx` on OSX
-                    cmd = 'man -c %s | col -bx',
-                },
+                man = { cmd = 'man -c %s | col -bx' },
                 builtin = {
                     syntax = true,
                     syntax_limit_l = 0,
@@ -657,8 +584,6 @@ return {
                     render_markdown = { enabled = true, filetypes = { markdown = true } },
                     snacks_image = { enabled = false, render_inline = true },
                 },
-                -- Code Action previewers, default is "codeaction" (set via `lsp.code_actions.previewer`)
-                -- "codeaction_native" uses fzf's native previewer, recommended when combined with git-delta
                 codeaction = { diff_opts = { ctxlen = 3 } },
                 codeaction_native = {
                     diff_opts = { ctxlen = 3 },
@@ -667,7 +592,7 @@ return {
             },
         })
 
-        Fzf.register_ui_select()
+        require('fzf-lua').register_ui_select()
         vim.api.nvim_set_hl(0, 'FzfLuaBorder', { link = 'FloatBorder' })
     end,
 }

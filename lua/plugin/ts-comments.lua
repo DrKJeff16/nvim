@@ -3,7 +3,7 @@
 ---@type LazySpec
 return {
     'folke/ts-comments.nvim',
-    event = 'VeryLazy',
+    cond = not require('user_api.check').in_console(),
     opts = {
         lang = {
             astro = '<!-- %s -->',
@@ -27,9 +27,9 @@ return {
             ini = '; %s',
             ipynb = '# %s',
             javascript = {
-                '// %s', -- default commentstring when no treesitter node matches
+                '// %s',
                 '/* %s */',
-                call_expression = '// %s', -- specific commentstring for call_expression
+                call_expression = '// %s',
                 jsx_attribute = '// %s',
                 jsx_element = '{/* %s */}',
                 jsx_fragment = '{/* %s */}',
@@ -44,15 +44,12 @@ return {
             sql = '-- %s',
             styled = '/* %s */',
             svelte = '<!-- %s -->',
-            templ = {
-                '// %s',
-                component_block = '<!-- %s -->',
-            },
+            templ = { '// %s', component_block = '<!-- %s -->' },
             terraform = '# %s',
             tsx = {
-                '// %s', -- default commentstring when no treesitter node matches
+                '// %s',
                 '/* %s */',
-                call_expression = '// %s', -- specific commentstring for call_expression
+                call_expression = '// %s',
                 jsx_attribute = '// %s',
                 jsx_element = '{/* %s */}',
                 jsx_fragment = '{/* %s */}',
