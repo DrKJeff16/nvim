@@ -2,8 +2,10 @@ local ensure_langs = {
     'bash',
     'c',
     'comment',
+    'commonlisp',
     'cpp',
     'css',
+    'csv',
     'desktop',
     'diff',
     'editorconfig',
@@ -12,19 +14,23 @@ local ensure_langs = {
     'gitattributes',
     'gitcommit',
     'gitignore',
-    'gpg',
     'html',
+    'hyprlang',
+    'ini',
+    'jsdoc',
     'json',
     'json5',
     'jsonc',
+    'kconfig',
+    'kitty',
     'lua',
     'luadoc',
     'luap',
+    'make',
     'markdown',
     'markdown_inline',
-    'meson',
-    'ninja',
     'passwd',
+    'printf',
     'python',
     'query',
     'readline',
@@ -33,15 +39,22 @@ local ensure_langs = {
     'rust',
     'scss',
     'ssh_config',
+    'sway',
+    'tmux',
+    'todotxt',
     'toml',
     'udev',
     'vim',
     'vimdoc',
+    'xcompose',
+    'xresources',
     'yaml',
+    'zathurarc',
 }
 
 require('nvim-treesitter').setup({ install_dir = vim.fn.stdpath('data') .. '/site' })
-require('nvim-treesitter').install(ensure_langs):wait(300000)
+require('nvim-treesitter').install(ensure_langs)
+
 vim.api.nvim_create_autocmd('FileType', {
     pattern = {
         'bash',
@@ -50,9 +63,7 @@ vim.api.nvim_create_autocmd('FileType', {
         'css',
         'desktop',
         'diff',
-        'dockerfile',
         'dosini',
-        'doxygen',
         'editorconfig',
         'gitattributes',
         'gitcommit',
@@ -62,7 +73,6 @@ vim.api.nvim_create_autocmd('FileType', {
         'gpg',
         'html',
         'hyprlang',
-        'java',
         'json',
         'json5',
         'jsonc',
@@ -93,21 +103,16 @@ vim.api.nvim_create_autocmd('FileType', {
         'zsh',
     },
     callback = function(ev)
-        if vim.api.nvim_buf_is_loaded(ev.buf) then
-            local lang = vim.treesitter.language.get_lang(vim.bo[ev.buf].filetype)
-            if not (lang and vim.treesitter.language.add(lang)) then
-                return
-            end
-            vim.treesitter.start()
-            -- -- Set folding if available
-            -- if vim.treesitter.query.get(lang, 'folds') then
-            --     vim.wo[vim.api.nvim_get_current_win()].foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-            -- end
-            -- -- Set indentation if available (overrides traditional indent)
-            -- if vim.treesitter.query.get(lang, 'indents') then
-            --     vim.bo[ev.buf].indentexpr = 'nvim_treesitter#indent()'
-            -- end
+        if not vim.api.nvim_buf_is_loaded(ev.buf) then
+            return
         end
+
+        local lang = vim.treesitter.language.get_lang(vim.bo[ev.buf].filetype)
+        if not (lang and vim.treesitter.language.add(lang)) then
+            return
+        end
+
+        vim.treesitter.start(ev.buf)
     end,
 })
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
