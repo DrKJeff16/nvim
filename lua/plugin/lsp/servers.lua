@@ -1,8 +1,3 @@
-local User = require('user_api')
-local Check = User.check
-
-local executable = Check.exists.executable
-
 ---@param name string
 ---@param exe string|nil
 ---@return vim.lsp.Config|nil
@@ -17,7 +12,7 @@ local function server_load(name, exe)
         })
     end
     exe = (exe and exe ~= '') and exe or name
-    if not executable(exe) then
+    if not require('user_api.check.exists').executable(exe) then
         return
     end
 
@@ -49,6 +44,7 @@ local Clients = {
     gh_actions_ls = server_load('gh_actions_ls', 'gh-action-language-server'),
     html = server_load('html', 'vscode-html-language-server'),
     jsonls = server_load('jsonls', 'vscode-json-language-server'),
+    cspell_ls = server_load('cspell_ls', 'cspell-lsp'),
     cssls = server_load('cssls', 'vscode-css-language-server'),
     css_variables = server_load('css_variables', 'css-variables-language-server'),
     cssmodules_ls = server_load('cssmodules_ls', 'cssmodules-language-server'),
@@ -57,8 +53,5 @@ local Clients = {
     hyprls = server_load('hyprls', 'hyprls'),
 }
 
-_G.CLIENTS = Clients
-
 return Clients
-
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
