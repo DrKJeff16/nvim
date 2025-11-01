@@ -1,15 +1,3 @@
----@module 'lua.vim.lsp'
----@module 'lua.vim.diagnostic'
----@module 'lua.vim.lsp.diagnostic'
-
-local User = require('user_api')
-local Check = User.check
-
-local exists = Check.exists.module
-local type_not_empty = Check.value.type_not_empty
-local executable = Check.exists.executable
-local desc = User.maps.desc
-
 local in_list = vim.list_contains
 local mk_caps = vim.lsp.protocol.make_client_capabilities
 local d_extend = vim.tbl_deep_extend
@@ -32,12 +20,7 @@ Server.Clients = require('plugin.lsp.servers')
 ---@return lsp.ClientCapabilities caps
 function Server.make_capabilities(T)
     local caps = d_extend('keep', T or {}, mk_caps())
-    if not exists('blink.cmp') then
-        return caps
-    end
-
-    local blink_caps = require('blink.cmp').get_lsp_capabilities
-    caps = d_extend('keep', copy(caps), blink_caps({}, true))
+    caps = d_extend('keep', copy(caps), require('blink.cmp').get_lsp_capabilities({}, true))
     return caps
 end
 
@@ -45,7 +28,7 @@ end
 ---@param config vim.lsp.Config
 ---@return vim.lsp.Config config
 function Server.populate(name, config)
-    if type_not_empty('table', config.capabilities) then
+    if require('user_api.check.value').type_not_empty('table', config.capabilities) then
         local old_caps = copy(config.capabilities)
         local caps = Server.make_capabilities(old_caps)
         config.capabilities = insert_client(copy(config.capabilities), caps)
@@ -55,46 +38,32 @@ function Server.populate(name, config)
 
     if in_list({ 'html', 'jsonls' }, name) then
         config.capabilities = insert_client(copy(config.capabilities), {
-            textDocument = {
-                completion = {
-                    completionItem = {
-                        snippetSupport = true,
-                    },
-                },
-            },
+            textDocument = { completion = { completionItem = { snippetSupport = true } } },
         })
         return config
     end
 
     if name == 'rust_analyzer' then
         config.capabilities = insert_client(copy(config.capabilities), {
-            experimental = {
-                serverStatusNotification = true,
-            },
+            experimental = { serverStatusNotification = true },
         })
         return config
     end
     if name == 'clangd' then
         config.capabilities = insert_client(copy(config.capabilities), {
             offsetEncoding = { 'utf-8', 'utf-16' },
-            textDocument = {
-                completion = {
-                    editsNearCursor = true,
-                },
-            },
+            textDocument = { completion = { editsNearCursor = true } },
         })
         return config
     end
     if name == 'gh_actions_ls' then
         config.capabilities = insert_client(copy(config.capabilities), {
-            workspace = {
-                didChangeWorkspaceFolders = {
-                    dynamicRegistration = true,
-                },
-            },
+            workspace = { didChangeWorkspaceFolders = { dynamicRegistration = true } },
         })
         return config
     end
+
+    local exists = require('user_api.check.exists').module
     if name == 'lua_ls' and exists('lazydev') then
         config.root_dir = function(bufnr, on_dir)
             on_dir(require('lazydev').find_workspace(bufnr))
@@ -108,8 +77,8 @@ function Server.populate(name, config)
             end
             config.settings = insert_client(copy(config.settings), {
                 json = {
-                    schemas = require('schemastore').json.schemas(),
                     validate = { enable = true },
+                    schemas = require('schemastore').json.schemas(),
                 },
             })
         end
@@ -131,11 +100,9 @@ end
 function Server.setup()
     vim.lsp.protocol.TextDocumentSyncKind.Full = 1
     vim.lsp.protocol.TextDocumentSyncKind[1] = 'Full'
-
     vim.lsp.config('*', {
         capabilities = Server.make_capabilities(),
     })
-
     vim.diagnostic.config({
         signs = {
             text = {
@@ -154,7 +121,7 @@ function Server.setup()
 
     vim.lsp.log.set_level(vim.log.levels.WARN)
 
-    for name, client in next, Server.Clients do
+    for name, client in pairs(Server.Clients) do
         if client then
             vim.lsp.config(name, Server.populate(name, client))
             if not in_list(Server.client_names, name) then
@@ -164,12 +131,14 @@ function Server.setup()
     end
 
     vim.lsp.enable(Server.client_names)
-    local Keys = { ---@type AllModeMaps
+
+    local desc = require('user_api.maps').desc
+    require('user_api.config').keymaps({
         n = {
             ['<leader>l'] = { group = '+LSP' },
             ['<leader>li'] = {
                 function()
-                    if exists('lspconfig') then
+                    if require('user_api.check.exists').module('lspconfig') then
                         vim.cmd.LspInfo()
                     end
                 end,
@@ -177,17 +146,13 @@ function Server.setup()
             },
             ['<leader>lC'] = {
                 function()
-                    vim.print(Server.client_names)
+                    vim.notify(vim.inspect(Server.client_names))
                 end,
                 desc('List Clients'),
             },
         },
-
         v = { ['<leader>l'] = { group = '+LSP' } },
-    }
-
-    local Keymaps = require('user_api.config.keymaps')
-    Keymaps(Keys)
+    })
 
     local Autocmd = require('plugin.lsp.autocmd')
     Autocmd()
@@ -203,9 +168,8 @@ end
 ---@param name string
 ---@param exe? string
 function Server.add(config, name, exe)
-    exe = type_not_empty('string', exe) and exe or name
-
-    if not executable(exe) then
+    exe = require('user_api.check.value').type_not_empty('string', exe) and exe or name
+    if not require('user_api.check.exists').executable(exe) then
         return
     end
 
@@ -213,10 +177,8 @@ function Server.add(config, name, exe)
 
     Server.Clients[name] = cfg and d_extend('force', cfg, config) or config
     Server.Clients[name] = Server.populate(name, copy(Server.Clients[name]))
-
     Server.setup()
 end
 
 return Server
-
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
