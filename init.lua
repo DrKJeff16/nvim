@@ -99,6 +99,7 @@ L.setup({
     { import = 'plugin._spec.colorschemes' },
     { import = 'plugin._spec' },
     { import = 'plugin.notify' },
+    { import = 'plugin.lastplace' },
     { import = 'plugin.mini.icons' },
     { import = 'plugin.web-devicons' },
     { import = 'plugin.mini.basics' },
