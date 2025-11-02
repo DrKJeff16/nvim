@@ -1,12 +1,10 @@
 ---@module 'lazy'
 
-local floor = math.floor
 local ORG_PFX = vim.fn.expand('~/.org')
 
 ---@type LazySpec
 return {
     'nvim-orgmode/orgmode',
-    ft = 'org',
     version = false,
     cond = not require('user_api.check').in_console(),
     config = function()
@@ -25,28 +23,13 @@ return {
             org_hide_leading_stars = false,
             org_hide_emphasis_markers = false,
             org_ellipsis = '...',
-            win_split_mode = function(name) ---@param name string
-                local bufnr = vim.api.nvim_create_buf(false, false)
-                local width = floor(vim.o.columns * 0.8)
-                local height = floor(vim.o.lines * 0.8)
-                local row = floor(((vim.o.lines - height) / 2) - 1)
-                local col = floor((vim.o.columns - width) / 2)
-                vim.api.nvim_buf_set_name(bufnr, name)
-                vim.api.nvim_open_win(bufnr, true, {
-                    relative = 'editor',
-                    width = width,
-                    height = height,
-                    row = row,
-                    col = col,
-                    style = 'minimal',
-                    border = 'rounded',
-                })
-            end,
+            win_split_mode = 'auto',
             win_border = 'single',
             org_startup_folded = 'showeverything',
             org_babel_default_header_args = { [':tangle'] = 'no', [':noweb'] = 'no' },
             calendar_week_start_day = 0,
         })
+
         require('user_api.config').keymaps({ n = { ['<leader>o'] = { group = '+Orgmode' } } })
     end,
 }
