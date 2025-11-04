@@ -4,7 +4,6 @@
 return {
     {
         'nvim-telescope/telescope.nvim',
-        dev = true,
         version = false,
         dependencies = {
             'nvim-treesitter/nvim-treesitter',
