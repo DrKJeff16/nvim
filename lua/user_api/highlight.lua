@@ -15,10 +15,7 @@ local Hl = {}
 ---@param opts vim.api.keyset.highlight The highlight options
 ---@param ns? integer The highlighting namespace **(OPTIONAL)**
 function Hl.hl(name, opts, ns)
-    local Value = require('user_api.check.value')
-
-    local type_not_empty = Value.type_not_empty
-
+    local type_not_empty = require('user_api.check.value').type_not_empty
     if not (type_not_empty('string', name) and type_not_empty('table', opts)) then
         vim.notify('(user_api.highlight.hl): Bad argument', ERROR)
         return
@@ -42,10 +39,7 @@ end
 --- ---
 ---@param A HlPair[] The array of `HlPair` objects
 function Hl.hl_from_arr(A)
-    local Value = require('user_api.check.value')
-
-    local type_not_empty = Value.type_not_empty
-
+    local type_not_empty = require('user_api.check.value').type_not_empty
     if not type_not_empty('table', A) then
         error('(user_api.highlight.hl_from_arr): Bad argument', ERROR)
     end
@@ -91,16 +85,5 @@ function Hl.hl_from_dict(D)
     end
 end
 
----@return table|User.Hl
-function Hl.new()
-    return setmetatable({}, {
-        __index = Hl,
-        __newindex = function(_, _, _)
-            error('(user_api.highlight): This is an immutable module!', ERROR)
-        end,
-    })
-end
-
-return Hl.new()
-
+return Hl
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

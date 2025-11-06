@@ -11,7 +11,6 @@ local is_bool = Value.is_bool
 local type_not_empty = Value.type_not_empty
 local strip_fields = Util.strip_fields
 
-local validate = vim.validate
 local in_tbl = vim.tbl_contains
 local in_list = vim.list_contains
 
@@ -19,15 +18,14 @@ local MODES = { 'n', 'i', 'v', 't', 'o', 'x' }
 local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
 
----@type User.Maps
-local Maps = {}
+local Maps = {} ---@type User.Maps
 
 Maps.modes = MODES
 Maps.keymap = require('user_api.maps.keymap')
 Maps.wk = require('user_api.maps.wk')
 
 function Maps.desc(desc, silent, bufnr, noremap, nowait, expr)
-    validate('desc', desc, { 'string', 'nil' }, false, 'string|nil')
+    vim.validate('desc', desc, { 'string', 'nil' }, false, 'string|nil')
 
     if not type_not_empty('string', desc) then
         desc = 'Unnamed Key'
@@ -40,25 +38,20 @@ function Maps.desc(desc, silent, bufnr, noremap, nowait, expr)
     end
 
     local res = O.new()
-
     res:add({
         desc = desc,
         silent = silent,
         noremap = noremap,
     })
-
     if nowait ~= nil then
         res:add({ nowait = nowait })
     end
-
     if expr ~= nil then
         res:add({ expr = expr })
     end
-
     if bufnr ~= nil then
         res:add({ buffer = bufnr })
     end
-
     return res
 end
 
@@ -66,36 +59,28 @@ function Maps.nop(T, opts, mode, prefix)
     if not (is_str(T) or is_tbl(T)) then
         error('(user_api.maps.nop): Argument is neither a string nor a table')
     end
-
-    local insp = inspect or vim.inspect
-
     mode = (is_str(mode) and in_tbl(MODES, mode)) and mode or 'n'
-
     if mode == 'i' then
         vim.notify(
-            '(user_api.maps.nop): Refusing to NO-OP these keys in Insert mode: ' .. insp(T),
+            '(user_api.maps.nop): Refusing to NO-OP these keys in Insert mode: ' .. vim.inspect(T),
             WARN
         )
+        return
     end
 
     opts = is_tbl(opts) and opts or {}
-
     opts.silent = is_bool(opts.silent) and opts.silent or true
-
     if is_int(opts.buffer) then
         ---@type User.Maps.Opts
         opts = strip_fields(opts, 'buffer')
     end
-
     prefix = is_str(prefix) and prefix or ''
 
     local func = Maps.keymap[mode]
-
     if is_str(T) then
         func(prefix .. T, '<Nop>', opts)
         return
     end
-
     ---@cast T string[]
     for _, v in ipairs(T) do
         func(prefix .. v, '<Nop>', opts)
@@ -108,24 +93,18 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
     end
 
     local map_choices = { 'keymap', 'wk.register' }
-
-    -- Choose `which-key` by default
     map_func = in_list(map_choices, map_func) and map_func or 'wk.register'
-
     if not Maps.wk.available() then
         map_func = 'keymap'
     end
-
     mode = (is_str(mode) and in_list(MODES, mode)) and mode or 'n'
     has_modes = is_bool(has_modes) and has_modes or false
     bufnr = is_int(bufnr) and bufnr or nil
 
     ---@type fun(lhs: string, rhs: string|fun(), opts?: vim.keymap.set.Opts)
     local func
-
     if has_modes then
         local keymap_ran = false
-
         ---@cast T AllModeMaps
         for mode_choice, t in pairs(T) do
             if in_tbl(MODES, mode_choice) then
@@ -194,20 +173,17 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
                 end
             end
         end
-
         return
     end
 
     if map_func == 'keymap' then
         func = Maps.keymap[mode]
-
         ---@cast T AllMaps
         for lhs, v in pairs(T) do
             v[2] = is_tbl(v[2]) and v[2] or {}
 
             func(lhs, v[1], v[2])
         end
-
         return
     end
 
@@ -259,5 +235,4 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
 end
 
 return Maps
-
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

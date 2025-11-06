@@ -18,35 +18,23 @@ local optset = vim.api.nvim_set_option_value
 ---@class User.Commands
 local Commands = {}
 
----@type User.Commands.Spec
-Commands.commands = {
+Commands.commands = { ---@type User.Commands.Spec
     Redir = {
         function(ctx)
-            local lines = vim.split(
-                exec2(ctx.args, { output = true })['output'],
-                string.char(10), -- `'\n'`
-                { plain = true }
-            )
+            local l = vim.split(exec2(ctx.args, { output = true }).output, '\n', { plain = true })
             local bufnr = vim.api.nvim_create_buf(true, true)
             open_win(bufnr, true, { vertical = false })
-            set_lines(bufnr, 0, -1, false, lines)
+            set_lines(bufnr, 0, -1, false, l)
             optset('modified', false, { buf = bufnr })
         end,
-        {
-            nargs = '+',
-            complete = 'command',
-        },
+        { nargs = '+', complete = 'command', desc = 'Redirect command output to scratch buffer' },
         mappings = {
             n = {
                 ['<Leader>UC'] = { group = '+Commands' },
-                ['<Leader>UCR'] = {
-                    ':Redir ',
-                    desc('Prompt to `Redir` command', false),
-                },
+                ['<Leader>UCR'] = { ':Redir ', desc('Prompt to `Redir` command', false) },
             },
         },
     },
-
     DeleteInactiveBuffers = {
         function(ctx)
             local notify = ctx.bang ~= nil and ctx.bang or false
@@ -60,10 +48,7 @@ Commands.commands = {
                 vim.notify('Deleted inactive buffers.', vim.log.levels.INFO)
             end
         end,
-        {
-            desc = 'Delete listed unmodified buffers that are not in a window',
-            bang = true,
-        },
+        { desc = 'Delete listed unmodified buffers out of window', bang = true },
     },
 }
 
@@ -98,7 +83,7 @@ function Commands.setup_keys()
     if not type_not_empty('table', Commands.commands) then
         return
     end
-    local Keymaps = require('user_api.config.keymaps')
+    local Keymaps = require('user_api.config').keymaps
     for _, cmd in pairs(Commands.commands) do
         if cmd.mappings and not vim.tbl_isempty(cmd.mappings) then
             Keymaps(cmd.mappings)
@@ -124,13 +109,5 @@ function Commands.setup(cmds)
     Commands.setup_keys()
 end
 
----@type User.Commands
-local M = setmetatable({}, {
-    __index = Commands,
-    __newindex = function(_, _, _)
-        error('User.Commands table is Read-Only!')
-    end,
-})
-
-return M
+return Commands
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
