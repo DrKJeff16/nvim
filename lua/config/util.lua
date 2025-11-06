@@ -1,7 +1,6 @@
 local MODSTR = 'config.util'
 local Exists = require('user_api.check.exists')
 local Value = require('user_api.check.value')
-local in_console = require('user_api.check').in_console
 local exists = Exists.module
 local executable = Exists.executable
 local env_vars = Exists.env_vars
@@ -23,12 +22,14 @@ function CfgUtil.set_tgc(force)
         vim.validate({ force = { force, { 'boolean', 'nil' } } })
     end
     force = force ~= nil and force or false
-    vim.o.tgc = not force and (vim_exists('+termguicolors') and not in_console()) or true
+
+    local in_console = require('user_api.check').in_console
+    vim.o.termguicolors = not force and (vim_exists('+termguicolors') and not in_console()) or true
 end
 
 ---@param name string
 ---@param callback? fun()
----@return fun()
+---@return function
 function CfgUtil.flag_installed(name, callback)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('name', name, 'string', false)
@@ -68,6 +69,7 @@ function CfgUtil.colorscheme_init(fields, force_tgc)
             force_tgc = { force_tgc, { 'boolean', 'nil' } },
         })
     end
+
     force_tgc = is_bool(force_tgc) and force_tgc or false
     return function()
         CfgUtil.set_tgc(force_tgc)
@@ -143,25 +145,14 @@ function CfgUtil.key_variant(cmd)
     cmd = (cmd ~= nil and in_list({ 'ed', 'tabnew', 'split', 'vsplit' }, cmd)) and cmd or 'ed'
 
     local fpath = vim.fn.stdpath('config') .. '/lua/config/lazy.lua'
-    local FUNCS = {
-        ed = function()
-            vim.cmd.ed(fpath)
-        end,
-        tabnew = function()
-            vim.cmd.tabnew(fpath)
-        end,
-        split = function()
-            vim.cmd.split(fpath)
-        end,
-        vsplit = function()
-            vim.cmd.vsplit(fpath)
-        end,
-    }
-    return FUNCS[cmd]
+    return function()
+        vim.cmd[cmd](fpath)
+    end
 end
 
 ---@return boolean
 function CfgUtil.has_tgc()
+    local in_console = require('user_api.check').in_console
     if in_console or not exists('+termguicolors') then
         return false
     end
