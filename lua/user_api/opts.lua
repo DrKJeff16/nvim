@@ -72,8 +72,9 @@ Opts.options = {} ---@type User.Opts.Spec
 function Opts.long_opts_convert(T, verbose)
     verbose = is_bool(verbose) and verbose or false
 
-    local parsed_opts, msg = {}, '' ---@type User.Opts.Spec, string
-    local verb_str = '' ---@type string
+    local parsed_opts = {} ---@type User.Opts.Spec
+    local msg = ''
+    local verb_str = ''
     if not type_not_empty('table', T) then
         if verbose then
             vim.notify('(user.opts.long_opts_convert): All seems good', INFO)
@@ -114,11 +115,17 @@ end
 --- @param O User.Opts.Spec A dictionary with keys acting as `vim.o` fields, and values
 --- @param verbose? boolean Enable verbose printing if `true`
 function Opts.optset(O, verbose)
-    vim.validate('O', O, 'table', false, 'User.Opts.Spec')
-    vim.validate('verbose', verbose, 'boolean', true)
+    if vim.fn.has('nvim-0.11') then
+        vim.validate('O', O, 'table', false, 'User.Opts.Spec')
+        vim.validate('verbose', verbose, 'boolean', true)
+    else
+        vim.validate({
+            O = { O, 'table' },
+            verbose = { verbose, { 'boolean', 'nil' } },
+        })
+    end
     verbose = verbose ~= nil and verbose or false
 
-    local insp = vim.inspect
     local curr_buf = vim.api.nvim_get_current_buf
     if not vim.api.nvim_get_option_value('modifiable', { buf = curr_buf() }) then
         return
@@ -130,7 +137,7 @@ function Opts.optset(O, verbose)
         if type(vim.o[k]) == type(v) then
             Opts.options[k] = v
             vim.o[k] = Opts.options[k]
-            verb_msg = ('%s- %s: %s\n'):format(verb_msg, k, insp(v))
+            verb_msg = ('%s- %s: %s\n'):format(verb_msg, k, vim.inspect(v))
         end
     end
     if msg ~= '' then

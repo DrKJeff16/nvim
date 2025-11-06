@@ -368,24 +368,11 @@ function Util.setup_autocmd()
             },
         },
         {
-            events = { 'TextYankPost' },
-            opts_tbl = {
-                {
-                    pattern = '*',
-                    group = group,
-                    callback = function()
-                        vim.hl.on_yank({ higroup = 'Visual', timeout = 300 })
-                    end,
-                },
-            },
-        },
-        {
             events = { 'BufEnter', 'WinEnter', 'BufWinEnter' },
             opts_tbl = {
                 {
                     group = group,
                     callback = function(ev)
-                        local Keymaps = require('user_api.config.keymaps')
                         local executable = require('user_api.check.exists').executable
                         local desc = require('user_api.maps').desc
 
@@ -420,7 +407,7 @@ function Util.setup_autocmd()
                             return
                         end
                         if ft == 'lua' and executable('stylua') then
-                            Keymaps({
+                            require('user_api.config').keymaps({
                                 n = {
                                     ['<leader><C-l>'] = {
                                         function()
@@ -442,7 +429,7 @@ function Util.setup_autocmd()
                             }, ev.buf)
                         end
                         if ft == 'python' and executable('isort') then
-                            Keymaps({
+                            require('user_api.config').keymaps({
                                 n = {
                                     ['<leader><C-l>'] = {
                                         function()
@@ -491,8 +478,15 @@ end
 ---@param direction? 'next'|'prev'
 ---@return string
 function Util.displace_letter(c, direction)
-    vim.validate('c', c, 'string', false)
-    vim.validate('direction', direction, 'string', true, "'next'|'prev'")
+    if vim.fn.has('nvim-0.11') then
+        vim.validate('c', c, 'string', false)
+        vim.validate('direction', direction, 'string', true, "'next'|'prev'")
+    else
+        vim.validate({
+            c = { c, 'string' },
+            direction = { direction, { 'string', 'nil' } },
+        })
+    end
     local Value = require('user_api.check.value')
     local A = Util.string.alphabet
     local fields = Value.fields
@@ -575,13 +569,5 @@ function Util.reverse_tbl(T)
     return T
 end
 
----@type User.Util
-local M = setmetatable(Util, {
-    __index = function(t, k)
-        return rawget(t, k)
-    end,
-})
-
-return M
-
+return Util
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
