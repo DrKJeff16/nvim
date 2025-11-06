@@ -13,49 +13,8 @@ User.update = require('user_api.update')
 User.highlight = require('user_api.highlight')
 User.config = require('user_api.config')
 
-function User.setup_maps()
-    local Keymaps = User.config.keymaps
-    local desc = User.maps.desc
-    local displace_letter = User.util.displace_letter
-    User.paths = {}
-
-    ---@type AllMaps
-    local Keys = { ['<leader>Pe'] = { group = '+Edit Plugin Config' } }
-    local group, i, cycle = 'a', 1, 1
-    while i < #User.paths do
-        local name = User.paths[i]
-        Keys['<leader>Pe' .. group] = { group = '+Group ' .. group:upper() }
-        Keys['<leader>Pe' .. group .. tostring(cycle)] = {
-            function()
-                vim.cmd.tabnew(name)
-            end,
-            desc(vim.fn.fnamemodify(name, ':h:t') .. '/' .. vim.fn.fnamemodify(name, ':t')),
-        }
-        if cycle == 9 then
-            group = displace_letter(group, 'next')
-            cycle = 1
-        elseif cycle < 9 then
-            cycle = cycle + 1
-        end
-        i = i + 1
-    end
-
-    Keymaps({ n = Keys })
-end
-
----@param opts? table
-function User.setup(opts)
-    if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('opts', opts, 'table', true, 'table?')
-    else
-        vim.validate({ opts = { opts, { 'table', 'nil' } } })
-    end
-    opts = opts or {}
-
-    local Keymaps = User.config.keymaps
-    Keymaps({ n = { ['<leader>U'] = { group = '+User API' } } })
-
-    User.setup_maps()
+function User.setup()
+    User.config.keymaps({ n = { ['<leader>U'] = { group = '+User API' } } })
     User.commands.setup()
     User.update.setup()
     User.opts.setup_maps()
