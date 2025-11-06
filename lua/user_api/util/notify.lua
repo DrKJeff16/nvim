@@ -89,15 +89,15 @@ function Notify.notify(msg, lvl, opts)
         if type(lvl) == 'number' then
             lvl = math.floor(lvl)
             lvl = (lvl <= OFF and lvl >= TRACE) and Notify.Levels[lvl] or Notify.Levels[INFO]
-        elseif not vim.tbl_contains(Notify.Levels, string.lower(lvl)) then
+        elseif not vim.tbl_contains(Notify.Levels, lvl:lower()) then
             lvl = Notify.Levels[INFO]
         end
 
         opts = vim.tbl_deep_extend('keep', opts, Notify.Opts)
     else
         if type(lvl) == 'string' then
-            if vim.tbl_contains(Notify.Levels, string.lower(lvl)) then
-                lvl = Notify.Levels[string.upper(lvl)]
+            if vim.tbl_contains(Notify.Levels, lvl:lower()) then
+                lvl = Notify.Levels[lvl:upper()]
             end
         elseif type(lvl) == 'number' then
             if lvl < TRACE or lvl > OFF then

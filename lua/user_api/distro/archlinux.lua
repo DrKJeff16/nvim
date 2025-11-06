@@ -35,9 +35,7 @@ Archlinux.rtpaths = setmetatable(RTPATHS, {
 ---@return boolean
 function Archlinux.validate()
     local type_not_empty = require('user_api.check.value').type_not_empty
-
-    ---@type string[]|table
-    local new_rtpaths = {}
+    local new_rtpaths = {} ---@type string[]
 
     -- First check for each dir's existance
     for _, p in ipairs(Archlinux.rtpaths) do
@@ -59,11 +57,9 @@ end
 ---@type User.Distro.Archlinux|fun()
 local M = setmetatable({}, {
     __index = Archlinux,
-
     __newindex = function(_, _, _)
         error('User.Distro.Archlinux table is Read-Only!', ERROR)
     end,
-
     ---@param self User.Distro.Archlinux
     __call = function(self)
         if not Archlinux.validate() then
@@ -86,5 +82,4 @@ local M = setmetatable({}, {
 })
 
 return M
-
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
