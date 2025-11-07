@@ -11,7 +11,7 @@ local in_list = vim.list_contains
 ---[SOURCE](https://stackoverflow.com/questions/7183998/in-lua-what-is-the-right-way-to-handle-varargs-which-contains-nil).
 ---@param ... any
 function _G.notify_inspect(...)
-    local nargs = select('#', ...)
+    local nargs = select('#', ...) ---@type integer
     local txt = ''
     local i = 1
     while i <= nargs do
@@ -94,7 +94,7 @@ vim.g.loaded_netrwPlugin = 1
 local L = require('config.lazy')
 L.setup({
     { import = 'plugin.startuptime' },
-    { import = 'plugin.which_key' },
+    { import = 'plugin.which-key' },
     { import = 'plugin.luaref' },
     { import = 'plugin._spec.colorschemes' },
     { import = 'plugin._spec' },
@@ -144,14 +144,14 @@ L.setup({
     { import = 'plugin.fzf-nerdfont' },
     { import = 'plugin.zen-mode' },
     { import = 'plugin.todo_comments' },
-    { import = 'plugin.replua' },
     { import = 'plugin.doxygen' },
     { import = 'plugin.doxygen-previewer' },
-    { import = 'plugin.log-highlight' },
     { import = 'plugin.orgmode' },
     { import = 'plugin.pomo' },
     { import = 'plugin.gh-co' },
     { import = 'plugin.co-author' },
+    -- { import = 'plugin.replua' },
+    -- { import = 'plugin.log-highlight' },
     -- { import = 'plugin.dooku' },
     -- { import = 'plugin.nvim-test' },
     -- { import = 'plugin.mini.test' },
@@ -175,9 +175,7 @@ require('user_api.config').keymaps({
         ['<leader>vN'] = { vim.cmd.Notifications, desc('Run `:Notifications`') },
         ['<C-/>'] = { ':normal gcc<CR>', desc('Toggle Comment') },
     },
-    v = {
-        ['<C-/>'] = { [[:'<,'>normal gcc<CR>]], desc('Toggle Comment') },
-    },
+    v = { ['<C-/>'] = { [[:'<,'>normal gcc<CR>]], desc('Toggle Comment') } },
     x = {
         ['<M-m>'] = {
             function()
