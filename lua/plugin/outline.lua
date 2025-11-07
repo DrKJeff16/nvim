@@ -130,6 +130,7 @@ return {
                 },
             },
         })
+
         local desc = require('user_api.maps').desc
         require('user_api.config').keymaps({
             n = {

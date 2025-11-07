@@ -5,14 +5,9 @@ return {
     'bngarren/checkmate.nvim',
     ft = 'markdown',
     version = false,
-    ---@type checkmate.Config
-    opts = {
+    opts = { ---@type checkmate.Config
         enabled = true,
         notify = true,
-        -- Default file matching:
-        --  - Any `todo` or `TODO` file, including with `.md` extension
-        --  - Any `.todo` extension (can be ".todo" or ".todo.md")
-        -- To activate Checkmate, the filename must match AND the filetype must be "markdown"
         files = {
             'todo',
             'TODO',
@@ -21,10 +16,7 @@ return {
             '*.todo',
             '*.todo.md',
         },
-        log = {
-            level = 'warn',
-            use_file = true,
-        },
+        log = { level = 'warn', use_file = true },
         -- Default keymappings
         keys = {
             ['<leader><C-c>t'] = {
@@ -85,20 +77,11 @@ return {
         },
         default_list_marker = '-',
         todo_states = {
-            -- we don't need to set the `markdown` field for `unchecked` and `checked` as these can't be overriden
-            ---@diagnostic disable-next-line: missing-fields
-            unchecked = {
-                marker = '□',
-                order = 1,
-            },
-            ---@diagnostic disable-next-line: missing-fields
-            checked = {
-                marker = '✔',
-                order = 2,
-            },
+            unchecked = { marker = '□', order = 1 }, ---@diagnostic disable-line: missing-fields
+            checked = { marker = '✔', order = 2 }, ---@diagnostic disable-line: missing-fields
         },
-        style = {}, -- override defaults
-        enter_insert_after_new = true, -- Should enter INSERT mode after `:Checkmate create` (new todo)
+        style = {},
+        enter_insert_after_new = true,
         smart_toggle = {
             enabled = true,
             include_cycle = false,
@@ -112,22 +95,22 @@ return {
         todo_count_recursive = true,
         use_metadata_keymaps = true,
         metadata = {
-            -- Example: A @priority tag that has dynamic color based on the priority value
             priority = {
                 style = function(context)
                     local value = context.value:lower()
                     if value == 'high' then
                         return { fg = '#ff5555', bold = true }
-                    elseif value == 'medium' then
+                    end
+                    if value == 'medium' then
                         return { fg = '#ffb86c' }
-                    elseif value == 'low' then
-                        return { fg = '#8be9fd' }
-                    else -- fallback
+                    end
+                    if value == 'low' then
                         return { fg = '#8be9fd' }
                     end
+                    return { fg = '#8be9fd' }
                 end,
                 get_value = function()
-                    return 'medium' -- Default priority
+                    return 'medium'
                 end,
                 choices = function()
                     return { 'low', 'medium', 'high' }
@@ -137,7 +120,6 @@ return {
                 jump_to_on_insert = 'value',
                 select_on_insert = true,
             },
-            -- Example: A @started tag that uses a default date/time string when added
             started = {
                 aliases = { 'init' },
                 style = { fg = '#9fd6d5' },
@@ -147,7 +129,6 @@ return {
                 key = '<leader><C-c>s',
                 sort_order = 20,
             },
-            -- Example: A @done tag that also sets the todo item state when it is added and removed
             done = {
                 aliases = { 'completed', 'finished' },
                 style = { fg = '#96de7a' },
@@ -165,16 +146,11 @@ return {
             },
         },
         archive = {
-            heading = {
-                title = 'Archive',
-                level = 2, -- e.g. ##
-            },
-            parent_spacing = 0, -- no extra lines between archived todos
+            heading = { title = 'Archive', level = 2 },
+            parent_spacing = 0,
             newest_first = true,
         },
-        linter = {
-            enabled = true,
-        },
+        linter = { enabled = true },
     },
     cond = not vim.g.vscode and true or false,
     enabled = false,

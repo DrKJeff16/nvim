@@ -242,15 +242,41 @@
 ---@field lualine_y LuaLineSection
 ---@field lualine_z LuaLineSection
 
-local User = require('user_api')
-local Check = User.check
-local Termux = User.distro.termux
-
-local exists = Check.exists.module
-local is_bool = Check.value.is_bool
-local type_not_empty = Check.value.type_not_empty
+local Termux = require('user_api.distro').termux
+local exists = require('user_api.check.exists').module
 
 local in_list = vim.list_contains
+
+---@param theme? ''|'auto'|string
+---@param force_auto? boolean
+---@return string
+local function theme_select(theme, force_auto)
+    if vim.fn.has('nvim-0.11') then
+        vim.validate('theme', theme, 'string', true)
+        vim.validate('force_auto', force_auto, 'boolean', true)
+    else
+        vim.validate({
+            theme = { theme, { 'string', 'nil' } },
+            force_auto = { force_auto, { 'boolean', 'nil' } },
+        })
+    end
+    force_auto = force_auto ~= nil and force_auto or false
+    if in_list({ 'auto', '' }, theme) or force_auto then
+        return 'auto'
+    end
+
+    local themes = { 'tokyonight', 'catppuccin', 'nightfox', 'onedark' }
+    if not in_list(themes, theme) then
+        return 'auto'
+    end
+
+    for _, t in next, themes do
+        if t == theme and exists(theme) then
+            return theme
+        end
+    end
+    return 'auto'
+end
 
 ---@type LazySpec
 return {
@@ -263,11 +289,7 @@ return {
     },
     cond = not require('user_api.check').in_console(),
     config = function()
-        local Lualine = require('lualine')
-        local floor = math.floor
-
-        ---@class LuaLine.Presets
-        local Presets = {}
+        local Presets = {} ---@class LuaLine.Presets
 
         ---@class LuaLine.ComponentsDict
         ---@field branch LuaLine.Components.Branch
@@ -289,10 +311,8 @@ return {
         ---@field tabs LuaLine.Components.Tabs
         ---@field windows LuaLine.Components.Windows
         Presets.components = {}
-
         Presets.components.buffers = {
             'buffers',
-
             filetype_names = {
                 TelescopePrompt = 'Telescope',
                 dashboard = 'Dashboard',
@@ -303,145 +323,77 @@ return {
                 NvimTree = 'Nvim Tree',
                 qf = 'Quickfix',
             },
-
-            symbols = {
-                modified = ' ●', -- Text to show when the buffer is modified
-                alternate_file = '#', -- Text to identify the alternate file
-                directory = '', -- Text to show when the buffer is a directory
-            },
-
-            buffers_color = {
-                active = 'lualine_c_normal',
-                inactive = 'lualine_c_inactive',
-            },
-
-            max_length = floor(vim.o.columns / 4),
+            symbols = { modified = ' ●', alternate_file = '#', directory = '' },
+            buffers_color = { active = 'lualine_c_normal', inactive = 'lualine_c_inactive' },
+            max_length = math.floor(vim.o.columns / 4),
         }
-
         Presets.components.diff = {
             'diff',
             colored = true,
+            symbols = { added = '+', modified = '~', removed = '-' },
             diff_color = {
                 added = 'LuaLineDiffAdd',
                 modified = 'LuaLineDiffChange',
                 removed = 'LuaLineDiffDelete',
             },
-
-            symbols = {
-                added = '+',
-                modified = '~',
-                removed = '-',
-            },
         }
-
         Presets.components.branch = { 'branch' }
         Presets.components.encoding = { 'encoding' }
         Presets.components.hostname = { 'hostname' }
         Presets.components.location = { 'location' }
         Presets.components.selectioncount = { 'selectioncount' }
         Presets.components.filesize = { 'filesize' }
-
         Presets.components.filename = {
             'filename',
-
             file_status = true,
             newfile_status = true,
             path = 4,
         }
-
         Presets.components.filetype = {
             'filetype',
-
             colored = false,
             icon_only = false,
             icon = { align = 'right' },
         }
-
         Presets.components.fileformat = {
             'fileformat',
-
-            symbols = {
-                unix = '', -- e712
-                dos = '', -- e70f
-                mac = '', -- e711
-            },
+            symbols = { unix = '', dos = '', mac = '' },
         }
-
-        Presets.components.searchcount = {
-            'searchcount',
-
-            maxcount = 999,
-            timeout = 500,
-        }
-
+        Presets.components.searchcount = { 'searchcount', maxcount = 999, timeout = 500 }
         Presets.components.tabs = {
             'tabs',
-
-            tab_max_length = floor(vim.o.columns / 3),
-
+            tab_max_length = math.floor(vim.o.columns / 3),
             mode = 2,
             path = 1,
-            tabs_color = {
-                active = 'lualine_b_normal',
-                inactive = 'lualine_b_inactive',
-            },
+            tabs_color = { active = 'lualine_b_normal', inactive = 'lualine_b_inactive' },
         }
-
         Presets.components.windows = {
             'windows',
-
-            max_length = floor(vim.o.columns / 5),
-
-            disabled_buftypes = {
-                'help',
-                'prompt',
-                'quickfix',
-                'terminal',
-            },
-
+            max_length = math.floor(vim.o.columns / 5),
+            disabled_buftypes = { 'help', 'prompt', 'quickfix', 'terminal' },
             windows_color = {
                 active = 'lualine_z_normal',
                 inactive = 'lualine_z_inactive',
             },
         }
-
         Presets.components.diagnostics = {
             'diagnostics',
-
-            sources = {
-                'nvim_workspace_diagnostic',
-            },
-
+            sources = { 'nvim_workspace_diagnostic' },
             sections = { 'error', 'warn' },
-
             diagnostics_color = {
                 error = 'DiagnosticError',
                 warn = 'DiagnosticWarn',
                 info = 'DiagnosticInfo',
                 hint = 'DiagnosticHint',
             },
-
-            symbols = {
-                error = '󰅚 ',
-                hint = '󰌶 ',
-                info = ' ',
-                warn = '󰀪 ',
-            },
-
+            symbols = { error = '󰅚 ', hint = '󰌶 ', info = ' ', warn = '󰀪 ' },
             colored = true,
             update_in_insert = false,
             always_visible = true,
         }
-
-        Presets.components.datetime = {
-            'datetime',
-
-            style = 'uk',
-        }
-
+        Presets.components.datetime = { 'datetime', style = 'uk' }
         Presets.components.mode = {
             'mode',
-
             fmt = function(str)
                 return str:sub(1, 1)
             end,
@@ -450,7 +402,6 @@ return {
         if exists('nvim-possession') then
             Presets.components.possession = {
                 require('nvim-possession').status,
-
                 cond = function()
                     return require('nvim-possession').status() ~= nil
                 end,
@@ -458,7 +409,6 @@ return {
         end
 
         if exists('lualine.components.lsp_progress') then
-            -- Color for highlights
             local colors = {
                 red = '#ec5f67',
                 green = '#98be65',
@@ -470,12 +420,8 @@ return {
                 orange = '#FF8800',
                 darkblue = '#081633',
             }
-
-            ---@type LuaLine.Components.Spec
-            Presets.components.lsp_progress = {
+            Presets.components.lsp_progress = { ---@type LuaLine.Components.Spec
                 'lsp_progress',
-                -- display_components = { 'lsp_client_name', { 'title', 'percentage', 'message' } },
-                -- With spinner
                 colors = {
                     percentage = colors.cyan,
                     title = colors.cyan,
@@ -492,7 +438,6 @@ return {
                     title = { pre = '', post = ': ' },
                     lsp_client_name = { pre = '[', post = ']' },
                     spinner = { pre = '', post = '' },
-                    -- message = { commenced = 'In Progress', completed = 'Completed' },
                 },
                 display_components = {
                     'lsp_client_name',
@@ -513,7 +458,7 @@ return {
             }
         end
 
-        Presets.components.noice = {
+        Presets.components.noice = { ---@type LuaLine.Components.Spec
             hl_get = {},
             command_get = {},
             mode_get = {},
@@ -544,103 +489,47 @@ return {
                 color = { fg = '#ff9e64' },
             },
         }
-
         ---@diagnostic enable
 
         Presets.default = {
-            lualine_a = {
-                -- Presets.components.noice.mode_get,
-                -- Presets.components.noice.command_get,
-                -- Presets.components.noice.search_get,
-                -- Presets.components.datetime,
-                Presets.components.mode,
-            },
-            lualine_b = User.distro.termux.validate()
+            lualine_a = { Presets.components.mode },
+            lualine_b = Termux.validate()
                     and {
                         -- Presets.components.branch,
                         -- Presets.components.possession,
                         Presets.components.filename,
-                        -- Presets.components.filesize,
                     }
                 or {
                     Presets.components.branch,
                     -- Presets.components.possession,
                     Presets.components.filename,
-                    -- Presets.components.filesize,
                 },
-            lualine_c = User.distro.termux.validate()
-                    and {
-                        Presets.components.diagnostics,
-                        -- Presets.components.diff,
-                    }
-                or {
-                    Presets.components.diagnostics,
-                    Presets.components.diff,
-                },
+            lualine_c = Termux.validate() and { Presets.components.diagnostics }
+                or { Presets.components.diagnostics, Presets.components.diff },
             lualine_x = {
-                -- Presets.components.encoding,
                 Presets.components.lsp_progress,
                 Presets.components.fileformat,
                 Presets.components.filetype,
             },
             lualine_y = {
-                Presets.components.noice.search_get,
+                Presets.components.noice.search_get, ---@diagnostic disable-line
                 Presets.components.progress,
             },
-            lualine_z = {
-                Presets.components.location,
-            },
+            lualine_z = { Presets.components.location },
         }
-
         Presets.default_inactive = {
             lualine_a = {},
-            lualine_b = {
-                Presets.components.filename,
-            },
+            lualine_b = { Presets.components.filename },
             lualine_c = {},
             lualine_x = {
-                Presets.components.noice.command_get,
+                Presets.components.noice.command_get, ---@diagnostic disable-line
                 Presets.components.filetype,
             },
             lualine_y = {},
-            lualine_z = {
-                Presets.components.location,
-            },
+            lualine_z = { Presets.components.location },
         }
 
-        ---@param theme? ''|'auto'|string
-        ---@param force_auto? boolean
-        ---@return string
-        local function theme_select(theme, force_auto)
-            theme = type_not_empty('string', theme) and theme or 'auto'
-            force_auto = is_bool(force_auto) and force_auto or false
-
-            -- If `auto` theme and permitted to select from fallbacks.
-            -- Keep in mind these fallbacks are the same strings as their `require()` module strings
-            if in_list({ 'auto', '' }, theme) or force_auto then
-                return 'auto'
-            end
-
-            local themes = {
-                'tokyonight',
-                'catppuccin',
-                'nightfox',
-                'onedark',
-            }
-            if not in_list(themes, theme) then
-                return 'auto'
-            end
-
-            for _, t in next, themes do
-                if t == theme and exists(theme) then
-                    return theme
-                end
-            end
-
-            return 'auto'
-        end
-
-        local Opts = {
+        require('lualine').setup({
             options = {
                 icons_enabled = true,
                 theme = theme_select('catppuccin', true),
@@ -649,32 +538,14 @@ return {
                 ignore_focus = {},
                 always_divide_middle = Termux.validate(),
                 globalstatus = true,
-                refresh = {
-                    statusline = 1000,
-                    tabline = 1000,
-                    winbar = 1000,
-                },
+                refresh = { statusline = 1000, tabline = 1000, winbar = 1000 },
             },
             sections = Presets.default,
             inactive_sections = Presets.default_inactive,
             inactive_tabline = {},
             inactive_winbar = {},
-
-            extensions = {
-                'lazy',
-                'fugitive',
-                'man',
-            },
-        }
-
-        if exists('nvim-tree') and not in_list(Opts.extensions, 'nvim-tree') then
-            table.insert(Opts.extensions, 'nvim-tree')
-        end
-        if exists('toggleterm') and not in_list(Opts.extensions, 'toggleterm') then
-            table.insert(Opts.extensions, 'toggleterm')
-        end
-
-        Lualine.setup(Opts)
+            extensions = { 'lazy', 'man', 'nvim-tree', 'toggleterm' },
+        })
     end,
 }
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

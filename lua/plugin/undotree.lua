@@ -4,9 +4,9 @@
 return {
     'jiaoshijie/undotree',
     dev = true,
-    cond = false,
     version = false,
     dependencies = { 'nvim-lua/plenary.nvim' },
+    enabled = false,
     config = function()
         require('undotree').setup({
             float_diff = true,
@@ -37,9 +37,7 @@ return {
         })
         local desc = require('user_api.maps').desc
         require('user_api.config').keymaps({
-            n = {
-                ['<leader><M-u>'] = { require('undotree').toggle, desc('Toggle UndoTree') },
-            },
+            n = { ['<leader><M-u>'] = { require('undotree').toggle, desc('Toggle UndoTree') } },
         })
         vim.api.nvim_create_user_command('Undotree', function(ctx)
             if vim.tbl_isempty(ctx.fargs) then
@@ -69,3 +67,4 @@ return {
         })
     end,
 }
+--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

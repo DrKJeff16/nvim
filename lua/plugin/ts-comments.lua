@@ -3,6 +3,7 @@
 ---@type LazySpec
 return {
     'folke/ts-comments.nvim',
+    version = false,
     cond = not require('user_api.check').in_console(),
     opts = {
         lang = {
@@ -57,7 +58,7 @@ return {
                 statement_block = '// %s',
             },
             twig = '{# %s #}',
-            typescript = { '// %s', '/* %s */' }, -- langs can have multiple commentstrings
+            typescript = { '// %s', '/* %s */' },
             vue = '<!-- %s -->',
             xaml = '<!-- %s -->',
         },

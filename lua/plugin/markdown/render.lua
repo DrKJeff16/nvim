@@ -41,7 +41,7 @@ return {
                     (#set! injection.combined)
                     (#set! injection.include-children)
                     (#set! injection.language "markdown"))
-            ]],
+                ]],
             },
         },
         anti_conceal = {
@@ -49,9 +49,6 @@ return {
             disabled_modes = false,
             above = 0,
             below = 0,
-            -- Which elements to always show, ignoring anti conceal behavior. Values can either be
-            -- booleans to fix the behavior or string lists representing modes where anti conceal
-            -- behavior will be ignored. Valid values are:
             --   bullet
             --   callout
             --   check_icon, check_scope

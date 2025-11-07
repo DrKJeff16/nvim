@@ -3,27 +3,13 @@
 ---@type LazySpec
 return {
     'hat0uma/doxygen-previewer.nvim',
-    lazy = true,
+    cmd = { 'DoxygenOpen', 'DoxygenUpdate', 'DoxygenStop', 'DoxygenLog', 'DoxygenTempDoxyfileOpen' },
     version = false,
-    cmd = {
-        'DoxygenOpen',
-        'DoxygenUpdate',
-        'DoxygenStop',
-        'DoxygenLog',
-        'DoxygenTempDoxyfileOpen',
-    },
     dependencies = {
         {
             'hat0uma/prelive.nvim',
-            lazy = true,
+            cmd = { 'PreLiveGo', 'PreLiveStatus', 'PreLiveClose', 'PreLiveCloseAll', 'PreLiveLog' },
             version = false,
-            cmd = {
-                'PreLiveGo',
-                'PreLiveStatus',
-                'PreLiveClose',
-                'PreLiveCloseAll',
-                'PreLiveLog',
-            },
             opts = {
                 server = { host = '127.0.0.1', port = 0 },
                 http = {
@@ -54,14 +40,9 @@ return {
             fallback_cwd = function()
                 return vim.fs.dirname(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
             end,
-            --- Example:
-            --- override_options = {
-            ---   PROJECT_NAME = "PreviewProject",
-            ---   HTML_EXTRA_STYLESHEET = vim.fn.stdpath("config") .. "/stylesheet.css"
-            --- }
             override_options = {}, ---@type table<string, string|fun():string>
         },
     },
-    enabled = require('user_api.check.exists').executable('doxygen'),
+    cond = require('user_api.check.exists').executable('doxygen'),
 }
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

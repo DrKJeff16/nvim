@@ -5,11 +5,7 @@
 return {
     'folke/noice.nvim',
     version = false,
-    dependencies = {
-        'MunifTanjim/nui.nvim',
-        'rcarriga/nvim-notify',
-        'nvim-mini/mini.nvim',
-    },
+    dependencies = { 'MunifTanjim/nui.nvim', 'rcarriga/nvim-notify', 'nvim-mini/mini.nvim' },
     cond = not require('user_api.check').in_console(),
     config = function()
         require('noice').setup({
@@ -18,11 +14,6 @@ return {
                 enabled = true,
                 view = 'cmdline_popup', ---@type 'cmdline_popup'|'cmdline'
                 format = { ---@type NoiceFormatOptions
-                    -- conceal: (default=true) This will hide the text in the cmdline that matches the pattern
-                    -- view: (default is cmdline view)
-                    -- opts: any options passed to the view
-                    -- icon_hl_group: optional hl_group for the icon
-                    -- title: set to anything or empty string to hide
                     cmdline = { pattern = '^:', icon = '', lang = 'vim' },
                     search_down = {
                         kind = 'search',
@@ -43,45 +34,43 @@ return {
                         lang = 'lua',
                     },
                     help = { pattern = '^:%s*he?l?p?%s+', icon = '' },
-                    input = { view = 'cmdline_input', icon = '󰥻 ' }, -- Used by input()
+                    input = { view = 'cmdline_input', icon = '󰥻 ' },
                 },
             },
             messages = {
-                enabled = true, -- enables the Noice messages UI
-                view = 'notify', -- default view for messages
-                view_error = 'notify', -- view for errors
-                view_warn = 'notify', -- view for warnings
-                view_history = 'messages', -- view for :messages
-                view_search = 'virtualtext', -- view for search count messages. Set to `false` to disable
+                enabled = true,
+                view = 'notify',
+                view_error = 'notify',
+                view_warn = 'notify',
+                view_history = 'messages',
+                view_search = 'virtualtext',
             },
             popupmenu = {
-                enabled = true, -- enables the Noice popupmenu UI
-                backend = 'nui', -- backend to use to show regular cmdline completions
-                -- Icons for completion item kinds (see defaults at noice.config.icons.kinds)
-                kind_icons = false,
-                -- kind_icons = { ---@type NoicePopupmenuItemKind|false
-                --     Class = ' ',
-                --     Color = ' ',
-                --     Constant = ' ',
-                --     Constructor = ' ',
-                --     Enum = '了 ',
-                --     EnumMember = ' ',
-                --     Field = ' ',
-                --     File = ' ',
-                --     Folder = ' ',
-                --     Function = ' ',
-                --     Interface = ' ',
-                --     Keyword = ' ',
-                --     Method = 'ƒ ',
-                --     Module = ' ',
-                --     Property = ' ',
-                --     Snippet = ' ',
-                --     Struct = ' ',
-                --     Text = ' ',
-                --     Unit = ' ',
-                --     Value = ' ',
-                --     Variable = ' ',
-                -- }, -- set to `false` to disable icons
+                enabled = true,
+                backend = 'nui',
+                kind_icons = { ---@type NoicePopupmenuItemKind|false
+                    Class = ' ',
+                    Color = ' ',
+                    Constant = ' ',
+                    Constructor = ' ',
+                    Enum = '了 ',
+                    EnumMember = ' ',
+                    Field = ' ',
+                    File = ' ',
+                    Folder = ' ',
+                    Function = ' ',
+                    Interface = ' ',
+                    Keyword = ' ',
+                    Method = 'ƒ ',
+                    Module = ' ',
+                    Property = ' ',
+                    Snippet = ' ',
+                    Struct = ' ',
+                    Text = ' ',
+                    Unit = ' ',
+                    Value = ' ',
+                    Variable = ' ',
+                },
                 opts = {},
             },
             redirect = { ---@type NoiceRouteConfig
@@ -94,7 +83,6 @@ return {
             },
             commands = {
                 history = {
-                    -- options for the message history that you get with `:Noice`
                     view = 'split',
                     opts = { enter = true, format = 'details' },
                     filter = {
@@ -107,7 +95,7 @@ return {
                         },
                     },
                 },
-                last = { -- :Noice last
+                last = {
                     view = 'popup',
                     opts = { enter = true, format = 'details' },
                     filter = {
@@ -121,25 +109,20 @@ return {
                     },
                     filter_opts = { count = 1 },
                 },
-                errors = { -- `:Noice errors`
-                    -- options for the message history that you get with `:Noice`
+                errors = {
                     view = 'popup',
                     opts = { enter = true, format = 'details' },
                     filter = { error = true, has = true, warning = true }, ---@type NoiceFilter
                     filter_opts = { reverse = true },
                 },
             },
-            notify = {
-                enabled = true,
-                view = 'notify',
-                opts = {},
-            },
+            notify = { enabled = true, view = 'notify', opts = {} },
             lsp = {
                 progress = {
                     enabled = false,
                     format = 'lsp_progress', ---@type NoiceFormat|string
                     format_done = 'lsp_progress_done', ---@type NoiceFormat|string
-                    throttle = 1000 / 30, -- frequency to update lsp progress message
+                    throttle = 1000 / 30,
                     view = 'mini',
                     opts = { ---@type NoiceViewOptions
                         enter = false,
@@ -152,27 +135,13 @@ return {
                     ['vim.lsp.util.stylize_markdown'] = true,
                     ['cmp.entry.get_documentation'] = false,
                 },
-                message = {
-                    enabled = true,
-                    view = 'notify',
-                    opts = {},
-                },
-                hover = {
-                    enabled = true,
-                    silent = false,
-                    opts = {}, ---@type NoiceViewOptions
-                    view = nil,
-                },
+                message = { enabled = true, view = 'notify', opts = {} },
+                hover = { enabled = true, silent = false, opts = {}, view = nil },
                 signature = {
                     enabled = true,
                     view = nil,
-                    opts = {}, ---@type NoiceViewOptions
-                    auto_open = {
-                        enabled = true,
-                        trigger = true,
-                        luasnip = true,
-                        throttle = 500,
-                    },
+                    opts = {},
+                    auto_open = { enabled = true, trigger = true, luasnip = true, throttle = 500 },
                 },
                 documentation = {
                     view = 'hover',
@@ -181,10 +150,7 @@ return {
                         replace = true,
                         render = 'plain',
                         format = { '{message}' },
-                        win_options = {
-                            concealcursor = 'n',
-                            conceallevel = 3,
-                        },
+                        win_options = { concealcursor = 'n', conceallevel = 3 },
                     },
                 },
             },
@@ -208,28 +174,19 @@ return {
                 },
             },
             health = { checker = true },
-            -- you can enable a preset for easier configuration
             presets = {
-                bottom_search = true, -- use a classic bottom cmdline for search
-                command_palette = true, -- position the cmdline and popupmenu together
-                long_message_to_split = true, -- long messages will be sent to a split
-                inc_rename = false, -- enables an input dialog for inc-rename.nvim
-                lsp_doc_border = true, -- add a border to hover docs and signature help
+                bottom_search = true,
+                command_palette = true,
+                long_message_to_split = true,
+                inc_rename = false,
+                lsp_doc_border = true,
             },
             views = { ---@type NoiceConfigViews
                 split = { enter = true },
             },
             routes = { ---@type NoiceRouteConfig
-                -- skip search_count messages instead of showing them as virtual text
-                {
-                    filter = { event = 'msg_show', kind = 'search_count' },
-                    opts = { skip = true },
-                },
-                -- always route any messages with more than N lines to the split view
-                {
-                    view = 'split',
-                    filter = { event = 'msg_show', min_height = 15 },
-                },
+                { filter = { event = 'msg_show', kind = 'search_count' }, opts = { skip = true } },
+                { view = 'split', filter = { event = 'msg_show', min_height = 15 } },
             },
             status = {}, ---@type table<string, NoiceFilter>
             format = {}, ---@type NoiceFormatOptions

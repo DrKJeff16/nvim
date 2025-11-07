@@ -91,6 +91,7 @@ return {
                 end,
             },
         })
+
         local group = vim.api.nvim_create_augroup('ToggleTerm.Hooks', { clear = true })
         require('user_api.util.autocmd').au_from_dict({
             TermOpen = { group = group, callback = set_terminal_keymaps },

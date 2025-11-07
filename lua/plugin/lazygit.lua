@@ -33,36 +33,11 @@ return {
             n = {
                 ['<leader>G'] = { group = '+Git' },
                 ['<leader>Gl'] = { group = '+LazyGit' },
-                ['<leader>GlC'] = {
-                    function()
-                        vim.cmd('LazyGitConfig')
-                    end,
-                    desc("LazyGit's Config"),
-                },
-                ['<leader>GlF'] = {
-                    function()
-                        vim.cmd('LazyGitFilter')
-                    end,
-                    desc('Open Project Commits In Float'),
-                },
-                ['<leader>Glc'] = {
-                    function()
-                        vim.cmd('LazyGitCurrentFile')
-                    end,
-                    desc('LazyGit On Current File'),
-                },
-                ['<leader>Glf'] = {
-                    function()
-                        vim.cmd('LazyGitFilterCurrentFile')
-                    end,
-                    desc("LazyGit's Config"),
-                },
-                ['<leader>Glg'] = {
-                    function()
-                        vim.cmd('LazyGit')
-                    end,
-                    desc('Run LazyGit'),
-                },
+                ['<leader>GlC'] = { vim.cmd.LazyGitConfig, desc("LazyGit's Config") },
+                ['<leader>GlF'] = { vim.cmdLazyGitFilter, desc('Open Project Commits In Float') },
+                ['<leader>Glc'] = { vim.cmd.LazyGitCurrentFile, desc('LazyGit On Current File') },
+                ['<leader>Glf'] = { vim.cmd.LazyGitFilterCurrentFile, desc("LazyGit's Config") },
+                ['<leader>Glg'] = { vim.cmd.LazyGit, desc('Run LazyGit') },
             },
         })
 

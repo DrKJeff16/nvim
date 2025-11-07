@@ -8,44 +8,38 @@ return {
     config = function()
         local desc = require('user_api.maps').desc
         require('nvim-possession').setup({
-            sessions = {
-                -- sessions_path = ... -- folder to look for sessions, must be a valid existing path
-                -- sessions_variable = ... -- defines vim.g[sessions_variable] when a session is loaded
-                -- sessions_icon = ...-- string: shows icon both in the prompt and in the statusline
-                sessions_prompt = 'Possession Prompt: ', -- fzf prompt string
-            },
-            autoload = true, -- whether to autoload sessions in the cwd at startup
-            autosave = true, -- whether to autosave loaded sessions before quitting
+            sessions = { sessions_prompt = 'Possession Prompt: ' },
+            autoload = true,
+            autosave = true,
             autoprompt = true,
             autoswitch = { enable = true, exclude_ft = { 'text', 'markdown' } },
             save_hook = function()
                 if require('user_api.check.exists').module('scope') then
-                    vim.cmd.ScopeSaveState() -- scope.nvim saving
+                    vim.cmd.ScopeSaveState()
                 end
                 local visible_buffers = {}
                 for _, win in next, vim.api.nvim_list_wins() do
                     visible_buffers[vim.api.nvim_win_get_buf(win)] = true
                 end
                 for _, bufnr in next, vim.api.nvim_list_bufs() do
-                    if visible_buffers[bufnr] == nil then -- Delete buffer if not visible
+                    if visible_buffers[bufnr] == nil then
                         pcall(vim.cmd.bdel, bufnr)
                     end
                 end
             end,
             post_hook = function()
                 if require('user_api.check.exists').module('scope') then
-                    vim.cmd.ScopeLoadState() -- scope.nvim saving
+                    vim.cmd.ScopeLoadState()
                 end
                 vim.lsp.buf.format()
                 require('nvim-tree.api').tree.toggle()
             end,
-            fzf_hls = { ---@type possession.Hls
+            fzf_hls = {
                 normal = 'Normal',
                 preview_normal = 'Normal',
                 border = 'Todo',
                 preview_border = 'Constant',
             },
-            ---@type possession.Winopts
             fzf_winopts = { width = 0.5, preview = { vertical = 'right:30%' } },
             sort = require('nvim-possession.sorting').time_sort,
         })

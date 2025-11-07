@@ -7,10 +7,7 @@ return {
     config = function()
         require('replua').setup({
             open_command = 'enew',
-            intro_lines = {
-                '-- Scratch buffer for Lua evaluation',
-                '',
-            },
+            intro_lines = { '-- Scratch buffer for Lua evaluation', '' },
             keymaps = {
                 eval_line = '<leader>rl',
                 eval_block = '<leader>r<CR>',
@@ -26,3 +23,4 @@ return {
         })
     end,
 }
+--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

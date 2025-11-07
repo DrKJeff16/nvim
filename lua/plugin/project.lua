@@ -8,33 +8,33 @@ return {
     init = function()
         vim.g.project_lsp_nowarn = 1
     end,
-    opts = { ---@type Project.Config.Options
-        log = { enabled = true, logpath = vim.fn.stdpath('state') },
-        scope_chdir = 'tab',
-        detection_methods = { 'pattern' },
-        telescope = { enabled = false, prefer_file_browser = true },
-        show_hidden = true,
-        fzf_lua = { enabled = true },
-        exclude_dirs = {
-            '/usr/*',
-            '~/.build/*',
-            '~/.cache/*',
-            '~/.cargo/*',
-            '~/.conda/*',
-            '~/.gnupg/*',
-            '~/.local/*',
-            '~/.luarocks/*',
-            '~/.rustup/*',
-            '~/.ssh/*',
-            '~/.tmux/*',
-            '~/.wine64/*',
-            '~/Desktop/*',
-            '~/Public/*',
-            '~/Templates/*',
-        },
-    },
-    config = function(_, opts) ---@param opts Project.Config.Options
-        require('project').setup(opts)
+    config = function()
+        require('project').setup({
+            log = { enabled = true, logpath = vim.fn.stdpath('state') },
+            scope_chdir = 'tab',
+            detection_methods = { 'pattern' },
+            telescope = { enabled = false, prefer_file_browser = true },
+            show_hidden = true,
+            fzf_lua = { enabled = true },
+            exclude_dirs = {
+                '/usr/*',
+                '~/.build/*',
+                '~/.cache/*',
+                '~/.cargo/*',
+                '~/.conda/*',
+                '~/.gnupg/*',
+                '~/.local/*',
+                '~/.luarocks/*',
+                '~/.rustup/*',
+                '~/.ssh/*',
+                '~/.tmux/*',
+                '~/.wine64/*',
+                '~/Desktop/*',
+                '~/Public/*',
+                '~/Templates/*',
+            },
+        })
+
         local desc = require('user_api.maps').desc
         require('user_api.config').keymaps({
             n = {

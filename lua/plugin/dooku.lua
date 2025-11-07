@@ -3,7 +3,6 @@
 ---@type LazySpec
 return {
     'Zeioth/dooku.nvim',
-    event = 'VeryLazy',
     version = false,
     opts = {
         project_root = { '.git', '.hg', '.svn', '.bzr', '_darcs', '_FOSSIL_', '.fslckout' },

@@ -4,38 +4,23 @@
 ---@field text string
 
 ---@alias GitSigns table<'add'|'change'|'delete'|'topdelete'|'changedelete'|'untracked', GitSignOpts>
-
 ---@alias GitSignsArr GitSigns[]
-
-local User = require('user_api')
-local Check = User.check
-
-local executable = Check.exists.executable
-local is_int = Check.value.is_int
-local desc = User.maps.desc
 
 ---@type LazySpec
 return {
     'lewis6991/gitsigns.nvim',
     version = false,
-    cond = executable('git'),
+    cond = require('user_api.check.exists').executable('git'),
     config = function()
         local GS = require('gitsigns')
         GS.setup({
-            ---@param bufnr? integer
-            on_attach = function(bufnr)
-                bufnr = is_int(bufnr) and bufnr or vim.api.nvim_get_current_buf()
-
-                local Keymaps = require('user_api.config.keymaps')
-
-                ---@type AllModeMaps
-                local Keys = {
+            on_attach = function(bufnr) ---@param bufnr? integer
+                local desc = require('user_api.maps').desc
+                require('user_api.config').keymaps({
                     n = {
                         ['<leader>G'] = { group = '+Git' },
                         ['<leader>Gh'] = { group = '+GitSigns Hunks' },
                         ['<leader>Gt'] = { group = '+GitSigns Toggles' },
-
-                        -- Navigation
                         ['<leader>Gh]'] = {
                             function()
                                 if vim.wo.diff then
@@ -56,50 +41,24 @@ return {
                             end,
                             desc('Previous Hunk'),
                         },
-
-                        -- Actions
-                        ['<leader>Ghs'] = {
-                            GS.stage_hunk,
-                            desc('Stage Current Hunk'),
-                        },
-                        ['<leader>Ghr'] = {
-                            GS.reset_hunk,
-                            desc('Reset Current Hunk'),
-                        },
-                        ['<leader>Ghu'] = {
-                            GS.stage_hunk,
-                            desc('Undo Hunk Stage'),
-                        },
-                        ['<leader>Ghp'] = {
-                            GS.preview_hunk,
-                            desc('Preview Current Hunk'),
-                        },
-                        ['<leader>GhS'] = {
-                            GS.stage_buffer,
-                            desc('Stage The Whole Buffer'),
-                        },
-                        ['<leader>GhR'] = {
-                            GS.reset_buffer,
-                            desc('Reset The Whole Buffer'),
-                        },
+                        ['<leader>Ghs'] = { GS.stage_hunk, desc('Stage Current Hunk') },
+                        ['<leader>Ghr'] = { GS.reset_hunk, desc('Reset Current Hunk') },
+                        ['<leader>Ghu'] = { GS.stage_hunk, desc('Undo Hunk Stage') },
+                        ['<leader>Ghp'] = { GS.preview_hunk, desc('Preview Current Hunk') },
+                        ['<leader>GhS'] = { GS.stage_buffer, desc('Stage The Whole Buffer') },
+                        ['<leader>GhR'] = { GS.reset_buffer, desc('Reset The Whole Buffer') },
                         ['<leader>Ghb'] = {
                             function()
                                 GS.blame_line({ full = true })
                             end,
                             desc('Blame Current Line'),
                         },
-                        ['<leader>Ghd'] = {
-                            GS.diffthis,
-                            desc('Diff Against Index'),
-                        },
+                        ['<leader>Ghd'] = { GS.diffthis, desc('Diff Against Index') },
                         ['<leader>Gtb'] = {
                             GS.toggle_current_line_blame,
                             desc('Toggle Line Blame'),
                         },
-                        ['<leader>Gtd'] = {
-                            GS.preview_hunk_inline,
-                            desc('Toggle Deleted'),
-                        },
+                        ['<leader>Gtd'] = { GS.preview_hunk_inline, desc('Toggle Deleted') },
                     },
                     v = {
                         ['<leader>G'] = { group = '+Git' },
@@ -120,13 +79,9 @@ return {
                     },
                     o = { ['ih'] = { ':<C-U>Gitsigns select_hunk<CR>' } },
                     x = { ['ih'] = { ':<C-U>Gitsigns select_hunk<CR>' } },
-                }
-
-                Keymaps(Keys, bufnr)
+                }, bufnr)
             end,
-
-            ---@type GitSigns
-            signs = {
+            signs = { ---@type GitSigns
                 add = { text = '+' },
                 change = { text = '┃' },
                 delete = { text = '-' },
@@ -134,9 +89,7 @@ return {
                 changedelete = { text = '~' },
                 untracked = { text = '┆' },
             },
-
-            ---@type GitSigns
-            signs_staged = {
+            signs_staged = { ---@type GitSigns
                 add = { text = '+' },
                 change = { text = '┃' },
                 delete = { text = '-' },
@@ -144,23 +97,18 @@ return {
                 changedelete = { text = '~' },
                 untracked = { text = '┆' },
             },
-
             signs_staged_enable = true,
-
-            signcolumn = vim.wo.signcolumn == 'yes', -- Toggle with `:Gitsigns toggle_signs`
-            numhl = vim.wo.number, -- Toggle with `:Gitsigns toggle_numhl`
-            linehl = false, -- Toggle with `:Gitsigns toggle_linehl`
-            word_diff = false, -- Toggle with `:Gitsigns toggle_word_diff`
+            signcolumn = vim.wo.signcolumn == 'yes',
+            numhl = vim.wo.number,
+            linehl = false,
+            word_diff = false,
             watch_gitdir = { follow_files = true },
             auto_attach = true,
             attach_to_untracked = true,
-            current_line_blame = true, -- Toggle with `:Gitsigns toggle_current_line_blame`
+            current_line_blame = true,
             current_line_blame_opts = {
                 virt_text = false,
-
-                ---@type 'eol'|'overlay'|'right_align'
-                virt_text_pos = 'overlay',
-
+                virt_text_pos = 'overlay', ---@type 'eol'|'overlay'|'right_align'
                 delay = 1250,
                 ignore_whitespace = false,
                 virt_text_priority = 3,
@@ -168,7 +116,7 @@ return {
             current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
             sign_priority = 4,
             update_debounce = 100,
-            max_file_length = 40000, -- Disable if file is longer than this (in lines)
+            max_file_length = 40000,
             status_formatter = nil,
             preview_config = {
                 border = 'rounded',
@@ -180,5 +128,4 @@ return {
         })
     end,
 }
-
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

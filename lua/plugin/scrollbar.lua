@@ -16,14 +16,10 @@ return {
             excluded_filetypes = {
                 'TelescopePrompt',
                 'notify',
-                'checkhealth',
-                'help',
                 'startify',
-                'gitcommit',
                 'NvimTree',
                 'neo-tree',
                 'lazy',
-                'qf',
             },
         })
     end,

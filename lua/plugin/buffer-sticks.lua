@@ -3,23 +3,18 @@
 ---@type LazySpec
 return {
     'ahkohd/buffer-sticks.nvim',
-    dev = true,
     version = false,
     config = function()
         require('buffer-sticks').setup({
             position = 'right', ---@type 'right'|'left'
-            width = 3, ---@type integer
-            offset = { x = 1, y = 0 }, ---@type { x: integer, y: integer }
-            active_char = '──', ---@type string
-            inactive_char = ' ─', ---@type string
+            width = 3,
+            offset = { x = 1, y = 0 },
+            active_char = '──',
+            inactive_char = ' ─',
             jump = { show = { 'filename', 'space', 'label' } },
             label = { show = 'always' },
-            transparent = true, ---@type boolean
-            -- Overrides `transparent`
-            -- winblend = 100, ---@type integer
-            filter = {
-                filetypes = { 'terminal' },
-            },
+            transparent = true,
+            filter = { filetypes = { 'terminal' } },
             highlights = {
                 active = { link = 'Statement' },
                 inactive = { link = 'Whitespace' },

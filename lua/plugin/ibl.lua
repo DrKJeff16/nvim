@@ -11,8 +11,7 @@ local function reg(htype, func, opts)
     require('ibl.hooks').register(htype, func, opts)
 end
 
----@type HlDict
-local Hilite = {
+local Hilite = { ---@type HlDict
     RainbowRed = { fg = '#E06C75' },
     RainbowYellow = { fg = '#E5C07B' },
     RainbowBlue = { fg = '#61AFEF' },
@@ -39,11 +38,7 @@ return {
             debounce = 200,
             indent = {
                 highlight = highlight,
-                repeat_linebreak = (
-                    vim.fn.has('nvim-0.10') == 1
-                    and vim.o.breakindent
-                    and vim.o.breakindentopt ~= ''
-                ),
+                repeat_linebreak = vim.o.bri and vim.o.briopt ~= '',
                 smart_indent_cap = false,
                 char = { '╎', '╏', '┆', '┇', '┊', '┋' },
                 tab_char = { '▏', '▎', '▍', '▌', '▋', '▊', '▉', '█' },
@@ -52,7 +47,6 @@ return {
                 highlight = { 'Whitespace', 'NonText' },
                 remove_blankline_trail = false,
             },
-
             scope = { highlight = highlight },
         })
 
@@ -60,9 +54,7 @@ return {
         local arg_tbl = {
             {
                 require('ibl.hooks').type.ACTIVE,
-                ---@param bufnr integer
-                ---@return boolean
-                function(bufnr)
+                function(bufnr) ---@param bufnr integer
                     return vim.api.nvim_buf_line_count(bufnr) < 5000
                 end,
             },
@@ -76,8 +68,7 @@ return {
                 { bufnr = 0 },
             },
         }
-
-        for _, t in next, arg_tbl do
+        for _, t in ipairs(arg_tbl) do
             local htype, func, opts = t[1], t[2], t[3] or nil
             if opts then
                 reg(htype, func, opts)
@@ -89,9 +80,7 @@ return {
         if not vim.g.rainbow_delimiters or vim.tbl_isempty(vim.g.rainbow_delimiters) then
             return
         end
-
-        local d_extend = vim.tbl_deep_extend
-        vim.g.rainbow_delimiters = d_extend('force', vim.g.rainbow_delimiters, {
+        vim.g.rainbow_delimiters = vim.tbl_deep_extend('force', vim.g.rainbow_delimiters, {
             highlight = highlight,
         })
     end,

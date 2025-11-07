@@ -23,7 +23,6 @@ return {
         show_keys = true,
         debug = false,
         disable = { ft = {}, bt = {} },
-        -- expand = 0,
         spec = { ---@type wk.Spec
             {
                 '<leader>?',
@@ -34,13 +33,7 @@ return {
             },
         },
         defer = function(ctx) ---@param ctx { mode: string, operator: string }
-            local deferred_ops = {
-                'o',
-                'v',
-                'V',
-                '<C-v>',
-                '<C-V>',
-            }
+            local deferred_ops = { 'o', 'v', 'V', '<C-v>', '<C-V>' }
             return not vim.list_contains(deferred_ops, ctx.operator)
         end,
         filter = function(mapping) ---@param mapping wk.Mapping
@@ -64,7 +57,7 @@ return {
         win = { ---@type wk.Win
             no_overlap = true,
             border = 'single',
-            padding = { 1, 2 }, -- extra window padding [top/bottom, right/left]
+            padding = { 1, 2 },
             title = true,
             title_pos = 'center',
             zindex = 1000,
@@ -124,15 +117,10 @@ return {
                 Down = '',
                 Left = '',
                 Right = '',
-                -- C = '󰘴 ',
                 C = 'CTRL-',
-                -- M = '󰘵 ',
                 M = 'META-',
-                -- S = '󰘶 ',
                 S = 'SHIFT-',
-                -- CR = '󰌑 ',
                 CR = '<CR>',
-                -- Esc = '󱊷 ',
                 Esc = '<ESC>',
                 ScrollWheelDown = '󱕐 ',
                 ScrollWheelUp = '󱕑 ',
@@ -161,5 +149,4 @@ return {
         },
     },
 }
-
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

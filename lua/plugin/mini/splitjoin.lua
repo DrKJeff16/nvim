@@ -15,8 +15,8 @@ return {
             split = { hooks_pre = {}, hooks_post = {} },
             join = { hooks_pre = {}, hooks_post = {} },
         })
-        require('user_api.config').keymaps({ n = { ['<leader>ms'] = { group = '+Splitjoin' } } })
 
+        require('user_api.config').keymaps({ n = { ['<leader>ms'] = { group = '+Splitjoin' } } })
         vim.api.nvim_create_autocmd({ 'BufNew', 'BufAdd', 'BufEnter', 'BufCreate', 'WinEnter' }, {
             group = vim.api.nvim_create_augroup('UserMini', { clear = false }),
             callback = function(ev)
@@ -26,10 +26,9 @@ return {
                     return
                 end
 
-                local hook = require('mini.splitjoin').gen_hook
-                local add_trail_sep = hook.add_trailing_separator
-                local del_trail_sep = hook.del_trailing_separator
-                local pad_bracks = hook.pad_brackets
+                local add_trail_sep = require('mini.splitjoin').gen_hook.add_trailing_separator
+                local del_trail_sep = require('mini.splitjoin').gen_hook.del_trailing_separator
+                local pad_bracks = require('mini.splitjoin').gen_hook.pad_brackets
                 local bracks = { brackets = { '%b{}' } }
                 local join = { hooks_post = { add_trail_sep(bracks) } }
                 local split = { hooks_post = { del_trail_sep(bracks), pad_bracks(bracks) } }

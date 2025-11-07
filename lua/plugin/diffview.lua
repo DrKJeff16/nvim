@@ -11,9 +11,6 @@
 ---|-1
 
 ---@alias DiffView.ListStyle 'list'|'tree'
----@alias DiffView.WinConfig.Type 'float'|'split'
----@alias DiffView.WinConfig.Positon 'left'|'top'|'right'|'bottom'
----@alias DiffView.WinConfig.Relative 'editor'|'win'
 
 local min = math.min
 local floor = math.floor
@@ -21,18 +18,17 @@ local floor = math.floor
 ---@type LazySpec
 return {
     'sindrets/diffview.nvim',
-    event = 'VeryLazy',
     version = false,
     cond = require('user_api.check.exists').executable('git'),
     config = function()
         local desc = require('user_api.maps').desc
         local Actions = require('diffview.actions')
         require('diffview').setup({
-            diff_binaries = false, --- Show diffs for binaries
-            enhanced_diff_hl = true, --- See `:h diffview-config-enhanced_diff_hl`
-            use_icons = true, --- Requires nvim-web-devicons
-            show_help_hints = true, --- Show hints for how to open the help panel
-            watch_index = true, --- Update views and index buffers when the git index changes
+            diff_binaries = false,
+            enhanced_diff_hl = true,
+            use_icons = true,
+            show_help_hints = true,
+            watch_index = true,
             git_cmd = { 'git' },
             hg_cmd = { 'hg' },
             icons = { folder_closed = '', folder_open = '' },
@@ -87,7 +83,7 @@ return {
                 win_config = function()
                     local c = { width = vim.o.columns, height = vim.o.lines }
                     return {
-                        position = 'bottom', ---@type DiffView.WinConfig.Positon
+                        position = 'bottom',
                         width = min(100, c.width),
                         height = min(24, c.height),
                         col = floor(vim.o.columns * 0.5 - c.width * 0.5),
@@ -106,7 +102,7 @@ return {
                 win_config = function()
                     local c = { width = vim.o.columns, height = vim.o.lines }
                     return {
-                        position = 'bottom', ---@type DiffView.WinConfig.Positon
+                        position = 'bottom',
                         width = min(100, c.width),
                         height = min(24, c.height),
                         col = floor(vim.o.columns * 0.5 - c.width * 0.5),

@@ -298,10 +298,11 @@ return {
     config = function()
         local gen_sources = BUtil.gen_sources
         local gen_providers = BUtil.gen_providers
-        local select_opts = { auto_insert = true, preselect = false }
         if exists('luasnip.loaders.from_vscode') then
             require('luasnip.loaders.from_vscode').lazy_load()
         end
+
+        local select_opts = { auto_insert = true, preselect = false }
         require('blink.cmp').setup({
             keymap = {
                 preset = 'super-tab',
@@ -468,18 +469,10 @@ return {
                 end,
             },
             fuzzy = {
-                ---@param keyword string
-                ---@return integer
-                max_typos = function(keyword)
-                    return math.floor(#keyword / 3)
+                max_typos = function(keyword) ---@param keyword string
+                    return math.floor(keyword:len() / 3)
                 end,
-                sorts = {
-                    'exact',
-                    -- 'label',
-                    -- 'kind',
-                    'score',
-                    'sort_text',
-                },
+                sorts = { 'exact', 'score', 'sort_text' },
                 implementation = executable({ 'cargo', 'rustc' }) and 'prefer_rust_with_warning'
                     or 'lua',
             },

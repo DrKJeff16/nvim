@@ -29,38 +29,23 @@ return {
                 require('user_api.config').keymaps({
                     i = { ['<C-Tab>'] = { '<Esc>:IH<CR>', buffer = ev.buf } },
                     n = {
-                        ['<leader><C-h>'] = {
-                            group = '+Header/Source Switch (C/C++)',
-                            buffer = ev.buf,
-                        },
+                        ['<leader><C-h>'] = { group = '+Header/Source Switch', buffer = ev.buf },
                         ['<leader><C-h>s'] = { ':A<CR>', desc('Cycle Header/Source', true, ev.buf) },
-                        ['<leader><C-h>x'] = {
-                            ':AS<CR>',
-                            desc('Horizontal Cycle Header/Source', true, ev.buf),
-                        },
-                        ['<leader><C-h>v'] = {
-                            ':AV<CR>',
-                            desc('Vertical Cycle Header/Source', true, ev.buf),
-                        },
-                        ['<leader><C-h>t'] = {
-                            ':AT<CR>',
-                            desc('Tab Cycle Header/Source', true, ev.buf),
-                        },
-                        ['<leader><C-h>S'] = {
-                            ':IH<CR>',
-                            desc('Cycle Header/Source (Cursor)', true, ev.buf),
-                        },
+                        ['<leader><C-h>x'] = { ':AS<CR>', desc('Horizontal Cycle', true, ev.buf) },
+                        ['<leader><C-h>v'] = { ':AV<CR>', desc('Vertical Cycle', true, ev.buf) },
+                        ['<leader><C-h>t'] = { ':AT<CR>', desc('Tab Cycle', true, ev.buf) },
+                        ['<leader><C-h>S'] = { ':IH<CR>', desc('Cycle (Cursor)', true, ev.buf) },
                         ['<leader><C-h>X'] = {
                             ':IHS<CR>',
-                            desc('Horizontal Cycle Header/Source (Cursor)', true, ev.buf),
+                            desc('Horizontal Cycle (Cursor)', true, ev.buf),
                         },
                         ['<leader><C-h>V'] = {
                             ':IHV<CR>',
-                            desc('Vertical Cycle Header/Source (Cursor)', true, ev.buf),
+                            desc('Vertical Cycle (Cursor)', true, ev.buf),
                         },
                         ['<leader><C-h>T'] = {
                             ':IHT<CR>',
-                            desc('Tab Cycle Header/Source (Cursor)', true, ev.buf),
+                            desc('Tab Cycle (Cursor)', true, ev.buf),
                         },
                     },
                 }, ev.buf)

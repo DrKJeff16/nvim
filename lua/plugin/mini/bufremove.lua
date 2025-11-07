@@ -19,7 +19,7 @@ return {
         local desc = require('user_api.maps').desc
         require('user_api.config').keymaps({
             n = {
-                ['<leader>bd'] = { gen_bdel(false), desc('Close Buffer (Mini)') },
+                ['<leader>bd'] = { gen_bdel(), desc('Close Buffer (Mini)') },
                 ['<leader>bD'] = { gen_bdel(true), desc('Close Buffer Forcefully (Mini)') },
             },
         })

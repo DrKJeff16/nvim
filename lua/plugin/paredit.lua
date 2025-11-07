@@ -12,14 +12,7 @@ return {
                 clojure = { whitespace_chars = { ' ', ',' } },
                 fennel = { whitekpace_chars = { ' ', ',' } },
             },
-            -- This controls where the cursor is placed when performing slurp/barf operations
-            --
-            -- - "remain" - It will never change the cursor position, keeping it in the same place
-            -- - "follow" - It will always place the cursor on the form edge that was moved
-            -- - "auto"   - A combination of remain and follow, it will try keep the cursor in the original position
-            --              unless doing so would result in the cursor no longer being within the original form. In
-            --              this case it will place the cursor on the moved edge
-            cursor_behaviour = 'auto', -- remain, follow, auto
+            cursor_behaviour = 'auto', ---@type 'remain'|'follow'|'auto'
             dragging = { auto_drag_pairs = true },
             indent = {
                 enabled = true,
@@ -53,7 +46,6 @@ return {
                 E = {
                     require('nvim-paredit').api.move_to_next_element_tail,
                     'Jump to next element tail',
-                    -- by default all keybindings are dot repeatable
                     repeatable = false,
                     mode = { 'n', 'x', 'o', 'v' },
                 },

@@ -5,10 +5,7 @@ return {
     'akinsho/bufferline.nvim',
     event = 'VeryLazy',
     version = false,
-    dependencies = {
-        'nvim-tree/nvim-web-devicons',
-        'tiagovla/scope.nvim',
-    },
+    dependencies = { 'nvim-tree/nvim-web-devicons', 'tiagovla/scope.nvim' },
     cond = not require('user_api.check').in_console(),
     config = function()
         _G.__cached_neo_tree_selector = nil
@@ -101,23 +98,19 @@ return {
                 indicator = { icon = '▎', style = 'none' },
                 ---@param diags table<string, string>
                 ---@param context? table
-                ---@return string
                 diagnostics_indicator = function(_, _, diags, context)
-                    local s = ''
                     if not (context and context.buffer:current()) then
-                        return s
+                        return ''
                     end
-                    s = ' '
+
+                    local s = ' '
                     for e, n in pairs(diags) do
                         local sym = e == 'error' and ' ' or (e == 'warning' and ' ' or '')
                         s = ('%s%s%s'):format(s, n, sym)
                     end
                     return s
                 end,
-                ---@param element { filetype: string, path: string, extension: string, directory: string }
-                ---@return string
-                ---@return string
-                get_element_icon = function(element)
+                get_element_icon = function(element) ---@param element { filetype: string, path: string, extension: string, directory: string }
                     return require('nvim-web-devicons').get_icon_by_filetype(element.filetype, {
                         default = false,
                     })
