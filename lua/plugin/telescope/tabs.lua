@@ -3,14 +3,12 @@ if not (exists('telescope') and exists('telescope-tabs')) then
     return nil
 end
 
-local Tabs = require('telescope-tabs')
-
 ---@class TelescopeTabs
 local TelescopeTabs = {}
 
 function TelescopeTabs.create()
     require('telescope').load_extension('telescope-tabs')
-    Tabs.setup({
+    require('telescope-tabs').setup({
         entry_formatter = function(tab_id, _, _, file_paths, is_current)
             local entry_string = table.concat(
                 vim.tbl_map(function(v)
@@ -18,9 +16,8 @@ function TelescopeTabs.create()
                 end, file_paths),
                 ', '
             )
-            return string.format('%d: %s%s', tab_id, entry_string, is_current and ' <' or '')
+            return ('%d: %s%s'):format(tab_id, entry_string, is_current and ' <' or '')
         end,
-
         entry_ordinal = function(_, _, file_names, _, _)
             return table.concat(file_names, ' ')
         end,
@@ -34,8 +31,8 @@ function TelescopeTabs.loadkeys()
     local desc = require('user_api.maps').desc
     require('user_api.config').keymaps({
         n = {
-            ['<leader>fTet'] = { Tabs.list_tabs, desc('Tabs') },
-            ['<leader>tt'] = { Tabs.list_tabs, desc('Telescope Tabs') },
+            ['<leader>fTet'] = { require('telescope-tabs').list_tabs, desc('Tabs') },
+            ['<leader>tt'] = { require('telescope-tabs').list_tabs, desc('Telescope Tabs') },
         },
     })
 end
