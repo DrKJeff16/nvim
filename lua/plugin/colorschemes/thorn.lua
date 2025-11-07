@@ -1,0 +1,18 @@
+local exists = require('user_api.check.exists').module
+
+---A submodule class for the `<NAME>` colorscheme.
+--- ---
+---@class ThornSubMod
+local Thorn = {}
+
+---@return boolean
+function Thorn.valid()
+    return exists('thorn')
+end
+
+function Thorn.setup()
+    vim.cmd.colorscheme('thorn')
+end
+
+return Thorn
+--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

@@ -6,6 +6,33 @@ local in_console = require('user_api.check').in_console
 ---@type LazySpec[]
 return {
     {
+        'jpwol/thorn.nvim',
+        lazy = false,
+        priority = 1000,
+        version = false,
+        init = colorscheme_init('installed_thorn'),
+        cond = not in_console(),
+        opts = {
+            theme = 'dark', ---@type nil|'light'|'dark'
+            background = 'cold', ---@type 'warm'|'cold'
+            transparent = false,
+            terminal = true,
+            styles = {
+                keywords = { italic = false, bold = true },
+                comments = { italic = false, bold = false },
+                strings = { italic = false, bold = false },
+                diagnostic = {
+                    underline = true,
+                    -- true will apply the bg highlight, false applies the fg highlight
+                    error = { highlight = true },
+                    hint = { highlight = false },
+                    info = { highlight = false },
+                    warn = { highlight = true },
+                },
+            },
+        },
+    },
+    {
         'lucasadelino/conifer.nvim',
         lazy = false,
         priority = 1000,
@@ -23,7 +50,7 @@ return {
         version = false,
         init = colorscheme_init('installed_tokyonight'),
         config = function()
-            require('tokyonight').setup({
+            require('tokyonight').setup({ ---@diagnostic disable-line:missing-fields
                 cache = true,
                 on_colors = function(colors) ---@param colors ColorScheme
                     colors.error = '#df4f4f'
