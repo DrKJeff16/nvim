@@ -96,7 +96,6 @@ L.setup({
     { import = 'plugin.startuptime' },
     { import = 'plugin.which-key' },
     { import = 'plugin.luaref' },
-    { import = 'plugin._spec.colorschemes' },
     { import = 'plugin._spec' },
     { import = 'plugin.notify' },
     { import = 'plugin.lastplace' },
@@ -144,12 +143,12 @@ L.setup({
     { import = 'plugin.fzf-nerdfont' },
     { import = 'plugin.zen-mode' },
     { import = 'plugin.todo_comments' },
-    { import = 'plugin.doxygen' },
     { import = 'plugin.doxygen-previewer' },
     { import = 'plugin.orgmode' },
-    { import = 'plugin.pomo' },
-    { import = 'plugin.gh-co' },
     { import = 'plugin.co-author' },
+    -- { import = 'plugin.doxygen' },
+    -- { import = 'plugin.pomo' },
+    -- { import = 'plugin.gh-co' },
     -- { import = 'plugin.replua' },
     -- { import = 'plugin.log-highlight' },
     -- { import = 'plugin.dooku' },
@@ -173,7 +172,12 @@ require('user_api.config').keymaps({
     n = {
         ['<leader>vM'] = { vim.cmd.messages, desc('Run `:messages`') },
         ['<leader>vN'] = { vim.cmd.Notifications, desc('Run `:Notifications`') },
-        ['<C-/>'] = { ':normal gcc<CR>', desc('Toggle Comment') },
+        ['<C-/>'] = {
+            function()
+                vim.cmd.norm('gcc')
+            end,
+            desc('Toggle Comment'),
+        },
     },
     v = { ['<C-/>'] = { [[:'<,'>normal gcc<CR>]], desc('Toggle Comment') } },
     x = {
@@ -210,8 +214,6 @@ vim.cmd.packadd('nohlsearch')
 if vim.fn.has('nvim-0.12.0') == 1 then
     vim.cmd.packadd('nvim.undotree')
 end
-
-vim.g.markdown_minlines = 500
 
 L.lsp().setup()
 
