@@ -34,7 +34,7 @@ require('user_api').opts({
     backspace = 'indent,eol,start',
     backup = false,
     cmdwinheight = require('user_api.distro.termux').validate() and 15 or 25,
-    colorcolumn = '101',
+    colorcolumn = '100',
     confirm = true,
     copyindent = true,
     equalalways = true,
