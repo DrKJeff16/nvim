@@ -408,6 +408,19 @@ return {
             }
         end
 
+        if exists('triforce') then
+            Presets.components.triforce_lvl = { ---@type LuaLine.Components.Spec
+                function()
+                    return require('triforce.lualine').level()
+                end,
+            }
+            Presets.components.triforce_achv = { ---@type LuaLine.Components.Spec
+                function()
+                    return require('triforce.lualine').achievements()
+                end,
+            }
+        end
+
         if exists('lualine.components.lsp_progress') then
             local colors = {
                 red = '#ec5f67',
@@ -508,6 +521,8 @@ return {
                 or { Presets.components.diagnostics, Presets.components.diff },
             lualine_x = {
                 Presets.components.lsp_progress,
+                Presets.components.triforce_lvl,
+                Presets.components.triforce_achv,
                 Presets.components.fileformat,
                 Presets.components.filetype,
             },

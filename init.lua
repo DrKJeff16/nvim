@@ -147,6 +147,7 @@ L.setup({
     { import = 'plugin.orgmode' },
     { import = 'plugin.co-author' },
     { import = 'plugin.blink-indent' },
+    { import = 'plugin.triforce' },
     -- { import = 'plugin.ibl' },
     -- { import = 'plugin.doxygen' },
     -- { import = 'plugin.pomo' },
