@@ -47,6 +47,7 @@ require('user_api').opts({
     helplang = 'en',
     hidden = true,
     hlsearch = true,
+    inccommand = 'nosplit',
     ignorecase = false,
     incsearch = true,
     list = true,
