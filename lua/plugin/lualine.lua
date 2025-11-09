@@ -482,10 +482,7 @@ return {
 
         ---@diagnostic disable
         Presets.components.noice = {
-            hl_get = {
-                NoiceAPI.status.message.get_hl,
-                cond = NoiceAPI.status.message.has,
-            },
+            hl_get = { NoiceAPI.status.message.get_hl, cond = NoiceAPI.status.message.has },
             command_get = {
                 NoiceAPI.status.command.get,
                 cond = NoiceAPI.status.command.has,
