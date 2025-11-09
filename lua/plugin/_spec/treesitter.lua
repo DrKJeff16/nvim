@@ -8,19 +8,17 @@ return {
         build = ':TSUpdate',
         version = false,
         dependencies = {
+            'ibhagwan/ts-vimdoc.nvim',
             {
                 'nvim-treesitter/nvim-treesitter-context',
-                version = false,
                 config = require('config.util').require('plugin.ts.context'),
             },
             {
                 'windwp/nvim-ts-autotag',
-                version = false,
                 config = require('config.util').require('plugin.ts.autotag'),
             },
             {
                 'JoosepAlviste/nvim-ts-context-commentstring',
-                version = false,
                 config = function()
                     require('ts_context_commentstring').setup({ enable_autocmd = false })
                 end,
