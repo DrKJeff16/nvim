@@ -3,6 +3,7 @@
 ---@type LazySpec
 return {
     'nvim-mini/mini.starter',
+    priority = 1000,
     version = false,
     config = function()
         require('mini.starter').setup({
