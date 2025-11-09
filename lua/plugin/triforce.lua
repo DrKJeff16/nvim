@@ -19,11 +19,12 @@ return {
                 lua = { icon = '', name = 'Lua' },
             },
             level_progression = {
-                tier_1 = { min_level = 1, max_level = 10, xp_per_level = 500 },
-                tier_2 = { min_level = 11, max_level = 20, xp_per_level = 1000 },
-                tier_3 = { min_level = 21, max_level = math.huge, xp_per_level = 2000 },
+                tier_1 = { min_level = 1, max_level = 15, xp_per_level = 600 },
+                tier_2 = { min_level = 16, max_level = 30, xp_per_level = 1200 },
+                tier_3 = { min_level = 31, max_level = math.huge, xp_per_level = 3000 },
             },
             xp_rewards = { char = 1, line = 2, save = 20 },
+            require('user_api.config').keymaps({ n = { ['<leader>Tp'] = { group = '+Triforce' } } }),
         })
     end,
 }
