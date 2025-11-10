@@ -152,7 +152,7 @@ end
 local M = setmetatable(Exists, {
     __index = Exists,
     __newindex = function(_, _, _)
-        error('User.Check.Exists table is Read-Only!', ERROR)
+        vim.notify('User.Check.Exists table is Read-Only!', ERROR)
     end,
 })
 

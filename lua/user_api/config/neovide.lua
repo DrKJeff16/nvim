@@ -90,9 +90,17 @@ end
 ---@param transparency? number
 ---@param bg? string
 function Neovide.set_transparency(opacity, transparency, bg)
-    vim.validate('opacity', opacity, 'number', true)
-    vim.validate('transparency', transparency, 'number', true)
-    vim.validate('bg', bg, 'string', true)
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('opacity', opacity, 'number', true)
+        vim.validate('transparency', transparency, 'number', true)
+        vim.validate('bg', bg, 'string', true)
+    else
+        vim.validate({
+            opacity = { opacity, { 'number', 'nil' } },
+            transparency = { transparency, { 'number', 'nil' } },
+            bg = { bg, { 'string', 'nil' } },
+        })
+    end
 
     local eq = { high = true, low = true }
     if opacity ~= nil and not num_range(opacity, 0.0, 1.0, eq) then
@@ -118,10 +126,17 @@ end
 ---@param O any[]
 ---@param pfx string
 function Neovide.parse_g_opts(O, pfx)
-    vim.validate('O', O, 'table', false, 'any[]')
-    vim.validate('pfx', pfx, 'string', false)
-
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('O', O, 'table', false, 'any[]')
+        vim.validate('pfx', pfx, 'string', false)
+    else
+        vim.validate({
+            O = { O, 'table' },
+            pfx = { pfx, 'string' },
+        })
+    end
     pfx = (pfx ~= nil and pfx:sub(1, 8) == 'neovide_') and pfx or 'neovide_'
+
     for k, v in ipairs(O) do
         local key = pfx .. k
         if is_tbl(v) then
@@ -159,9 +174,17 @@ end
 ---@param transparent? boolean
 ---@param verbose? boolean
 function Neovide.setup(T, transparent, verbose)
-    vim.validate('T', T, 'table', true)
-    vim.validate('transparent', transparent, 'boolean', true)
-    vim.validate('verbose', verbose, 'boolean', true)
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('T', T, 'table', true)
+        vim.validate('transparent', transparent, 'boolean', true)
+        vim.validate('verbose', verbose, 'boolean', true)
+    else
+        vim.validate({
+            T = { T, { 'table', 'nil' } },
+            transparent = { transparent, { 'boolean', 'nil' } },
+            verbose = { verbose, { 'boolean', 'nil' } },
+        })
+    end
 
     if not (Neovide.check() or Neovide.active) then
         return

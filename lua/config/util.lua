@@ -86,7 +86,7 @@ end
 ---A `config` function to call your plugin from a `lazy` spec.
 --- ---
 ---@param mod_str string
----@return fun()
+---@return function
 function CfgUtil.require(mod_str)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('mod_str', mod_str, 'string', false)

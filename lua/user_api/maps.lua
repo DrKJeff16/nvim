@@ -25,7 +25,11 @@ Maps.keymap = require('user_api.maps.keymap')
 Maps.wk = require('user_api.maps.wk')
 
 function Maps.desc(desc, silent, bufnr, noremap, nowait, expr)
-    vim.validate('desc', desc, { 'string', 'nil' }, false, 'string|nil')
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('desc', desc, { 'string', 'nil' }, false, 'string|nil')
+    else
+        vim.validate({ desc = { desc, { 'string', 'nil' } } })
+    end
 
     if not type_not_empty('string', desc) then
         desc = 'Unnamed Key'

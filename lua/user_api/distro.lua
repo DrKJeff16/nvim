@@ -13,9 +13,12 @@ return setmetatable({}, {
     __newindex = function(_, _, _)
         vim.notify('User.Distro table is Read-Only!', ERROR)
     end,
-    ---@param verbose? boolean
-    __call = function(_, verbose)
-        vim.validate('verbose', verbose, 'boolean', true)
+    __call = function(_, verbose) ---@param verbose? boolean
+        if vim.fn.has('nvim-0.11') == 1 then
+            vim.validate('verbose', verbose, 'boolean', true)
+        else
+            vim.validate({ verbose = { verbose, { 'boolean' } } })
+        end
         verbose = verbose ~= nil and verbose or false
 
         local msg = ''

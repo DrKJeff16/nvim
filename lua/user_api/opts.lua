@@ -115,7 +115,7 @@ end
 --- @param O User.Opts.Spec A dictionary with keys acting as `vim.o` fields, and values
 --- @param verbose? boolean Enable verbose printing if `true`
 function Opts.optset(O, verbose)
-    if vim.fn.has('nvim-0.11') then
+    if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('O', O, 'table', false, 'User.Opts.Spec')
         vim.validate('verbose', verbose, 'boolean', true)
     else

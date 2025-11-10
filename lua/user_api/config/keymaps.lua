@@ -56,7 +56,7 @@ end
 ---@param vertical? boolean
 ---@return function
 local function gen_fun_blank(vertical)
-    if vim.fn.has('nvim-0.11') then
+    if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('vertical', vertical, 'boolean', true)
     else
         vim.validate({ vertical = { vertical, { 'boolean', 'nil' } } })
@@ -80,7 +80,7 @@ end
 ---@param force? boolean
 ---@return fun()
 local function buf_del(force)
-    if vim.fn.has('nvim-0.11') then
+    if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('force', force, 'boolean', true)
     else
         vim.validate({ force = { force, { 'boolean', 'nil' } } })
@@ -207,7 +207,7 @@ local NOP = {
 Keymaps.NOP = setmetatable({}, {
     __index = NOP,
     __newindex = function(_, _, _)
-        error('(user_api.config.keymaps.NOP): Read-only table!', ERROR)
+        vim.notify('(user_api.config.keymaps.NOP): Read-only table!', ERROR)
     end,
 })
 
@@ -553,9 +553,17 @@ Keymaps.Keys = { ---@type AllModeMaps
 ---@param local_leader? string _`<localleader>`_ string (defaults to `<Space>`)
 ---@param force? boolean Force leader switch (defaults to `false`)
 function Keymaps.set_leader(leader, local_leader, force)
-    vim.validate('leader', leader, 'string', false)
-    vim.validate('local_leader', local_leader, 'string', true)
-    vim.validate('force', force, 'boolean', true)
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('leader', leader, 'string', false)
+        vim.validate('local_leader', local_leader, 'string', true)
+        vim.validate('force', force, 'boolean', true)
+    else
+        vim.validate({
+            leader = { leader, 'string' },
+            local_leader = { local_leader, { 'string', 'nil' } },
+            force = { force, { 'boolean', 'nil' } },
+        })
+    end
     leader = leader ~= '' and leader or '<Space>'
     local_leader = (local_leader ~= nil and local_leader ~= '') and local_leader or leader
     force = force ~= nil and force or false
@@ -603,19 +611,26 @@ end
 ---@param bufnr? integer
 ---@return table<('n'|'i'|'v'|'t'|'o'|'x'), nil[]>|nil
 function Keymaps.delete(K, bufnr)
-    vim.validate('K', K, 'table', false, "{ [('n'|'i'|'v'|'t'|'o'|'x')]: string[] }|string[]")
-    vim.validate('bufnr', bufnr, 'number', true, 'integer')
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('K', K, 'table', false, "{ [('n'|'i'|'v'|'t'|'o'|'x')]: string[] }|string[]")
+        vim.validate('bufnr', bufnr, 'number', true, 'integer')
+    else
+        vim.validate({
+            K = { K, 'table' },
+            bufnr = { bufnr, { 'number', 'nil' } },
+        })
+    end
     bufnr = bufnr or nil
     if vim.tbl_isemyty(K) then
         return
     end
 
     local ditched_keys = {} ---@type table<('n'|'i'|'v'|'t'|'o'|'x'), nil[]>
-    for k, v in next, K do
+    for k, v in pairs(K) do
         if is_int(k) then
             Keymaps.delete(v, bufnr)
         end
-        if bufnr ~= nil then
+        if bufnr then
             vim.keymap.del(k, v, { buffer = bufnr })
         else
             vim.keymap.del(k, v, {})
@@ -635,9 +650,17 @@ local M = setmetatable({}, {
     ---@param bufnr? integer
     ---@param load_defaults? boolean
     __call = function(_, keys, bufnr, load_defaults)
-        vim.validate('keys', keys, 'table', false, 'AllModeMaps')
-        vim.validate('bufnr', bufnr, 'number', true, 'integer')
-        vim.validate('load_defaults', load_defaults, 'boolean', true)
+        if vim.fn.has('nvim-0.11') == 1 then
+            vim.validate('keys', keys, 'table', false, 'AllModeMaps')
+            vim.validate('bufnr', bufnr, 'number', true, 'integer')
+            vim.validate('load_defaults', load_defaults, 'boolean', true)
+        else
+            vim.validate({
+                keys = { keys, 'table' },
+                bufnr = { bufnr, { 'number', 'nil' } },
+                load_defaults = { load_defaults, { 'boolean', 'nil' } },
+            })
+        end
         if vim.tbl_isempty(keys) then
             return
         end

@@ -1,7 +1,7 @@
 --- Modify runtimepath to also search the system-wide Vim directory
 -- (eg. for Vim runtime files from Termux packages)
 
-local function is_dir(dir)
+local function is_dir(dir) ---@param dir string
     return vim.fn.isdirectory(dir) == 1
 end
 

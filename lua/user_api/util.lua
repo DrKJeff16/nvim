@@ -27,7 +27,7 @@ end
 ---@param bufnr? integer
 ---@return table<string, any> res
 function Util.get_opts_tbl(s, bufnr)
-    if vim.fn.has('nvim-0.11') then
+    if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('s', s, { 'string', 'table' }, false, 'string[]|string')
         vim.validate('bufnr', bufnr, 'number', true, 'integer')
     else
@@ -57,34 +57,38 @@ end
 ---@param direction? 'l'|'r'
 ---@return table<string, any> res
 function Util.mv_tbl_values(T, steps, direction)
-    vim.validate('T', T, 'table', false, 'table<string, any>')
-    vim.validate('steps', steps, 'number', true, 'integer')
-    vim.validate('direction', direction, 'string', true, "'l'|'r'")
-
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('T', T, 'table', false, 'table<string, any>')
+        vim.validate('steps', steps, 'number', true, 'integer')
+        vim.validate('direction', direction, 'string', true, "'l'|'r'")
+    else
+        vim.validate({
+            T = { T, 'table' },
+            steps = { steps, { 'number', 'nil' } },
+            direction = { direction, { 'string', 'nil' } },
+        })
+    end
     steps = steps > 0 and steps or 1
     direction = (direction ~= nil and in_list({ 'l', 'r' }, direction)) and direction or 'r'
+
     local direction_funcs = { ---@class DirectionFuns
-        ---@param t table<string, any>
-        ---@return table<string, any> res
-        r = function(t)
-            ---@type string[]
-            local res = {} ---@type table<string, any>
-            local keys = vim.tbl_keys(t)
+        r = function(t) ---@param t table<string, any>
+            local keys = vim.tbl_keys(t) ---@type string[]
             table.sort(keys)
 
+            local res = {} ---@type table<string, any>
             local len = #keys
             for i, v in ipairs(keys) do
                 res[v] = t[keys[i == 1 and len or (i - 1)]]
             end
             return res
         end,
-        ---@param t table<string, any>
-        ---@return table<string, any> res
-        l = function(t)
+        l = function(t) ---@param t table<string, any>
             local keys = vim.tbl_keys(t) ---@type string[]
             table.sort(keys)
-            local len = #keys
+
             local res = {} ---@type table<string, any>
+            local len = #keys
             for i, v in ipairs(keys) do
                 res[v] = t[keys[i == len and 1 or (i + 1)]]
             end
@@ -104,7 +108,7 @@ end
 ---@param y boolean
 ---@return boolean
 function Util.xor(x, y)
-    if vim.fn.has('nvim-0.11') then
+    if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('x', x, 'boolean', false)
         vim.validate('y', y, 'boolean', false)
     else
@@ -121,7 +125,7 @@ end
 ---@param fields string|integer|(string|integer)[]
 ---@return table<string, any> T
 function Util.strip_fields(T, fields)
-    if vim.fn.has('nvim-0.11') then
+    if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('T', T, 'table', false, 'table<string, any>')
         vim.validate(
             'fields',
@@ -166,9 +170,17 @@ end
 ---@param max_instances? integer
 ---@return table<string, any> res
 function Util.strip_values(T, values, max_instances)
-    vim.validate('T', T, 'table', false, 'table<string, any>')
-    vim.validate('values', values, 'table', false, 'any[]')
-    vim.validate('max_instances', max_instances, 'table', true, 'integer')
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('T', T, 'table', false, 'table<string, any>')
+        vim.validate('values', values, 'table', false, 'any[]')
+        vim.validate('max_instances', max_instances, 'table', true, 'integer')
+    else
+        vim.validate({
+            T = { T, 'table' },
+            values = { values, 'table' },
+            max_instances = { max_instances, { 'table', 'nil' } },
+        })
+    end
 
     local Value = require('user_api.check.value')
     local type_not_empty = Value.type_not_empty
@@ -478,7 +490,7 @@ end
 ---@param direction? 'next'|'prev'
 ---@return string
 function Util.displace_letter(c, direction)
-    if vim.fn.has('nvim-0.11') then
+    if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('c', c, 'string', false)
         vim.validate('direction', direction, 'string', true, "'next'|'prev'")
     else

@@ -1,6 +1,5 @@
 local ERROR = vim.log.levels.ERROR
 local uv = vim.uv or vim.loop
-local in_list = vim.list_contains
 
 ---Checking Utilities.
 --- ---
@@ -15,25 +14,19 @@ Check.exists = require('user_api.check.exists')
 ---This function can be useful for (un)loading certain elements
 ---that conflict with the Linux console, for example.
 --- ---
----@return boolean
 function Check.in_console()
-    local fields = Check.value.fields
-
-    local env = vim.fn.environ() ---@type table<string, string>
-
     --- FIXME: This is not a good enough check. Must find a better solution
-    return in_list({ 'linux' }, env['TERM']) and not fields('DISPLAY', env)
+    local env = vim.fn.environ() ---@type table<string, string>
+    return vim.list_contains({ 'linux' }, env.TERM) and not Check.value.fields('DISPLAY', env)
 end
 
 ---Check whether Nvim is running as root (`PID == 0`).
 --- ---
----@return boolean
 function Check.is_root()
     return uv.getuid() == 0
 end
 
----@type User.Check
-local M = setmetatable(Check, {
+local M = setmetatable(Check, { ---@type User.Check
     __index = Check,
     __newindex = function(_, _, _)
         vim.notify('User.Check is read-only!', ERROR)

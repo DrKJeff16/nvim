@@ -227,10 +227,17 @@ end
 ---@param T table<string|integer, any>
 ---@return boolean
 function Value.fields(field, T)
-    local is_tbl = Value.is_tbl
-    vim.validate('field', field, { 'string', 'number', 'table' }, true)
-    vim.validate('T', T, 'table', false)
-    if not is_tbl(field) then
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('field', field, { 'string', 'number', 'table' }, true)
+        vim.validate('T', T, 'table', false)
+    else
+        vim.validate({
+            field = { field, { 'string', 'number', 'table', 'nil' } },
+            T = { T, 'table' },
+        })
+    end
+
+    if not Value.is_tbl(field) then
         return T[field] ~= nil
     end
     for _, v in ipairs(field) do
@@ -246,14 +253,21 @@ end
 ---@param return_keys? boolean
 ---@return boolean|string|integer|(string|integer)[] res
 function Value.tbl_values(values, T, return_keys)
-    vim.validate('values', values, 'table', false, 'any[]|table<string, any>')
-    vim.validate('T', T, 'table', false)
-    vim.validate('return_keys', return_keys, 'boolean', true)
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('values', values, 'table', false, 'any[]|table<string, any>')
+        vim.validate('T', T, 'table', false)
+        vim.validate('return_keys', return_keys, 'boolean', true)
+    else
+        vim.validate({
+            values = { values, 'table' },
+            T = { T, 'table' },
+            return_keys = { return_keys, { 'boolean', 'nil' } },
+        })
+    end
     return_keys = return_keys ~= nil and return_keys or false
 
-    ---@type boolean|string|integer|(string|integer)[]
-    local res = return_keys and {} or false
-    for _, val in next, values do
+    local res = return_keys and {} or false ---@type boolean|string|integer|(string|integer)[]
+    for _, val in pairs(values) do
         for k, v in next, T do
             if return_keys and v == val then
                 table.insert(res, k)
@@ -269,11 +283,7 @@ function Value.tbl_values(values, T, return_keys)
         end
     end
     if return_keys then
-        if #res == 1 then
-            res = res[1]
-        elseif Value.empty(res) then
-            res = false
-        end
+        res = #res == 1 and res[1] or (Value.empty(res) and false or res)
     end
     return res
 end
@@ -283,13 +293,7 @@ end
 ---@return boolean
 function Value.single_type_tbl(type_str, T)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate(
-            'type_str',
-            type_str,
-            'string',
-            false,
-            "'boolean'|'function'|'number'|'string'|'table'"
-        )
+        vim.validate('type_str', type_str, 'string', false)
         vim.validate('T', T, 'table', false)
     else
         vim.validate({

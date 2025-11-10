@@ -3,8 +3,6 @@
 ---@type LazySpec
 return {
     'saghen/blink.indent',
-    dev = true,
-    event = 'VeryLazy', -- WARN: VERY IMPORTANT
     version = false,
     cond = not require('user_api.check').in_console(),
     opts = {},

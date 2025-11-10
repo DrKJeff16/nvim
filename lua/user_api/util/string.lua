@@ -150,7 +150,7 @@ String.digits = {
 ---@param triggers? string[]
 ---@return string new_str
 function String.capitalize(str, use_dot, triggers)
-    if vim.fn.has('nvim-0.11') then
+    if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('str', str, 'string', false)
         vim.validate('use_dot', use_dot, 'boolean', true)
         vim.validate('triggers', triggers, 'table', true, 'string[]')
@@ -206,12 +206,18 @@ end
 ---@param str string
 ---@param target string
 ---@param new string
----@return string
 function String.replace(str, target, new)
-    vim.validate('str', str, 'string', false)
-    vim.validate('target', target, 'string', false)
-    vim.validate('new', new, 'string', false)
-
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('str', str, 'string', false)
+        vim.validate('target', target, 'string', false)
+        vim.validate('new', new, 'string', false)
+    else
+        vim.validate({
+            str = { str, 'string' },
+            target = { target, 'string' },
+            new = { new, 'string' },
+        })
+    end
     if in_list({ str:len(), target:len(), new:len() }, 0) or new == target then
         return str
     end

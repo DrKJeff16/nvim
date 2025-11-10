@@ -178,8 +178,15 @@ end
 ---@param opts? RegPfx|User.Maps.Opts
 ---@return false|nil
 function WK.register(T, opts)
-    vim.validate('T', T, 'table', false, 'AllMaps')
-    vim.validate('opts', opts, 'table', true, 'RegPfx|User.Maps.Opts')
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('T', T, 'table', false, 'AllMaps')
+        vim.validate('opts', opts, 'table', true, 'RegPfx|User.Maps.Opts')
+    else
+        vim.validate({
+            T = { T, 'table' },
+            opts = { opts, { 'table', 'nil' } },
+        })
+    end
 
     if not WK.available() then
         vim.notify('(user.maps.wk.register): `which_key` unavailable', ERROR)

@@ -6,9 +6,9 @@ local INFO = vim.log.levels.INFO
 local Update = {}
 
 ---@param verbose? boolean
----@return string?
+---@return string|nil
 function Update.update(verbose)
-    if vim.fn.has('nvim-0.11') then
+    if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('verbose', verbose, 'boolean', true)
     else
         vim.validate({ verbose = { verbose, { 'boolean', 'nil' } } })

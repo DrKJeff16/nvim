@@ -1,7 +1,9 @@
---- Available modes
+---Available modes.
+--- ---
 ---@alias MapModes 'n'|'i'|'v'|'t'|'o'|'x'
 
---- Array for available modes
+---Array for available modes.
+--- ---
 ---@alias Modes (MapModes)[]
 
 ---@class KeyMapRhsArr
@@ -12,7 +14,8 @@
 ---@field rhs string|function
 ---@field opts? User.Maps.Opts
 
---- Array for `vim.keymap.set` arguments
+---Array for `vim.keymap.set` arguments.
+--- ---
 ---@class KeyMapArr
 ---@field [1] string
 ---@field [2] string|function
@@ -48,12 +51,8 @@
 local ERROR = vim.log.levels.ERROR
 
 ---@param mode MapModes
----@return fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)
 local function variant(mode)
-    ---@param lhs string
-    ---@param rhs string|function
-    ---@param opts? vim.keymap.set.Opts
-    return function(lhs, rhs, opts)
+    return function(lhs, rhs, opts) ---@type fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)
         opts = require('user_api.check.value').is_tbl(opts) and opts or {}
         vim.keymap.set(mode, lhs, rhs, opts)
     end
