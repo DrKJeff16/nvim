@@ -206,24 +206,30 @@ end
 
 L.lsp().setup()
 
-local DISABLE_BT = { 'help', 'prompt', 'quickfix', 'terminal' }
-local DISABLE_FT = {
-    'help',
-    'lazy',
-    'checkhealth',
-    'notify',
-    'qf',
-    'TelescopePrompt',
-    'TelescopeResults',
-}
+local func = vim.schedule_wrap(function()
+    local DISABLE_BT = { 'help', 'prompt', 'quickfix', 'terminal' }
+    local DISABLE_FT = {
+        'help',
+        'lazy',
+        'checkhealth',
+        'notify',
+        'qf',
+        'TelescopePrompt',
+        'TelescopeResults',
+        'ministarter',
+        'Redir',
+    }
 
-local bufnr = vim.api.nvim_get_current_buf()
-local win = vim.api.nvim_get_current_win()
-if not (in_list(DISABLE_FT, ft_get(bufnr)) or in_list(DISABLE_BT, bt_get(bufnr))) then
-    return
-end
+    local bufnr = vim.api.nvim_get_current_buf()
+    local win = vim.api.nvim_get_current_win()
+    if not (in_list(DISABLE_FT, ft_get(bufnr)) or in_list(DISABLE_BT, bt_get(bufnr))) then
+        return
+    end
 
-vim.keymap.set('n', 'q', vim.cmd.bdelete, { noremap = true, silent = true, buffer = bufnr })
-vim.wo[win].number = false
-vim.wo[win].signcolumn = 'no'
+    vim.keymap.set('n', 'q', vim.cmd.bdelete, { noremap = true, silent = true, buffer = bufnr })
+    vim.wo[win].number = false
+    vim.wo[win].signcolumn = 'no'
+end)
+
+func()
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
