@@ -1,13 +1,4 @@
-local User = require('user_api')
-local Check = User.check
-
-local exists = Check.exists.module
-local executable = Check.exists.executable
-
-if not exists('telescope._extensions.file_browser') then
-    return nil
-end
-
+local executable = require('user_api.check.exists').executable
 local Actions = require('telescope._extensions.file_browser.actions')
 local Finders = require('telescope._extensions.file_browser.finders')
 

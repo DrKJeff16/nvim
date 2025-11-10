@@ -87,7 +87,6 @@ end
 ---@param T AuRepeat
 function M.au_repeated(T)
     local Value = require('user_api.check.value')
-
     local is_str = Value.is_str
     local type_not_empty = Value.type_not_empty
 
@@ -98,17 +97,17 @@ function M.au_repeated(T)
 
     for event, t in pairs(T) do
         if not is_str(event) then
-            error('(user_api.util.au.au_repeated): Event is not a string, skipping', ERROR)
+            vim.notify('(user_api.util.au.au_repeated): Event is not a string, skipping', ERROR)
+            return
         end
-
         if not type_not_empty('table', t) then
-            error('(user_api.util.au.au_repeated): Invalid options table, skipping', ERROR)
+            vim.notify('(user_api.util.au.au_repeated): Invalid options table, skipping', ERROR)
+            return
         end
-
         for _, opts in ipairs(t) do
             if not type_not_empty('table', opts) then
                 vim.notify('(user_api.util.au.au_repeated): Option table is empty, skipping', ERROR)
-                break
+                return
             end
 
             au(event, opts)
@@ -132,13 +131,15 @@ function M.au_repeated_events(T)
 
     for _, opts in ipairs(T.opts_tbl) do
         if not type_not_empty('table', opts) then
-            error('(user_api.util.au.au_repeated_events): Options are not a vaild table', ERROR)
+            vim.notify(
+                '(user_api.util.au.au_repeated_events): Options are not a vaild table',
+                ERROR
+            )
+            return
         end
-
         au(T.events, opts)
     end
 end
 
 return M
-
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

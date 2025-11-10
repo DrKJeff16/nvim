@@ -26,9 +26,8 @@ local RTPATHS = {
 ---@type string[]
 Archlinux.rtpaths = setmetatable(RTPATHS, {
     __index = RTPATHS,
-
     __newindex = function(_, _, _)
-        error('User.Distro.Archlinux.RTP table is Read-Only!', ERROR)
+        vim.notify('User.Distro.Archlinux.RTP table is Read-Only!', ERROR)
     end,
 })
 
@@ -58,7 +57,7 @@ end
 local M = setmetatable({}, {
     __index = Archlinux,
     __newindex = function(_, _, _)
-        error('User.Distro.Archlinux table is Read-Only!', ERROR)
+        vim.notify('User.Distro.Archlinux table is Read-Only!', ERROR)
     end,
     ---@param self User.Distro.Archlinux
     __call = function(self)
@@ -68,15 +67,13 @@ local M = setmetatable({}, {
 
         for _, path in ipairs(self.rtpaths) do
             if is_dir(path) then
-                vim.go.rtp = vim.go.rtp .. ',' .. path
+                vim.o.rtp = vim.o.rtp .. ',' .. path
             end
         end
 
         local ok = pcall(vim.cmd.runtime, { 'archlinux.vim', bang = true })
-
         if not ok then
             vim.notify('Bad setup for Arch Linux!', WARN)
-            return
         end
     end,
 })

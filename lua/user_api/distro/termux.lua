@@ -45,7 +45,7 @@ end
 local M = setmetatable({}, {
     __index = Termux,
     __newindex = function(_, _, _)
-        error('User.Distro.Termux is Read-Only!', ERROR)
+        vim.notify('User.Distro.Termux is Read-Only!', ERROR)
     end,
     __call = function(self) ---@param self User.Distro.Termux
         if not (Termux.validate() and is_dir(Termux.PREFIX)) then
@@ -53,7 +53,7 @@ local M = setmetatable({}, {
         end
         for _, path in ipairs(self.rtpaths) do
             if is_dir(path) == 1 then
-                vim.go.rtp = vim.go.rtp .. ',' .. path
+                vim.o.rtp = vim.o.rtp .. ',' .. path
             end
         end
         vim.api.nvim_set_option_value('wrap', true, { scope = 'global' })

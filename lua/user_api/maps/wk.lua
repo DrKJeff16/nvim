@@ -166,12 +166,8 @@ function WK.convert_dict(T)
     local res = {}
 
     for lhs, v in pairs(T) do
-        ---@type string|fun()
-        local rhs = v[1]
-
-        ---@type User.Maps.Opts
-        local opts = is_tbl(v[2]) and v[2] or {}
-
+        local rhs = v[1] ---@type string|function
+        local opts = is_tbl(v[2]) and v[2] or {} ---@type User.Maps.Opts
         table.insert(res, WK.convert(lhs, rhs, opts))
     end
 
@@ -180,7 +176,7 @@ end
 
 ---@param T AllMaps
 ---@param opts? RegPfx|User.Maps.Opts
----@return false?
+---@return false|nil
 function WK.register(T, opts)
     vim.validate('T', T, 'table', false, 'AllMaps')
     vim.validate('opts', opts, 'table', true, 'RegPfx|User.Maps.Opts')
@@ -190,22 +186,16 @@ function WK.register(T, opts)
         return false
     end
 
-    local WKEY = require('which-key')
-
     opts = opts or O.new({ mode = 'n' })
-
     opts.mode = (is_str(opts.mode) and vim.list_contains(MODES, opts.mode)) and opts.mode or 'n'
 
-    ---@type (KeyMapRhsArr|AllMaps|AllModeMaps)[]
-    local filtered = {}
+    local filtered = {} ---@type (KeyMapRhsArr|AllMaps|AllModeMaps)[]
 
     for _, val in pairs(T) do
         table.insert(filtered, val)
     end
-
-    WKEY.add(filtered)
+    require('which-key').add(filtered)
 end
 
 return WK
-
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

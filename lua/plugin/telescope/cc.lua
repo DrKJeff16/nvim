@@ -1,14 +1,3 @@
-local User = require('user_api')
-local Check = User.check
-
-local Keymaps = require('user_api.config.keymaps')
-local exists = Check.exists.module
-local desc = User.maps.desc
-
-if not exists('telescope._extensions.conventional_commits.actions') then
-    return nil
-end
-
 ---@class TelCC
 local CC = {}
 
@@ -16,16 +5,13 @@ local function create_cc()
     local Actions = require('telescope._extensions.conventional_commits.actions')
     local Themes = require('telescope.themes')
     local picker = require('telescope._extensions.conventional_commits.picker')
-    local Opts = {
-        action = Actions.prompt,
-        include_body_and_footer = true,
-    }
+    local Opts = { action = Actions.prompt, include_body_and_footer = true }
     picker(vim.tbl_extend('keep', Opts, Themes.get_dropdown({})))
 end
 
 ---@class TelCC.Opts
 CC.cc = {
-    theme = 'dropdown', -- custom theme
+    theme = 'dropdown',
     action = function(_)
         local entry = {
             display = 'feat       A new feature',
@@ -35,21 +21,18 @@ CC.cc = {
         }
         vim.print(entry)
     end,
-    include_body_and_footer = true, -- Add prompts for commit body and footer
+    include_body_and_footer = true,
 }
 
 function CC.loadkeys()
-    Keymaps({
+    local desc = require('user_api.maps').desc
+    require('user_api.config').keymaps({
         n = {
             ['<leader>Gc'] = { group = '+Commit' },
-            ['<leader>GcC'] = {
-                create_cc,
-                desc('Create Conventional Commit'),
-            },
+            ['<leader>GcC'] = { create_cc, desc('Create Conventional Commit') },
         },
     })
 end
 
 return CC
-
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

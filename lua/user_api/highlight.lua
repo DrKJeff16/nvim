@@ -41,7 +41,8 @@ end
 function Hl.hl_from_arr(A)
     local type_not_empty = require('user_api.check.value').type_not_empty
     if not type_not_empty('table', A) then
-        error('(user_api.highlight.hl_from_arr): Bad argument', ERROR)
+        vim.notify('(user_api.highlight.hl_from_arr): Bad argument', ERROR)
+        return
     end
 
     for _, t in ipairs(A) do

@@ -95,13 +95,16 @@ vim.g.loaded_netrwPlugin = 1
 local L = require('config.lazy')
 L.setup({
     { import = 'plugin.startuptime' },
-    { import = 'plugin.which-key' },
-    { import = 'plugin.luaref' },
-    { import = 'plugin._spec' },
-    { import = 'plugin.notify' },
-    { import = 'plugin.lastplace' },
     { import = 'plugin.mini.icons' },
     { import = 'plugin.web-devicons' },
+    { import = 'plugin.which-key' },
+    { import = 'plugin.notify' },
+    { import = 'plugin.noice' },
+    { import = 'plugin.luaref' },
+    { import = 'plugin.fzf-lua' },
+    { import = 'plugin._spec' },
+    { import = 'plugin.blink-indent' },
+    { import = 'plugin.lastplace' },
     { import = 'plugin.mini.basics' },
     { import = 'plugin.mini.extra' },
     { import = 'plugin.mini.starter' },
@@ -110,7 +113,6 @@ L.setup({
     { import = 'plugin.lspkind' },
     { import = 'plugin.blink_cmp' },
     { import = 'plugin.project' },
-    { import = 'plugin.fzf-lua' },
     { import = 'plugin.lazydev' },
     { import = 'plugin.Comment' },
     { import = 'plugin.autopairs' },
@@ -119,7 +121,6 @@ L.setup({
     { import = 'plugin.persistence' },
     { import = 'plugin.scope' },
     { import = 'plugin.possession' },
-    { import = 'plugin.noice' },
     { import = 'plugin.markdown' },
     { import = 'plugin.markdown.render' },
     { import = 'plugin.ts-comments' },
@@ -136,18 +137,17 @@ L.setup({
     { import = 'plugin.screenkey' },
     { import = 'plugin.hoversplit' },
     { import = 'plugin.outline' },
-    { import = 'plugin.helpview' },
-    { import = 'plugin.buffer-sticks' },
     { import = 'plugin.lualine' },
     { import = 'plugin.bufferline' },
     { import = 'plugin.fzf-nerdfont' },
     { import = 'plugin.zen-mode' },
     { import = 'plugin.todo_comments' },
     { import = 'plugin.doxygen-previewer' },
-    { import = 'plugin.orgmode' },
     { import = 'plugin.co-author' },
-    { import = 'plugin.blink-indent' },
     { import = 'plugin.triforce' },
+    { import = 'plugin.helpview' },
+    -- { import = 'plugin.buffer-sticks' },
+    -- { import = 'plugin.orgmode' },
     -- { import = 'plugin.ibl' },
     -- { import = 'plugin.doxygen' },
     -- { import = 'plugin.pomo' },
@@ -189,10 +189,9 @@ require('user_api.config').keymaps({
 require('user_api').setup()
 
 local Color = L.colorschemes()
-
--- Color('Nightfox')
--- Color('Thorn')
 Color('Tokyonight')
+-- Color('Thorn')
+-- Color('Nightfox')
 -- Color('Conifer')
 -- Color('Tokyodark')
 -- Color('Catppuccin')
@@ -216,7 +215,6 @@ local func = vim.schedule_wrap(function()
         'qf',
         'TelescopePrompt',
         'TelescopeResults',
-        'ministarter',
         'Redir',
     }
 

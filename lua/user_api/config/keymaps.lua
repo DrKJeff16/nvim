@@ -625,11 +625,11 @@ function Keymaps.delete(K, bufnr)
     return ditched_keys
 end
 
----@type table|User.Config.Keymaps|fun(keys: AllModeMaps, bufnr?: integer, load_defaults?: boolean)
+---@type User.Config.Keymaps|fun(keys: AllModeMaps, bufnr?: integer, load_defaults?: boolean)
 local M = setmetatable({}, {
     __index = Keymaps,
     __newindex = function(_, _, _)
-        error('User.Config.Keymaps table is Read-Only!', ERROR)
+        vim.notify('User.Config.Keymaps table is Read-Only!', ERROR)
     end,
     ---@param keys AllModeMaps
     ---@param bufnr? integer

@@ -377,7 +377,7 @@ end
 local M = setmetatable(Value, {
     __index = Value,
     __newindex = function(_, _, _)
-        error('User.Check.Value table is Read-Only!', ERROR)
+        vim.notify('User.Check.Value table is Read-Only!', ERROR)
     end,
 })
 

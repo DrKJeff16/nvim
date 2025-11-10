@@ -71,8 +71,7 @@ function Maps.nop(T, opts, mode, prefix)
     opts = is_tbl(opts) and opts or {}
     opts.silent = is_bool(opts.silent) and opts.silent or true
     if is_int(opts.buffer) then
-        ---@type User.Maps.Opts
-        opts = strip_fields(opts, 'buffer')
+        opts = strip_fields(opts, 'buffer') ---@type User.Maps.Opts
     end
     prefix = is_str(prefix) and prefix or ''
 
@@ -110,13 +109,10 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
             if in_tbl(MODES, mode_choice) then
                 if map_func == 'keymap' then
                     func = Maps.keymap[mode_choice]
-
                     for lhs, v in pairs(t) do
                         v[2] = is_tbl(v[2]) and v[2] or {}
-
                         func(lhs, v[1], v[2])
                     end
-
                     keymap_ran = true
                 end
 
@@ -124,12 +120,9 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
                     if keymap_ran then
                         break
                     end
-
                     if is_str(lhs) then
                         local tbl = {}
-
                         table.insert(tbl, lhs)
-
                         if v[1] ~= nil then
                             table.insert(tbl, v[1])
                         end
@@ -139,19 +132,15 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
                         if bufnr ~= nil then
                             tbl.buffer = bufnr
                         end
-
                         if is_str(v.group) then
                             tbl.group = v.group
                         end
-
                         if is_bool(v.hidden) then
                             tbl.hidden = v.hidden
                         end
-
                         if not is_tbl(v[2]) then
                             v[2] = {}
                         end
-
                         if is_str(v[2].desc) then
                             tbl.desc = v[2].desc
                         end
@@ -181,7 +170,6 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
         ---@cast T AllMaps
         for lhs, v in pairs(T) do
             v[2] = is_tbl(v[2]) and v[2] or {}
-
             func(lhs, v[1], v[2])
         end
         return
@@ -192,7 +180,6 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
         local tbl = {}
         if is_str(lhs) then
             table.insert(tbl, lhs)
-
             if v[1] ~= nil then
                 table.insert(tbl, v[1])
             end
@@ -202,11 +189,9 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
             if bufnr ~= nil then
                 tbl.buffer = bufnr
             end
-
             if is_str(v.group) then
                 tbl.group = v.group
             end
-
             if is_bool(v.hidden) then
                 tbl.hidden = v.hidden
             end
