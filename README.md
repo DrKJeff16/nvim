@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> **This README is in desperate need of a whole rewrite!**
+
+---
+
 <div align="center">
 
 # Jnvim
@@ -7,9 +12,9 @@
 A **modular**, **_obsessively documented_**, **portable**, **platform-agnostic**
 [Neovim](https://github.com/neovim/neovim) config.
 
-</div>
-
 <a href="#"><img src="./assets/Jnvim.jpg" /></a>
+
+</div>
 
 ---
 
