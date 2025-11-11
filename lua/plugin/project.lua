@@ -12,7 +12,7 @@ return {
         require('project').setup({
             log = { enabled = true, logpath = vim.fn.stdpath('state') },
             scope_chdir = 'tab',
-            detection_methods = { 'pattern' },
+            use_lsp = true,
             telescope = { enabled = false, prefer_file_browser = true },
             show_hidden = true,
             fzf_lua = { enabled = true },
@@ -44,7 +44,7 @@ return {
                 ['<leader>pr'] = { vim.cmd.ProjectRecents, desc('Print Recent Projects') },
                 ['<leader>pl'] = { vim.cmd.ProjectLog, desc('Open Project Log Window') },
                 ['<leader>ph'] = { vim.cmd.ProjectHealth, desc('Run `:checkhealth project`') },
-                ['<leader>pf'] = { require('project').run_fzf_lua, desc('Run Fzf-Lua') },
+                ['<leader>pf'] = { vim.cmd.ProjectFzf, desc('Run Fzf-Lua') },
             },
         })
     end,
