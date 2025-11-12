@@ -103,6 +103,7 @@ L.setup({
     { import = 'plugin.luaref' },
     { import = 'plugin.fzf-lua' },
     { import = 'plugin._spec' },
+    { import = 'plugin.mason' },
     { import = 'plugin.blink-indent' },
     { import = 'plugin.lastplace' },
     { import = 'plugin.mini.basics' },
