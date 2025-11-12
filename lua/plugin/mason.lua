@@ -3,7 +3,7 @@
 ---@type LazySpec
 return {
     'mason-org/mason-lspconfig.nvim',
-    lazy = true,
+    version = false,
     dependencies = {
         'neovim/nvim-lspconfig',
         {
