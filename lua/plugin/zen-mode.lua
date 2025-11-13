@@ -4,34 +4,7 @@
 return {
     'folke/zen-mode.nvim',
     version = false,
-    cmd = 'ZenMode',
     cond = not require('user_api.check').in_console(),
-    keys = {
-        {
-            '<leader>Zo',
-            function()
-                require('zen-mode').open()
-            end,
-            desc = 'Open Zen Mode',
-            mode = { 'n' },
-        },
-        {
-            '<leader>Zd',
-            function()
-                require('zen-mode').close()
-            end,
-            desc = 'Close Zen Mode',
-            mode = { 'n' },
-        },
-        {
-            '<leader>Zt',
-            function()
-                require('zen-mode').toggle()
-            end,
-            desc = 'Toggle Zen Mode',
-            mode = { 'n' },
-        },
-    },
     config = function()
         require('zen-mode').setup({
             window = {
@@ -67,7 +40,30 @@ return {
             },
         })
 
-        require('user_api.config').keymaps({ n = { ['<leader>Z'] = { group = '+Zen Mode' } } })
+        local desc = require('user_api.maps').desc
+        require('user_api.config').keymaps({
+            n = {
+                ['<leader>Z'] = { group = '+Zen Mode' },
+                ['<leader>Zo'] = {
+                    function()
+                        require('zen-mode').open()
+                    end,
+                    desc('Open Zen Mode'),
+                },
+                ['<leader>Zd'] = {
+                    function()
+                        require('zen-mode').close()
+                    end,
+                    desc('Close Zen Mode'),
+                },
+                ['<leader>Zt'] = {
+                    function()
+                        require('zen-mode').toggle()
+                    end,
+                    desc('Toggle Zen Mode'),
+                },
+            },
+        })
     end,
 }
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
