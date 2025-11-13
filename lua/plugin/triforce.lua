@@ -24,8 +24,8 @@ return {
                 tier_3 = { min_level = 31, max_level = math.huge, xp_per_level = 3000 },
             },
             xp_rewards = { char = 1, line = 2, save = 20 },
-            require('user_api.config').keymaps({ n = { ['<leader>Tp'] = { group = '+Triforce' } } }),
         })
+        require('user_api.config').keymaps({ n = { ['<leader>T'] = { group = '+Triforce' } } })
     end,
 }
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
