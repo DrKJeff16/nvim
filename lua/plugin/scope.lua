@@ -7,17 +7,15 @@ return {
     init = function()
         vim.o.sessionoptions = 'buffers,tabpages,globals'
     end,
-    config = function()
-        require('scope').setup({
-            hooks = {
-                pre_tab_leave = function()
-                    vim.api.nvim_exec_autocmds('User', { pattern = 'ScopeTabLeavePre' })
-                end,
-                post_tab_enter = function()
-                    vim.api.nvim_exec_autocmds('User', { pattern = 'ScopeTabEnterPost' })
-                end,
-            },
-        })
-    end,
+    opts = {
+        hooks = {
+            pre_tab_leave = function()
+                vim.api.nvim_exec_autocmds('User', { pattern = 'ScopeTabLeavePre' })
+            end,
+            post_tab_enter = function()
+                vim.api.nvim_exec_autocmds('User', { pattern = 'ScopeTabEnterPost' })
+            end,
+        },
+    },
 }
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
