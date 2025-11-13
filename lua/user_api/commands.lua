@@ -17,18 +17,21 @@ Commands.commands = { ---@type table<string, User.Commands.CmdSpec>
                 { plain = true }
             )
             local bufnr = vim.api.nvim_create_buf(true, true)
-
-            vim.api.nvim_open_win(bufnr, true, { vertical = true })
+            local win = vim.api.nvim_open_win(bufnr, true, { vertical = false })
             vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, l)
-            vim.api.nvim_set_option_value('filetype', 'Redir', { buf = bufnr })
-            vim.api.nvim_set_option_value('modified', false, { buf = bufnr })
+            vim.bo[bufnr].filetype = 'Redir'
+            vim.bo[bufnr].modified = false
+            vim.wo[win].number = false
+            vim.wo[win].signcolumn = 'no'
 
-            vim.keymap.set('n', 'q', '<CMD>q!<CR>', { buffer = bufnr })
-            local equal_windows = vim.schedule_wrap(function()
+            vim.keymap.set('n', 'q', function()
+                vim.api.nvim_buf_delete(bufnr, { force = true })
+                pcall(vim.api.nvim_win_close, win, true)
+            end, { buffer = bufnr })
+
+            vim.schedule(function()
                 vim.cmd.wincmd('=')
             end)
-
-            equal_windows()
         end,
         { nargs = '+', complete = 'command', desc = 'Redirect command output to scratch buffer' },
         mappings = {
