@@ -1,56 +1,32 @@
+local uv = vim.uv or vim.loop
 local d_extend = vim.tbl_deep_extend
-local fs_stat = (vim.uv or vim.loop).fs_stat
+local fs_stat = uv.fs_stat
 
-local stdpath = vim.fn.stdpath('config')
+local cfg = vim.fn.stdpath('config')
+local luarocks_path = vim.fn.expand('~/.luarocks/share/lua/5.1')
 
 ---@param client vim.lsp.Client
-local function on_init(client)
-    if client.workspace_folders then
-        local path = client.workspace_folders[1].name
-        local luarc = {
-            path .. '/luarc.json',
-            path .. '/.luarc.json',
-        }
-
-        if path ~= stdpath and (fs_stat(luarc[1]) or fs_stat(luarc[2])) then
-            return
-        end
+local function on_init(client, _)
+    local path = client.workspace_folders[1].name
+    local luarc = { path .. '/luarc.json', path .. '/.luarc.json' }
+    if client.workspace_folders and path ~= cfg and (fs_stat(luarc[1]) or fs_stat(luarc[2])) then
+        return
     end
 
     local library = {
         -- vim.env.VIMRUNTIME,
         vim.api.nvim_get_runtime_file('', true),
-
         '${3rd}/luv/library',
         '${3rd}/busted/library',
     }
-
     client.config.settings.Lua = d_extend('force', client.config.settings.Lua or {}, {
-        diagnostics = {
-            enable = true,
-            globals = { 'vim' },
-        },
-        runtime = {
-            -- Tell the language server which version of Lua you're using (most
-            -- likely LuaJIT in the case of Neovim)
-            version = 'LuaJIT',
-            -- Tell the language server how to find Lua modules same way as Neovim
-            -- (see `:h lua-module-load`)
-            path = {
-                'lua/?.lua',
-                'lua/?/init.lua',
-            },
-        },
-        workspace = {
-            checkThirdParty = false,
-            useGitIgnore = true,
-            library = library,
-        },
+        diagnostics = { enable = true, globals = { 'vim' } },
+        runtime = { version = 'LuaJIT', path = { 'lua/?.lua', 'lua/?/init.lua' } },
+        workspace = { checkThirdParty = false, useGitIgnore = true, library = library },
     })
 end
 
----@type vim.lsp.ClientConfig
-return {
+return { ---@type vim.lsp.ClientConfig
     cmd = { 'lua-language-server' },
     filetypes = { 'lua' },
     on_init = on_init,
@@ -61,7 +37,6 @@ return {
         '.stylua.toml',
         'stylua.toml',
         'selene.toml',
-        'selene.yml',
         '.git',
     },
     settings = {
@@ -71,7 +46,7 @@ return {
             completion = {
                 autoRequire = false,
                 callSnippet = 'Replace',
-                displayContext = 8,
+                displayContext = 12,
                 enable = true,
                 keywordSnippet = 'Replace',
                 postfix = '@',
@@ -80,16 +55,8 @@ return {
                 showWord = 'Enable',
                 workspaceWord = true,
             },
-            diagnostics = {
-                enable = true,
-            },
-            format = {
-                enable = true,
-                defaultConfig = {
-                    indent_style = 'space',
-                    indent_size = 4,
-                },
-            },
+            diagnostics = { enable = true, libraryFiles = 'Opened' },
+            format = { enable = false },
             hint = {
                 arrayIndex = 'Auto',
                 await = true,
@@ -116,14 +83,11 @@ return {
                     '?.lua',
                     'lua/?.lua',
                     'lua/?/init.lua',
+                    luarocks_path .. '/?.lua',
+                    luarocks_path .. '/?/init.lua',
                 },
             },
-            semantic = {
-                annotation = true,
-                enable = true,
-                keyword = true,
-                variable = true,
-            },
+            semantic = { annotation = true, enable = true, keyword = true, variable = true },
             signatureHelp = { enable = true },
             type = {
                 castNumberToInteger = false,
@@ -131,13 +95,11 @@ return {
                 weakNilCheck = true,
                 weakUnionCheck = true,
             },
-            window = {
-                progressBar = false,
-                statusBar = false,
-            },
+            window = { progressBar = false, statusBar = false },
             workspace = {
                 checkThirdParty = false,
                 useGitIgnore = true,
+                library = { luarocks_path },
             },
         },
     },
