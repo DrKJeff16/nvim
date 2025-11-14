@@ -17,10 +17,7 @@ local Opts = {
     defaults = {
         layout_strategy = 'flex',
         layout_config = {
-            vertical = {
-                width = floor(vim.o.columns * 3 / 4),
-                height = floor(vim.o.lines * 5 / 6),
-            },
+            vertical = { width = floor(vim.o.columns * 3 / 4), height = floor(vim.o.lines * 5 / 6) },
             horizontal = {
                 width = floor(vim.o.columns * 4 / 5),
                 height = floor(vim.o.lines * 4 / 5),
@@ -98,32 +95,23 @@ local Opts = {
         vim_options = { theme = 'ivy' },
     },
 }
+
 if exists('trouble.sources.telescope') then
-    local pfx = require('trouble.sources.telescope')
-    local open_with_trouble = pfx.open
+    local open_with_trouble = require('trouble.sources.telescope').open
     Opts.defaults.mappings.i['<C-T>'] = open_with_trouble
     Opts.defaults.mappings.n['<C-T>'] = open_with_trouble
 end
-if exists('plugin.telescope.file_browser') then
-    local pfx = require('plugin.telescope.file_browser')
-    if pfx then
-        Opts.extensions.file_browser = pfx.file_browser
-        pfx.loadkeys()
-    end
+if require('plugin.telescope.file_browser') then
+    Opts.extensions.file_browser = require('plugin.telescope.file_browser').file_browser
+    require('plugin.telescope.file_browser').loadkeys()
 end
-if exists('plugin.telescope.cc') then
-    local pfx = require('plugin.telescope.cc')
-    if pfx then
-        Opts.extensions.conventional_commits = pfx.cc
-        pfx.loadkeys()
-    end
+if require('plugin.telescope.cc') then
+    Opts.extensions.conventional_commits = require('plugin.telescope.cc').cc
+    require('plugin.telescope.cc').loadkeys()
 end
-if exists('plugin.telescope.tabs') then
-    local pfx = require('plugin.telescope.tabs')
-    if pfx then
-        pfx.create()
-        pfx.loadkeys()
-    end
+if require('plugin.telescope.tabs') then
+    require('plugin.telescope.tabs').create()
+    require('plugin.telescope.tabs').loadkeys()
 end
 
 require('telescope').setup(Opts)
@@ -160,7 +148,7 @@ local Keys = { ---@type AllMaps
     ['<leader>li'] = { ':Telescope lsp_implementations<CR>', desc('Telelcope Lsp Implementations') },
     ['<leader>lwD'] = {
         ':Telescope lsp_dynamic_workspace_symbols<CR>',
-        desc('Telescope Dynamic Workspace Symbols'),
+        desc('Telescope Dynamic Symbols'),
     },
     ['<leader>lwd'] = {
         ':Telescope lsp_workspace_symbols<CR>',
@@ -183,6 +171,7 @@ local known_exts = { ---@type table<string, { [1]: string, keys?: AllMaps }>
         'heading',
         keys = { ['<leader><C-t>eh'] = { ':Telescope heading<CR>', desc('Heading Picker') } },
     },
+    ['telescope._extensions.lazy_plugins'] = { 'lazy_plugins' },
     ['telescope._extensions.undo'] = {
         'undo',
         keys = {
@@ -296,11 +285,11 @@ vim.api.nvim_create_autocommand('User', {
     group = vim.api.nvim_create_augroup('UserTelescope', { clear = true }),
     pattern = 'TelescopePreviewerLoaded',
     callback = function(ev)
-        local wo = vim.wo[vim.api.nvim_get_current_win()]
+        local win = vim.api.nvim_get_current_win()
         if ev.data.filetype ~= 'help' then
-            wo.number = true
+            vim.wo[win].number = true
         elseif ev.data.bufname:match('*.csv') then
-            wo.wrap = false
+            vim.wo[win].wrap = false
         end
     end,
 })

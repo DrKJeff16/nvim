@@ -12,6 +12,8 @@ return {
             'OliverChao/telescope-picker-list.nvim',
             'nvim-telescope/telescope-file-browser.nvim',
             'crispgm/telescope-heading.nvim',
+            { 'tpope/vim-fugitive', verbose = false },
+            { 'polirritmico/telescope-lazy-plugins.nvim', dev = true },
             {
                 'nvim-telescope/telescope-fzf-native.nvim',
                 version = false,
