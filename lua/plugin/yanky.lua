@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'gbprod/yanky.nvim',
     version = false,
     dependencies = { 'kkharji/sqlite.lua', 'nvim-telescope/telescope.nvim', 'folke/snacks.nvim' },
@@ -23,7 +22,7 @@ return {
             preserve_cursor_position = { enabled = true },
             textobj = { enabled = true },
         })
-        require('telescope').load_extension('yank_history')
+        pcall(require('telescope').load_extension, 'yank_history')
 
         vim.keymap.set({ 'o', 'x' }, 'iy', function()
             require('yanky.textobj').last_put()

@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'OXY2DEV/helpview.nvim',
     lazy = false,
     version = false,

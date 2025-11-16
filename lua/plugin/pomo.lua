@@ -1,11 +1,9 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'epwalsh/pomo.nvim',
     cmd = { 'TimerStart', 'TimerRepeat', 'TimerSession' },
     version = false,
-    dependencies = { 'rcarriga/nvim-notify' },
     opts = {
         update_interval = 1000,
         notifiers = {

@@ -1,7 +1,8 @@
 ---@module 'lazy'
+---@module 'ibl'
 
 ---@param htype string
----@param func fun(...: any): any
+---@param func function
 ---@param opts? ibl.hooks.options
 local function reg(htype, func, opts)
     if not opts or require('user_api.check.value').empty(opts) then
@@ -22,8 +23,7 @@ local Hilite = { ---@type HlDict
 }
 local highlight = vim.tbl_keys(Hilite) ---@type string[]
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'lukas-reineke/indent-blankline.nvim',
     main = 'ibl',
     version = false,
@@ -43,15 +43,11 @@ return {
                 char = { '╎', '╏', '┆', '┇', '┊', '┋' },
                 tab_char = { '▏', '▎', '▍', '▌', '▋', '▊', '▉', '█' },
             },
-            whitespace = {
-                highlight = { 'Whitespace', 'NonText' },
-                remove_blankline_trail = false,
-            },
+            whitespace = { highlight = { 'Whitespace', 'NonText' }, remove_blankline_trail = false },
             scope = { highlight = highlight },
         })
 
-        ---@type { [1]: string, [2]: (fun(...: any): any), [3]?: ibl.hooks.options }[]
-        local arg_tbl = {
+        local arg_tbl = { ---@type { [1]: string, [2]: function, [3]?: ibl.hooks.options }[]
             {
                 require('ibl.hooks').type.ACTIVE,
                 function(bufnr) ---@param bufnr integer

@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'wsdjeg/scrollbar.vim',
     version = false,
     cond = not require('user_api.check').in_console(),
@@ -18,6 +17,7 @@ return {
                 'notify',
                 'startify',
                 'NvimTree',
+                'ministarter',
                 'neo-tree',
                 'lazy',
             },

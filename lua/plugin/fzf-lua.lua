@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'ibhagwan/fzf-lua',
     version = false,
     dependencies = { 'nvim-tree/nvim-web-devicons', 'nvim-mini/mini.icons' },

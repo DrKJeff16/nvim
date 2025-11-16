@@ -1,18 +1,15 @@
 ---@module 'lazy'
 ---@module 'snacks'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'folke/snacks.nvim',
     lazy = false,
     version = false,
     priority = 1000,
     keys = {
         {
-            '<leader><leader>',
-            function()
-                require('snacks').picker.commands()
-            end,
+            '<leader><A-s>',
+            require('snacks').picker.commands,
             mode = { 'n' },
             desc = 'Snacks Picker',
         },
@@ -24,76 +21,47 @@ return {
             focus = 'input',
             layout = {
                 cycle = true,
-                --- Use the default layout or vertical if the window is too narrow
                 preset = function()
                     return vim.o.columns >= 120 and 'default' or 'vertical'
                 end,
             },
-            ---@type snacks.picker.matcher.Config
-            matcher = {
-                fuzzy = true, -- use fuzzy matching
-                smartcase = true, -- use smartcase
-                ignorecase = false, -- use ignorecase
-                sort_empty = false, -- sort results when the search string is empty
-                filename_bonus = true, -- give bonus for matching file names (last part of the path)
-                file_pos = true, -- support patterns like `file:line:col` and `file:line`
-                -- the bonusses below, possibly require string concatenation and path normalization,
-                -- so this can have a performance impact for large lists and increase memory usage
-                cwd_bonus = true, -- give bonus for matching files in the cwd
-                frecency = false, -- frecency bonus
-                history_bonus = false, -- give more weight to chronological order
+            matcher = { ---@type snacks.picker.matcher.Config
+                fuzzy = true,
+                smartcase = true,
+                ignorecase = false,
+                sort_empty = false,
+                filename_bonus = true,
+                file_pos = true,
+                cwd_bonus = true,
+                frecency = false,
+                history_bonus = false,
             },
-            sort = {
-                -- default sort is by score, text length and index
-                fields = { 'score:desc', '#text', 'idx' },
-            },
-            ui_select = true, -- replace `vim.ui.select` with the snacks picker
+            sort = { fields = { 'score:desc', '#text', 'idx' } },
+            ui_select = true,
             formatters = { ---@type snacks.picker.formatters.Config
-                text = {
-                    ft = nil, ---@type string? filetype for highlighting
-                },
+                text = { ft = nil },
                 file = {
-                    filename_first = false, -- display filename before the file path
-                    truncate = 40, -- truncate the file path to (roughly) this length
-                    filename_only = false, -- only show the filename
-                    icon_width = 2, -- width of the icon (in characters)
-                    git_status_hl = true, -- use the git status highlight group for the filename
+                    filename_first = false,
+                    truncate = 40,
+                    filename_only = false,
+                    icon_width = 2,
+                    git_status_hl = true,
                 },
-                selected = {
-                    show_always = true, -- only show the selected column when there are multiple selections
-                    unselected = true, -- use the unselected icon for unselected items
-                },
-                severity = {
-                    icons = true, -- show severity icons
-                    level = true, -- show severity level
-                    ---@type "left"|"right"
-                    pos = 'left', -- position of the diagnostics
-                },
+                selected = { show_always = true, unselected = true },
+                severity = { icons = true, level = true, pos = 'left' },
             },
-            ---@type snacks.picker.previewers.Config
-            previewers = {
-                diff = {
-                    builtin = true, -- use Neovim for previewing diffs (true) or use an external tool (false)
-                    cmd = { 'delta' }, -- example to show a diff with delta
-                },
-                git = {
-                    builtin = true, -- use Neovim for previewing git output (true) or use git (false)
-                    args = {}, -- additional arguments passed to the git command. Useful to set pager options usin `-c ...`
-                },
-                file = {
-                    max_size = 1024 * 1024, -- 1MB
-                    max_line_length = 500, -- max line length
-                    ft = nil, ---@type string? filetype for highlighting. Use `nil` for auto detect
-                },
-                man_pager = nil, ---@type string? MANPAGER env to use for `man` preview
+            previewers = { ---@type snacks.picker.previewers.Config
+                diff = { builtin = true, cmd = { 'delta' } },
+                git = { builtin = true, args = {} },
+                file = { max_size = 1024 * 1024, max_line_length = 500, ft = nil },
+                man_pager = nil,
             },
-            ---@type snacks.picker.jump.Config
-            jump = {
-                jumplist = true, -- save the current position in the jumplist
-                tagstack = true, -- save the current position in the tagstack
-                reuse_win = false, -- reuse an existing window if the buffer is already open
-                close = true, -- close the picker when jumping/editing to a location (defaults to true)
-                match = false, -- jump to the first match position. (useful for `lines`)
+            jump = { ---@type snacks.picker.jump.Config
+                jumplist = true,
+                tagstack = true,
+                reuse_win = false,
+                close = true,
+                match = false,
             },
             toggles = {
                 follow = 'f',
@@ -105,8 +73,6 @@ return {
             win = {
                 input = {
                     keys = {
-                        -- to close the picker on ESC instead of going to normal mode,
-                        -- add the following keymap to your config
                         -- ["<Esc>"] = { "close", mode = { "n", "i" } },
                         G = 'list_bottom',
                         ['/'] = 'toggle_focus',
@@ -158,11 +124,8 @@ return {
                         k = 'list_up',
                         q = 'close',
                     },
-                    b = {
-                        minipairs_disable = true,
-                    },
+                    b = { minipairs_disable = true },
                 },
-                -- result list window
                 list = {
                     keys = {
                         G = 'list_bottom',
@@ -207,12 +170,8 @@ return {
                         zt = 'list_scroll_top',
                         zz = 'list_scroll_center',
                     },
-                    wo = {
-                        conceallevel = 2,
-                        concealcursor = 'nvc',
-                    },
+                    wo = { conceallevel = 2, concealcursor = 'nvc' },
                 },
-                -- preview window
                 preview = {
                     keys = {
                         ['<A-w>'] = 'cycle_win',
@@ -222,25 +181,11 @@ return {
                     },
                 },
             },
-            ---@type snacks.picker.icons
-            icons = {
-                files = {
-                    enabled = true, -- show file icons
-                    dir = '󰉋 ',
-                    dir_open = '󰝰 ',
-                    file = '󰈔 ',
-                },
-                keymaps = {
-                    nowait = '󰓅 ',
-                },
-                tree = {
-                    vertical = '│ ',
-                    middle = '├╴',
-                    last = '└╴',
-                },
-                undo = {
-                    saved = ' ',
-                },
+            icons = { ---@type snacks.picker.icons
+                files = { enabled = true, dir = '󰉋 ', dir_open = '󰝰 ', file = '󰈔 ' },
+                keymaps = { nowait = '󰓅 ' },
+                tree = { vertical = '│ ', middle = '├╴', last = '└╴' },
+                undo = { saved = ' ' },
                 ui = {
                     live = '󰐰 ',
                     hidden = 'h',
@@ -248,12 +193,11 @@ return {
                     follow = 'f',
                     selected = '● ',
                     unselected = '○ ',
-                    -- selected = " ",
                 },
                 git = {
-                    enabled = true, -- show git icons
-                    commit = '󰜘 ', -- used by git log
-                    staged = '●', -- staged changes. always overrides the type icons
+                    enabled = true,
+                    commit = '󰜘 ',
+                    staged = '●',
                     added = '',
                     deleted = '',
                     ignored = ' ',
@@ -262,12 +206,7 @@ return {
                     unmerged = ' ',
                     untracked = '?',
                 },
-                diagnostics = {
-                    Error = ' ',
-                    Warn = ' ',
-                    Hint = ' ',
-                    Info = ' ',
-                },
+                diagnostics = { Error = ' ', Warn = ' ', Hint = ' ', Info = ' ' },
                 lsp = {
                     unavailable = '',
                     enabled = ' ',
@@ -315,22 +254,15 @@ return {
                     Variable = '󰀫 ',
                 },
             },
-            ---@type snacks.picker.db.Config
-            db = {
-                -- path to the sqlite3 library
-                -- If not set, it will try to load the library by name.
-                -- On Windows it will download the library from the internet.
-                sqlite3_path = nil, ---@type string?
-            },
-            ---@type snacks.picker.debug
-            debug = {
-                scores = false, -- show scores in the list
-                leaks = false, -- show when pickers don't get garbage collected
-                explorer = false, -- show explorer debug info
-                files = false, -- show file debug info
-                grep = false, -- show file debug info
-                proc = false, -- show proc debug info
-                extmarks = false, -- show extmarks errors
+            db = { sqlite3_path = nil }, ---@type snacks.picker.db.Config
+            debug = { ---@type snacks.picker.debug
+                scores = false,
+                leaks = false,
+                explorer = false,
+                files = false,
+                grep = false,
+                proc = false,
+                extmarks = false,
             },
         },
         dim = { enabled = true },
@@ -339,3 +271,4 @@ return {
         notify = { enabled = true },
     },
 }
+--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

@@ -1,9 +1,7 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'jiaoshijie/undotree',
-    dev = true,
     version = false,
     dependencies = { 'nvim-lua/plenary.nvim' },
     enabled = false,
@@ -35,10 +33,12 @@ return {
                 q = 'quit',
             },
         })
+
         local desc = require('user_api.maps').desc
         require('user_api.config').keymaps({
             n = { ['<leader><M-u>'] = { require('undotree').toggle, desc('Toggle UndoTree') } },
         })
+
         vim.api.nvim_create_user_command('Undotree', function(ctx)
             if vim.tbl_isempty(ctx.fargs) then
                 require('undotree').toggle()

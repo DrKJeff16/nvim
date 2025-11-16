@@ -1,158 +1,150 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'bngarren/checkmate.nvim',
     ft = 'markdown',
     version = false,
-    opts = { ---@type checkmate.Config
-        enabled = true,
-        notify = true,
-        files = {
-            'todo',
-            'TODO',
-            'todo.md',
-            'TODO.md',
-            '*.todo',
-            '*.todo.md',
-        },
-        log = { level = 'warn', use_file = true },
-        -- Default keymappings
-        keys = {
-            ['<leader><C-c>t'] = {
-                rhs = '<cmd>Checkmate toggle<CR>',
-                desc = 'Toggle todo item',
-                modes = { 'n', 'v' },
-            },
-            ['<leader><C-c>c'] = {
-                rhs = '<cmd>Checkmate check<CR>',
-                desc = 'Set todo item as checked (done)',
-                modes = { 'n', 'v' },
-            },
-            ['<leader><C-c>u'] = {
-                rhs = '<cmd>Checkmate uncheck<CR>',
-                desc = 'Set todo item as unchecked (not done)',
-                modes = { 'n', 'v' },
-            },
-            ['<leader><C-c>='] = {
-                rhs = '<cmd>Checkmate cycle_next<CR>',
-                desc = 'Cycle todo item(s) to the next state',
-                modes = { 'n', 'v' },
-            },
-            ['<leader><C-c>-'] = {
-                rhs = '<cmd>Checkmate cycle_previous<CR>',
-                desc = 'Cycle todo item(s) to the previous state',
-                modes = { 'n', 'v' },
-            },
-            ['<leader><C-c>n'] = {
-                rhs = '<cmd>Checkmate create<CR>',
-                desc = 'Create todo item',
-                modes = { 'n', 'v' },
-            },
-            ['<leader><C-c>R'] = {
-                rhs = '<cmd>Checkmate remove_all_metadata<CR>',
-                desc = 'Remove all metadata from a todo item',
-                modes = { 'n', 'v' },
-            },
-            ['<leader><C-c>a'] = {
-                rhs = '<cmd>Checkmate archive<CR>',
-                desc = 'Archive checked/completed todo items (move to bottom section)',
-                modes = { 'n' },
-            },
-            ['<leader><C-c>v'] = {
-                rhs = '<cmd>Checkmate metadata select_value<CR>',
-                desc = 'Update the value of a metadata tag under the cursor',
-                modes = { 'n' },
-            },
-            ['<leader><C-c>]'] = {
-                rhs = '<cmd>Checkmate metadata jump_next<CR>',
-                desc = 'Move cursor to next metadata tag',
-                modes = { 'n' },
-            },
-            ['<leader><C-c>['] = {
-                rhs = '<cmd>Checkmate metadata jump_previous<CR>',
-                desc = 'Move cursor to previous metadata tag',
-                modes = { 'n' },
-            },
-        },
-        default_list_marker = '-',
-        todo_states = {
-            unchecked = { marker = '□', order = 1 }, ---@diagnostic disable-line: missing-fields
-            checked = { marker = '✔', order = 2 }, ---@diagnostic disable-line: missing-fields
-        },
-        style = {},
-        enter_insert_after_new = true,
-        smart_toggle = {
-            enabled = true,
-            include_cycle = false,
-            check_down = 'direct_children',
-            uncheck_down = 'none',
-            check_up = 'direct_children',
-            uncheck_up = 'direct_children',
-        },
-        show_todo_count = true,
-        todo_count_position = 'eol',
-        todo_count_recursive = true,
-        use_metadata_keymaps = true,
-        metadata = {
-            priority = {
-                style = function(context)
-                    local value = context.value:lower()
-                    if value == 'high' then
-                        return { fg = '#ff5555', bold = true }
-                    end
-                    if value == 'medium' then
-                        return { fg = '#ffb86c' }
-                    end
-                    if value == 'low' then
-                        return { fg = '#8be9fd' }
-                    end
-                    return { fg = '#8be9fd' }
-                end,
-                get_value = function()
-                    return 'medium'
-                end,
-                choices = function()
-                    return { 'low', 'medium', 'high' }
-                end,
-                key = '<leader><C-c>p',
-                sort_order = 10,
-                jump_to_on_insert = 'value',
-                select_on_insert = true,
-            },
-            started = {
-                aliases = { 'init' },
-                style = { fg = '#9fd6d5' },
-                get_value = function()
-                    return tostring(os.date('%m/%d/%y %H:%M'))
-                end,
-                key = '<leader><C-c>s',
-                sort_order = 20,
-            },
-            done = {
-                aliases = { 'completed', 'finished' },
-                style = { fg = '#96de7a' },
-                get_value = function()
-                    return tostring(os.date('%m/%d/%y %H:%M'))
-                end,
-                key = '<leader><C-c>d',
-                on_add = function(todo_item)
-                    require('checkmate').set_todo_item(todo_item, 'checked')
-                end,
-                on_remove = function(todo_item)
-                    require('checkmate').set_todo_item(todo_item, 'unchecked')
-                end,
-                sort_order = 30,
-            },
-        },
-        archive = {
-            heading = { title = 'Archive', level = 2 },
-            parent_spacing = 0,
-            newest_first = true,
-        },
-        linter = { enabled = true },
-    },
     cond = not vim.g.vscode and true or false,
-    enabled = false,
+    config = function()
+        require('checkmate').setup({
+            enabled = true,
+            notify = true,
+            files = { 'todo', 'TODO', 'todo.md', 'TODO.md', '*.todo', '*.todo.md' },
+            log = { level = 'warn', use_file = true },
+            keys = {
+                ['<leader><C-c>t'] = {
+                    rhs = '<cmd>Checkmate toggle<CR>',
+                    desc = 'Toggle todo item',
+                    modes = { 'n', 'v' },
+                },
+                ['<leader><C-c>c'] = {
+                    rhs = '<cmd>Checkmate check<CR>',
+                    desc = 'Set todo item as checked (done)',
+                    modes = { 'n', 'v' },
+                },
+                ['<leader><C-c>u'] = {
+                    rhs = '<cmd>Checkmate uncheck<CR>',
+                    desc = 'Set todo item as unchecked (not done)',
+                    modes = { 'n', 'v' },
+                },
+                ['<leader><C-c>='] = {
+                    rhs = '<cmd>Checkmate cycle_next<CR>',
+                    desc = 'Cycle todo item(s) to the next state',
+                    modes = { 'n', 'v' },
+                },
+                ['<leader><C-c>-'] = {
+                    rhs = '<cmd>Checkmate cycle_previous<CR>',
+                    desc = 'Cycle todo item(s) to the previous state',
+                    modes = { 'n', 'v' },
+                },
+                ['<leader><C-c>n'] = {
+                    rhs = '<cmd>Checkmate create<CR>',
+                    desc = 'Create todo item',
+                    modes = { 'n', 'v' },
+                },
+                ['<leader><C-c>R'] = {
+                    rhs = '<cmd>Checkmate remove_all_metadata<CR>',
+                    desc = 'Remove all metadata from a todo item',
+                    modes = { 'n', 'v' },
+                },
+                ['<leader><C-c>a'] = {
+                    rhs = '<cmd>Checkmate archive<CR>',
+                    desc = 'Archive checked/completed todo items (move to bottom section)',
+                    modes = { 'n' },
+                },
+                ['<leader><C-c>v'] = {
+                    rhs = '<cmd>Checkmate metadata select_value<CR>',
+                    desc = 'Update the value of a metadata tag under the cursor',
+                    modes = { 'n' },
+                },
+                ['<leader><C-c>]'] = {
+                    rhs = '<cmd>Checkmate metadata jump_next<CR>',
+                    desc = 'Move cursor to next metadata tag',
+                    modes = { 'n' },
+                },
+                ['<leader><C-c>['] = {
+                    rhs = '<cmd>Checkmate metadata jump_previous<CR>',
+                    desc = 'Move cursor to previous metadata tag',
+                    modes = { 'n' },
+                },
+            },
+            default_list_marker = '-',
+            todo_states = {
+                unchecked = { marker = '□', order = 1 },
+                checked = { marker = '✔', order = 2 },
+            },
+            style = {},
+            enter_insert_after_new = true,
+            smart_toggle = {
+                enabled = true,
+                include_cycle = false,
+                check_down = 'direct_children',
+                uncheck_down = 'none',
+                check_up = 'direct_children',
+                uncheck_up = 'direct_children',
+            },
+            show_todo_count = true,
+            todo_count_position = 'eol',
+            todo_count_recursive = true,
+            use_metadata_keymaps = true,
+            metadata = {
+                priority = {
+                    style = function(context)
+                        local value = context.value:lower()
+                        if value == 'high' then
+                            return { fg = '#ff5555', bold = true }
+                        end
+                        if value == 'medium' then
+                            return { fg = '#ffb86c' }
+                        end
+                        if value == 'low' then
+                            return { fg = '#8be9fd' }
+                        end
+                        return { fg = '#8be9fd' }
+                    end,
+                    get_value = function()
+                        return 'medium'
+                    end,
+                    choices = function()
+                        return { 'low', 'medium', 'high' }
+                    end,
+                    key = '<leader><C-c>p',
+                    sort_order = 10,
+                    jump_to_on_insert = 'value',
+                    select_on_insert = true,
+                },
+                started = {
+                    aliases = { 'init' },
+                    style = { fg = '#9fd6d5' },
+                    get_value = function()
+                        return tostring(os.date('%m/%d/%y %H:%M'))
+                    end,
+                    key = '<leader><C-c>s',
+                    sort_order = 20,
+                },
+                done = {
+                    aliases = { 'completed', 'finished' },
+                    style = { fg = '#96de7a' },
+                    get_value = function()
+                        return tostring(os.date('%m/%d/%y %H:%M'))
+                    end,
+                    key = '<leader><C-c>d',
+                    on_add = function(todo_item)
+                        require('checkmate').set_todo_item(todo_item, 'checked')
+                    end,
+                    on_remove = function(todo_item)
+                        require('checkmate').set_todo_item(todo_item, 'unchecked')
+                    end,
+                    sort_order = 30,
+                },
+            },
+            archive = {
+                heading = { title = 'Archive', level = 2 },
+                parent_spacing = 0,
+                newest_first = true,
+            },
+            linter = { enabled = true },
+        })
+    end,
 }
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

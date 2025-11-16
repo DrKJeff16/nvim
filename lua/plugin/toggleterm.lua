@@ -1,6 +1,17 @@
 ---@module 'lazy'
 
-local floor = math.floor
+---@param arg string
+---@return function
+local function wincmd(arg)
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('arg', arg, 'string', false)
+    else
+        vim.validate({ arg = { arg, { 'string' } } })
+    end
+    return function()
+        vim.cmd.wincmd(arg)
+    end
+end
 
 local function set_terminal_keymaps(ev) ---@param ev vim.api.keyset.create_autocmd.callback_args
     if not ev then
@@ -10,63 +21,36 @@ local function set_terminal_keymaps(ev) ---@param ev vim.api.keyset.create_autoc
     local desc = require('user_api.maps').desc
     require('user_api.config').keymaps({
         t = {
-            ['<Esc>'] = { [[<C-\><C-n>]], desc('Escape Terminal', true, bufnr) },
-            ['<C-e>'] = { [[<C-\><C-n>]], desc('Escape Terminal', true, bufnr) },
-            ['<C-w>'] = { [[<C-\><C-n><C-w>w]], desc('Switch Window', true, bufnr) },
-            ['<C-h>'] = {
-                function()
-                    vim.cmd.wincmd('h')
-                end,
-                desc('Goto Left Window', true, bufnr),
-            },
-            ['<C-j>'] = {
-                function()
-                    vim.cmd.wincmd('j')
-                end,
-                desc('Goto Down Window', true, bufnr),
-            },
-            ['<C-k>'] = {
-                function()
-                    vim.cmd.wincmd('k')
-                end,
-                desc('Goto Up Window', true, bufnr),
-            },
-            ['<C-l>'] = {
-                function()
-                    vim.cmd.wincmd('l')
-                end,
-                desc('Goto Right Window', true, bufnr),
-            },
+            ['<Esc>'] = { '<C-\\><C-n>', desc('Escape Terminal', true, bufnr) },
+            ['<C-e>'] = { '<C-\\><C-n>', desc('Escape Terminal', true, bufnr) },
+            ['<C-w>'] = { '<C-\\><C-n><C-w>w', desc('Switch Window', true, bufnr) },
+            ['<C-h>'] = { wincmd('h'), desc('Goto Left Window', true, bufnr) },
+            ['<C-j>'] = { wincmd('j'), desc('Goto Down Window', true, bufnr) },
+            ['<C-k>'] = { wincmd('k'), desc('Goto Up Window', true, bufnr) },
+            ['<C-l>'] = { wincmd('l'), desc('Goto Right Window', true, bufnr) },
         },
     }, bufnr)
 end
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'akinsho/toggleterm.nvim',
     version = false,
-    keys = {
-        {
-            '<A-t>',
-            '<CMD>exe v:count1 . "ToggleTerm"<CR>',
-            mode = { 'n', 'i', 't' },
-            desc = 'ToggleTerm',
-            noremap = true,
-        },
-    },
     enabled = not require('user_api.check').in_console(),
     config = function()
         require('toggleterm').setup({
             size = function(term) ---@param term Terminal
-                local cols = vim.o.columns
-                return term.direction == 'vertical' and floor(cols * 0.65) or floor(cols * 0.85)
+                return math.floor(vim.o.columns * (term.direction == 'vertical' and 0.65 or 0.85))
             end,
-            open_mapping = [[<A-t>]],
+            open_mapping = '<A-t>',
             autochdir = true,
             hide_numbers = true,
             direction = 'float',
             close_on_exit = true,
-            opts = { border = 'rounded', title_pos = 'center', width = floor(vim.o.columns * 0.85) },
+            opts = {
+                border = 'rounded',
+                title_pos = 'center',
+                width = math.floor(vim.o.columns * 0.85),
+            },
             highlights = {
                 Normal = { guibg = '#291d3f' },
                 NormalFloat = { link = 'Normal' },
@@ -98,11 +82,9 @@ return {
         })
 
         local desc = require('user_api.maps').desc
-        require('user_api.config').keymaps({
-            n = {
-                ['<leader><A-t>'] = { '<CMD>exe v:count1 . "ToggleTerm"<CR>', desc('Toggleterm') },
-            },
-        })
+        local cmd = ':exe v:count1 . "ToggleTerm"<CR>'
+        local map = { ['<A-t>'] = { cmd, desc('Toggleterm') } }
+        require('user_api.config').keymaps({ n = map, i = map, t = map })
     end,
 }
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

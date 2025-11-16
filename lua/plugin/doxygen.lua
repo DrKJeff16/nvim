@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'vim-scripts/DoxygenToolkit.vim',
     ft = { 'c', 'cpp' },
     version = false,
@@ -17,7 +16,7 @@ return {
             paramTag_pre = '@param ',
             returnTag = '@return ',
         }
-        for k, v in next, g_vars do
+        for k, v in pairs(g_vars) do
             vim.g[('DoxygenToolkit_%s'):format(k)] = v
         end
     end,

@@ -1,14 +1,10 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'windwp/nvim-autopairs',
     event = 'InsertEnter',
     version = false,
-    dependencies = {
-        'nvim-treesitter/nvim-treesitter',
-        { 'RRethy/nvim-treesitter-endwise', event = 'InsertEnter' },
-    },
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'RRethy/nvim-treesitter-endwise' },
     config = function()
         require('nvim-autopairs').setup({
             enabled = function(bufnr) ---@param bufnr integer
@@ -24,14 +20,7 @@ return {
                     'snacks_picker_input',
                     'spectre_panel',
                 }
-                local EXCEPT_BT = {
-                    'help',
-                    'nofile',
-                    'nowrite',
-                    'prompt',
-                    'quickfix',
-                    'terminal',
-                }
+                local EXCEPT_BT = { 'help', 'nofile', 'nowrite', 'prompt', 'quickfix', 'terminal' }
                 local ft = require('user_api.util').ft_get(bufnr)
                 local bt = require('user_api.util').bt_get(bufnr)
                 local in_list = vim.list_contains
@@ -59,7 +48,6 @@ return {
         local joined_bracks = { '()', '[]', '{}' }
         local spaced_bracks = { '(  )', '[  ]', '{  }' }
         local bracks = { { '(', ')' }, { '[', ']' }, { '{', '}' } }
-
         local Rule = require('nvim-autopairs.rule')
         local cond = require('nvim-autopairs.conds')
         local ts_node = require('nvim-autopairs.ts-conds').is_ts_node
@@ -90,14 +78,11 @@ return {
                     return vim.list_contains(spaced_bracks, context)
                 end),
 
-            Rule('<', '>', {
-                '-html',
-                '-markdown',
-                '-javascriptreact',
-                '-typescriptreact',
-            }):with_pair(cond.before_regex('%a+:?:?$', 3)):with_move(function(opts)
-                return opts.char == '>'
-            end),
+            Rule('<', '>', { '-html', '-markdown', '-javascriptreact', '-typescriptreact' })
+                :with_pair(cond.before_regex('%a+:?:?$', 3))
+                :with_move(function(opts)
+                    return opts.char == '>'
+                end),
 
             Rule('{', '},', 'lua'):with_pair(ts_node({ 'table_constructor' })),
             Rule("'", "',", 'lua'):with_pair(ts_node({ 'table_constructor' })),

@@ -1,12 +1,9 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'gennaro-tedesco/nvim-possession',
     version = false,
-    dependencies = { 'ibhagwan/fzf-lua' },
     config = function()
-        local desc = require('user_api.maps').desc
         require('nvim-possession').setup({
             sessions = { sessions_prompt = 'Possession Prompt: ' },
             autoload = true,
@@ -14,25 +11,21 @@ return {
             autoprompt = true,
             autoswitch = { enable = true, exclude_ft = { 'text', 'markdown' } },
             save_hook = function()
-                if require('user_api.check.exists').module('scope') then
-                    vim.cmd.ScopeSaveState()
-                end
+                vim.cmd.ScopeSaveState()
                 local visible_buffers = {}
-                for _, win in next, vim.api.nvim_list_wins() do
+                for _, win in ipairs(vim.api.nvim_list_wins()) do
                     visible_buffers[vim.api.nvim_win_get_buf(win)] = true
                 end
-                for _, bufnr in next, vim.api.nvim_list_bufs() do
-                    if visible_buffers[bufnr] == nil then
+                for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+                    if not visible_buffers[bufnr] then
                         pcall(vim.cmd.bdel, bufnr)
                     end
                 end
             end,
             post_hook = function()
-                if require('user_api.check.exists').module('scope') then
-                    vim.cmd.ScopeLoadState()
-                end
+                vim.cmd.ScopeLoadState()
                 vim.lsp.buf.format()
-                require('nvim-tree.api').tree.toggle()
+                pcall(require('nvim-tree.api').tree.toggle)
             end,
             fzf_hls = {
                 normal = 'Normal',
@@ -43,19 +36,15 @@ return {
             fzf_winopts = { width = 0.5, preview = { vertical = 'right:30%' } },
             sort = require('nvim-possession.sorting').time_sort,
         })
+
+        local desc = require('user_api.maps').desc
         require('user_api.config').keymaps({
             n = {
                 ['<leader>s'] = { group = '+Session' },
                 ['<leader>sl'] = { require('nvim-possession').list, desc('📌 List Sessions') },
                 ['<leader>sn'] = { require('nvim-possession').new, desc('📌 Create New Session') },
-                ['<leader>su'] = {
-                    require('nvim-possession').update,
-                    desc('📌 Update Current Session'),
-                },
-                ['<leader>sd'] = {
-                    require('nvim-possession').delete,
-                    desc('📌 Delete Selected Session'),
-                },
+                ['<leader>su'] = { require('nvim-possession').update, desc('📌 Update Current') },
+                ['<leader>sd'] = { require('nvim-possession').delete, desc('📌 Delete Selected') },
             },
         })
     end,

@@ -1,12 +1,11 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'folke/which-key.nvim',
     lazy = false,
     priority = 1000,
     version = false,
-    enabled = require('user_api.check.exists').vim_has('nvim-0.10'),
+    cond = require('user_api.check.exists').vim_has('nvim-0.10'),
     init = function()
         vim.o.timeout = true
         vim.o.timeoutlen = 500
@@ -55,17 +54,17 @@ return {
         },
         ---@diagnostic disable-next-line:missing-fields
         win = { ---@type wk.Win
-            no_overlap = true,
+            no_overlap = false,
             border = 'single',
             padding = { 1, 2 },
             title = true,
             title_pos = 'center',
             zindex = 1000,
             bo = { modifiable = false },
-            wo = { winblend = require('user_api.check').in_console() and 0 or 45 },
+            wo = { winblend = require('user_api.check').in_console() and 0 or 50 },
         },
         layout = {
-            width = { min = 20, max = math.floor(vim.o.columns * 3 / 4) },
+            width = { min = 20, max = math.floor(vim.o.columns / 2) },
             spacing = 1,
             align = 'center',
         },

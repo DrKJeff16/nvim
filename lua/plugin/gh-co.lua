@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'comatory/gh-co.nvim',
     version = false,
     config = function()

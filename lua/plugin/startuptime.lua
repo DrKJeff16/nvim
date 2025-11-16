@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'dstein64/vim-startuptime',
     lazy = false,
     priority = 1000,

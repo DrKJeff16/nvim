@@ -1,12 +1,12 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'folke/twilight.nvim',
     version = false,
     cond = not require('user_api.check').in_console(),
     config = function()
-        require('twilight').setup({
+        local Twilight = require('twilight')
+        Twilight.setup({
             dimming = {
                 alpha = 0.4,
                 color = { 'Normal', '#ffffff' },
@@ -23,9 +23,9 @@ return {
         require('user_api.config').keymaps({
             n = {
                 ['<leader>ut'] = { group = '+Twilight' },
-                ['<leader>utt'] = { require('twilight').toggle, desc('Toggle Twilight') },
-                ['<leader>ute'] = { require('twilight').enable, desc('Enable Twilight') },
-                ['<leader>utd'] = { require('twilight').disable, desc('Disable Twilight') },
+                ['<leader>utt'] = { Twilight.toggle, desc('Toggle Twilight') },
+                ['<leader>ute'] = { Twilight.enable, desc('Enable Twilight') },
+                ['<leader>utd'] = { Twilight.disable, desc('Disable Twilight') },
             },
         })
     end,

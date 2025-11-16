@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'vim-scripts/a.vim',
     lazy = true,
     ft = { 'c', 'cpp' },
@@ -51,7 +50,7 @@ return {
                 }, ev.buf)
             end,
         })
-        ---HACK: Delete default plugin maps (very annoying ones)
+
         vim.keymap.del({ 'n', 'i' }, '<leader>ihn')
         vim.keymap.del({ 'n', 'i' }, '<leader>ih')
         vim.keymap.del({ 'n', 'i' }, '<leader>is')

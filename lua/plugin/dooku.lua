@@ -1,9 +1,9 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'Zeioth/dooku.nvim',
     version = false,
+    cond = not require('user_api.check').in_console(),
     opts = {
         project_root = { '.git', '.hg', '.svn', '.bzr', '_darcs', '_FOSSIL_', '.fslckout' },
         browser_cmd = 'xdg-open',

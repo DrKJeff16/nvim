@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'gisketch/triforce.nvim',
     dev = true,
     version = false,
@@ -25,6 +24,7 @@ return {
             },
             xp_rewards = { char = 1, line = 2, save = 20 },
         })
+
         require('user_api.config').keymaps({ n = { ['<leader>T'] = { group = '+Triforce' } } })
     end,
 }

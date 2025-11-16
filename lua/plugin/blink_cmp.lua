@@ -245,8 +245,7 @@ local function gen_termcode_fun(key)
     end
 end
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'saghen/blink.cmp',
     event = 'InsertEnter',
     version = false,
@@ -288,8 +287,7 @@ return {
         'disrupted/blink-cmp-conventional-commits',
         { 'bydlw98/blink-cmp-env', dev = true, version = false },
         {
-            'DrKJeff16/blink-cmp-sshconfig',
-            dev = true,
+            'bydlw98/blink-cmp-sshconfig',
             build = executable('uv') and 'make' or false,
             version = false,
         },
@@ -298,9 +296,7 @@ return {
     config = function()
         local gen_sources = BUtil.gen_sources
         local gen_providers = BUtil.gen_providers
-        if exists('luasnip.loaders.from_vscode') then
-            require('luasnip.loaders.from_vscode').lazy_load()
-        end
+        pcall(require('luasnip.loaders.from_vscode').lazy_load)
 
         local select_opts = { auto_insert = true, preselect = false }
         require('blink.cmp').setup({
@@ -477,15 +473,15 @@ return {
                     or 'lua',
             },
             snippets = {
-                preset = exists('luasnip') and 'luasnip' or 'default',
+                preset = 'luasnip',
                 expand = function(snippet)
                     vim.snippet.expand(snippet)
                 end,
                 active = function(filter)
                     return vim.snippet.active(filter)
                 end,
-                jump = function(direction)
-                    vim.snippet.jump(direction) ---@diagnostic disable-line:param-type-mismatch
+                jump = function(direction) ---@param direction integer
+                    vim.snippet.jump(direction)
                 end,
             },
             signature = {

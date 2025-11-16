@@ -1,20 +1,15 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'DrKJeff16/project.nvim',
     dev = true,
     version = false,
-    init = function()
-        vim.g.project_lsp_nowarn = 1
-    end,
     config = function()
         require('project').setup({
             log = { enabled = true, logpath = vim.fn.stdpath('state') },
             scope_chdir = 'tab',
             use_lsp = true,
             telescope = { enabled = false, prefer_file_browser = true },
-            show_hidden = true,
             fzf_lua = { enabled = true },
             exclude_dirs = {
                 '/usr/*',

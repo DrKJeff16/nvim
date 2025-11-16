@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'hat0uma/doxygen-previewer.nvim',
     cmd = { 'DoxygenOpen', 'DoxygenUpdate', 'DoxygenStop', 'DoxygenLog', 'DoxygenTempDoxyfileOpen' },
     version = false,
@@ -43,6 +42,7 @@ return {
             override_options = {}, ---@type table<string, string|fun():string>
         },
     },
-    cond = require('user_api.check.exists').executable('doxygen'),
+    cond = require('user_api.check.exists').executable('doxygen')
+        and not require('user_api.check').in_console,
 }
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'onsails/lspkind.nvim',
     version = false,
     config = function()
