@@ -29,7 +29,7 @@
 ---@field icons_enabled? boolean
 ---@field icon? string|nil
 ---@field separator? nil|string|SectionSeparator
----@field cond? nil|fun()
+---@field cond? nil|function
 ---@field draw_empty? boolean
 ---@field color? nil|vim.api.keyset.highlight|string
 ---@field type? any
@@ -232,7 +232,7 @@
 ---|LuaLine.Components.Tabs
 ---|LuaLine.Components.Windows
 
----@alias LuaLineSection (LuaLine.Components|SectionComponentStr|fun())[]|table
+---@alias LuaLineSection (LuaLine.Components|SectionComponentStr|function)[]|table
 
 ---@class LuaLine.Sections
 ---@field lualine_a LuaLineSection
@@ -244,7 +244,6 @@
 
 local Termux = require('user_api.distro').termux
 local exists = require('user_api.check.exists').module
-
 local in_list = vim.list_contains
 
 ---@param theme? ''|'auto'|string
@@ -270,7 +269,7 @@ local function theme_select(theme, force_auto)
         return 'auto'
     end
 
-    for _, t in next, themes do
+    for _, t in ipairs(themes) do
         if t == theme and exists(theme) then
             return theme
         end
@@ -278,8 +277,7 @@ local function theme_select(theme, force_auto)
     return 'auto'
 end
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'nvim-lualine/lualine.nvim',
     event = 'VeryLazy',
     version = false,

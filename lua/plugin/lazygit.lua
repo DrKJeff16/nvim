@@ -24,7 +24,7 @@ return {
                 '│',
             },
         }
-        for k, v in next, g_vars do
+        for k, v in pairs(g_vars) do
             vim.g['lazygit_' .. k] = v
         end
 

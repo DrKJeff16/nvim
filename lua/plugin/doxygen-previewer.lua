@@ -39,7 +39,7 @@ return { ---@type LazySpec
             fallback_cwd = function()
                 return vim.fs.dirname(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
             end,
-            override_options = {}, ---@type table<string, string|fun():string>
+            override_options = {}, ---@type table<string, string|fun(): string>
         },
     },
     cond = require('user_api.check.exists').executable('doxygen')
