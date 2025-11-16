@@ -368,6 +368,18 @@ function Util.setup_autocmd()
                         vim.api.nvim_set_option_value('signcolumn', 'no', O)
                     end,
                 },
+                {
+                    pattern = 'nvim-undotree',
+                    group = group,
+                    callback = function(ev)
+                        vim.keymap.set(
+                            'n',
+                            'q',
+                            vim.cmd.bdelete,
+                            { buffer = ev.buf, noremap = true }
+                        )
+                    end,
+                },
             },
         },
         {
