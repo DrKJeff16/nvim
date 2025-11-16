@@ -19,7 +19,7 @@ function CfgUtil.set_tgc(force)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('force', force, 'boolean', true)
     else
-        vim.validate({ force = { force, { 'boolean', 'nil' } } })
+        vim.validate({ force = { force, { 'boolean', 'nil' }, true } })
     end
     force = force ~= nil and force or false
 
@@ -28,16 +28,16 @@ function CfgUtil.set_tgc(force)
 end
 
 ---@param name string
----@param callback? fun()
+---@param callback? function
 ---@return function
 function CfgUtil.flag_installed(name, callback)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('name', name, 'string', false)
-        vim.validate('callback', callback, 'function', true, 'fun()')
+        vim.validate('callback', callback, 'function', true)
     else
         vim.validate({
             name = { name, 'string' },
-            callback = { callback, { 'function', 'nil' } },
+            callback = { callback, { 'function', 'nil' }, true },
         })
     end
     if name == '' then
@@ -58,7 +58,7 @@ end
 --- ---
 ---@param fields string|table<string, any>
 ---@param force_tgc? boolean
----@return fun()
+---@return function
 function CfgUtil.colorscheme_init(fields, force_tgc)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('fields', fields, { 'string', 'table' }, false, 'string|table<string, any>')
@@ -66,7 +66,7 @@ function CfgUtil.colorscheme_init(fields, force_tgc)
     else
         vim.validate({
             fields = { fields, { 'string', 'table' } },
-            force_tgc = { force_tgc, { 'boolean', 'nil' } },
+            force_tgc = { force_tgc, { 'boolean', 'nil' }, true },
         })
     end
 
@@ -122,35 +122,29 @@ function CfgUtil.tel_fzf_build()
     if not executable({ 'make', 'mingw32-make' }) then
         return false
     end
-
-    local cmd = executable({ 'make', 'nproc' }) and 'make -j"$(nproc)"'
+    return executable({ 'make', 'nproc' }) and 'make -j"$(nproc)"'
         or (executable('make') and 'make' or 'mingw32-make')
-
-    return cmd
 end
 
----@return boolean
 function CfgUtil.luarocks_check()
     return executable('luarocks') and env_vars({ 'LUA_PATH', 'LUA_CPATH' })
 end
 
 ---@param cmd? 'ed'|'tabnew'|'split'|'vsplit'
----@return fun()
+---@return function
 function CfgUtil.key_variant(cmd)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('cmd', cmd, 'string', true, "'ed'|'tabnew'|'split'|'vsplit'")
     else
-        vim.validate({ cmd = { cmd, { 'string', 'nil' } } })
+        vim.validate({ cmd = { cmd, { 'string', 'nil' }, true } })
     end
     cmd = (cmd ~= nil and in_list({ 'ed', 'tabnew', 'split', 'vsplit' }, cmd)) and cmd or 'ed'
 
-    local fpath = vim.fn.stdpath('config') .. '/lua/config/lazy.lua'
     return function()
-        vim.cmd[cmd](fpath)
+        vim.cmd[cmd](vim.fn.stdpath('config') .. '/lua/config/lazy.lua')
     end
 end
 
----@return boolean
 function CfgUtil.has_tgc()
     local in_console = require('user_api.check').in_console
     if in_console or not exists('+termguicolors') then

@@ -1,9 +1,9 @@
 local MODSTR = 'config.lazy'
-local stdpath = vim.fn.stdpath
+local uv = vim.uv or vim.loop
 local key_variant = require('config.util').key_variant
 
-local LAZY_DATA = stdpath('data') .. '/lazy'
-local LAZY_STATE = stdpath('state') .. '/lazy'
+local LAZY_DATA = vim.fn.stdpath('data') .. '/lazy'
+local LAZY_STATE = vim.fn.stdpath('state') .. '/lazy'
 local LAZYPATH = LAZY_DATA .. '/lazy.nvim'
 local README_PATH = LAZY_STATE .. '/readme'
 
@@ -15,7 +15,7 @@ function M.bootstrap()
         return
     end
 
-    if not (vim.uv or vim.loop).fs_stat(LAZYPATH) then
+    if not uv.fs_stat(LAZYPATH) then
         local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
         local out = vim.fn.system({ 'git', 'clone', '--filter=blob:none', lazyrepo, LAZYPATH })
         if vim.v.shell_error ~= 0 then
@@ -100,19 +100,14 @@ function M.setup(specs)
         },
         rocks = {
             enabled = require('config.util').luarocks_check(),
-            root = stdpath('data') .. '/lazy-rocks',
-            server = 'https://nvim-neorocks.github.io/rocks-binaries/',
+            root = vim.fn.stdpath('data') .. '/lazy-rocks',
         },
         pkg = {
             enabled = true,
             cache = LAZY_STATE .. '/pkg-cache.lua',
             versions = true,
-            sources = (function()
-                if require('config.util').luarocks_check() then
-                    return { 'lazy', 'packspec' }
-                end
-                return { 'lazy', 'packspec', 'rockspec' }
-            end)(),
+            sources = require('config.util').luarocks_check() and { 'lazy', 'packspec' }
+                or { 'lazy', 'packspec', 'rockspec' },
         },
         checker = {
             enabled = not require('user_api.distro.termux').validate(),
@@ -142,15 +137,13 @@ function M.setup(specs)
 end
 
 function M.colorschemes()
-    if require('user_api.check.exists').module('plugin.colorschemes') then
-        return require('plugin.colorschemes')
-    end
+    local csc = require('plugin.colorschemes')
+    return csc
 end
 
 function M.lsp()
-    if require('user_api.check.exists').module('plugin.lsp') then
-        return require('plugin.lsp')
-    end
+    local lsp = require('plugin.lsp')
+    return lsp
 end
 
 return M
