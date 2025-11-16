@@ -39,7 +39,7 @@ local function type_fun(t)
         if vim.fn.has('nvim-0.11') == 1 then
             vim.validate('multiple', multiple, 'boolean', true)
         else
-            vim.validate({ multiple = { multiple, { 'boolean', 'nil' } } })
+            vim.validate({ multiple = { multiple, { 'boolean', 'nil' }, true } })
         end
         multiple = multiple ~= nil and multiple or false
         if not multiple then
@@ -101,7 +101,7 @@ function Value.is_int(var, multiple)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('multiple', multiple, 'boolean', true)
     else
-        vim.validate({ multiple = { multiple, { 'boolean', 'nil' } } })
+        vim.validate({ multiple = { multiple, { 'boolean', 'nil' }, true } })
     end
     multiple = multiple ~= nil and multiple or false
 
@@ -145,7 +145,7 @@ function Value.empty(data, multiple)
     else
         vim.validate({
             data = { data, { 'string', 'table', 'number' } },
-            multiple = { multiple, { 'boolean', 'nil' } },
+            multiple = { multiple, { 'boolean', 'nil' }, true },
         })
     end
     multiple = multiple ~= nil and multiple or false
@@ -232,7 +232,7 @@ function Value.fields(field, T)
         vim.validate('T', T, 'table', false)
     else
         vim.validate({
-            field = { field, { 'string', 'number', 'table', 'nil' } },
+            field = { field, { 'string', 'number', 'table', 'nil' }, true },
             T = { T, 'table' },
         })
     end
@@ -261,14 +261,14 @@ function Value.tbl_values(values, T, return_keys)
         vim.validate({
             values = { values, 'table' },
             T = { T, 'table' },
-            return_keys = { return_keys, { 'boolean', 'nil' } },
+            return_keys = { return_keys, { 'boolean', 'nil' }, true },
         })
     end
     return_keys = return_keys ~= nil and return_keys or false
 
     local res = return_keys and {} or false ---@type boolean|string|integer|(string|integer)[]
     for _, val in pairs(values) do
-        for k, v in next, T do
+        for k, v in pairs(T) do
             if return_keys and v == val then
                 table.insert(res, k)
             elseif not return_keys and v == val then
@@ -290,7 +290,7 @@ end
 
 ---@param type_str Types
 ---@param T table
----@return boolean
+---@return boolean is_single_type
 function Value.single_type_tbl(type_str, T)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('type_str', type_str, 'string', false)
@@ -309,7 +309,7 @@ function Value.single_type_tbl(type_str, T)
         return false
     end
 
-    for _, v in next, T do
+    for _, v in pairs(T) do
         if (type_str == 'nil' and v ~= nil) or type(v) ~= type_str then
             return false
         end
@@ -325,7 +325,7 @@ end
 --- ---
 ---@param type_str EmptyTypes
 ---@param data any
----@return boolean
+---@return boolean result
 function Value.type_not_empty(type_str, data)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('type_str', type_str, 'string', false, 'EmptyTypes')
@@ -348,9 +348,7 @@ function Value.type_not_empty(type_str, data)
     if not in_list(vim.tbl_keys(valid_types), type_str) then
         return false
     end
-
-    local checker = valid_types[type_str]
-    return checker(data) and not Value.empty(data)
+    return valid_types[type_str](data) and not Value.empty(data)
 end
 
 ---Checks whether a certain `num` does not exceed table index range

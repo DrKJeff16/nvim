@@ -51,6 +51,7 @@
 local ERROR = vim.log.levels.ERROR
 
 ---@param mode MapModes
+---@return fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)
 local function variant(mode)
     return function(lhs, rhs, opts) ---@type fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)
         opts = require('user_api.check.value').is_tbl(opts) and opts or {}
@@ -68,8 +69,7 @@ local Keymap = {
     x = variant('x'),
 }
 
----@type User.Maps.Keymap
-local M = setmetatable({}, {
+local M = setmetatable({}, { ---@type User.Maps.Keymap
     __index = Keymap,
     __newindex = function(_, _, _)
         vim.notify('(user_api.maps.keymap): Not allowed to modify this table', ERROR)

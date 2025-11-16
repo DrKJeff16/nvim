@@ -26,9 +26,8 @@ function O.new(T)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('T', T, 'table', true, 'User.Maps.Opts|table')
     else
-        vim.validate({ T = { T, { 'table', 'nil' } } })
+        vim.validate({ T = { T, { 'table', 'nil' }, true } })
     end
-
     return setmetatable(T or {}, { __index = O })
 end
 

@@ -21,8 +21,7 @@ local RTPATHS = { ---@type string[]
     '/usr/local/share/nvim/runtime',
 }
 
----@type string[]
-Archlinux.rtpaths = setmetatable(RTPATHS, {
+Archlinux.rtpaths = setmetatable(RTPATHS, { ---@type string[]
     __index = RTPATHS,
     __newindex = function(_, _, _)
         vim.notify('User.Distro.Archlinux.RTP table is Read-Only!', ERROR)
@@ -30,10 +29,8 @@ Archlinux.rtpaths = setmetatable(RTPATHS, {
 })
 
 function Archlinux.validate()
-    local type_not_empty = require('user_api.check.value').type_not_empty
-    local new_rtpaths = {} ---@type string[]
-
     -- First check for each dir's existance
+    local new_rtpaths = {} ---@type string[]
     for _, p in ipairs(Archlinux.rtpaths) do
         if vim.fn.isdirectory(p) == 1 and not in_list(new_rtpaths, p) then
             table.insert(new_rtpaths, p)
@@ -41,7 +38,7 @@ function Archlinux.validate()
     end
 
     -- If no dirs...
-    if not type_not_empty('table', new_rtpaths) then
+    if not require('user_api.check.value').type_not_empty('table', new_rtpaths) then
         return false
     end
 
@@ -49,7 +46,7 @@ function Archlinux.validate()
     return true
 end
 
----@type User.Distro.Archlinux|fun()
+---@type User.Distro.Archlinux|function
 local M = setmetatable({}, {
     __index = Archlinux,
     __newindex = function(_, _, _)

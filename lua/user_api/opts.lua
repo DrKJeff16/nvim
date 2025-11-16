@@ -59,9 +59,10 @@ end
 
 Opts.toggleable = Opts.gen_toggleable()
 
----@return User.Opts.Spec
+---@return User.Opts.Spec defaults
 function Opts.get_defaults()
-    return require('user_api.opts.config')
+    local defaults = require('user_api.opts.config')
+    return defaults
 end
 
 Opts.options = {} ---@type User.Opts.Spec
@@ -121,7 +122,7 @@ function Opts.optset(O, verbose)
     else
         vim.validate({
             O = { O, 'table' },
-            verbose = { verbose, { 'boolean', 'nil' } },
+            verbose = { verbose, { 'boolean', 'nil' }, true },
         })
     end
     verbose = verbose ~= nil and verbose or false
@@ -180,14 +181,16 @@ function Opts.toggle(O, verbose)
     else
         vim.validate({
             O = { O, { 'string', 'table' } },
-            verbose = { verbose, { 'boolean', 'nil' } },
+            verbose = { verbose, { 'boolean', 'nil' }, true },
         })
     end
     verbose = verbose ~= nil and verbose or false
 
-    if is_str(O) then ---@cast O string
+    ---@cast O string
+    if is_str(O) then
         O = { O }
-    elseif vim.tbl_isempty(O) then ---@cast O string[]
+    end
+    if vim.tbl_isempty(O) then
         return
     end
     for _, opt in ipairs(O) do
@@ -251,8 +254,8 @@ function Opts.new()
                 vim.validate('verbose', verbose, 'boolean', true)
             else
                 vim.validate({
-                    override = { override, { 'table', 'nil' } },
-                    verbose = { verbose, { 'boolean', 'nil' } },
+                    override = { override, { 'table', 'nil' }, true },
+                    verbose = { verbose, { 'boolean', 'nil' }, true },
                 })
             end
             override = override or {}

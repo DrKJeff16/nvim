@@ -78,7 +78,7 @@ local function gen_fun_blank(vertical)
 end
 
 ---@param force? boolean
----@return fun()
+---@return function
 local function buf_del(force)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('force', force, 'boolean', true)

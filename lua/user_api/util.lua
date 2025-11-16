@@ -1,13 +1,7 @@
 local ERROR = vim.log.levels.ERROR
 local INFO = vim.log.levels.INFO
-
 local curr_buf = vim.api.nvim_get_current_buf
 local curr_win = vim.api.nvim_get_current_win
-local optset = vim.api.nvim_set_option_value
-local optget = vim.api.nvim_get_option_value
-local augroup = vim.api.nvim_create_augroup
-local buf_lines = vim.api.nvim_buf_get_lines
-local win_cursor = vim.api.nvim_win_get_cursor
 local in_tbl = vim.tbl_contains
 local in_list = vim.list_contains
 
@@ -19,8 +13,11 @@ Util.au = require('user_api.util.autocmd')
 Util.string = require('user_api.util.string')
 
 function Util.has_words_before()
-    local line, col = (unpack or table.unpack)(win_cursor(curr_win()))
-    return col ~= 0 and buf_lines(0, line - 1, line, true)[1]:sub(col, col):match('%s') == nil
+    local win = curr_win()
+    local line, col = (unpack or table.unpack)(vim.api.nvim_win_get_cursor(win))
+    return col ~= 0
+        and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match('%s')
+            == nil
 end
 
 ---@param s string[]|string
@@ -33,7 +30,7 @@ function Util.get_opts_tbl(s, bufnr)
     else
         vim.validate({
             s = { s, { 'string', 'table' } },
-            bufnr = { bufnr, { 'number', 'nil' } },
+            bufnr = { bufnr, { 'number', 'nil' }, true },
         })
     end
     bufnr = bufnr or curr_buf()
@@ -42,7 +39,7 @@ function Util.get_opts_tbl(s, bufnr)
     local type_not_empty = Value.type_not_empty
     local res = {} ---@type table<string, any>
     if type_not_empty('string', s) then ---@cast s string
-        res[s] = optget(s, { buf = bufnr })
+        res[s] = vim.api.nvim_get_option_value(s, { buf = bufnr })
     end
     if type_not_empty('table', s) then ---@cast s string[]
         for _, opt in ipairs(s) do
@@ -64,8 +61,8 @@ function Util.mv_tbl_values(T, steps, direction)
     else
         vim.validate({
             T = { T, 'table' },
-            steps = { steps, { 'number', 'nil' } },
-            direction = { direction, { 'string', 'nil' } },
+            steps = { steps, { 'number', 'nil' }, true },
+            direction = { direction, { 'string', 'nil' }, true },
         })
     end
     steps = steps > 0 and steps or 1
@@ -158,7 +155,7 @@ function Util.strip_fields(T, fields)
     end
     for k, _ in pairs(T) do
         ---@cast fields (string|integer)[]
-        if in_tbl(fields, k) then
+        if in_list(fields, k) then
             T[k] = nil
         end
     end
@@ -178,7 +175,7 @@ function Util.strip_values(T, values, max_instances)
         vim.validate({
             T = { T, 'table' },
             values = { values, 'table' },
-            max_instances = { max_instances, { 'table', 'nil' } },
+            max_instances = { max_instances, { 'table', 'nil' }, true },
         })
     end
 
@@ -212,22 +209,20 @@ end
 
 ---@param s? string
 ---@param bufnr? integer
----@return fun()
+---@return function
 function Util.ft_set(s, bufnr)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('s', s, 'string', true)
         vim.validate('bufnr', bufnr, 'number', true, 'integer')
     else
         vim.validate({
-            s = { s, { 'string', 'nil' } },
-            bufnr = { bufnr, { 'number', 'nil' } },
+            s = { s, { 'string', 'nil' }, true },
+            bufnr = { bufnr, { 'number', 'nil' }, true },
         })
     end
-    s = s or ''
-    bufnr = bufnr or curr_buf()
 
     return function()
-        optset('ft', s, { buf = bufnr })
+        vim.api.nvim_set_option_value('filetype', s or '', { buf = bufnr or curr_buf() })
     end
 end
 
@@ -236,7 +231,7 @@ function Util.bt_get(bufnr)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('bufnr', bufnr, 'number', true, 'integer')
     else
-        vim.validate({ bufnr = { bufnr, { 'number', 'nil' } } })
+        vim.validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
     end
     return vim.bo[bufnr or curr_buf()].buftype
 end
@@ -247,18 +242,18 @@ function Util.ft_get(bufnr)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('bufnr', bufnr, 'number', true, 'integer')
     else
-        vim.validate({ bufnr = { bufnr, { 'number', 'nil' } } })
+        vim.validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
     end
     return vim.bo[bufnr or curr_buf()].filetype
 end
 
----@param T table
+---@param T any[]
 ---@param V any
 ---@return table T
 ---@return any val
 function Util.pop_values(T, V)
     local idx = 0
-    for i, v in next, T do
+    for i, v in ipairs(T) do
         if v == V then
             idx = i
             break
@@ -267,14 +262,13 @@ function Util.pop_values(T, V)
     if idx < 1 or idx > #T then
         return T
     end
-    local val = table.remove(T, idx)
-    return T, val
+    return T, table.remove(T, idx)
 end
 
 function Util.setup_autocmd()
     local au_repeated_events = Util.au.au_repeated_events
     local ft_set = Util.ft_set
-    local group = augroup('User.AU', { clear = true })
+    local group = vim.api.nvim_create_augroup('User.AU', { clear = true })
     local AUS = { ---@type AuRepeatEvents[]
         -- NOTE: Keep this as first element for `orgmode` addition
         {
@@ -312,8 +306,7 @@ function Util.setup_autocmd()
                     group = group,
                     pattern = { '*.c', '*.h' },
                     callback = function(ev)
-                        ---@type vim.api.keyset.option
-                        local setopt_opts = { buf = ev.buf }
+                        local buf_opts = { buf = ev.buf } ---@type vim.api.keyset.option
                         local opt_dict = {
                             tabstop = 2,
                             shiftwidth = 2,
@@ -322,9 +315,8 @@ function Util.setup_autocmd()
                             autoindent = true,
                             filetype = 'c',
                         }
-
                         for opt, val in pairs(opt_dict) do
-                            optset(opt, val, setopt_opts)
+                            vim.api.nvim_set_option_value(opt, val, buf_opts)
                         end
                     end,
                 },
@@ -348,8 +340,7 @@ function Util.setup_autocmd()
                         '*.yml',
                     },
                     callback = function(ev)
-                        ---@type vim.api.keyset.option
-                        local setopt_opts = { buf = ev.buf }
+                        local buf_opts = { buf = ev.buf } ---@type vim.api.keyset.option
                         local opt_dict = {
                             tabstop = 2,
                             shiftwidth = 2,
@@ -358,7 +349,7 @@ function Util.setup_autocmd()
                             autoindent = true,
                         }
                         for opt, val in pairs(opt_dict) do
-                            optset(opt, val, setopt_opts)
+                            vim.api.nvim_set_option_value(opt, val, buf_opts)
                         end
                     end,
                 },
@@ -371,10 +362,10 @@ function Util.setup_autocmd()
                     pattern = 'checkhealth',
                     group = group,
                     callback = function()
-                        local O = { scope = 'local' } ---@type vim.api.keyset.option
-                        optset('wrap', true, O)
-                        optset('number', false, O)
-                        optset('signcolumn', 'no', O)
+                        local O = { win = curr_win() } ---@type vim.api.keyset.option
+                        vim.api.nvim_set_option_value('wrap', true, O)
+                        vim.api.nvim_set_option_value('number', false, O)
+                        vim.api.nvim_set_option_value('signcolumn', 'no', O)
                     end,
                 },
             },
@@ -393,15 +384,15 @@ function Util.setup_autocmd()
                         local win_opts = { win = curr_win() } ---@type vim.api.keyset.option
                         local buf_opts = { buf = ev.buf } ---@type vim.api.keyset.option
                         if ft == 'lazy' then
-                            optset('signcolumn', 'no', win_opts)
-                            optset('number', false, win_opts)
+                            vim.api.nvim_set_option_value('signcolumn', 'no', win_opts)
+                            vim.api.nvim_set_option_value('number', false, win_opts)
                             return
                         end
                         if bt == 'help' or ft == 'help' then
-                            optset('signcolumn', 'no', win_opts)
-                            optset('number', false, win_opts)
-                            optset('wrap', true, win_opts)
-                            optset('colorcolumn', '', win_opts)
+                            vim.api.nvim_set_option_value('signcolumn', 'no', win_opts)
+                            vim.api.nvim_set_option_value('number', false, win_opts)
+                            vim.api.nvim_set_option_value('wrap', true, win_opts)
+                            vim.api.nvim_set_option_value('colorcolumn', '', win_opts)
                             vim.keymap.set('n', 'q', vim.cmd.bdelete, { buffer = ev.buf })
 
                             local fn = vim.schedule_wrap(function()
@@ -415,7 +406,7 @@ function Util.setup_autocmd()
                             vim.keymap.set('n', 'q', vim.cmd.quit, { buffer = ev.buf })
                             return
                         end
-                        if not optget('modifiable', buf_opts) then
+                        if not vim.api.nvim_get_option_value('modifiable', buf_opts) then
                             return
                         end
                         if ft == 'lua' and executable('stylua') then
@@ -468,8 +459,7 @@ function Util.setup_autocmd()
         },
     }
 
-    local ok = pcall(require, 'orgmode')
-    if ok then
+    if pcall(require, 'orgmode') then
         table.insert(AUS[1].opts_tbl, {
             group = group,
             pattern = '*.org',
@@ -479,8 +469,7 @@ function Util.setup_autocmd()
         })
     end
 
-    ---@type AuRepeatEvents[]
-    Util.au.created = vim.tbl_deep_extend('keep', Util.au.created or {}, AUS)
+    Util.au.created = vim.tbl_deep_extend('keep', Util.au.created or {}, AUS) ---@type AuRepeatEvents[]
     for _, t in ipairs(Util.au.created) do
         au_repeated_events(t)
     end
@@ -496,34 +485,30 @@ function Util.displace_letter(c, direction)
     else
         vim.validate({
             c = { c, 'string' },
-            direction = { direction, { 'string', 'nil' } },
+            direction = { direction, { 'string', 'nil' }, true },
         })
     end
     local Value = require('user_api.check.value')
-    local A = Util.string.alphabet
     local fields = Value.fields
     local mv = Util.mv_tbl_values
+    local A = Util.string.alphabet
 
-    direction = in_list({ 'next', 'prev' }, direction) and direction or 'next'
     if c == '' then
         return 'a'
     end
 
-    -- NOTE: Copy the tables from the alphabet field
+    direction = in_list({ 'next', 'prev' }, direction) and direction or 'next'
     local LOWER, UPPER = vim.deepcopy(A.lower_map), vim.deepcopy(A.upper_map)
-    local res = ''
-    if direction == 'prev' and fields(c, LOWER) then
-        res = mv(LOWER, 1, 'r')[c]
-    elseif direction == 'next' and fields(c, LOWER) then
-        res = mv(LOWER, 1, 'l')[c]
-    elseif direction == 'prev' and fields(c, UPPER) then
-        res = mv(UPPER, 1, 'r')[c]
-    elseif direction == 'next' and fields(c, UPPER) then
-        res = mv(UPPER, 1, 'l')[c]
+    if direction == 'prev' then
+        if fields(c, LOWER) then
+            return mv(LOWER, 1, 'r')[c]
+        end
+        return mv(UPPER, 1, 'r')[c]
     end
-
-    assert(res ~= '', ('(user_api.util.displace_letter): Invalid argument `%s`\n'):format(c))
-    return res
+    if fields(c, LOWER) then
+        return mv(LOWER, 1, 'l')[c]
+    end
+    return mv(UPPER, 1, 'l')[c]
 end
 
 ---@param data string|table
@@ -542,9 +527,9 @@ function Util.discard_dups(data)
         return data
     end
 
-    local res ---@type string|table
-    if is_str(data) then ---@cast data string
-        res = data:sub(1, 1)
+    ---@cast data string
+    if is_str(data) then
+        local res = data:sub(1, 1)
         local i = 2
         while i < data:len() do
             local c = data:sub(i, i)
@@ -556,8 +541,10 @@ function Util.discard_dups(data)
         return res
     end
 
-    res = {} ---@type table
-    for k, v in next, data do ---@cast data table
+    local res = {} ---@type table
+
+    ---@cast data table
+    for k, v in pairs(data) do
         if not in_tbl(res, v) then
             res[k] = v
         end
@@ -565,12 +552,10 @@ function Util.discard_dups(data)
     return res
 end
 
----@param T table
----@return table
+---@param T any[]
+---@return any[]
 function Util.reverse_tbl(T)
-    local Value = require('user_api.check.value')
-    local type_not_empty = Value.type_not_empty
-    if not type_not_empty('table', T) then
+    if not require('user_api.check.value').type_not_empty('table', T) then
         error('(user_api.util.reverse_tbl): Empty or non-existant table', ERROR)
     end
 

@@ -15,7 +15,7 @@
 ---@field [1] string
 --- AKA `rhs` of a Vim Keymap.
 ---
----@field [2] string|fun()
+---@field [2] string|function
 ---@field [3]? User.Maps.Opts
 --- Keymap's description.
 ---
@@ -130,19 +130,16 @@ function WK.available()
 end
 
 ---@param lhs string
----@param rhs string|fun()
+---@param rhs string|function
 ---@param opts? User.Maps.Opts|vim.keymap.set.Opts|RegPfx
 ---@return RegKey|RegPfx
 function WK.convert(lhs, rhs, opts)
     if not WK.available() then
         error('(user.maps.wk.convert): `which_key` not available', WARN)
     end
-
     opts = is_tbl(opts) and opts or {}
 
-    ---@type RegKey|RegPfx
-    local res = { lhs, rhs }
-
+    local res = { lhs, rhs } ---@type RegKey|RegPfx
     if is_bool(opts.hidden) then
         res.hidden = opts.hidden
     end
@@ -162,15 +159,12 @@ end
 ---@param T AllMaps
 ---@return AllMaps res
 function WK.convert_dict(T)
-    ---@type RegKeys
-    local res = {}
-
+    local res = {} ---@type RegKeys
     for lhs, v in pairs(T) do
         local rhs = v[1] ---@type string|function
         local opts = is_tbl(v[2]) and v[2] or {} ---@type User.Maps.Opts
         table.insert(res, WK.convert(lhs, rhs, opts))
     end
-
     return res
 end
 
@@ -184,7 +178,7 @@ function WK.register(T, opts)
     else
         vim.validate({
             T = { T, 'table' },
-            opts = { opts, { 'table', 'nil' } },
+            opts = { opts, { 'table', 'nil' }, true },
         })
     end
 
@@ -197,7 +191,6 @@ function WK.register(T, opts)
     opts.mode = (is_str(opts.mode) and vim.list_contains(MODES, opts.mode)) and opts.mode or 'n'
 
     local filtered = {} ---@type (KeyMapRhsArr|AllMaps|AllModeMaps)[]
-
     for _, val in pairs(T) do
         table.insert(filtered, val)
     end

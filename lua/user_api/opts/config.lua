@@ -47,7 +47,7 @@ local Defaults = {
     wildmenu = true,
 }
 
-if is_windows then
+if vim.fn.has('win32') == 1 then
     if executable('mingw32-make') then
         Defaults.makeprg = 'mingw32-make'
     end

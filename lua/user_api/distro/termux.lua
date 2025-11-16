@@ -41,7 +41,7 @@ function Termux.validate()
     return true
 end
 
----@type User.Distro.Termux|fun()
+---@type User.Distro.Termux|function
 local M = setmetatable({}, {
     __index = Termux,
     __newindex = function(_, _, _)

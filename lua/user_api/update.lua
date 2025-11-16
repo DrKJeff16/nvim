@@ -11,7 +11,7 @@ function Update.update(verbose)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('verbose', verbose, 'boolean', true)
     else
-        vim.validate({ verbose = { verbose, { 'boolean', 'nil' } } })
+        vim.validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
     end
     verbose = verbose ~= nil and verbose or false
 

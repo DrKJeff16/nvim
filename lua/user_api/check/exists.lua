@@ -39,11 +39,14 @@ function Exists.vim_has(expr)
     else
         vim.validate({ expr = { expr, { 'string', 'table' } } })
     end
-    local type_not_empty = get_value().type_not_empty
-    if type_not_empty('string', expr) then
+
+    ---@cast expr string
+    if get_value().type_not_empty('string', expr) then
         return vim.fn.has(expr) == 1
     end
-    for _, v in ipairs(expr) do ---@cast expr string[]
+
+    ---@cast expr string[]
+    for _, v in ipairs(expr) do
         if not Exists.vim_has(v) then
             return false
         end
@@ -59,15 +62,16 @@ function Exists.vim_exists(expr)
     else
         vim.validate({ expr = { expr, { 'string', 'table' } } })
     end
-    local type_not_empty = get_value().type_not_empty
-    if type_not_empty('string', expr) then
+    ---@cast expr string
+    if get_value().type_not_empty('string', expr) then
         return vim.fn.exists(expr) == 1
     end
 
     local res = false
-    for _, v in ipairs(expr) do ---@cast expr string[]
-        res = Exists.vim_exists(v)
 
+    ---@cast expr string[]
+    for _, v in ipairs(expr) do
+        res = Exists.vim_exists(v)
         if not res then
             break
         end
@@ -76,16 +80,16 @@ function Exists.vim_exists(expr)
 end
 
 ---@param vars string[]|string
----@param fallback? fun()
+---@param fallback function|nil
 ---@return boolean
 function Exists.env_vars(vars, fallback)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('vars', vars, { 'string', 'table' }, false, 'string[]|string')
-        vim.validate('fallback', fallback, 'function', true, 'fun()?')
+        vim.validate('fallback', fallback, 'function', true)
     else
         vim.validate({
             vars = { vars, { 'string', 'table' } },
-            fallback = { fallback, { 'function', 'nil' } },
+            fallback = { fallback, { 'function', 'nil' }, true },
         })
     end
     fallback = fallback or nil
@@ -95,9 +99,12 @@ function Exists.env_vars(vars, fallback)
     local is_tbl = Value.is_tbl
     local environment = vim.fn.environ()
     local res = false
+
+    ---@cast vars string
     if is_str(vars) then
         res = vim.fn.has_key(environment, vars) == 1
     elseif is_tbl(vars) then
+        ---@cast vars string[]
         for _, v in ipairs(vars) do
             res = Exists.env_vars(v)
             if not res then
@@ -127,7 +134,8 @@ function Exists.executable(exe)
     if is_str(exe) then
         res = vim.fn.executable(exe) == 1
     elseif is_tbl(exe) then
-        for _, v in ipairs(exe) do ---@cast exe string[]
+        ---@cast exe string[]
+        for _, v in ipairs(exe) do
             res = Exists.executable(v)
             if not res then
                 break
