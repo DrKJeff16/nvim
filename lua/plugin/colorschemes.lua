@@ -30,29 +30,29 @@ local ERROR = vim.log.levels.ERROR
 ---@class CscMod
 local Colorschemes = {}
 
----@enum AllCsc
+---@enum (keys) AllCsc
 Colorschemes.OPTIONS = {
-    'Thorn',
-    'Kurayami',
-    'Conifer',
-    'Tokyonight',
-    'Tokyodark',
-    'Nightfox',
-    'Embark',
-    'Kanagawa',
-    'Vague',
-    'KanagawaPaper',
-    'Catppuccin',
-    'Spaceduck',
-    'Onedark',
-    'Gruvdark',
-    'Gruvbox',
-    'Vscode',
-    'Ariake',
-    'Dracula',
-    'Molokai',
-    'SpaceVimDark',
-    'SpaceNvim',
+    Thorn = 'Thorn',
+    Kurayami = 'Kurayami',
+    Conifer = 'Conifer',
+    Tokyonight = 'Tokyonight',
+    Nightfox = 'Nightfox',
+    Embark = 'Embark',
+    Kanagawa = 'Kanagawa',
+    Vague = 'Vague',
+    Catppuccin = 'Catppuccin',
+    Tokyodark = 'Tokyodark',
+    KanagawaPaper = 'KanagawaPaper',
+    Spaceduck = 'Spaceduck',
+    Onedark = 'Onedark',
+    Gruvdark = 'Gruvdark',
+    Gruvbox = 'Gruvbox',
+    Vscode = 'Vscode',
+    Ariake = 'Ariake',
+    Dracula = 'Dracula',
+    Molokai = 'Molokai',
+    SpaceVimDark = 'SpaceVimDark',
+    SpaceNvim = 'SpaceNvim',
 }
 
 -- stylua: ignore start
@@ -94,7 +94,7 @@ local M = setmetatable({}, {
         local valid = {} ---@type string[]
         local csc_group = 'A'
         local i = 1
-        for _, name in ipairs(self.OPTIONS) do
+        for name in pairs(self.OPTIONS) do
             local TColor = self[name] ---@type AllColorSubMods
             if TColor and TColor.valid and TColor.valid() then
                 table.insert(valid, name)

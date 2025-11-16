@@ -201,7 +201,7 @@ Color('Tokyonight')
 
 vim.cmd.packadd('nohlsearch')
 
-if vim.fn.has('nvim-0.12.0') == 1 then
+if vim.fn.has('nvim-0.12') == 1 then
     vim.cmd.packadd('nvim.undotree')
 end
 
