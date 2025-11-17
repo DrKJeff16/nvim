@@ -2,9 +2,6 @@ _G.MYVIMRC = vim.fn.stdpath('config') .. '/init.lua'
 _G.is_windows = vim.fn.has('win32') == 1
 _G.inspect = vim.inspect
 
-local ft_get = require('user_api.util').ft_get
-local bt_get = require('user_api.util').bt_get
-
 local INFO = vim.log.levels.INFO
 local in_list = vim.list_contains
 
@@ -206,30 +203,4 @@ if vim.fn.has('nvim-0.12') == 1 then
 end
 
 L.lsp().setup()
-
-local func = vim.schedule_wrap(function()
-    local DISABLE_BT = { 'help', 'prompt', 'quickfix', 'terminal' }
-    local DISABLE_FT = {
-        'help',
-        'lazy',
-        'checkhealth',
-        'notify',
-        'qf',
-        'TelescopePrompt',
-        'TelescopeResults',
-        'Redir',
-    }
-
-    local bufnr = vim.api.nvim_get_current_buf()
-    local win = vim.api.nvim_get_current_win()
-    if not (in_list(DISABLE_FT, ft_get(bufnr)) or in_list(DISABLE_BT, bt_get(bufnr))) then
-        return
-    end
-
-    vim.keymap.set('n', 'q', vim.cmd.bdelete, { noremap = true, silent = true, buffer = bufnr })
-    vim.wo[win].number = false
-    vim.wo[win].signcolumn = 'no'
-end)
-
-func()
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
