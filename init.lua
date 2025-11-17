@@ -133,6 +133,7 @@ L.setup({
     { import = 'plugin.mini.trailspace' },
     { import = 'plugin.toggleterm' },
     { import = 'plugin.screenkey' },
+    { import = 'plugin.echo' },
     { import = 'plugin.hoversplit' },
     { import = 'plugin.outline' },
     { import = 'plugin.lualine' },
