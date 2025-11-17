@@ -9,7 +9,7 @@ return { ---@type LazySpec
             log = { enabled = true, logpath = vim.fn.stdpath('state') },
             scope_chdir = 'tab',
             use_lsp = true,
-            telescope = { enabled = false, prefer_file_browser = true },
+            telescope = { prefer_file_browser = true, sort = 'newest' },
             fzf_lua = { enabled = true },
             exclude_dirs = {
                 '/usr/*',
