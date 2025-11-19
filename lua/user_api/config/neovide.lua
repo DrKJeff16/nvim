@@ -1,11 +1,7 @@
+local INFO = vim.log.levels.INFO
 local executable = require('user_api.check.exists').executable
 local is_tbl = require('user_api.check.value').is_tbl
 local num_range = require('user_api.check.value').num_range
-
-local augroup = vim.api.nvim_create_augroup
-local au = vim.api.nvim_create_autocmd
-
-local INFO = vim.log.levels.INFO
 
 ---Helper function for transparency formatting.
 --- ---
@@ -151,6 +147,7 @@ function Neovide.setup_maps()
     if not Neovide.check() then
         return
     end
+
     local desc = require('user_api.maps').desc
     require('user_api.config').keymaps({
         n = {
@@ -205,13 +202,13 @@ function Neovide.setup(T, transparent, verbose)
         Neovide.set_transparency()
     end
 
-    local ime_input = augroup('ime_input', { clear = true })
-    au({ 'InsertEnter', 'InsertLeave' }, {
+    local ime_input = vim.api.nvim_create_augroup('ime_input', { clear = true })
+    vim.api.nvim_create_autocmd({ 'InsertEnter', 'InsertLeave' }, {
         group = ime_input,
         pattern = '*',
         callback = set_ime,
     })
-    au({ 'CmdlineEnter', 'CmdlineLeave' }, {
+    vim.api.nvim_create_autocmd({ 'CmdlineEnter', 'CmdlineLeave' }, {
         group = ime_input,
         pattern = '[/\\?]',
         callback = set_ime,
@@ -221,7 +218,7 @@ function Neovide.setup(T, transparent, verbose)
     end
 
     if verbose then
-        vim.notify((inspect or vim.inspect)(Neovide.g_opts), INFO)
+        vim.notify(vim.inspect(Neovide.g_opts), INFO)
     end
     Neovide.setup_maps()
 end
