@@ -113,6 +113,7 @@ L.setup({
     { import = 'plugin.lazydev' },
     { import = 'plugin.Comment' },
     { import = 'plugin.yanky' },
+    { import = 'plugin.conform' },
     { import = 'plugin.paredit' },
     { import = 'plugin.persistence' },
     { import = 'plugin.scope' },
