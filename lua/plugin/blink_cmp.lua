@@ -2,7 +2,6 @@
 
 local exists = require('user_api.check.exists').module
 local executable = require('user_api.check.exists').executable
-local type_not_empty = require('user_api.check.value').type_not_empty
 local vim_has = require('user_api.check.exists').vim_has
 local copy = vim.deepcopy
 local in_list = vim.list_contains
@@ -11,8 +10,8 @@ local curr_buf = vim.api.nvim_get_current_buf
 ---@class BUtil
 local BUtil = {}
 
-BUtil.Sources = {}
-BUtil.Providers = {}
+BUtil.Sources = {} ---@type string[]
+BUtil.Providers = {} ---@type table<string, blink.cmp.SourceProviderConfigPartial>
 BUtil.curr_ft = ''
 
 ---@param snipps? boolean
@@ -23,14 +22,14 @@ function BUtil.reset_sources(snipps, buf)
         vim.validate('buf', buf, 'boolean', true, 'boolean?')
     else
         vim.validate({
-            snipps = { snipps, { 'boolean', 'nil' } },
-            buf = { buf, { 'boolean', 'nil' } },
+            snipps = { snipps, { 'boolean', 'nil' }, true },
+            buf = { buf, { 'boolean', 'nil' }, true },
         })
     end
     snipps = snipps ~= nil and snipps or false
     buf = buf ~= nil and buf or true
 
-    BUtil.Sources = { 'lsp', 'path', 'env' }
+    BUtil.Sources = { 'lsp', 'path', 'env' } ---@type string[]
     if snipps then
         table.insert(BUtil.Sources, 'snippets')
     end
@@ -59,14 +58,15 @@ end
 
 ---@param snipps? boolean
 ---@param buf? boolean
+---@return string[] sources
 function BUtil.gen_sources(snipps, buf)
     if vim_has('nvim-0.11') then
         vim.validate('snipps', snipps, 'boolean', true)
         vim.validate('buf', buf, 'boolean', true)
     else
         vim.validate({
-            snipps = { snipps, { 'boolean', 'nil' } },
-            buf = { buf, { 'boolean', 'nil' } },
+            snipps = { snipps, { 'boolean', 'nil' }, true },
+            buf = { buf, { 'boolean', 'nil' }, true },
         })
     end
 
@@ -101,25 +101,28 @@ function BUtil.reset_providers()
                 use_cache = true,
                 enable_in_ex_commands = false,
             },
+            ---@param ctx blink.cmp.Context
+            ---@param items blink.cmp.CompletionItem[]
             transform_items = function(ctx, items)
                 local keyword = ctx.get_keyword()
                 local correct = ''
-                local case ---@type fun(s: string|number): string
+                local uppercase ---@type boolean
                 if keyword:match('^%l') then
                     correct = '^%u%l+$'
-                    case = string.lower
+                    uppercase = false
                 elseif keyword:match('^%u') then
                     correct = '^%l+$'
-                    case = string.upper
+                    uppercase = true
                 else
                     return items
                 end
 
                 local seen, out = {}, {}
                 for _, item in ipairs(items) do
-                    local raw = item.insertText ---@type string
-                    if raw:match(correct) then
-                        local text = case(raw:sub(1, 1)) .. raw:sub(2)
+                    local raw = item.insertText
+                    if raw and raw:match(correct) then
+                        local text = (uppercase and raw:sub(1, 1):upper() or raw:sub(1, 1):lower())
+                            .. raw:sub(2)
                         item.insertText = text
                         item.label = text
                     end
@@ -217,17 +220,17 @@ function BUtil.reset_providers()
     end
 end
 
+---@param P table<string, blink.cmp.SourceProviderConfigPartial>|nil
+---@return table<string, blink.cmp.SourceProviderConfigPartial>
 function BUtil.gen_providers(P)
     if vim_has('nvim-0.11') then
         vim.validate('P', P, 'table', true, 'BlinkCmp.Util.Providers')
     else
-        vim.validate({ P = { P, { 'table', 'nil' } } })
+        vim.validate({ P = { P, { 'table', 'nil' }, true } })
     end
 
     BUtil.reset_providers()
-    if type_not_empty('table', P) then
-        BUtil.Providers = vim.tbl_deep_extend('keep', P, copy(BUtil.Providers))
-    end
+    BUtil.Providers = vim.tbl_deep_extend('keep', P or {}, copy(BUtil.Providers))
     return BUtil.Providers
 end
 
@@ -237,7 +240,7 @@ local function gen_termcode_fun(key)
     if vim_has('nvim-0.11') then
         vim.validate('key', key, 'string', false)
     else
-        vim.validate({ key = { key, 'string' } })
+        vim.validate({ key = { key, { 'string' } } })
     end
     return function()
         local termcode = vim.api.nvim_replace_termcodes(key, true, false, true)
