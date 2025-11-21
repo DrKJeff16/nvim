@@ -59,7 +59,7 @@ local function gen_fun_blank(vertical)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('vertical', vertical, 'boolean', true)
     else
-        vim.validate({ vertical = { vertical, { 'boolean', 'nil' } } })
+        vim.validate({ vertical = { vertical, { 'boolean', 'nil' }, true } })
     end
     vertical = vertical ~= nil and vertical or false
 
@@ -83,7 +83,7 @@ local function buf_del(force)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('force', force, 'boolean', true)
     else
-        vim.validate({ force = { force, { 'boolean', 'nil' } } })
+        vim.validate({ force = { force, { 'boolean', 'nil' }, true } })
     end
     force = force ~= nil and force or false
 
@@ -559,9 +559,9 @@ function Keymaps.set_leader(leader, local_leader, force)
         vim.validate('force', force, 'boolean', true)
     else
         vim.validate({
-            leader = { leader, 'string' },
-            local_leader = { local_leader, { 'string', 'nil' } },
-            force = { force, { 'boolean', 'nil' } },
+            leader = { leader, { 'string' } },
+            local_leader = { local_leader, { 'string', 'nil' }, true },
+            force = { force, { 'boolean', 'nil' }, true },
         })
     end
     leader = leader ~= '' and leader or '<Space>'
@@ -616,8 +616,8 @@ function Keymaps.delete(K, bufnr)
         vim.validate('bufnr', bufnr, 'number', true, 'integer')
     else
         vim.validate({
-            K = { K, 'table' },
-            bufnr = { bufnr, { 'number', 'nil' } },
+            K = { K, { 'table' } },
+            bufnr = { bufnr, { 'number', 'nil' }, true },
         })
     end
     bufnr = bufnr or nil
@@ -656,9 +656,9 @@ local M = setmetatable({}, {
             vim.validate('load_defaults', load_defaults, 'boolean', true)
         else
             vim.validate({
-                keys = { keys, 'table' },
-                bufnr = { bufnr, { 'number', 'nil' } },
-                load_defaults = { load_defaults, { 'boolean', 'nil' } },
+                keys = { keys, { 'table' } },
+                bufnr = { bufnr, { 'number', 'nil' }, true },
+                load_defaults = { load_defaults, { 'boolean', 'nil' }, true },
             })
         end
         if vim.tbl_isempty(keys) then

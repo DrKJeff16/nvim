@@ -71,10 +71,10 @@ function Commands.add_command(name, cmd, opts, mappings)
         vim.validate('mappings', mappings, 'table', true, 'AllModeMaps')
     else
         vim.validate({
-            name = { name, 'string' },
-            cmd = { cmd, 'function' },
-            opts = { opts, { 'table', 'nil' } },
-            mappings = { mappings, { 'table', 'nil' } },
+            name = { name, { 'string' } },
+            cmd = { cmd, { 'function' } },
+            opts = { opts, { 'table', 'nil' }, true },
+            mappings = { mappings, { 'table', 'nil' }, true },
         })
     end
 
@@ -99,7 +99,7 @@ function Commands.setup(cmds)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('cmds', cmds, 'table', true, 'User.Commands.Spec')
     else
-        vim.validate({ cmds = { cmds, { 'table', 'nil' } } })
+        vim.validate({ cmds = { cmds, { 'table', 'nil' }, true } })
     end
 
     Commands.commands = vim.tbl_deep_extend('keep', cmds or {}, vim.deepcopy(Commands.commands))

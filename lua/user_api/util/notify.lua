@@ -76,9 +76,9 @@ function Notify.notify(msg, lvl, opts)
         vim.validate('opts', opts, 'table', true)
     else
         vim.validate({
-            msg = { msg, 'string' },
-            lvl = { lvl, { 'string', 'number', 'nil' } },
-            opts = { opts, { 'table', 'nil' } },
+            msg = { msg, { 'string' } },
+            lvl = { lvl, { 'string', 'number', 'nil' }, true },
+            opts = { opts, { 'table', 'nil' }, true },
         })
     end
     lvl = lvl or 'info'

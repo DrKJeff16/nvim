@@ -60,7 +60,7 @@ function Util.mv_tbl_values(T, steps, direction)
         vim.validate('direction', direction, 'string', true, "'l'|'r'")
     else
         vim.validate({
-            T = { T, 'table' },
+            T = { T, { 'table' } },
             steps = { steps, { 'number', 'nil' }, true },
             direction = { direction, { 'string', 'nil' }, true },
         })
@@ -110,8 +110,8 @@ function Util.xor(x, y)
         vim.validate('y', y, 'boolean', false)
     else
         vim.validate({
-            x = { x, 'boolean' },
-            y = { y, 'boolean' },
+            x = { x, { 'boolean' } },
+            y = { y, { 'boolean' } },
         })
     end
 
@@ -124,16 +124,10 @@ end
 function Util.strip_fields(T, fields)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('T', T, 'table', false, 'table<string, any>')
-        vim.validate(
-            'fields',
-            fields,
-            { 'string', 'number', 'table' },
-            false,
-            'string|integer|(string|integer)[]'
-        )
+        vim.validate('fields', fields, { 'string', 'number', 'table' }, false)
     else
         vim.validate({
-            T = { T, 'table' },
+            T = { T, { 'table' } },
             fields = { fields, { 'string', 'number', 'table' } },
         })
     end
@@ -173,8 +167,8 @@ function Util.strip_values(T, values, max_instances)
         vim.validate('max_instances', max_instances, 'table', true, 'integer')
     else
         vim.validate({
-            T = { T, 'table' },
-            values = { values, 'table' },
+            T = { T, { 'table' } },
+            values = { values, { 'table' } },
             max_instances = { max_instances, { 'table', 'nil' }, true },
         })
     end
@@ -496,7 +490,7 @@ function Util.displace_letter(c, direction)
         vim.validate('direction', direction, 'string', true, "'next'|'prev'")
     else
         vim.validate({
-            c = { c, 'string' },
+            c = { c, { 'string' } },
             direction = { direction, { 'string', 'nil' }, true },
         })
     end

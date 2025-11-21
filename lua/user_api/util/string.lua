@@ -156,9 +156,9 @@ function String.capitalize(str, use_dot, triggers)
         vim.validate('triggers', triggers, 'table', true, 'string[]')
     else
         vim.validate({
-            str = { str, 'string' },
-            use_dot = { use_dot, { 'boolean', 'nil' } },
-            triggers = { triggers, { 'table', 'nil' } },
+            str = { str, { 'string' } },
+            use_dot = { use_dot, { 'boolean', 'nil' }, true },
+            triggers = { triggers, { 'table', 'nil' }, true },
         })
     end
     if str == '' then
@@ -213,9 +213,9 @@ function String.replace(str, target, new)
         vim.validate('new', new, 'string', false)
     else
         vim.validate({
-            str = { str, 'string' },
-            target = { target, 'string' },
-            new = { new, 'string' },
+            str = { str, { 'string' } },
+            target = { target, { 'string' } },
+            new = { new, { 'string' } },
         })
     end
     if in_list({ str:len(), target:len(), new:len() }, 0) or new == target then

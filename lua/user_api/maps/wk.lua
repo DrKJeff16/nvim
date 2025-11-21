@@ -177,7 +177,7 @@ function WK.register(T, opts)
         vim.validate('opts', opts, 'table', true, 'RegPfx|User.Maps.Opts')
     else
         vim.validate({
-            T = { T, 'table' },
+            T = { T, { 'table' } },
             opts = { opts, { 'table', 'nil' }, true },
         })
     end

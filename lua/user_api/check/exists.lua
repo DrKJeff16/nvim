@@ -20,7 +20,7 @@ function Exists.module(mod)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('mod', mod, 'string', false)
     else
-        vim.validate({ mod = { mod, 'string' } })
+        vim.validate({ mod = { mod, { 'string' } } })
     end
     local type_not_empty = get_value().type_not_empty
     if not type_not_empty('string', mod) then
@@ -151,7 +151,7 @@ function Exists.vim_isdir(path)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('path', path, 'string', false)
     else
-        vim.validate({ path = { path, 'string' } })
+        vim.validate({ path = { path, { 'string' } } })
     end
     return get_value().type_not_empty('string', path) and (vim.fn.isdirectory(path) == 1) or false
 end

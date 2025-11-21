@@ -7,7 +7,7 @@ function O:add(T)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('T', T, 'table', false, 'User.Maps.Opts|table')
     else
-        vim.validate({ T = { T, 'table' } })
+        vim.validate({ T = { T, { 'table' } } })
     end
     if not require('user_api.check.value').type_not_empty('table', T) then
         return

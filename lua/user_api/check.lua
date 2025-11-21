@@ -4,10 +4,10 @@ local uv = vim.uv or vim.loop
 ---Checking Utilities.
 --- ---
 ---@class User.Check
-local Check = {}
-
-Check.value = require('user_api.check.value')
-Check.exists = require('user_api.check.exists')
+local Check = {
+    value = require('user_api.check.value'),
+    exists = require('user_api.check.exists'),
+}
 
 ---Check whether Nvim is running in a Linux Console rather than a `pty`.
 ---

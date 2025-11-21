@@ -121,7 +121,7 @@ function Opts.optset(O, verbose)
         vim.validate('verbose', verbose, 'boolean', true)
     else
         vim.validate({
-            O = { O, 'table' },
+            O = { O, { 'table' } },
             verbose = { verbose, { 'boolean', 'nil' }, true },
         })
     end
