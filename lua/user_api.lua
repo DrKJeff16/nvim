@@ -1,9 +1,9 @@
 ---@class UserAPI
-local User = {}
-
-User.opts = require('user_api.opts')
-User.distro = require('user_api.distro')
-User.config = require('user_api.config')
+local User = {
+    opts = require('user_api.opts'),
+    distro = require('user_api.distro'),
+    config = require('user_api.config'),
+}
 
 function User.setup()
     User.config.keymaps({ n = { ['<leader>U'] = { group = '+User API' } } })
