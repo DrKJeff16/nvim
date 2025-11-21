@@ -10,6 +10,12 @@ return {
         'MunifTanjim/nui.nvim',
         'nvim-tree/nvim-web-devicons',
         'saifulapm/neotree-file-nesting-config',
+        {
+            'antosha417/nvim-lsp-file-operations',
+            config = function()
+                require('lsp-file-operations').setup()
+            end,
+        },
         { 'mrbjarksen/neo-tree-diagnostics.nvim', main = 'neo-tree.sources.diagnostics' },
         {
             's1n7ax/nvim-window-picker',
