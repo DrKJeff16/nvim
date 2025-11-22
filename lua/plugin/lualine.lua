@@ -232,6 +232,26 @@
 ---|LuaLine.Components.Tabs
 ---|LuaLine.Components.Windows
 
+---@class LuaLine.ComponentsDict
+---@field branch LuaLine.Components.Branch
+---@field buffers LuaLine.Components.Buffers
+---@field datetime LuaLine.Components.DateTime
+---@field diagnostics LuaLine.Components.Diagnostics
+---@field diff LuaLine.Components.Diff
+---@field encoding LuaLine.Components.Encoding
+---@field fileformat LuaLine.Components.Fileformat
+---@field filename LuaLine.Components.Filename
+---@field filesize LuaLine.Components.Filesize
+---@field filetype LuaLine.Components.Filetype
+---@field hostname LuaLine.Components.Hostname
+---@field location LuaLine.Components.Location
+---@field mode LuaLine.Components.Mode
+---@field progress LuaLine.Components.Progress
+---@field searchcount LuaLine.Components.Searchcount
+---@field selectioncount LuaLine.Components.Selectioncount
+---@field tabs LuaLine.Components.Tabs
+---@field windows LuaLine.Components.Windows
+
 ---@alias LuaLineSection (LuaLine.Components|SectionComponentStr|function)[]|table
 
 ---@class LuaLine.Sections
@@ -289,25 +309,7 @@ return { ---@type LazySpec
     config = function()
         local Presets = {} ---@class LuaLine.Presets
 
-        ---@class LuaLine.ComponentsDict
-        ---@field branch LuaLine.Components.Branch
-        ---@field buffers LuaLine.Components.Buffers
-        ---@field datetime LuaLine.Components.DateTime
-        ---@field diagnostics LuaLine.Components.Diagnostics
-        ---@field diff LuaLine.Components.Diff
-        ---@field encoding LuaLine.Components.Encoding
-        ---@field fileformat LuaLine.Components.Fileformat
-        ---@field filename LuaLine.Components.Filename
-        ---@field filesize LuaLine.Components.Filesize
-        ---@field filetype LuaLine.Components.Filetype
-        ---@field hostname LuaLine.Components.Hostname
-        ---@field location LuaLine.Components.Location
-        ---@field mode LuaLine.Components.Mode
-        ---@field progress LuaLine.Components.Progress
-        ---@field searchcount LuaLine.Components.Searchcount
-        ---@field selectioncount LuaLine.Components.Selectioncount
-        ---@field tabs LuaLine.Components.Tabs
-        ---@field windows LuaLine.Components.Windows
+        ---@type LuaLine.ComponentsDict|table<string, LuaLine.Components.Spec>
         Presets.components = {}
         Presets.components.buffers = {
             'buffers',
@@ -407,14 +409,27 @@ return { ---@type LazySpec
         end
 
         if exists('triforce') then
-            Presets.components.triforce_lvl = { ---@type LuaLine.Components.Spec
+            Presets.components.triforce_lvl = {
                 function()
                     return require('triforce.lualine').level()
                 end,
             }
-            Presets.components.triforce_achv = { ---@type LuaLine.Components.Spec
+            Presets.components.triforce_achv = {
                 function()
-                    return require('triforce.lualine').achievements()
+                    return require('triforce.lualine').achievements({ show_count = true })
+                end,
+            }
+            Presets.components.triforce_streak = {
+                function()
+                    return require('triforce.lualine').streak({ show_days = true })
+                end,
+            }
+            Presets.components.triforce_session_time = {
+                function()
+                    return require('triforce.lualine').session_time({
+                        format = Termux.validate() and 'short' or 'long',
+                        show_duration = true,
+                    })
                 end,
             }
         end
@@ -469,72 +484,29 @@ return { ---@type LazySpec
             }
         end
 
-        Presets.components.noice = { ---@type LuaLine.Components.Spec
-            hl_get = {},
-            command_get = {},
-            mode_get = {},
-            search_get = {},
-        }
-
-        local NoiceAPI = require('noice.api')
-
-        ---@diagnostic disable
-        Presets.components.noice = {
-            hl_get = { NoiceAPI.status.message.get_hl, cond = NoiceAPI.status.message.has },
-            command_get = {
-                NoiceAPI.status.command.get,
-                cond = NoiceAPI.status.command.has,
-                color = { fg = '#ff9e64' },
-            },
-            mode_get = {
-                NoiceAPI.status.mode.get,
-                cond = NoiceAPI.status.mode.has,
-                color = { fg = '#ff9e64' },
-            },
-            search_get = {
-                NoiceAPI.status.search.get,
-                cond = NoiceAPI.status.search.has,
-                color = { fg = '#ff9e64' },
-            },
-        }
-        ---@diagnostic enable
-
         Presets.default = {
             lualine_a = { Presets.components.mode },
-            lualine_b = Termux.validate()
-                    and {
-                        -- Presets.components.branch,
-                        -- Presets.components.possession,
-                        Presets.components.filename,
-                    }
-                or {
-                    Presets.components.branch,
-                    -- Presets.components.possession,
-                    Presets.components.filename,
-                },
+            lualine_b = Termux.validate() and { Presets.components.filename }
+                or { Presets.components.branch, Presets.components.filename },
             lualine_c = Termux.validate() and { Presets.components.diagnostics }
                 or { Presets.components.diagnostics, Presets.components.diff },
             lualine_x = {
                 Presets.components.lsp_progress,
                 Presets.components.triforce_lvl,
                 Presets.components.triforce_achv,
+                Presets.components.triforce_session_time,
+                -- Presets.components.triforce_streak,
                 Presets.components.fileformat,
                 Presets.components.filetype,
             },
-            lualine_y = {
-                Presets.components.noice.search_get, ---@diagnostic disable-line
-                Presets.components.progress,
-            },
+            lualine_y = { Presets.components.progress },
             lualine_z = { Presets.components.location },
         }
         Presets.default_inactive = {
             lualine_a = {},
             lualine_b = { Presets.components.filename },
             lualine_c = {},
-            lualine_x = {
-                Presets.components.noice.command_get, ---@diagnostic disable-line
-                Presets.components.filetype,
-            },
+            lualine_x = { Presets.components.filetype },
             lualine_y = {},
             lualine_z = { Presets.components.location },
         }
