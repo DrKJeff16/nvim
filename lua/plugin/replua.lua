@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'mghaight/replua.nvim',
     version = false,
     config = function()

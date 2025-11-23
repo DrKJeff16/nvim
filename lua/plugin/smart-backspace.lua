@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'qwavies/smart-backspace.nvim',
     event = { 'InsertEnter', 'CmdlineEnter' },
     version = false,

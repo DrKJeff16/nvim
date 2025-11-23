@@ -6,8 +6,7 @@
 ---@alias GitSigns table<'add'|'change'|'delete'|'topdelete'|'changedelete'|'untracked', GitSignOpts>
 ---@alias GitSignsArr GitSigns[]
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'lewis6991/gitsigns.nvim',
     version = false,
     cond = require('user_api.check.exists').executable('git'),

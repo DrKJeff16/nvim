@@ -91,7 +91,6 @@ vim.g.loaded_netrwPlugin = 1
 
 local L = require('config.lazy')
 L.setup({
-    { import = 'plugin.startuptime' },
     { import = 'plugin.mini.icons' },
     { import = 'plugin.web-devicons' },
     { import = 'plugin.which-key' },
@@ -145,6 +144,7 @@ L.setup({
     { import = 'plugin.triforce' },
     { import = 'plugin.helpview' },
     { import = 'plugin.gh-co' },
+    { import = 'plugin.startuptime' },
     -- { import = 'plugin.echo' },
     -- { import = 'plugin.doxygen-previewer' },
     -- { import = 'plugin.mason' },

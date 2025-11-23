@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'nvim-mini/mini.starter',
     priority = 1000,
     version = false,

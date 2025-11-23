@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'folke/lazydev.nvim',
     ft = { 'lua' },
     version = false,

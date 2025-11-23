@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'roobert/hoversplit.nvim',
     dev = true,
     version = false,

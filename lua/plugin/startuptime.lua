@@ -2,8 +2,7 @@
 
 return { ---@type LazySpec
     'dstein64/vim-startuptime',
-    lazy = false,
-    priority = 1000,
+    cmd = 'StartupTime',
     version = false,
     init = require('config.util').flag_installed('startuptime'),
     config = function()
@@ -33,8 +32,9 @@ return { ---@type LazySpec
         require('user_api.config').keymaps({
             n = { ['<leader>vS'] = { vim.cmd.StartupTime, desc('Run StartupTime') } },
         })
+
         require('user_api.highlight').hl_from_dict({
-            ['StartupTimeSourcingEvent'] = { link = 'Title' },
+            StartupTimeSourcingEvent = { link = 'Title' },
         })
     end,
 }

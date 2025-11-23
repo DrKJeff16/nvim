@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'stephansama/fzf-nerdfont.nvim',
     dev = true,
     cmd = 'FzfNerdfont',

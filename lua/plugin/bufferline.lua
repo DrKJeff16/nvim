@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'akinsho/bufferline.nvim',
     event = 'VeryLazy',
     version = false,

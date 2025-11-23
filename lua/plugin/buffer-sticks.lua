@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'ahkohd/buffer-sticks.nvim',
     version = false,
     config = function()

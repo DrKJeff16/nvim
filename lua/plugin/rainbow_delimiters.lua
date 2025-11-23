@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'HiPhish/rainbow-delimiters.nvim',
     version = false,
     cond = not require('user_api.check').in_console(),

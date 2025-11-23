@@ -9,8 +9,7 @@ local function gen_bdel(force)
     end
 end
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'nvim-mini/mini.bufremove',
     version = false,
     config = function()

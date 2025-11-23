@@ -1,7 +1,39 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+local uv = vim.uv or vim.loop
+local in_list = vim.list_contains
+
+---@param direction 'next'|'prev'
+---@param keywords string[]
+---@return function
+local function jump(direction, keywords)
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('direction', direction, 'string', false, "'next'|'prev'")
+        vim.validate('keywords', keywords, 'table', false, 'string[]')
+    else
+        vim.validate({
+            direction = { direction, 'string' },
+            keywords = { keywords, 'table' },
+        })
+    end
+    if not in_list({ 'next', 'prev' }, direction) then
+        error(('(plugin.todo_comments:jump): Invalid direction `%s`!'):format(direction))
+    end
+    if vim.tbl_isempty(keywords) then
+        error('(plugin.todo_comments:jump): No available keywords!')
+    end
+
+    local direction_map = {
+        next = require('todo-comments').jump_next,
+        prev = require('todo-comments').jump_prev,
+    }
+    return function()
+        local func = direction_map[direction]
+        func({ keywords = keywords })
+    end
+end
+
+return { ---@type LazySpec
     'folke/todo-comments.nvim',
     version = false,
     dependencies = {
@@ -12,9 +44,6 @@ return {
     cond = require('user_api.check.exists').executable('rg')
         and not require('user_api.check').in_console(),
     config = function()
-        local uv = vim.uv or vim.loop
-        local in_list = vim.list_contains
-
         require('todo-comments').setup({
             signs = true,
             sign_priority = 8,
@@ -103,36 +132,6 @@ return {
                 pattern = [[\b(KEYWORDS):]],
             },
         })
-
-        ---@param direction 'next'|'prev'
-        ---@param keywords string[]
-        ---@return function
-        local function jump(direction, keywords)
-            if vim.fn.has('nvim-0.11') == 1 then
-                vim.validate('direction', direction, 'string', false, "'next'|'prev'")
-                vim.validate('keywords', keywords, 'table', false, 'string[]')
-            else
-                vim.validate({
-                    direction = { direction, 'string' },
-                    keywords = { keywords, 'table' },
-                })
-            end
-            if not in_list({ 'next', 'prev' }, direction) then
-                error(('(plugin.todo_comments:jump): Invalid direction `%s`!'):format(direction))
-            end
-            if vim.tbl_isempty(keywords) then
-                error('(plugin.todo_comments:jump): No available keywords!')
-            end
-
-            local direction_map = {
-                next = require('todo-comments').jump_next,
-                prev = require('todo-comments').jump_prev,
-            }
-            return function()
-                local func = direction_map[direction]
-                func({ keywords = keywords })
-            end
-        end
 
         local KEYWORDS = { ---@class TODOKeywords
             TODO = { 'TODO', 'PENDING', 'MISSING' },

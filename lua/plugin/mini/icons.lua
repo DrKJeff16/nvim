@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'nvim-mini/mini.icons',
     version = false,
     config = function()

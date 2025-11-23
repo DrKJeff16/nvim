@@ -1,11 +1,10 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'nvim-mini/mini.extra',
     version = false,
     config = function()
-        require('mini.bufremove').setup({})
+        require('mini.extra').setup({})
     end,
 }
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

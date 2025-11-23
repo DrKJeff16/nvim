@@ -2,8 +2,7 @@
 
 local ORG_PFX = vim.fn.expand('~/.org')
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'nvim-orgmode/orgmode',
     version = false,
     cond = not require('user_api.check').in_console(),

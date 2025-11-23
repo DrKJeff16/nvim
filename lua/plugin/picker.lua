@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'wsdjeg/picker.nvim',
     version = false,
     cmd = { 'Picker' },

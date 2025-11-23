@@ -1,8 +1,7 @@
 ---@diagnostic disable:missing-fields
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'folke/noice.nvim',
     version = false,
     dependencies = { 'MunifTanjim/nui.nvim', 'rcarriga/nvim-notify', 'nvim-mini/mini.nvim' },

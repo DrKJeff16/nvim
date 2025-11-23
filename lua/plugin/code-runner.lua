@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'wsdjeg/code-runner.nvim',
     version = false,
     dependencies = { 'wsdjeg/job.nvim', 'wsdjeg/notify.nvim' },

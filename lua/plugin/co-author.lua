@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     '2kabhishek/co-author.nvim',
     version = false,
     ft = { 'gitcommit', 'gitrebase' },

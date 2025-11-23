@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'A7Lavinraj/fyler.nvim',
     version = false,
     dependencies = { 'nvim-mini/mini.icons' },

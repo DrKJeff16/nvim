@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'folke/ts-comments.nvim',
     version = false,
     cond = not require('user_api.check').in_console(),

@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'kdheepak/lazygit.nvim',
     cmd = { 'LazyGit' },
     version = false,
@@ -53,8 +52,7 @@ return {
             pattern = '*',
             group = group,
             callback = function()
-                local ft = require('user_api.util').ft_get()
-                if ft ~= 'lazygit' and not vim.v.event.status then
+                if require('user_api.util').ft_get() ~= 'lazygit' and not vim.v.event.status then
                     vim.fn.execute('bdelete! ' .. vim.fn.expand('<abuf>'), 'silent!')
                 end
             end,

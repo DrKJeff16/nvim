@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'folke/zen-mode.nvim',
     version = false,
     cond = not require('user_api.check').in_console(),
@@ -44,24 +43,9 @@ return {
         require('user_api.config').keymaps({
             n = {
                 ['<leader>Z'] = { group = '+Zen Mode' },
-                ['<leader>Zo'] = {
-                    function()
-                        require('zen-mode').open()
-                    end,
-                    desc('Open Zen Mode'),
-                },
-                ['<leader>Zd'] = {
-                    function()
-                        require('zen-mode').close()
-                    end,
-                    desc('Close Zen Mode'),
-                },
-                ['<leader>Zt'] = {
-                    function()
-                        require('zen-mode').toggle()
-                    end,
-                    desc('Toggle Zen Mode'),
-                },
+                ['<leader>Zo'] = { require('zen-mode').open, desc('Open Zen Mode') },
+                ['<leader>Zd'] = { require('zen-mode').close, desc('Close Zen Mode') },
+                ['<leader>Zt'] = { require('zen-mode').toggle, desc('Toggle Zen Mode') },
             },
         })
     end,

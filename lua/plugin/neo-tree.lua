@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'nvim-neo-tree/neo-tree.nvim',
     lazy = false,
     version = false,
@@ -57,23 +56,21 @@ return {
                 {
                     event = 'after_render',
                     handler = function(state)
-                        if
-                            state.current_position == 'left'
-                            or state.current_position == 'right'
-                        then
-                            vim.api.nvim_win_call(state.winid, function()
-                                local str = require('neo-tree.ui.selector').get()
-                                if str then
-                                    _G.__cached_neo_tree_selector = str
-                                end
-                            end)
+                        if not vim.list_contains({ 'left', 'right' }, state.current_position) then
+                            return
                         end
+                        vim.api.nvim_win_call(state.winid, function()
+                            local str = require('neo-tree.ui.selector').get()
+                            if str then
+                                _G.__cached_neo_tree_selector = str
+                            end
+                        end)
                     end,
                 },
                 {
                     event = 'neo_tree_window_after_open',
                     handler = function(args)
-                        if args.position == 'left' or args.position == 'right' then
+                        if vim.list_contains({ 'left', 'right' }, args.position) then
                             vim.cmd.wincmd('=')
                         end
                     end,
@@ -81,7 +78,7 @@ return {
                 {
                     event = 'neo_tree_window_after_close',
                     handler = function(args)
-                        if args.position == 'left' or args.position == 'right' then
+                        if vim.list_contains({ 'left', 'right' }, args.position) then
                             vim.cmd.wincmd('=')
                         end
                     end,
