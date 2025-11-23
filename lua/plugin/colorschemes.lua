@@ -21,10 +21,6 @@
 ---|VagueSubMod
 ---|VSCodeSubMod
 
-local is_str = require('user_api.check.value').is_str
-local type_not_empty = require('user_api.check.value').type_not_empty
-local displace_letter = require('user_api.util').displace_letter
-local desc = require('user_api.maps').desc
 local ERROR = vim.log.levels.ERROR
 
 ---@class CscMod
@@ -81,12 +77,18 @@ Colorschemes.Vscode         = require('plugin.colorschemes.vscode')
 
 -- stylua: ignore end
 
----@type CscMod|fun(color?: string|AllCsc)
+---@type CscMod|fun(color?: string|AllCsc|nil)
 local M = setmetatable({}, {
     __index = Colorschemes,
     ---@param self CscMod
-    ---@param color string|AllCsc
+    ---@param color? string|AllCsc|nil
     __call = function(self, color)
+        if vim.fn.has('nvim-0.11') == 1 then
+            vim.validate('color', color, { 'string', 'nil' }, true)
+        else
+            vim.validate({ color = { color, { 'string', 'nil' }, true } })
+        end
+
         local Keys = { ---@type AllMaps
             ['<leader>u'] = { group = '+UI' },
             ['<leader>uc'] = { group = '+Colorschemes' },
@@ -94,40 +96,42 @@ local M = setmetatable({}, {
         local valid = {} ---@type string[]
         local csc_group = 'A'
         local i = 1
-        for name in pairs(self.OPTIONS) do
+        for _, name in pairs(self.OPTIONS) do
             local TColor = self[name] ---@type AllColorSubMods
             if TColor and TColor.valid and TColor.valid() then
                 table.insert(valid, name)
                 Keys['<leader>uc' .. csc_group] = { group = '+Group ' .. csc_group }
-                local i_str = tostring(i)
-                Keys['<leader>uc' .. csc_group .. i_str] = {
+                Keys[('<leader>uc%s%s'):format(csc_group, i)] = {
                     TColor.setup,
-                    desc(('Set Colorscheme `%s`'):format(name)),
+                    require('user_api.maps').desc(('Set Colorscheme `%s`'):format(name)),
                 }
                 if i == 9 then
                     i = 1
-                    csc_group = displace_letter(csc_group, 'next')
+                    csc_group = require('user_api.util').displace_letter(csc_group, 'next')
                 elseif i < 9 then
                     i = i + 1
                 end
             end
         end
-        if not type_not_empty('table', valid) then
-            error('No valid colorschemes!', ERROR)
+        if vim.tbl_isempty(valid) then
+            vim.notify('No valid colorschemes!', ERROR)
         end
+
         require('user_api.config').keymaps({ n = Keys })
-        if not (is_str(color) and vim.list_contains(valid, color)) then
+
+        if not (color and vim.list_contains(valid, color)) then
             color = valid[1]
         end
 
         local Color = self[color] ---@type AllColorSubMods
-        if Color ~= nil and Color.valid() then
+        if Color and Color.valid() then
             Color.setup()
             return
         end
+
         for _, csc in ipairs(valid) do
             Color = self[csc] ---@type AllColorSubMods
-            if Color.valid ~= nil and Color.valid() then
+            if Color.valid and vim.is_callable(Color.valid) and Color.valid() then
                 Color.setup()
                 return
             end
