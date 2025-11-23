@@ -2,13 +2,12 @@ local INFO = vim.log.levels.INFO
 local ERROR = vim.log.levels.ERROR
 
 ---@class User.Distro
-local Distro = {}
+local Distro = {
+    archlinux = require('user_api.distro.archlinux'),
+    termux = require('user_api.distro.termux'),
+}
 
-Distro.archlinux = require('user_api.distro.archlinux')
-Distro.termux = require('user_api.distro.termux')
-
----@type User.Distro|fun(verbose?: boolean)
-return setmetatable({}, {
+local M = setmetatable(Distro, { ---@type User.Distro|fun(verbose?: boolean)
     __index = Distro,
     __newindex = function(_, _, _)
         vim.notify('User.Distro table is Read-Only!', ERROR)
@@ -35,4 +34,6 @@ return setmetatable({}, {
         end
     end,
 })
+
+return M
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

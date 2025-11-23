@@ -16,5 +16,12 @@ function User.setup()
     User.config.neovide.setup()
 end
 
-return User
+local M = setmetatable(User, {
+    __index = User,
+    __newindex = function(_, _, _)
+        vim.notify('User table is read-only!', vim.log.levels.ERROR)
+    end,
+})
+
+return M
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
