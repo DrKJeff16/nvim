@@ -11,6 +11,7 @@ return { ---@type LazySpec
         'saifulapm/neotree-file-nesting-config',
         {
             'antosha417/nvim-lsp-file-operations',
+            dev = true,
             config = function()
                 require('lsp-file-operations').setup()
             end,
