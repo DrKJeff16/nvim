@@ -3,9 +3,6 @@
 ---@class EmbarkSubMod
 local Embark = {}
 
-Embark.mod_cmd = 'silent! colorscheme embark'
-
----@return boolean
 function Embark.valid()
     return vim.g.installed_embark == 1
 end
@@ -15,7 +12,7 @@ function Embark.setup()
     if require('user_api.check.exists').module('embark') then
         require('embark').setup()
     end
-    vim.cmd(Embark.mod_cmd)
+    vim.cmd.colorscheme('embark')
 end
 
 return Embark

@@ -5,7 +5,7 @@
 ---@class TNSubMod
 local TokyoNight = {}
 
----@type (TNSubMod.Variant)[]
+---@class TNSubMod.Variants
 TokyoNight.variants = { 'storm', 'night', 'moon', 'day' }
 
 function TokyoNight.valid()

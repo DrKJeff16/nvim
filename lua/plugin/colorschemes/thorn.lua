@@ -1,13 +1,10 @@
-local exists = require('user_api.check.exists').module
-
 ---A submodule class for the `<NAME>` colorscheme.
 --- ---
 ---@class ThornSubMod
 local Thorn = {}
 
----@return boolean
 function Thorn.valid()
-    return exists('thorn')
+    return require('user_api.check.exists').module('thorn')
 end
 
 function Thorn.setup()

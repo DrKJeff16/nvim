@@ -1,15 +1,15 @@
 ---A submodule class for the `kanagawa-paper` colorscheme.
 --- ---
----@class KPSubMod
-local M = {}
+---@class KPSubKPod
+local KP = {}
 
-function M.valid()
+function KP.valid()
     return require('user_api.check.exists').module('kanagawa-paper')
 end
 
-function M.setup()
+function KP.setup()
     vim.cmd.colorscheme('kanagawa-paper')
 end
 
-return M
+return KP
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

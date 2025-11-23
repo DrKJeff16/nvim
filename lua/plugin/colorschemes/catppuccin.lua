@@ -1,4 +1,4 @@
----@alias CpcSubMod.Variant ('frappe'|'latte'|'macchiato'|'mocha')
+---@alias CpcSubMod.Variant 'frappe'|'latte'|'macchiato'|'mocha'
 
 --- A submodule class for the `catppuccin.nvim` colorscheme.
 --- ---
