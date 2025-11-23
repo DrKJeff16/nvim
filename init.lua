@@ -164,7 +164,6 @@ L.setup({
     -- { import = 'plugin.scrollbar' },
     -- { import = 'plugin.refactoring' },
     -- { import = 'plugin.checkmate' },
-    -- { import = 'plugin.fyler' },
     -- { import = 'plugin.a_vim' },
     -- { import = 'plugin.twilight' },
     -- { import = 'plugin.qwahl' },
