@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec[]
-return {
+return { ---@type LazySpec[]
     {
         'nvim-treesitter/nvim-treesitter',
         branch = 'main',

@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec[]
-return {
+return { ---@type LazySpec[]
     'neovim/nvim-lspconfig',
     'folke/trouble.nvim',
     'b0o/SchemaStore.nvim',
@@ -19,6 +18,7 @@ return {
     {
         'romus204/referencer.nvim',
         version = false,
+        cond = false,
         config = function()
             require('referencer').setup()
         end,

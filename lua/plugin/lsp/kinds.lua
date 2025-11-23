@@ -31,11 +31,9 @@ function Kinds.new()
     return setmetatable({}, {
         __index = Kinds,
         __call = function(self) ---@param self Lsp.SubMods.Kinds
-            local kinds = vim.lsp.protocol.CompletionItemKind
-            for s, kind in pairs(kinds) do
-                kinds[s] = require('user_api.check.value').type_not_empty('string', self.icons[s])
-                        and self.icons[s]
-                    or kind
+            for s, kind in pairs(vim.lsp.protocol.CompletionItemKind) do
+                local icon = self.icons[s] or kind ---@type Lsp.SubMods.Kinds.Icons|lsp.CompletionItemKind
+                vim.lsp.protocol.CompletionItemKind[s] = icon ~= '' and icon or kind
             end
         end,
     })

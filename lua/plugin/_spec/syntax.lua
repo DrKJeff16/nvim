@@ -1,12 +1,9 @@
 ---@module 'lazy'
 
----@type LazySpec[]
-return {
-    {
-        'rhysd/vim-syntax-codeowners',
-        lazy = false,
-        version = false,
-        init = require('config.util').flag_installed('codeowners'),
-    },
+return { ---@type LazySpec
+    'rhysd/vim-syntax-codeowners',
+    lazy = false,
+    version = false,
+    init = require('config.util').flag_installed('codeowners'),
 }
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

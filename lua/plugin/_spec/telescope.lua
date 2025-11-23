@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec[]
-return {
+return { ---@type LazySpec[]
     {
         'nvim-telescope/telescope.nvim',
         version = false,

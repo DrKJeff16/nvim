@@ -3,8 +3,7 @@
 local colorscheme_init = require('config.util').colorscheme_init
 local in_console = require('user_api.check').in_console
 
----@type LazySpec[]
-return {
+return { ---@type LazySpec[]
     {
         'jpwol/thorn.nvim',
         lazy = false,

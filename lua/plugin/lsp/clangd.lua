@@ -1,9 +1,7 @@
 ---@module 'lazy'
 
----@type LazySpec
-return {
+return { ---@type LazySpec
     'p00f/clangd_extensions.nvim',
-    lazy = true,
     ft = { 'c', 'cpp' },
     dev = true,
     version = false,

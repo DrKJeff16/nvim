@@ -199,17 +199,29 @@ Trouble.Keys = { ---@type AllMaps
     ['<leader>lx'] = { group = '+Trouble' },
     ['<leader>lxx'] = {
         function()
+            vim.cmd.Trouble('diagnostics toggle')
+        end,
+        desc('Toggle Global Diagnostics'),
+    },
+    ['<leader>lxX'] = {
+        function()
             vim.cmd.Trouble(
-                'diagnostics toggle filter.buf=' .. tostring(vim.api.nvim_get_current_buf())
+                ('diagnostics toggle filter.buf=%s'):format(vim.api.nvim_get_current_buf())
             )
         end,
-        desc('Toggle Diagnostics'),
+        desc('Toggle Buffer-Local Diagnostics'),
     },
     ['<leader>lxs'] = {
         function()
             vim.cmd.Trouble('symbols toggle focus=false')
         end,
         desc('Toggle Symbols'),
+    },
+    ['<leader>lxS'] = {
+        function()
+            vim.cmd.Trouble('symbols toggle focus=true')
+        end,
+        desc('Toggle Symbols (Focused)'),
     },
     ['<leader>lxl'] = {
         function()
@@ -231,14 +243,19 @@ Trouble.Keys = { ---@type AllMaps
     },
 }
 
----@return table|Lsp.SubMods.Trouble|fun(override: trouble.Config?)
+---@return Lsp.SubMods.Trouble|fun(override?: trouble.Config|nil)
 function Trouble.new()
     return setmetatable({}, {
         __index = Trouble,
-
         ---@param self Lsp.SubMods.Trouble
         ---@param override? trouble.Config
         __call = function(self, override)
+            if vim.fn.has('nvim-0.11') == 1 then
+                vim.validate('override', override, { 'table', 'nil' }, true)
+            else
+                vim.validate({ override = { override, { 'table', 'nil' }, true } })
+            end
+
             self.Opts = vim.tbl_deep_extend('force', self.Opts, override or {})
             require('trouble').setup(self.Opts)
             require('user_api.config').keymaps({ n = self.Keys })

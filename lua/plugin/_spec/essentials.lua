@@ -1,9 +1,6 @@
 ---@module 'lazy'
 
----@type LazySpec[]
-return {
-    { 'MunifTanjim/nui.nvim', version = false },
-    { 'nvim-lua/plenary.nvim', version = false },
+return { ---@type LazySpec[]
     {
         'nvim-mini/mini.nvim',
         version = false,
