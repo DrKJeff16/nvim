@@ -126,6 +126,7 @@ L.setup({
     { import = 'plugin.neo-tree' },
     { import = 'plugin.snacks' },
     { import = 'plugin.lsp.clangd' },
+    { import = 'plugin.lsp-toggle' },
     { import = 'plugin.gitsigns' },
     { import = 'plugin.lazygit' },
     { import = 'plugin.diffview' },
