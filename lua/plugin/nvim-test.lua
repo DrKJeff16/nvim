@@ -2,7 +2,6 @@
 
 return { ---@type LazySpec
     'klen/nvim-test',
-    lazy = true,
     version = false,
     cmd = {
         'TestEdit',
