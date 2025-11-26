@@ -493,8 +493,8 @@ return { ---@type LazySpec
             lualine_x = {
                 Presets.components.lsp_progress,
                 Presets.components.triforce_lvl,
-                Presets.components.triforce_achv,
                 Presets.components.triforce_session_time,
+                -- Presets.components.triforce_achv,
                 -- Presets.components.triforce_streak,
                 Presets.components.fileformat,
                 Presets.components.filetype,
