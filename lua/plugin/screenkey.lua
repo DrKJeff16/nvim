@@ -90,9 +90,10 @@ return { ---@type LazySpec
             notify_method = 'notify',
             log = {
                 min_level = vim.log.levels.OFF,
-                filepath = vim.fn.stdpath('data') .. '/screenkey.log',
+                filepath = vim.fn.stdpath('state') .. '/screenkey.log',
             },
         })
+
         local desc = require('user_api.maps').desc
         require('user_api.config').keymaps({
             n = { ['<leader><C-s>'] = { require('screenkey').toggle, desc('Toggle Screenkey') } },
