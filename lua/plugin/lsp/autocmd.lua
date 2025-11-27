@@ -83,7 +83,7 @@ Autocmd.autocommands = {
                                     local config = vim.deepcopy(client.config)
                                     table.sort(config)
                                     vim.notify(
-                                        ('%s: %s'):format(client.name, inspect(config)),
+                                        ('%s: %s'):format(client.name, vim.inspect(config)),
                                         INFO
                                     )
                                 end,

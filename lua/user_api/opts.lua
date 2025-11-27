@@ -238,6 +238,11 @@ function Opts.setup_maps()
     })
 end
 
+function Opts.setup()
+    Opts.setup_cmds()
+    Opts.setup_maps()
+end
+
 ---@return User.Opts|fun(override?: User.Opts.Spec, verbose?: boolean)
 function Opts.new()
     return setmetatable(Opts, {

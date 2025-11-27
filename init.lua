@@ -1,6 +1,5 @@
 _G.MYVIMRC = vim.fn.stdpath('config') .. '/init.lua'
 _G.is_windows = vim.fn.has('win32') == 1
-_G.inspect = vim.inspect
 
 local INFO = vim.log.levels.INFO
 local in_list = vim.list_contains

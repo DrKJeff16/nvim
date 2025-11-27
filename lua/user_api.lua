@@ -9,14 +9,13 @@ function User.setup()
     User.config.keymaps({ n = { ['<leader>U'] = { group = '+User API' } } })
     require('user_api.commands').setup()
     require('user_api.update').setup()
-    User.opts.setup_maps()
-    User.opts.setup_cmds()
+    User.opts.setup()
     require('user_api.util').setup_autocmd()
     User.distro()
     User.config.neovide.setup()
 end
 
-local M = setmetatable(User, {
+local M = setmetatable(User, { ---@type UserAPI
     __index = User,
     __newindex = function(_, _, _)
         vim.notify('User table is read-only!', vim.log.levels.ERROR)
