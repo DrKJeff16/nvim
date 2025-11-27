@@ -32,17 +32,6 @@ return { ---@type LazySpec[]
         },
     },
     {
-        'lucasadelino/conifer.nvim',
-        lazy = false,
-        priority = 1000,
-        version = false,
-        init = colorscheme_init('installed_conifer'),
-        config = function()
-            require('conifer').setup({ variant = 'lunar', transparent = false })
-        end,
-        cond = not in_console(),
-    },
-    {
         'folke/tokyonight.nvim',
         lazy = false,
         priority = 1000,
@@ -101,17 +90,6 @@ return { ---@type LazySpec[]
         cond = not in_console(),
     },
     {
-        'jim-at-jibba/ariake.nvim',
-        lazy = false,
-        priority = 1000,
-        version = false,
-        init = colorscheme_init('installed_ariake'),
-        config = function()
-            require('ariake').setup()
-        end,
-        cond = not in_console(),
-    },
-    {
         'tiagovla/tokyodark.nvim',
         lazy = false,
         priority = 1000,
@@ -143,16 +121,6 @@ return { ---@type LazySpec[]
         init = colorscheme_init('installed_gruvdark'),
         config = function()
             require('gruvdark').setup({ transparent = false, colors = {}, highlights = {} })
-        end,
-        cond = not in_console(),
-    },
-    {
-        'kevinm6/kurayami.nvim',
-        lazy = false,
-        priority = 1000,
-        init = colorscheme_init('installed_kurayami'),
-        config = function()
-            require('kurayami').setup()
         end,
         cond = not in_console(),
     },
@@ -465,45 +433,6 @@ return { ---@type LazySpec[]
                     type = '#9bb4bc',
                     visual = '#333738',
                     warning = '#f3be7c',
-                },
-            })
-        end,
-        cond = not in_console(),
-    },
-    {
-        'thesimonho/kanagawa-paper.nvim',
-        lazy = false,
-        priority = 1000,
-        version = false,
-        init = colorscheme_init('installed_kanagawa_paper'),
-        config = function()
-            require('kanagawa-paper').setup({
-                _theme = 'auto',
-                transparent = false,
-                undercurl = true,
-                gutter = true,
-                diag_background = true,
-                dim_inactive = true,
-                terminal_colors = true,
-                cache = true,
-                styles = {
-                    comment = { italic = false },
-                    functions = { italic = false, bold = true },
-                    keyword = { italic = false, bold = true },
-                    statement = { italic = false, bold = true },
-                    type = { italic = false },
-                },
-                color_balance = {
-                    ink = { brightness = 0, saturation = 0 },
-                    canvas = { brightness = 0, saturation = 0 },
-                },
-                auto_plugins = true,
-                all_plugins = true,
-                integrations = {
-                    wezterm = {
-                        enabled = true,
-                        path = (os.getenv('TEMP') or '/tmp') .. '/nvim-theme',
-                    },
                 },
             })
         end,
