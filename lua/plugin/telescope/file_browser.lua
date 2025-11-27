@@ -1,4 +1,3 @@
-local executable = require('user_api.check.exists').executable
 local Actions = require('telescope._extensions.file_browser.actions')
 local Finders = require('telescope._extensions.file_browser.finders')
 
@@ -13,8 +12,8 @@ FileBrowser.file_browser = {
     auto_depth = true,
     select_buffer = false,
     hidden = { file_browser = false, folder_browser = false },
-    respect_gitignore = executable('fd'),
-    use_fd = executable('fd'),
+    respect_gitignore = require('user_api.check.exists').executable('fd'),
+    use_fd = require('user_api.check.exists').executable('fd'),
     display_stat = { date = true, size = true, mode = true },
     git_status = true,
     quiet = false,
@@ -30,7 +29,7 @@ FileBrowser.file_browser = {
     theme = 'ivy',
     hijack_netrw = false,
     mappings = {
-        ['i'] = {
+        i = {
             ['<A-c>'] = Actions.create,
             ['<A-d>'] = Actions.remove,
             ['<A-m>'] = Actions.move,
@@ -47,7 +46,7 @@ FileBrowser.file_browser = {
             ['<C-w>'] = Actions.goto_cwd,
             ['<S-CR>'] = Actions.create_from_prompt,
         },
-        ['n'] = {
+        n = {
             c = Actions.create,
             d = Actions.remove,
             e = Actions.goto_home_dir,
@@ -69,7 +68,7 @@ function FileBrowser.loadkeys()
     local desc = require('user_api.maps').desc
     require('user_api.config').keymaps({
         n = {
-            ['<leader>fTeb'] = {
+            ['<leader><C-T>eb'] = {
                 require('telescope').extensions.file_browser.file_browser,
                 desc('File Browser'),
             },
