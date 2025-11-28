@@ -1,14 +1,4 @@
 local MODSTR = 'config.util'
-local Exists = require('user_api.check.exists')
-local Value = require('user_api.check.value')
-local exists = Exists.module
-local executable = Exists.executable
-local env_vars = Exists.env_vars
-local vim_exists = Exists.vim_exists
-local is_bool = Value.is_bool
-local is_str = Value.is_str
-
-local in_list = vim.list_contains
 local ERROR = vim.log.levels.ERROR
 
 ---@class Config.Util
@@ -17,14 +7,17 @@ local CfgUtil = {}
 ---@param force? boolean
 function CfgUtil.set_tgc(force)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('force', force, 'boolean', true)
+        vim.validate('force', force, { 'boolean', 'nil' }, true)
     else
         vim.validate({ force = { force, { 'boolean', 'nil' }, true } })
     end
     force = force ~= nil and force or false
 
-    local in_console = require('user_api.check').in_console
-    vim.o.termguicolors = not force and (vim_exists('+termguicolors') and not in_console()) or true
+    vim.o.termguicolors = not force
+            and (require('user_api.check.exists').vim_exists('+termguicolors') and not require(
+                'user_api.check'
+            ).in_console())
+        or true
 end
 
 ---@param name string
@@ -33,7 +26,7 @@ end
 function CfgUtil.flag_installed(name, callback)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('name', name, 'string', false)
-        vim.validate('callback', callback, 'function', true)
+        vim.validate('callback', callback, { 'function', 'nil' }, true)
     else
         vim.validate({
             name = { name, 'string' },
@@ -47,8 +40,7 @@ function CfgUtil.flag_installed(name, callback)
     local flag = (name:sub(1, 10) == 'installed_') and name or ('installed_' .. name)
     return function()
         vim.g[flag] = 1
-
-        if callback then
+        if callback and vim.is_callable(callback) then
             callback()
         end
     end
@@ -69,11 +61,11 @@ function CfgUtil.colorscheme_init(fields, force_tgc)
             force_tgc = { force_tgc, { 'boolean', 'nil' }, true },
         })
     end
+    force_tgc = force_tgc ~= nil and force_tgc or false
 
-    force_tgc = is_bool(force_tgc) and force_tgc or false
     return function()
         CfgUtil.set_tgc(force_tgc)
-        if is_str(fields) then
+        if require('user_api.check.value').is_str(fields) then
             CfgUtil.flag_installed(fields)()
             return
         end
@@ -93,8 +85,9 @@ function CfgUtil.require(mod_str)
     else
         vim.validate({ mod_str = { mod_str, 'string' } })
     end
+
     return function()
-        if exists(mod_str) then
+        if require('user_api.check.exists').module(mod_str) then
             require(mod_str)
         end
     end
@@ -119,6 +112,7 @@ end
 --- ---
 ---@return string|false cmd
 function CfgUtil.tel_fzf_build()
+    local executable = require('user_api.check.exists').executable
     if not executable({ 'make', 'mingw32-make' }) then
         return false
     end
@@ -127,18 +121,20 @@ function CfgUtil.tel_fzf_build()
 end
 
 function CfgUtil.luarocks_check()
-    return executable('luarocks') and env_vars({ 'LUA_PATH', 'LUA_CPATH' })
+    return require('user_api.check.exists').executable('luarocks')
+        and require('user_api.check.exists').env_vars({ 'LUA_PATH', 'LUA_CPATH' })
 end
 
 ---@param cmd? 'ed'|'tabnew'|'split'|'vsplit'
 ---@return function
 function CfgUtil.key_variant(cmd)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('cmd', cmd, 'string', true, "'ed'|'tabnew'|'split'|'vsplit'")
+        vim.validate('cmd', cmd, { 'string', 'nil' }, true, "'ed'|'tabnew'|'split'|'vsplit'")
     else
         vim.validate({ cmd = { cmd, { 'string', 'nil' }, true } })
     end
-    cmd = (cmd ~= nil and in_list({ 'ed', 'tabnew', 'split', 'vsplit' }, cmd)) and cmd or 'ed'
+    cmd = cmd or 'ed'
+    cmd = vim.list_contains({ 'ed', 'tabnew', 'split', 'vsplit' }, cmd) and cmd or 'ed'
 
     return function()
         vim.cmd[cmd](vim.fn.stdpath('config') .. '/lua/config/lazy.lua')
@@ -146,8 +142,10 @@ function CfgUtil.key_variant(cmd)
 end
 
 function CfgUtil.has_tgc()
-    local in_console = require('user_api.check').in_console
-    if in_console or not exists('+termguicolors') then
+    if
+        require('user_api.check').in_console()
+        or not require('user_api.check.exists').vim_exists('+termguicolors')
+    then
         return false
     end
     return vim.o.termguicolors
