@@ -20,11 +20,11 @@ function Update.update(verbose)
 
     vim.api.nvim_set_current_dir(vim.fn.stdpath('config'))
     local cmd = vim.system({ 'git', 'pull', '--rebase', '--recurse-submodules' }, { text = true })
-        :wait(3000)
+        :wait(10000)
 
     vim.api.nvim_set_current_dir(og_cwd)
-    if verbose then
-        vim.notify((cmd.code ~= 0 and cmd.stderr or cmd.stdout), cmd.code ~= 0 and WARN or INFO, {
+    if verbose and cmd.stdout and cmd.stdout ~= '' then
+        vim.notify(cmd.stdout, INFO, {
             animate = true,
             hide_from_history = false,
             timeout = 2250,
@@ -38,6 +38,14 @@ function Update.update(verbose)
             timeout = 5000,
             title = 'User API - Update',
         })
+        if verbose and cmd.stderr and cmd.stderr ~= '' then
+            vim.notify(cmd.stderr, WARN, {
+                animate = true,
+                hide_from_history = false,
+                timeout = 2250,
+                title = 'User API - Update',
+            })
+        end
         return
     end
 
