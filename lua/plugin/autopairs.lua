@@ -40,7 +40,7 @@ return { ---@type LazySpec
             check_ts = true,
             ts_config = { lua = { 'string' } },
             map_cr = true,
-            map_bs = false,
+            map_bs = true,
             map_c_h = false,
             map_c_w = false,
         })
