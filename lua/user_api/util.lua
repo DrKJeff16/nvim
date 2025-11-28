@@ -263,11 +263,18 @@ function Util.setup_autocmd()
     local au_repeated_events = Util.au.au_repeated_events
     local ft_set = Util.ft_set
     local group = vim.api.nvim_create_augroup('User.AU', { clear = true })
-    local AUS = { ---@type AuRepeatEvents[]
+    Util.au.created = vim.tbl_deep_extend('keep', Util.au.created or {}, {
         -- NOTE: Keep this as first element for `orgmode` addition
         {
             events = { 'BufCreate', 'BufAdd', 'BufNew', 'BufNewFile', 'BufRead' },
             opts_tbl = {
+                {
+                    group = group,
+                    pattern = '*.org',
+                    callback = function(ev)
+                        Util.ft_set('org', ev.buf)()
+                    end,
+                },
                 {
                     group = group,
                     pattern = '.spacemacs',
@@ -463,19 +470,8 @@ function Util.setup_autocmd()
                 },
             },
         },
-    }
+    })
 
-    if pcall(require, 'orgmode') then
-        table.insert(AUS[1].opts_tbl, {
-            group = group,
-            pattern = '*.org',
-            callback = function(ev)
-                Util.ft_set('org', ev.buf)()
-            end,
-        })
-    end
-
-    Util.au.created = vim.tbl_deep_extend('keep', Util.au.created or {}, AUS) ---@type AuRepeatEvents[]
     for _, t in ipairs(Util.au.created) do
         au_repeated_events(t)
     end

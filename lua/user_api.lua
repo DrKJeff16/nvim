@@ -6,13 +6,17 @@ local User = {
 }
 
 function User.setup()
-    User.config.keymaps({ n = { ['<leader>U'] = { group = '+User API' } } })
     require('user_api.commands').setup()
     require('user_api.update').setup()
+
     User.opts.setup()
-    require('user_api.util').setup_autocmd()
     User.distro()
+
+    require('user_api.util').setup_autocmd()
+
     User.config.neovide.setup()
+
+    User.config.keymaps({ n = { ['<leader>U'] = { group = '+User API' } } })
 end
 
 local M = setmetatable(User, { ---@type UserAPI

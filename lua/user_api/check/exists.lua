@@ -1,7 +1,7 @@
 local MODSTR = 'user_api.check.exists'
 local ERROR = vim.log.levels.ERROR
 
----@return User.Check.Value
+---@return User.Check.Value value
 local function get_value()
     return require('user_api.check.value')
 end
@@ -15,15 +15,15 @@ end
 local Exists = {}
 
 ---@param mod string
----@return boolean
+---@return boolean exists
 function Exists.module(mod)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('mod', mod, 'string', false)
     else
         vim.validate({ mod = { mod, { 'string' } } })
     end
-    local type_not_empty = get_value().type_not_empty
-    if not type_not_empty('string', mod) then
+
+    if not get_value().type_not_empty('string', mod) then
         error(('`(%s.module)`: Input is not valid'):format(MODSTR), ERROR)
     end
 
@@ -32,7 +32,7 @@ function Exists.module(mod)
 end
 
 ---@param expr string[]|string
----@return boolean
+---@return boolean has
 function Exists.vim_has(expr)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('expr', expr, { 'string', 'table' }, false, 'string[]|string')
@@ -55,7 +55,7 @@ function Exists.vim_has(expr)
 end
 
 ---@param expr string[]|string
----@return boolean
+---@return boolean exists
 function Exists.vim_exists(expr)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('expr', expr, { 'string', 'table' }, false, 'string[]|string')
@@ -80,30 +80,26 @@ function Exists.vim_exists(expr)
 end
 
 ---@param vars string[]|string
----@param fallback function|nil
----@return boolean
-function Exists.env_vars(vars, fallback)
+---@param callback function|nil
+---@return boolean found
+function Exists.env_vars(vars, callback)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('vars', vars, { 'string', 'table' }, false, 'string[]|string')
-        vim.validate('fallback', fallback, 'function', true)
+        vim.validate('callback', callback, 'function', true)
     else
         vim.validate({
             vars = { vars, { 'string', 'table' } },
-            fallback = { fallback, { 'function', 'nil' }, true },
+            callback = { callback, { 'function', 'nil' }, true },
         })
     end
-    fallback = fallback or nil
 
-    local Value = get_value()
-    local is_str = Value.is_str
-    local is_tbl = Value.is_tbl
     local environment = vim.fn.environ()
     local res = false
 
     ---@cast vars string
-    if is_str(vars) then
+    if get_value().is_str(vars) then
         res = vim.fn.has_key(environment, vars) == 1
-    elseif is_tbl(vars) then
+    elseif get_value().is_tbl(vars) then
         ---@cast vars string[]
         for _, v in ipairs(vars) do
             res = Exists.env_vars(v)
@@ -112,14 +108,14 @@ function Exists.env_vars(vars, fallback)
             end
         end
     end
-    if not res and fallback and vim.is_callable(fallback) then
-        fallback()
+    if not res and callback and vim.is_callable(callback) then
+        callback()
     end
     return res
 end
 
 ---@param exe string[]|string
----@return boolean
+---@return boolean found
 function Exists.executable(exe)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('exe', exe, { 'string', 'table' }, false, 'string[]|string')
@@ -127,13 +123,12 @@ function Exists.executable(exe)
         vim.validate({ exe = { exe, { 'string', 'table' } } })
     end
 
-    local Value = get_value()
-    local is_str = Value.is_str
-    local is_tbl = Value.is_tbl
     local res = false
-    if is_str(exe) then
+
+    ---@cast exe string
+    if get_value().is_str(exe) then
         res = vim.fn.executable(exe) == 1
-    elseif is_tbl(exe) then
+    elseif get_value().is_tbl(exe) then
         ---@cast exe string[]
         for _, v in ipairs(exe) do
             res = Exists.executable(v)
@@ -146,7 +141,7 @@ function Exists.executable(exe)
 end
 
 ---@param path string
----@return boolean
+---@return boolean is_dir
 function Exists.vim_isdir(path)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('path', path, 'string', false)
@@ -156,8 +151,7 @@ function Exists.vim_isdir(path)
     return get_value().type_not_empty('string', path) and (vim.fn.isdirectory(path) == 1) or false
 end
 
----@type User.Check.Existance
-local M = setmetatable(Exists, {
+local M = setmetatable(Exists, { ---@type User.Check.Existance
     __index = Exists,
     __newindex = function(_, _, _)
         vim.notify('User.Check.Exists table is Read-Only!', ERROR)
