@@ -20,10 +20,16 @@ function Check.in_console()
     return vim.list_contains({ 'linux' }, env.TERM) and not Check.value.fields('DISPLAY', env)
 end
 
----Check whether Nvim is running as root (`PID == 0`).
+---Check whether Neovim is running as root (`PID == 0`).
 --- ---
 function Check.is_root()
     return uv.getuid() == 0
+end
+
+---Check whether Neovim is running in a Windows environment.
+--- ---
+function Check.is_windows()
+    return vim.fn.has('win32') == 1
 end
 
 local M = setmetatable(Check, { ---@type User.Check

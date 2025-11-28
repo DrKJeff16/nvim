@@ -1,5 +1,4 @@
 _G.MYVIMRC = vim.fn.stdpath('config') .. '/init.lua'
-_G.is_windows = vim.fn.has('win32') == 1
 
 local INFO = vim.log.levels.INFO
 local in_list = vim.list_contains
@@ -37,7 +36,7 @@ require('user_api').opts({
     errorbells = false,
     expandtab = true,
     fileformat = 'unix',
-    fileignorecase = not _G.is_windows,
+    fileignorecase = not require('user_api.check').is_windows(),
     foldmethod = 'manual',
     formatoptions = 'bjlnopqw',
     helplang = 'en',
