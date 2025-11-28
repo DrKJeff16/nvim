@@ -142,7 +142,8 @@ Some of the most important plugins used:
 - [`which-key.nvim`](https://github.com/folke/which-key.nvim)
 - [`nvim-notify`](https://github.com/rcarriga/nvim-notify)
 - [`blink.cmp`](https://github.com/Saghen/blink.cmp)
-- [`mini.nvim`](https://github.com/echasnovski/mini.nvim)
+- [`mini.nvim`](https://github.com/nvim-mini/mini.nvim)
+    - [`mini.icons`](https://github.com/nvim-mini/mini.icons)
 - [`plenary.nvim`](https://github.com/nvim-lua/plenary.nvim)
 - [`nvim-treesitter`](https://github.com/nvim-treesitter/nvim-treesitter)
 - [`nvim-lspconfig`](https://github.com/neovim/nvim-lspconfig)
@@ -150,8 +151,8 @@ Some of the most important plugins used:
 - [`noice.nvim`](https://github.com/folke/noice.nvim)
 - [`telescope.nvim`](https://github.com/nvim-telescope/telescope.nvim)
 - [`lualine.nvim`](https://github.com/nvim-lualine/lualine.nvim)
-- [`nvim-tree.lua`](https://github.com/nvim-tree/nvim-tree.lua)
 - [`nvim-web-devicons`](https://github.com/nvim-tree/nvim-web-devicons)
+- [`neo-tree.nvim`](https://github.com/nvim-neo-tree/neo-tree.nvim)
 
 ---
 
@@ -183,7 +184,7 @@ Opts2:setup_keys() -- Setup keymaps
 
 The `setup()` function optionally accepts a dictionary-like table with your own vim options.
 It overwrites some of the default options as defined in [`user_api.opts`](./lua/user_api/opts.lua).
-**MAKE SURE THEY CAN BE ACCEPTED BY `vim.opt`**.
+**MAKE SURE THEY CAN BE ACCEPTED BY `vim.o`**.
 
 As an example:
 
@@ -192,7 +193,7 @@ local User = require('user_api')
 local Opts = User.opts
 
 Opts({
-    completeopt = { 'menu', 'menuone', 'noselect', 'noinsert', 'preview' },
+    completeopt = 'menu,menuone,noselect,noinsert,preview',
     nu = false, -- `:set nonumber`
 
     -- These equate to `:set tabstop=4 softtabstop=4 shiftwidth=4 expandtab`
