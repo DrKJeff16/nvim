@@ -2,6 +2,7 @@ local MODSTR = 'user_api.update'
 local WARN = vim.log.levels.WARN
 local ERROR = vim.log.levels.ERROR
 local INFO = vim.log.levels.INFO
+local uv = vim.uv or vim.loop
 
 ---@class User.Update
 local Update = {}
@@ -15,16 +16,15 @@ function Update.update(verbose)
     end
     verbose = verbose ~= nil and verbose or false
 
-    local og_cwd = vim.fn.getcwd()
+    local og_cwd = uv.cwd() or vim.fn.getcwd()
 
     vim.api.nvim_set_current_dir(vim.fn.stdpath('config'))
     local cmd = vim.system({ 'git', 'pull', '--rebase', '--recurse-submodules' }, { text = true })
-        :wait(5000)
+        :wait(3000)
 
-    local stdout, stderr = cmd.stdout, cmd.stderr
     vim.api.nvim_set_current_dir(og_cwd)
     if verbose then
-        vim.notify((cmd.code ~= 0 and stderr or stdout), cmd.code ~= 0 and WARN or INFO, {
+        vim.notify((cmd.code ~= 0 and cmd.stderr or cmd.stdout), cmd.code ~= 0 and WARN or INFO, {
             animate = true,
             hide_from_history = false,
             timeout = 2250,
@@ -41,7 +41,7 @@ function Update.update(verbose)
         return
     end
 
-    if stdout and stdout:match('Already up to date') then
+    if cmd.stdout and cmd.stdout:match('Already up to date') then
         vim.notify(('(%s.update): Jnvim is up to date!'):format(MODSTR), INFO, {
             animate = true,
             hide_from_history = true,
