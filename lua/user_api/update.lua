@@ -19,8 +19,7 @@ function Update.update(verbose)
     local og_cwd = uv.cwd() or vim.fn.getcwd()
 
     vim.api.nvim_set_current_dir(vim.fn.stdpath('config'))
-    local cmd = vim.system({ 'git', 'pull', '--rebase', '--recurse-submodules' }, { text = true })
-        :wait(10000)
+    local cmd = vim.system({ 'git', 'pull', '--rebase' }, { text = true }):wait(10000)
 
     vim.api.nvim_set_current_dir(og_cwd)
     if verbose and cmd.stdout and cmd.stdout ~= '' then
