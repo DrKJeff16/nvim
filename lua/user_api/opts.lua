@@ -61,8 +61,7 @@ Opts.toggleable = Opts.gen_toggleable()
 
 ---@return User.Opts.Spec defaults
 function Opts.get_defaults()
-    local defaults = require('user_api.opts.config')
-    return defaults
+    return require('user_api.opts.config')
 end
 
 Opts.options = {} ---@type User.Opts.Spec
@@ -71,7 +70,16 @@ Opts.options = {} ---@type User.Opts.Spec
 ---@param verbose? boolean
 ---@return User.Opts.Spec parsed_opts
 function Opts.long_opts_convert(T, verbose)
-    verbose = is_bool(verbose) and verbose or false
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('T', T, 'table', false)
+        vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
+    else
+        vim.validate({
+            T = { T, { 'table' } },
+            verbose = { verbose, { 'boolean', 'nil' }, true },
+        })
+    end
+    verbose = verbose ~= nil and verbose or false
 
     local parsed_opts = {} ---@type User.Opts.Spec
     local msg = ''
@@ -105,7 +113,7 @@ function Opts.long_opts_convert(T, verbose)
 
     if msg and msg ~= '' then
         vim.notify(msg, ERROR)
-    elseif verbose and verb_str ~= nil and verb_str ~= '' then
+    elseif verbose and verb_str and verb_str ~= '' then
         vim.notify(verb_str, INFO)
     end
     return parsed_opts
@@ -190,6 +198,7 @@ function Opts.toggle(O, verbose)
     if is_str(O) then
         O = { O }
     end
+
     if vim.tbl_isempty(O) then
         return
     end
@@ -255,8 +264,8 @@ function Opts.new()
         ---@param verbose? boolean Flag to make the function return a string with invalid values, if any
         __call = function(self, override, verbose)
             if vim.fn.has('nvim-0.11') == 1 then
-                vim.validate('override', override, 'table', true, 'User.Opts.Spec')
-                vim.validate('verbose', verbose, 'boolean', true)
+                vim.validate('override', override, { 'table', 'nil' }, true, 'User.Opts.Spec')
+                vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
             else
                 vim.validate({
                     override = { override, { 'table', 'nil' }, true },
@@ -267,7 +276,7 @@ function Opts.new()
             verbose = verbose ~= nil and verbose or false
 
             local defaults = Opts.get_defaults()
-            if not type_not_empty('table', self.options) then
+            if vim.tbl_isempty(self.options) then
                 self.options = Opts.long_opts_convert(defaults, verbose)
             end
 
