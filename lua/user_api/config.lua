@@ -4,5 +4,12 @@ local Config = {
     neovide = require('user_api.config.neovide'),
 }
 
-return Config
+local M = setmetatable(Config, { ---@type User.Config
+    __index = Config,
+    __newindex = function(_, _, _)
+        vim.notify('User.Config is read-only!', vim.log.levels.ERROR)
+    end,
+})
+
+return M
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

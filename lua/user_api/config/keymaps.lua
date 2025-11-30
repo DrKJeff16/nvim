@@ -1,48 +1,28 @@
 local VIMRC = vim.fn.stdpath('config') .. '/init.lua'
-
-local nop = require('user_api.maps').nop
-local map_dict = require('user_api.maps').map_dict
-local desc = require('user_api.maps').desc
-local ft_get = require('user_api.util').ft_get
-local bt_get = require('user_api.util').bt_get
-local is_int = require('user_api.check.value').is_int
-
 local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
 local INFO = vim.log.levels.INFO
-
-local copy = vim.deepcopy
+local nop = require('user_api.maps').nop
+local desc = require('user_api.maps').desc
+local ft_get = require('user_api.util').ft_get
 local curr_buf = vim.api.nvim_get_current_buf
 local in_list = vim.list_contains
-local d_extend = vim.tbl_deep_extend
 local optset = vim.api.nvim_set_option_value
 
----@return function
 local function rcfile_ed()
-    return function()
-        vim.cmd.edit(VIMRC)
-    end
+    vim.cmd.edit(VIMRC)
 end
 
----@return function
 local function rcfile_split()
-    return function()
-        vim.cmd.split(VIMRC)
-    end
+    vim.cmd.split(VIMRC)
 end
 
----@return function
 local function rcfile_vsplit()
-    return function()
-        vim.cmd.vsplit(VIMRC)
-    end
+    vim.cmd.vsplit(VIMRC)
 end
 
----@return function
 local function rcfile_tab()
-    return function()
-        vim.cmd.tabnew(VIMRC)
-    end
+    vim.cmd.tabnew(VIMRC)
 end
 
 ---@param check string
@@ -54,10 +34,9 @@ local function gen_checkhealth(check)
 end
 
 ---@param vertical? boolean
----@return function
 local function gen_fun_blank(vertical)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('vertical', vertical, 'boolean', true)
+        vim.validate('vertical', vertical, { 'boolean', 'nil' }, true)
     else
         vim.validate({ vertical = { vertical, { 'boolean', 'nil' }, true } })
     end
@@ -66,11 +45,10 @@ local function gen_fun_blank(vertical)
     return function()
         local buf = vim.api.nvim_create_buf(true, false)
         local win = vim.api.nvim_open_win(buf, true, { vertical = vertical })
-        local set_opts = { scope = 'local' } ---@type vim.api.keyset.option
-
         vim.api.nvim_set_current_win(win)
 
-        optset('ft', '', set_opts)
+        local set_opts = { buf = buf } ---@type vim.api.keyset.option
+        optset('filetype', '', set_opts)
         optset('buftype', '', set_opts)
         optset('modifiable', true, set_opts)
         optset('modified', false, set_opts)
@@ -78,7 +56,6 @@ local function gen_fun_blank(vertical)
 end
 
 ---@param force? boolean
----@return function
 local function buf_del(force)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('force', force, 'boolean', true)
@@ -91,8 +68,7 @@ local function buf_del(force)
     local pre_exc = { ft = { 'help', 'lazy', 'man', 'noice' }, bt = { 'help' } }
     return function()
         local buf = curr_buf()
-        local prev_ft, prev_bt = ft_get(buf), bt_get(buf)
-
+        local prev_ft, prev_bt = ft_get(buf), require('user_api.util').bt_get(buf)
         if not force then
             force = prev_bt == 'terminal'
         end
@@ -110,106 +86,7 @@ end
 
 ---@class User.Config.Keymaps
 ---@field no_oped? boolean
-local Keymaps = {}
-
-local NOP = {
-    "'",
-    '!',
-    '"',
-    '#',
-    '$',
-    '%',
-    '&',
-    '(',
-    ')',
-    '*',
-    '+',
-    ',',
-    '-',
-    '.',
-    '/',
-    '0',
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '<CR>',
-    '=',
-    '?',
-    '@',
-    'A',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-    'G',
-    'H',
-    'I',
-    'J',
-    'K',
-    'L',
-    'M',
-    'N',
-    'O',
-    'P',
-    'Q',
-    'R',
-    'S',
-    'T',
-    'U',
-    'V',
-    'W',
-    'X',
-    'Y',
-    'Z',
-    '[',
-    '\\',
-    ']',
-    '^',
-    '_',
-    '`',
-    'a',
-    'b',
-    'c',
-    'd',
-    'e',
-    'f',
-    'g',
-    'h',
-    'i',
-    'j',
-    'k',
-    'm',
-    'n',
-    'o',
-    'p',
-    'q',
-    's',
-    't',
-    'u',
-    'v',
-    'w',
-    'x',
-    'y',
-    'z',
-    '{',
-    '|',
-    '}',
-    '~',
-}
-
-Keymaps.NOP = setmetatable({}, {
-    __index = NOP,
-    __newindex = function(_, _, _)
-        vim.notify('(user_api.config.keymaps.NOP): Read-only table!', ERROR)
-    end,
-})
+local Keymaps = { NOP = require('user_api.config.keymaps.nop') }
 
 Keymaps.Keys = { ---@type AllModeMaps
     n = {
@@ -251,19 +128,15 @@ Keymaps.Keys = { ---@type AllModeMaps
                 local opt_get = vim.api.nvim_get_option_value
                 local cursor_set = vim.api.nvim_win_set_cursor
                 local cursor_get = vim.api.nvim_win_get_cursor
-
                 local bufnr = curr_buf()
-
                 if not opt_get('modifiable', { buf = bufnr }) then
-                    error('Unable to indent. File is not modifiable!', ERROR)
+                    vim.notify('Unable to indent. File is not modifiable!', ERROR)
+                    return
                 end
 
                 local win = vim.api.nvim_get_current_win()
                 local saved_pos = cursor_get(win)
-
                 vim.api.nvim_feedkeys('gg=G', 'n', false)
-
-                -- HACK: Wait for `feedkeys` to end, then reset to position
                 vim.schedule(function()
                     cursor_set(win, saved_pos)
                 end)
@@ -274,230 +147,81 @@ Keymaps.Keys = { ---@type AllModeMaps
         ['<leader>fiR'] = { ':%retab!<CR>', desc('Retab File (Forcefully)') },
         ['<leader>fvL'] = { ':luafile ', desc('Source Lua File (Prompt)', false) },
         ['<leader>fvV'] = { ':so ', desc('Source VimScript File (Prompt)', false) },
-        ['<leader>fvl'] = {
-            function()
-                vim.cmd.luafile('%')
-            end,
-            desc('Source Current File As Lua File'),
-        },
-        ['<leader>fvv'] = {
-            function()
-                vim.cmd.source('%')
-            end,
-            desc('Source Current File As VimScript File'),
-        },
-        ['<leader>vee'] = { rcfile_ed(), desc('Open In Current Window') },
-        ['<leader>vex'] = { rcfile_split(), desc('Open In Horizontal Split') },
-        ['<leader>vet'] = { rcfile_tab(), desc('Open In New Tab') },
-        ['<leader>vev'] = { rcfile_vsplit(), desc('Open In Vertical Split') },
+        ['<leader>fvl'] = { ':luafile %<CR>', desc('Source Current File As Lua File') },
+        ['<leader>fvv'] = { ':source %<CR>', desc('Source Current File') },
+        ['<leader>vee'] = { rcfile_ed, desc('Open In Current Window') },
+        ['<leader>vex'] = { rcfile_split, desc('Open In Horizontal Split') },
+        ['<leader>vet'] = { rcfile_tab, desc('Open In New Tab') },
+        ['<leader>vev'] = { rcfile_vsplit, desc('Open In Vertical Split') },
         ['<leader>vhh'] = { vim.cmd.checkhealth, desc('Run Checkhealth') },
         ['<leader>vhH'] = { ':checkhealth ', desc('Prompt Checkhealth', false) },
-        ['<leader>vhd'] = { gen_checkhealth('vim.health'), desc('Run `vim.health` Checkhealth') },
+        ['<leader>vhd'] = { gen_checkhealth('vim.health'), desc('`vim.health` Checkhealth') },
+        ['<leader>vhl'] = { gen_checkhealth('vim.lsp'), desc('`vim.lsp` Checkhealth') },
+        ['<leader>vhp'] = { gen_checkhealth('vim.provider'), desc('`vim.provider` Checkhealth') },
+        ['<leader>vs'] = { ':source $MYVIMRC<CR>', desc('Source $MYVIMRC') },
         ['<leader>vhD'] = {
             gen_checkhealth('vim.deprecated'),
-            desc('Run `vim.deprecated` Checkhealth'),
-        },
-        ['<leader>vhl'] = { gen_checkhealth('vim.lsp'), desc('Run `vim.lsp` Checkhealth') },
-        ['<leader>vhp'] = {
-            gen_checkhealth('vim.provider'),
-            desc('Run `vim.provider` Checkhealth'),
+            desc('`vim.deprecated` Checkhealth'),
         },
         ['<leader>vht'] = {
             gen_checkhealth('vim.treesitter'),
-            desc('Run `vim.treesitter` Checkhealth'),
+            desc('`vim.treesitter` Checkhealth'),
         },
-        ['<leader>vs'] = {
-            function()
-                vim.cmd.source(VIMRC)
-            end,
-            desc('Source $MYVIMRC'),
-        },
-        ['<leader>HT'] = {
-            function()
-                vim.cmd.help()
-                vim.cmd.wincmd('T')
-            end,
-            desc('Open Help On New Tab'),
-        },
-        ['<leader>HV'] = {
-            function()
-                vim.cmd.help({ mods = { vertical = true } })
-            end,
-            desc('Open Help On Vertical Split'),
-        },
-        ['<leader>HX'] = {
-            function()
-                vim.cmd.help({ mods = { horizontal = true } })
-            end,
-            desc('Open Help On Horizontal Split'),
-        },
+        ['<leader>HT'] = { ':tab help<CR>', desc('Open Help On New Tab') },
+        ['<leader>HV'] = { ':vert help<CR>', desc('Open Help On Vertical Split') },
+        ['<leader>HX'] = { ':hor help<CR>', desc('Open Help On Horizontal Split') },
         ['<leader>Hh'] = { ':h ', desc('Prompt For Help', false) },
         ['<leader>Ht'] = { ':tab h ', desc('Prompt For Help On New Tab', false) },
         ['<leader>Hv'] = { ':vertical h ', desc('Prompt For Help On Vertical Split', false) },
         ['<leader>Hx'] = { ':horizontal h ', desc('Prompt For Help On Horizontal Split', false) },
         ['<leader>HmM'] = { ':Man ', desc('Prompt For Man', false) },
-        ['<leader>HmT'] = { ':tab Man ', desc('Prompt For Arbitrary Man Page (Tab)', false) },
-        ['<leader>HmV'] = { ':vert Man ', desc('Prompt For Arbitrary Man Page (Vertical)', false) },
-        ['<leader>HmX'] = {
-            ':horizontal Man ',
-            desc('Prompt For Arbitrary Man Page (Horizontal)', false),
-        },
+        ['<leader>HmT'] = { ':tab Man ', desc('Prompt For Man Page (Tab)', false) },
+        ['<leader>HmV'] = { ':vert Man ', desc('Prompt For Man Page (Vertical)', false) },
+        ['<leader>HmX'] = { ':horizontal Man ', desc('Prompt Man Page (Horizontal)', false) },
         ['<leader>Hmm'] = { ':Man<CR>', desc('Open Manpage For Word Under Cursor') },
-        ['<leader>Hmt'] = { ':tab Man<CR>', desc('Open Arbitrary Man Page (Tab)') },
-        ['<leader>Hmv'] = { ':vert Man<CR>', desc('Open Arbitrary Man Page (Vertical)') },
-        ['<leader>Hmx'] = { ':horizontal Man<CR>', desc('Open Arbitrary Man Page (Horizontal)') },
+        ['<leader>Hmt'] = { ':tab Man<CR>', desc('Open Man Page (Tab)') },
+        ['<leader>Hmv'] = { ':vert Man<CR>', desc('Open Man Page (Vertical)') },
+        ['<leader>Hmx'] = { ':horizontal Man<CR>', desc('Open Man Page (Horizontal)') },
         ['<leader>wN'] = {
             function()
-                local bufnr = curr_buf()
-                local ft = ft_get(bufnr)
-
+                local ft = ft_get(curr_buf())
                 vim.cmd.wincmd('n')
                 vim.cmd.wincmd('o')
 
-                local opts = { buf = bufnr }
+                local opts = { buf = curr_buf() }
                 optset('ft', ft, opts)
                 optset('modifiable', true, opts)
                 optset('modified', false, opts)
             end,
             desc('New Blank File'),
         },
-        ['<leader>w='] = {
-            function()
-                vim.cmd.wincmd('=')
-            end,
-            desc('Resize all windows equally'),
-        },
-        ['<leader>w<Left>'] = {
-            function()
-                vim.cmd.wincmd('h')
-            end,
-            desc('Go To Window On The Left'),
-        },
-        ['<leader>w<Right>'] = {
-            function()
-                vim.cmd.wincmd('l')
-            end,
-            desc('Go To Window On The Right'),
-        },
-        ['<leader>w<Up>'] = {
-            function()
-                vim.cmd.wincmd('k')
-            end,
-            desc('Go To Window Above'),
-        },
-        ['<leader>w<Down>'] = {
-            function()
-                vim.cmd.wincmd('j')
-            end,
-            desc('Go To Window Below'),
-        },
-        ['<leader>wd'] = {
-            function()
-                vim.cmd.wincmd('q')
-            end,
-            desc('Close Window'),
-        },
-        ['<leader>wn'] = {
-            function()
-                vim.cmd.wincmd('w')
-            end,
-            desc('Next Window'),
-        },
-        ['<leader>ww'] = {
-            function()
-                vim.cmd.wincmd('w')
-            end,
-            desc('Next Window'),
-        },
-        ['<leader>wS'] = {
-            function()
-                vim.cmd.wincmd('x')
-            end,
-            desc('Swap Current With Next'),
-        },
-        ['<leader>wx'] = {
-            function()
-                vim.cmd.wincmd('x')
-            end,
-            desc('Exchange Current With Next'),
-        },
-        ['<leader>wt'] = {
-            function()
-                vim.cmd.wincmd('T')
-            end,
-            desc('Break Current Window Into Tab'),
-        },
-        ['<leader>wp'] = {
-            function()
-                vim.cmd.wincmd('W')
-            end,
-            desc('Previous Window'),
-        },
-        ['<leader>w<CR>'] = {
-            function()
-                vim.cmd.wincmd('o')
-            end,
-            desc('Make Current Only Window'),
-        },
-        ['<leader>wsx'] = {
-            function()
-                vim.cmd.wincmd('s')
-            end,
-            desc('Horizontal Split'),
-        },
-        ['<leader>wsv'] = {
-            function()
-                vim.cmd.wincmd('v')
-            end,
-            desc('Vertical Split'),
-        },
+        ['<leader>w='] = { ':wincmd =<CR>', desc('Resize all windows equally') },
+        ['<leader>w<Left>'] = { ':wincmd h<CR>', desc('Go To Window On The Left') },
+        ['<leader>w<Right>'] = { ':wincmd l<CR>', desc('Go To Window On The Right') },
+        ['<leader>w<Up>'] = { ':wincmd k<CR>', desc('Go To Window Above') },
+        ['<leader>w<Down>'] = { ':wincmd j<CR>', desc('Go To Window Below') },
+        ['<leader>wd'] = { ':wincmd q<CR>', desc('Close Window') },
+        ['<leader>wn'] = { ':wincmd w<CR>', desc('Next Window') },
+        ['<leader>ww'] = { ':wincmd w<CR>', desc('Next Window') },
+        ['<leader>wS'] = { ':wincmd x<CR>', desc('Swap Current With Next') },
+        ['<leader>wx'] = { ':wincmd x<CR>', desc('Exchange Current With Next') },
+        ['<leader>wt'] = { ':wincmd T<CR>', desc('Break Current Window Into Tab') },
+        ['<leader>wp'] = { ':wincmd W<CR>', desc('Previous Window') },
+        ['<leader>w<CR>'] = { ':wincmd o<CR>', desc('Make Current Only Window') },
+        ['<leader>wsx'] = { ':wincmd s<CR>', desc('Horizontal Split') },
+        ['<leader>wsv'] = { ':wincmd v<CR>', desc('Vertical Split') },
         ['<leader>wsX'] = { ':split ', desc('Horizontal Split (Prompt)', false) },
         ['<leader>wsV'] = { ':vsplit ', desc('Vertical Split (Prompt)', false) },
-        ['<leader>w|'] = {
-            function()
-                vim.cmd.wincmd('^')
-            end,
-            desc('Split Current To Edit Alternate File'),
-        },
-        ['<leader>wW<Up>'] = {
-            function()
-                vim.cmd.wincmd('K')
-            end,
-            desc('Move Window To The Very Top'),
-        },
-        ['<leader>wW<Down>'] = {
-            function()
-                vim.cmd.wincmd('J')
-            end,
-            desc('Move Window To The Very Bottom'),
-        },
-        ['<leader>wW<Right>'] = {
-            function()
-                vim.cmd.wincmd('L')
-            end,
-            desc('Move Window To Far Right'),
-        },
-        ['<leader>wW<Left>'] = {
-            function()
-                vim.cmd.wincmd('H')
-            end,
-            desc('Move Window To Far Left'),
-        },
-        ['<leader>qQ'] = {
-            function()
-                vim.cmd.quitall({ bang = true })
-            end,
-            desc('Quit Nvim Forcefully'),
-        },
+        ['<leader>w|'] = { ':wincmd ^<CR>', desc('Split Current To Edit Alternate File') },
+        ['<leader>wW<Up>'] = { ':wincmd K<CR>', desc('Move Window To The Very Top') },
+        ['<leader>wW<Down>'] = { ':wincmd J<CR>', desc('Move Window To The Very Bottom') },
+        ['<leader>wW<Right>'] = { ':wincmd L<CR>', desc('Move Window To Far Right') },
+        ['<leader>wW<Left>'] = { ':wincmd H<CR>', desc('Move Window To Far Left') },
+        ['<leader>qQ'] = { ':qa!<CR>', desc('Quit Nvim Forcefully') },
         ['<leader>qq'] = { vim.cmd.quitall, desc('Quit Nvim') },
-        ['<leader>qr'] = { ':restart +qall! lua vim.pack.update()<CR>', desc('Restart Nvim') },
+        ['<leader>qr'] = { ':restart +qall!<CR>', desc('Restart Nvim') },
         ['<leader>tA'] = { vim.cmd.tabnew, desc('New Tab') },
-        ['<leader>tD'] = {
-            function()
-                vim.cmd.tabclose({ bang = true })
-            end,
-            desc('Close Tab Forcefully'),
-        },
+        ['<leader>tD'] = { ':tabc<CR>', desc('Close Tab Forcefully') },
         ['<leader>ta'] = { ':tabnew ', desc('New Tab (Prompt)', false) },
         ['<leader>td'] = { vim.cmd.tabclose, desc('Close Tab') },
         ['<leader>tf'] = { vim.cmd.tabfirst, desc('Goto First Tab') },
@@ -513,12 +237,12 @@ Keymaps.Keys = { ---@type AllModeMaps
     },
     v = {
         ['<leader>'] = { group = '+Open `which-key`' },
-        ['<leader>f'] = { group = '+File' }, --- File Handling
-        ['<leader>fF'] = { group = '+Folding' }, --- Folding
-        ['<leader>fi'] = { group = '+Indent' }, --- Indent Control
-        ['<leader>h'] = { group = '+Help' }, --- Help
-        ['<leader>q'] = { group = '+Quit Nvim' }, --- Exiting
-        ['<leader>v'] = { group = '+Vim' }, --- Vim,
+        ['<leader>f'] = { group = '+File' },
+        ['<leader>fF'] = { group = '+Folding' },
+        ['<leader>fi'] = { group = '+Indent' },
+        ['<leader>h'] = { group = '+Help' },
+        ['<leader>q'] = { group = '+Quit Nvim' },
+        ['<leader>v'] = { group = '+Vim' },
         ['<leader>S'] = { ':sort!<CR>', desc('Sort Selection (Reverse)') },
         ['<leader>s'] = { ':sort<CR>', desc('Sort Selection') },
         ['<leader>fFo'] = { ':foldopen<CR>', desc('Open Fold') },
@@ -526,37 +250,22 @@ Keymaps.Keys = { ---@type AllModeMaps
         ['<leader>fr'] = { ':s/', desc('Search/Replace Prompt For Selection', false) },
         ['<leader>fir'] = { ':retab<CR>', desc('Retab Selection') },
         ['<leader>fiR'] = { ':retab!<CR>', desc('Retab Selection Forcefully') },
-
-        ['<leader>qQ'] = {
-            function()
-                vim.cmd.quitall({ bang = true })
-            end,
-            desc('Quit Nvim Forcefully'),
-        },
+        ['<leader>qQ'] = { ':qa!<CR>', desc('Quit Nvim Forcefully') },
         ['<leader>qq'] = { vim.cmd.quitall, desc('Quit Nvim') },
     },
-    t = {
-        ['<Esc>'] = { '<C-\\><C-n>', desc('Escape Terminal') },
-    },
+    t = { ['<Esc>'] = { '<C-\\><C-n>', desc('Escape Terminal') } },
 }
 
 ---Set both the `<leader>` and `<localleader>` keys.
----
----Setup a key as `<leader>` and `<localleader>`,
----but you can also set `<localleader>` to
----a different key if you want.
----
----If `<localleader>` is not explicitly set,
----then it'll be set as `<leader>`.
 --- ---
----@param leader string _`<leader>`_ key string (defaults to `<Space>`)
----@param local_leader? string _`<localleader>`_ string (defaults to `<Space>`)
+---@param leader string `<leader>` key string (defaults to `<Space>`)
+---@param local_leader? string `<localleader>` string (defaults to `<Space>`)
 ---@param force? boolean Force leader switch (defaults to `false`)
 function Keymaps.set_leader(leader, local_leader, force)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('leader', leader, 'string', false)
-        vim.validate('local_leader', local_leader, 'string', true)
-        vim.validate('force', force, 'boolean', true)
+        vim.validate('leader', leader, { 'string' }, false)
+        vim.validate('local_leader', local_leader, { 'string', 'nil' }, true)
+        vim.validate('force', force, { 'boolean', 'nil' }, true)
     else
         vim.validate({
             leader = { leader, { 'string' } },
@@ -612,8 +321,8 @@ end
 ---@return table<('n'|'i'|'v'|'t'|'o'|'x'), nil[]>|nil
 function Keymaps.delete(K, bufnr)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('K', K, 'table', false, "{ [('n'|'i'|'v'|'t'|'o'|'x')]: string[] }|string[]")
-        vim.validate('bufnr', bufnr, 'number', true, 'integer')
+        vim.validate('K', K, 'table', false)
+        vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
     else
         vim.validate({
             K = { K, { 'table' } },
@@ -627,7 +336,7 @@ function Keymaps.delete(K, bufnr)
 
     local ditched_keys = {} ---@type table<('n'|'i'|'v'|'t'|'o'|'x'), nil[]>
     for k, v in pairs(K) do
-        if is_int(k) then
+        if require('user_api.check.value').is_int(k) then
             Keymaps.delete(v, bufnr)
         end
         if bufnr then
@@ -640,7 +349,7 @@ function Keymaps.delete(K, bufnr)
     return ditched_keys
 end
 
----@type User.Config.Keymaps|fun(keys: AllModeMaps, bufnr?: integer, load_defaults?: boolean)
+---@type User.Config.Keymaps|fun(keys: AllModeMaps, bufnr?: integer, defaults?: boolean)
 local M = setmetatable({}, {
     __index = Keymaps,
     __newindex = function(_, _, _)
@@ -648,33 +357,32 @@ local M = setmetatable({}, {
     end,
     ---@param keys AllModeMaps
     ---@param bufnr? integer
-    ---@param load_defaults? boolean
-    __call = function(_, keys, bufnr, load_defaults)
+    ---@param defaults? boolean
+    __call = function(_, keys, bufnr, defaults)
         if vim.fn.has('nvim-0.11') == 1 then
-            vim.validate('keys', keys, 'table', false, 'AllModeMaps')
-            vim.validate('bufnr', bufnr, 'number', true, 'integer')
-            vim.validate('load_defaults', load_defaults, 'boolean', true)
+            vim.validate('keys', keys, { 'table' }, false, 'AllModeMaps')
+            vim.validate('bufnr', bufnr, { 'number', 'nil' }, true, 'integer')
+            vim.validate('defaults', defaults, { 'boolean', 'nil' }, true)
         else
             vim.validate({
                 keys = { keys, { 'table' } },
                 bufnr = { bufnr, { 'number', 'nil' }, true },
-                load_defaults = { load_defaults, { 'boolean', 'nil' }, true },
+                defaults = { defaults, { 'boolean', 'nil' }, true },
             })
         end
+        bufnr = bufnr or nil
+        defaults = defaults ~= nil and defaults or false
         if vim.tbl_isempty(keys) then
             return
         end
 
-        local MODES = require('user_api.maps').modes
         if not vim.g.leader_set then
             vim.notify('`keymaps.set_leader()` not called!', WARN)
         end
-        bufnr = bufnr or nil
-        load_defaults = load_defaults ~= nil and load_defaults or false
 
         local parsed_keys = {} ---@type AllModeMaps
         for k, v in pairs(keys) do
-            if not in_list(MODES, k) then
+            if not in_list(require('user_api.maps').modes, k) then
                 vim.notify(('Ignoring badly formatted table\n`%s`'):format(vim.inspect(keys)), WARN)
             else
                 parsed_keys[k] = v
@@ -685,19 +393,24 @@ local M = setmetatable({}, {
         end
 
         -- Noop keys after `<leader>` to avoid accidents
-        for _, mode in ipairs(MODES) do
+        for _, mode in ipairs(require('user_api.maps').modes) do
             if Keymaps.no_oped then
                 break
             end
             if in_list({ 'n', 'v' }, mode) then
-                nop(NOP, { noremap = false, silent = true }, mode, '<leader>')
+                nop(Keymaps.NOP, { noremap = false, silent = true }, mode, '<leader>')
             end
         end
 
         Keymaps.no_oped = true
-        Keymaps.Keys = d_extend('keep', parsed_keys, copy(Keymaps.Keys)) ---@type AllModeMaps
-        local Keys = load_defaults and Keymaps.Keys or parsed_keys
-        map_dict(Keys, 'wk.register', true, nil, bufnr)
+        Keymaps.Keys = vim.tbl_deep_extend('keep', parsed_keys, vim.deepcopy(Keymaps.Keys)) ---@type AllModeMaps
+        require('user_api.maps').map_dict(
+            defaults and Keymaps.Keys or parsed_keys,
+            'wk.register',
+            true,
+            nil,
+            bufnr
+        )
     end,
 })
 

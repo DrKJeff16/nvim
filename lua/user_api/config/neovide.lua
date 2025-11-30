@@ -1,7 +1,5 @@
 local INFO = vim.log.levels.INFO
-local executable = require('user_api.check.exists').executable
-local is_tbl = require('user_api.check.value').is_tbl
-local num_range = require('user_api.check.value').num_range
+local ERROR = vim.log.levels.ERROR
 
 ---Helper function for transparency formatting.
 --- ---
@@ -70,16 +68,12 @@ Neovide.active = false
 
 ---@return Config.Neovide.Opts
 function Neovide.get_defaults()
-    return {
-        g = g_opts,
-        o = o_opts,
-    }
+    return { g = g_opts, o = o_opts }
 end
 
----@return boolean
+---@return boolean active
 function Neovide.check()
-    Neovide.active = executable('neovide') and vim.g.neovide
-    return Neovide.active
+    return require('user_api.check.exists').executable('neovide') and vim.g.neovide
 end
 
 ---@param opacity? number
@@ -98,15 +92,16 @@ function Neovide.set_transparency(opacity, transparency, bg)
         })
     end
 
+    local num_range = require('user_api.check.value').num_range
     local eq = { high = true, low = true }
-    if opacity ~= nil and not num_range(opacity, 0.0, 1.0, eq) then
+    if opacity and not num_range(opacity, 0.0, 1.0, eq) then
         opacity = 0.85
     end
-    if transparency ~= nil and not num_range(transparency, 0.0, 1.0, eq) then
+    if transparency and not num_range(transparency, 0.0, 1.0, eq) then
         transparency = 1.0
     end
 
-    if bg == nil or bg:len() ~= 7 then
+    if not bg or bg:len() ~= 7 then
         bg = '#0f1117'
     end
 
@@ -123,19 +118,19 @@ end
 ---@param pfx string
 function Neovide.parse_g_opts(O, pfx)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('O', O, 'table', false, 'any[]')
-        vim.validate('pfx', pfx, 'string', false)
+        vim.validate('O', O, { 'table' }, false, 'any[]')
+        vim.validate('pfx', pfx, { 'string' }, false)
     else
         vim.validate({
-            O = { O, 'table' },
-            pfx = { pfx, 'string' },
+            O = { O, { 'table' } },
+            pfx = { pfx, { 'string' } },
         })
     end
-    pfx = (pfx ~= nil and pfx:sub(1, 8) == 'neovide_') and pfx or 'neovide_'
+    pfx = pfx:sub(1, 8) == 'neovide_' and pfx or 'neovide_'
 
     for k, v in ipairs(O) do
         local key = pfx .. k
-        if is_tbl(v) then
+        if require('user_api.check.value').is_tbl(v) then
             Neovide.parse_g_opts(v, key .. '_')
         else
             Neovide.g_opts[key] = v
@@ -172,18 +167,18 @@ end
 ---@param verbose? boolean
 function Neovide.setup(T, transparent, verbose)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('T', T, 'table', true)
-        vim.validate('transparent', transparent, 'boolean', true)
-        vim.validate('verbose', verbose, 'boolean', true)
+        vim.validate('T', T, { 'table', 'nil' }, true)
+        vim.validate('transparent', transparent, { 'boolean', 'nil' }, true)
+        vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
     else
         vim.validate({
-            T = { T, { 'table', 'nil' } },
-            transparent = { transparent, { 'boolean', 'nil' } },
-            verbose = { verbose, { 'boolean', 'nil' } },
+            T = { T, { 'table', 'nil' }, true },
+            transparent = { transparent, { 'boolean', 'nil' }, true },
+            verbose = { verbose, { 'boolean', 'nil' }, true },
         })
     end
 
-    if not (Neovide.check() or Neovide.active) then
+    if not Neovide.check() then
         return
     end
     T = T or {}
@@ -223,5 +218,12 @@ function Neovide.setup(T, transparent, verbose)
     Neovide.setup_maps()
 end
 
-return Neovide
+local M = setmetatable(Neovide, { ---@type User.Config.Neovide
+    __index = Neovide,
+    __newindex = function(_, _, _)
+        vim.notify('User.Config.Neovide is Read-Only!', ERROR)
+    end,
+})
+
+return M
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
