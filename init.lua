@@ -94,7 +94,7 @@ L.setup({
     { import = 'plugin.which-key' },
     { import = 'plugin.notify' },
     { import = 'plugin.noice' },
-    -- { import = 'plugin.luaref' },
+    { import = 'plugin.luaref' },
     { import = 'plugin.fzf-lua' },
     { import = 'plugin._spec' },
     -- { import = 'plugin.blink-indent' },
