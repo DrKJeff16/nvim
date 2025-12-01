@@ -52,6 +52,7 @@ local ensure_langs = {
     'xresources',
     'yaml',
     'zathurarc',
+    'zsh',
 }
 
 return { ---@type LazySpec
