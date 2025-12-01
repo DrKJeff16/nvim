@@ -352,7 +352,7 @@ end
 ---@type User.Config.Keymaps|fun(keys: AllModeMaps, bufnr?: integer, defaults?: boolean)
 local M = setmetatable({}, {
     __index = Keymaps,
-    __newindex = function(_, _, _)
+    __newindex = function()
         vim.notify('User.Config.Keymaps table is Read-Only!', ERROR)
     end,
     ---@param keys AllModeMaps
@@ -381,8 +381,9 @@ local M = setmetatable({}, {
         end
 
         local parsed_keys = {} ---@type AllModeMaps
+        local modes = require('user_api.maps').modes
         for k, v in pairs(keys) do
-            if not in_list(require('user_api.maps').modes, k) then
+            if not in_list(modes, k) then
                 vim.notify(('Ignoring badly formatted table\n`%s`'):format(vim.inspect(keys)), WARN)
             else
                 parsed_keys[k] = v
@@ -393,7 +394,7 @@ local M = setmetatable({}, {
         end
 
         -- Noop keys after `<leader>` to avoid accidents
-        for _, mode in ipairs(require('user_api.maps').modes) do
+        for _, mode in ipairs(modes) do
             if Keymaps.no_oped then
                 break
             end

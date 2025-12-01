@@ -5,20 +5,14 @@
 ---@module 'user_api.maps.wk'
 ---@module 'user_api.maps.keymap'
 
-local MODES = { 'n', 'i', 'v', 't', 'o', 'x' }
-
 ---@class User.Maps
-local Maps = {}
+local Maps = {
+    modes = { 'n', 'i', 'v', 't', 'o', 'x' },
+    wk = {}, ---@type User.Maps.WK
+    keymap = {}, ---@type User.Maps.Keymap
+}
 
-Maps.modes = MODES
-
----@type User.Maps.WK
-Maps.wk = {}
-
----@type User.Maps.Keymap
-Maps.keymap = {}
-
----@param desc string
+---@param desc string|nil
 ---@param silent? boolean
 ---@param bufnr? integer|nil
 ---@param noremap? boolean

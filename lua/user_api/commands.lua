@@ -111,5 +111,12 @@ function Commands.setup(cmds)
     Commands.setup_keys()
 end
 
-return Commands
+local M = setmetatable(Commands, { ---@type User.Commands
+    __index = Commands,
+    __newindex = function()
+        vim.notify('User.Commands is Read-Only!', vim.log.levels.ERROR)
+    end,
+})
+
+return M
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

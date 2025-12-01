@@ -23,7 +23,7 @@ local RTPATHS = { ---@type string[]
 
 Archlinux.rtpaths = setmetatable(RTPATHS, { ---@type string[]
     __index = RTPATHS,
-    __newindex = function(_, _, _)
+    __newindex = function()
         vim.notify('User.Distro.Archlinux.RTP table is Read-Only!', ERROR)
     end,
 })
@@ -49,7 +49,7 @@ end
 ---@type User.Distro.Archlinux|function
 local M = setmetatable({}, {
     __index = Archlinux,
-    __newindex = function(_, _, _)
+    __newindex = function()
         vim.notify('User.Distro.Archlinux table is Read-Only!', ERROR)
     end,
     __call = function(self) ---@param self User.Distro.Archlinux

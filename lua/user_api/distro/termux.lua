@@ -44,7 +44,7 @@ end
 ---@type User.Distro.Termux|function
 local M = setmetatable({}, {
     __index = Termux,
-    __newindex = function(_, _, _)
+    __newindex = function()
         vim.notify('User.Distro.Termux is Read-Only!', ERROR)
     end,
     __call = function(self) ---@param self User.Distro.Termux

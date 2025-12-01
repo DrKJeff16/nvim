@@ -21,9 +21,21 @@ Maps.wk = require('user_api.maps.wk')
 
 function Maps.desc(desc, silent, bufnr, noremap, nowait, expr)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('desc', desc, { 'string', 'nil' }, false, 'string|nil')
+        vim.validate('desc', desc, { 'string', 'nil' }, true)
+        vim.validate('silent', silent, { 'boolean', 'nil' }, true)
+        vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
+        vim.validate('noremap', noremap, { 'boolean', 'nil' }, true)
+        vim.validate('nowait', nowait, { 'boolean', 'nil' }, true)
+        vim.validate('expr', expr, { 'boolean', 'nil' }, true)
     else
-        vim.validate({ desc = { desc, { 'string', 'nil' }, true } })
+        vim.validate({
+            desc = { desc, { 'string', 'nil' }, true },
+            silent = { silent, { 'boolean', 'nil' }, true },
+            bufnr = { bufnr, { 'number', 'nil' }, true },
+            noremap = { noremap, { 'boolean', 'nil' }, true },
+            nowait = { nowait, { 'boolean', 'nil' }, true },
+            expr = { expr, { 'boolean', 'nil' }, true },
+        })
     end
 
     if not type_not_empty('string', desc) then
@@ -52,8 +64,18 @@ function Maps.desc(desc, silent, bufnr, noremap, nowait, expr)
 end
 
 function Maps.nop(T, opts, mode, prefix)
-    if not (is_str(T) or is_tbl(T)) then
-        error('(user_api.maps.nop): Argument is neither a string nor a table')
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('T', T, { 'string', 'table' }, false)
+        vim.validate('opts', opts, { 'table', 'nil' }, true)
+        vim.validate('mode', mode, { 'string', 'nil' }, true)
+        vim.validate('prefix', prefix, { 'string', 'nil' }, true)
+    else
+        vim.validate({
+            T = { T, { 'string', 'table' } },
+            opts = { opts, { 'table', 'nil' }, true },
+            mode = { mode, { 'string', 'nil' }, true },
+            prefix = { prefix, { 'string', 'nil' }, true },
+        })
     end
     mode = (is_str(mode) and in_list(MODES, mode)) and mode or 'n'
     if mode == 'i' then
@@ -215,5 +237,12 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
     end
 end
 
-return Maps
+local M = setmetatable(Maps, { ---@type User.Maps
+    __index = Maps,
+    __newindex = function()
+        vim.notify('User.Maps is Read-Only!', ERROR)
+    end,
+})
+
+return M
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

@@ -71,7 +71,7 @@ local Keymap = {
 
 local M = setmetatable({}, { ---@type User.Maps.Keymap
     __index = Keymap,
-    __newindex = function(_, _, _)
+    __newindex = function()
         vim.notify('(user_api.maps.keymap): Not allowed to modify this table', ERROR)
     end,
 })

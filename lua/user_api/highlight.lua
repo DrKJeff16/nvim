@@ -86,5 +86,12 @@ function Hl.hl_from_dict(D)
     end
 end
 
-return Hl
+local M = setmetatable(Hl, { ---@type User.Hl
+    __index = Hl,
+    __newindex = function()
+        vim.notify('User.Hl is Read-Only!', ERROR)
+    end,
+})
+
+return M
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

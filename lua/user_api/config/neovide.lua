@@ -220,7 +220,7 @@ end
 
 local M = setmetatable(Neovide, { ---@type User.Config.Neovide
     __index = Neovide,
-    __newindex = function(_, _, _)
+    __newindex = function()
         vim.notify('User.Config.Neovide is Read-Only!', ERROR)
     end,
 })

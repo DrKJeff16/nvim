@@ -6,7 +6,7 @@ local Config = {
 
 local M = setmetatable(Config, { ---@type User.Config
     __index = Config,
-    __newindex = function(_, _, _)
+    __newindex = function()
         vim.notify('User.Config is read-only!', vim.log.levels.ERROR)
     end,
 })

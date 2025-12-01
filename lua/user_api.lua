@@ -21,8 +21,8 @@ end
 
 local M = setmetatable(User, { ---@type UserAPI
     __index = User,
-    __newindex = function(_, _, _)
-        vim.notify('User table is read-only!', vim.log.levels.ERROR)
+    __newindex = function()
+        vim.notify('User API is Read-Only!', vim.log.levels.ERROR)
     end,
 })
 

@@ -34,7 +34,7 @@ end
 
 local M = setmetatable(Check, { ---@type User.Check
     __index = Check,
-    __newindex = function(_, _, _)
+    __newindex = function()
         vim.notify('User.Check is read-only!', ERROR)
     end,
 })

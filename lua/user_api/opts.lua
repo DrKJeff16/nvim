@@ -256,7 +256,7 @@ end
 function Opts.new()
     return setmetatable(Opts, {
         __index = Opts,
-        __newindex = function(_, _, _)
+        __newindex = function()
             vim.notify(('(%s): This module is read only!'):format(MODSTR), ERROR)
         end,
         ---@param self User.Opts

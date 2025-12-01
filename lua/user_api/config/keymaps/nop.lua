@@ -91,9 +91,9 @@ local NOP = {
     '~',
 }
 
-local M = setmetatable({}, { ---@type User.Config.Keymaps.NOP
+local M = setmetatable(NOP, { ---@type User.Config.Keymaps.NOP
     __index = NOP,
-    __newindex = function(_, _, _)
+    __newindex = function()
         vim.notify('(user_api.config.keymaps.NOP): Read-only table!', vim.log.levels.ERROR)
     end,
 })

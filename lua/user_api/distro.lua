@@ -9,8 +9,8 @@ local Distro = {
 
 local M = setmetatable(Distro, { ---@type User.Distro|fun(verbose?: boolean)
     __index = Distro,
-    __newindex = function(_, _, _)
-        vim.notify('User.Distro table is Read-Only!', ERROR)
+    __newindex = function()
+        vim.notify('User.Distro is Read-Only!', ERROR)
     end,
     __call = function(_, verbose) ---@param verbose? boolean
         if vim.fn.has('nvim-0.11') == 1 then
