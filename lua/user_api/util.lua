@@ -2,7 +2,6 @@ local ERROR = vim.log.levels.ERROR
 local INFO = vim.log.levels.INFO
 local curr_buf = vim.api.nvim_get_current_buf
 local curr_win = vim.api.nvim_get_current_win
-local in_tbl = vim.tbl_contains
 local in_list = vim.list_contains
 
 ---@class User.Util
@@ -26,7 +25,7 @@ end
 function Util.get_opts_tbl(s, bufnr)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('s', s, { 'string', 'table' }, false, 'string[]|string')
-        vim.validate('bufnr', bufnr, 'number', true, 'integer')
+        vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
     else
         vim.validate({
             s = { s, { 'string', 'table' } },
@@ -36,12 +35,11 @@ function Util.get_opts_tbl(s, bufnr)
     bufnr = bufnr or curr_buf()
 
     local Value = require('user_api.check.value')
-    local type_not_empty = Value.type_not_empty
     local res = {} ---@type table<string, any>
-    if type_not_empty('string', s) then ---@cast s string
+    if Value.type_not_empty('string', s) then ---@cast s string
         res[s] = vim.api.nvim_get_option_value(s, { buf = bufnr })
     end
-    if type_not_empty('table', s) then ---@cast s string[]
+    if Value.type_not_empty('table', s) then ---@cast s string[]
         for _, opt in ipairs(s) do
             res[opt] = Util.get_opts_tbl(opt, bufnr)
         end
@@ -133,11 +131,8 @@ function Util.strip_fields(T, fields)
     end
 
     local Value = require('user_api.check.value')
-    local is_str = Value.is_str
-    local field = Value.fields
-    local type_not_empty = Value.type_not_empty
-    if is_str(fields) then ---@cast fields string
-        if not (type_not_empty('string', fields) and field(fields, T)) then
+    if Value.is_str(fields) then ---@cast fields string
+        if not (Value.type_not_empty('string', fields) and Value.fields(fields, T)) then
             return T
         end
         for k, _ in pairs(T) do
@@ -174,9 +169,7 @@ function Util.strip_values(T, values, max_instances)
     end
 
     local Value = require('user_api.check.value')
-    local type_not_empty = Value.type_not_empty
-    local is_int = Value.is_int
-    if not (type_not_empty('table', T) or type_not_empty('table', values)) then
+    if not (Value.type_not_empty('table', T) or Value.type_not_empty('table', values)) then
         error('(user_api.util.strip_values): Empty tables as args!', ERROR)
     end
 
@@ -185,14 +178,14 @@ function Util.strip_values(T, values, max_instances)
     for k, v in pairs(T) do
         -- Both arguments can't be true simultaneously
         if Util.xor((max_instances == 0), (max_instances ~= 0 and max_instances > count)) then
-            if not in_tbl(values, v) and is_int(k) then
+            if not in_list(values, v) and Value.is_int(k) then
                 table.insert(res, v)
-            elseif not in_tbl(values, v) then
+            elseif not in_list(values, v) then
                 res[k] = v
             else
                 count = count + 1
             end
-        elseif is_int(k) then
+        elseif Value.is_int(k) then
             table.insert(res, v)
         else
             res[k] = v
@@ -206,8 +199,8 @@ end
 ---@return function
 function Util.ft_set(s, bufnr)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('s', s, 'string', true)
-        vim.validate('bufnr', bufnr, 'number', true, 'integer')
+        vim.validate('s', s, { 'string', 'nil' }, true)
+        vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
     else
         vim.validate({
             s = { s, { 'string', 'nil' }, true },
@@ -223,10 +216,11 @@ end
 ---@param bufnr? integer
 function Util.bt_get(bufnr)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('bufnr', bufnr, 'number', true, 'integer')
+        vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
     else
         vim.validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
     end
+
     return vim.bo[bufnr or curr_buf()].buftype
 end
 
@@ -234,7 +228,7 @@ end
 ---@return string
 function Util.ft_get(bufnr)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('bufnr', bufnr, 'number', true, 'integer')
+        vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
     else
         vim.validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
     end
@@ -246,6 +240,12 @@ end
 ---@return table T
 ---@return any val
 function Util.pop_values(T, V)
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('T', T, { 'table' }, false)
+    else
+        vim.validate({ T = { T, { 'table' } } })
+    end
+
     local idx = 0
     for i, v in ipairs(T) do
         if v == V then
@@ -260,11 +260,8 @@ function Util.pop_values(T, V)
 end
 
 function Util.setup_autocmd()
-    local au_repeated_events = Util.au.au_repeated_events
-    local ft_set = Util.ft_set
     local group = vim.api.nvim_create_augroup('User.AU', { clear = true })
-    Util.au.created = vim.tbl_deep_extend('keep', Util.au.created or {}, {
-        -- NOTE: Keep this as first element for `orgmode` addition
+    local autocmds = { ---@type AuRepeatEvents[]
         {
             events = { 'BufCreate', 'BufAdd', 'BufNew', 'BufNewFile', 'BufRead' },
             opts_tbl = {
@@ -279,28 +276,28 @@ function Util.setup_autocmd()
                     group = group,
                     pattern = '.spacemacs',
                     callback = function(ev)
-                        ft_set('lisp', ev.buf)()
+                        Util.ft_set('lisp', ev.buf)()
                     end,
                 },
                 {
                     group = group,
                     pattern = '*.el',
                     callback = function(ev)
-                        ft_set('lisp', ev.buf)()
+                        Util.ft_set('lisp', ev.buf)()
                     end,
                 },
                 {
                     group = group,
                     pattern = '.clangd',
                     callback = function(ev)
-                        ft_set('yaml', ev.buf)()
+                        Util.ft_set('yaml', ev.buf)()
                     end,
                 },
                 {
                     group = group,
                     pattern = '*.norg',
                     callback = function(ev)
-                        ft_set('norg', ev.buf)()
+                        Util.ft_set('norg', ev.buf)()
                     end,
                 },
                 {
@@ -371,6 +368,18 @@ function Util.setup_autocmd()
                 },
                 {
                     pattern = 'nvim-undotree',
+                    group = group,
+                    callback = function(ev)
+                        vim.keymap.set(
+                            'n',
+                            'q',
+                            vim.cmd.bdelete,
+                            { buffer = ev.buf, noremap = true }
+                        )
+                    end,
+                },
+                {
+                    pattern = 'startuptime',
                     group = group,
                     callback = function(ev)
                         vim.keymap.set(
@@ -470,10 +479,12 @@ function Util.setup_autocmd()
                 },
             },
         },
-    })
+    }
+
+    Util.au.created = vim.tbl_deep_extend('keep', Util.au.created or {}, autocmds) ---@type AuRepeatEvents[]
 
     for _, t in ipairs(Util.au.created) do
-        au_repeated_events(t)
+        Util.au.au_repeated_events(t)
     end
 end
 
@@ -491,23 +502,22 @@ function Util.displace_letter(c, direction)
         })
     end
     local Value = require('user_api.check.value')
-    local fields = Value.fields
     local mv = Util.mv_tbl_values
-    local A = Util.string.alphabet
+    local A = vim.deepcopy(Util.string.alphabet)
 
     if c == '' then
         return 'a'
     end
 
     direction = in_list({ 'next', 'prev' }, direction) and direction or 'next'
-    local LOWER, UPPER = vim.deepcopy(A.lower_map), vim.deepcopy(A.upper_map)
+    local LOWER, UPPER = A.lower_map, A.upper_map
     if direction == 'prev' then
-        if fields(c, LOWER) then
+        if Value.fields(c, LOWER) then
             return mv(LOWER, 1, 'r')[c]
         end
         return mv(UPPER, 1, 'r')[c]
     end
-    if fields(c, LOWER) then
+    if Value.fields(c, LOWER) then
         return mv(LOWER, 1, 'l')[c]
     end
     return mv(UPPER, 1, 'l')[c]
@@ -517,9 +527,7 @@ end
 ---@return string|table res
 function Util.discard_dups(data)
     local Value = require('user_api.check.value')
-    local is_str = Value.is_str
-    local type_not_empty = Value.type_not_empty
-    if not (type_not_empty('string', data) or type_not_empty('table', data)) then
+    if not (Value.type_not_empty('string', data) or Value.type_not_empty('table', data)) then
         vim.notify('Input is not valid!', ERROR, {
             animate = true,
             hide_from_history = false,
@@ -530,7 +538,7 @@ function Util.discard_dups(data)
     end
 
     ---@cast data string
-    if is_str(data) then
+    if Value.is_str(data) then
         local res = data:sub(1, 1)
         local i = 2
         while i < data:len() do
@@ -547,7 +555,7 @@ function Util.discard_dups(data)
 
     ---@cast data table
     for k, v in pairs(data) do
-        if not in_tbl(res, v) then
+        if not vim.tbl_contains(res, v) then
             res[k] = v
         end
     end
@@ -557,7 +565,12 @@ end
 ---@param T any[]
 ---@return any[]
 function Util.reverse_tbl(T)
-    if not require('user_api.check.value').type_not_empty('table', T) then
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('T', T, { 'table' }, false)
+    else
+        vim.validate({ T = { T, { 'table' } } })
+    end
+    if vim.tbl_isempty(T) then
         error('(user_api.util.reverse_tbl): Empty or non-existant table', ERROR)
     end
 
