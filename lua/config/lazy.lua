@@ -8,9 +8,9 @@ local LAZYPATH = LAZY_DATA .. '/lazy.nvim'
 local README_PATH = LAZY_STATE .. '/readme'
 
 ---@class Config.Lazy
-local M = {}
+local Lazy = {}
 
-function M.bootstrap()
+function Lazy.bootstrap()
     if vim.g.lazy_bootstrapped == 1 then
         return
     end
@@ -35,9 +35,9 @@ function M.bootstrap()
     vim.g.lazy_bootstrapped = 1
 end
 
-function M.setup_keys()
+function Lazy.setup_keys()
     local desc = require('user_api.maps').desc
-    local Lazy = require('lazy')
+    local lazy = require('lazy')
     require('user_api.config').keymaps({
         n = {
             ['<leader>L'] = { group = '+Lazy' },
@@ -46,13 +46,13 @@ function M.setup_keys()
             ['<leader>Les'] = { key_variant('split'), desc('Open `Lazy` File Horizontal Window') },
             ['<leader>Let'] = { key_variant('tabnew'), desc('Open `Lazy` File Tab') },
             ['<leader>Lev'] = { key_variant('vsplit'), desc('Open `Lazy`File Vertical Window') },
-            ['<leader>Ll'] = { Lazy.show, desc('Show Lazy Home') },
-            ['<leader>Ls'] = { Lazy.sync, desc('Sync Lazy Plugins') },
-            ['<leader>Lx'] = { Lazy.clear, desc('Clear Lazy Plugins') },
-            ['<leader>Lc'] = { Lazy.check, desc('Check Lazy Plugins') },
-            ['<leader>Li'] = { Lazy.install, desc('Install Lazy Plugins') },
-            ['<leader>Lh'] = { Lazy.health, desc('Run Lazy checkhealth') },
-            ['<leader>vhL'] = { Lazy.health, desc('Run Lazy checkhealth') },
+            ['<leader>Ll'] = { lazy.show, desc('Show Lazy Home') },
+            ['<leader>Ls'] = { lazy.sync, desc('Sync Lazy Plugins') },
+            ['<leader>Lx'] = { lazy.clear, desc('Clear Lazy Plugins') },
+            ['<leader>Lc'] = { lazy.check, desc('Check Lazy Plugins') },
+            ['<leader>Li'] = { lazy.install, desc('Install Lazy Plugins') },
+            ['<leader>Lh'] = { lazy.health, desc('Run Lazy checkhealth') },
+            ['<leader>vhL'] = { lazy.health, desc('Run Lazy checkhealth') },
             ['<leader>L<CR>'] = { ':Lazy ', desc('Select `Lazy` Operation (Interactively)', false) },
             ['<leader>Lb'] = { ':Lazy build ', desc('Prompt To Build', false) },
             ['<leader>Lr'] = { ':Lazy reload ', desc('Prompt To Build', false) },
@@ -63,8 +63,8 @@ end
 ---Sets up `lazy.nvim`. Only runs once!
 --- ---
 ---@param specs LazySpec[]
-function M.setup(specs)
-    M.bootstrap()
+function Lazy.setup(specs)
+    Lazy.bootstrap()
 
     require('lazy').setup({
         spec = specs or {
@@ -133,18 +133,25 @@ function M.setup(specs)
         profiling = { loader = true, require = true },
     })
 
-    M.setup_keys()
+    Lazy.setup_keys()
 end
 
-function M.colorschemes()
+function Lazy.colorschemes()
     local csc = require('plugin.colorschemes')
     return csc
 end
 
-function M.lsp()
+function Lazy.lsp()
     local lsp = require('plugin.lsp')
     return lsp
 end
+
+local M = setmetatable(Lazy, { ---@type Config.Lazy
+    __index = Lazy,
+    __newindex = function()
+        vim.notify('Config.Lazy is Read-Only!', vim.log.levels.ERROR)
+    end,
+})
 
 return M
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
