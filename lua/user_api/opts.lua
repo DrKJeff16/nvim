@@ -1,19 +1,21 @@
 local MODSTR = 'user_api.opts'
 local ERROR = vim.log.levels.ERROR
 local INFO = vim.log.levels.INFO
-local deep_extend = vim.tbl_deep_extend
 local in_list = vim.list_contains
 local curr_buf = vim.api.nvim_get_current_buf
-local copy = vim.deepcopy
 
-local Value = require('user_api.check.value')
-
-local Opts = {} ---@class User.Opts
-
----@return User.Opts.AllOpts
-function Opts.get_all_opts()
-    return require('user_api.opts.all_opts')
-end
+---@class User.Opts
+local Opts = {
+    options = {}, ---@type User.Opts.Spec
+    ---@return User.Opts.AllOpts all_opts
+    get_all_opts = function()
+        return require('user_api.opts.all_opts')
+    end,
+    ---@return User.Opts.Spec defaults
+    get_defaults = function()
+        return require('user_api.opts.config')
+    end,
+}
 
 ---@param ArgLead string
 ---@param CursorPos integer
@@ -57,13 +59,6 @@ end
 
 Opts.toggleable = Opts.gen_toggleable()
 
----@return User.Opts.Spec defaults
-function Opts.get_defaults()
-    return require('user_api.opts.config')
-end
-
-Opts.options = {} ---@type User.Opts.Spec
-
 ---@param T User.Opts.Spec
 ---@param verbose? boolean
 ---@return User.Opts.Spec parsed_opts
@@ -79,9 +74,9 @@ function Opts.long_opts_convert(T, verbose)
     end
     verbose = verbose ~= nil and verbose or false
 
+    local Value = require('user_api.check.value')
     local parsed_opts = {} ---@type User.Opts.Spec
-    local msg = ''
-    local verb_str = ''
+    local msg, verb_str = '', ''
     if not Value.type_not_empty('table', T) then
         if verbose then
             vim.notify('(user.opts.long_opts_convert): All seems good', INFO)
@@ -172,7 +167,7 @@ function Opts.set_cursor_blink()
 end
 
 function Opts.print_set_opts()
-    local T = copy(Opts.options)
+    local T = vim.deepcopy(Opts.options)
     table.sort(T)
     vim.notify(vim.inspect(T), INFO)
 end
@@ -191,11 +186,14 @@ function Opts.toggle(O, verbose)
     end
     verbose = verbose ~= nil and verbose or false
 
+    local Value = require('user_api.check.value')
+
     ---@cast O string
     if Value.is_str(O) then
         O = { O }
     end
 
+    ---@cast O string[]
     if vim.tbl_isempty(O) then
         return
     end
@@ -276,7 +274,7 @@ local M = setmetatable(Opts, { ---@type User.Opts|fun(override?: User.Opts.Spec,
         end
 
         local parsed_opts = Opts.long_opts_convert(override, verbose)
-        Opts.options = deep_extend('keep', parsed_opts, self.options) ---@type vim.bo|vim.wo
+        Opts.options = vim.tbl_deep_extend('keep', parsed_opts, self.options) ---@type vim.bo|vim.wo
         Opts.optset(Opts.options, verbose)
     end,
 })

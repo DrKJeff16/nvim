@@ -109,16 +109,9 @@
 
 local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
-
 local O = require('user_api.maps.objects')
-local Value = require('user_api.check.value')
-
-local is_tbl = Value.is_tbl
-local is_str = Value.is_str
-local is_bool = Value.is_bool
-local type_not_empty = Value.type_not_empty
-
 local MODES = { 'n', 'i', 'v', 't', 'o', 'x' }
+local in_list = vim.list_contains
 
 ---`which_key` API entrypoints.
 ---@class User.Maps.WK
@@ -137,19 +130,20 @@ function WK.convert(lhs, rhs, opts)
     if not WK.available() then
         error('(user.maps.wk.convert): `which_key` not available', WARN)
     end
-    opts = is_tbl(opts) and opts or {}
+    local Value = require('user_api.check.value')
+    opts = Value.is_tbl(opts) and opts or {}
 
     local res = { lhs, rhs } ---@type RegKey|RegPfx
-    if is_bool(opts.hidden) then
+    if Value.is_bool(opts.hidden) then
         res.hidden = opts.hidden
     end
 
-    if type_not_empty('string', opts.group) then
+    if Value.type_not_empty('string', opts.group) then
         res.group = opts.group
         return res
     end
 
-    if type_not_empty('string', opts.desc) then
+    if Value.type_not_empty('string', opts.desc) then
         res.desc = opts.desc
     end
 
@@ -164,10 +158,12 @@ function WK.convert_dict(T)
     else
         vim.validate({ T = { T, { 'table' } } })
     end
+
+    local Value = require('user_api.check.value')
     local res = {} ---@type RegKeys
     for lhs, v in pairs(T) do
         local rhs = v[1] ---@type string|function
-        local opts = is_tbl(v[2]) and v[2] or {} ---@type User.Maps.Opts
+        local opts = Value.is_tbl(v[2]) and v[2] or {} ---@type User.Maps.Opts
         table.insert(res, WK.convert(lhs, rhs, opts))
     end
     return res
@@ -193,7 +189,9 @@ function WK.register(T, opts)
     end
 
     opts = opts or O.new({ mode = 'n' })
-    opts.mode = (is_str(opts.mode) and vim.list_contains(MODES, opts.mode)) and opts.mode or 'n'
+    opts.mode = (require('user_api.check.value').is_str(opts.mode) and in_list(MODES, opts.mode))
+            and opts.mode
+        or 'n'
 
     local filtered = {} ---@type (KeyMapRhsArr|AllMaps|AllModeMaps)[]
     for _, val in pairs(T) do

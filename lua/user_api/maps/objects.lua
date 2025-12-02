@@ -1,11 +1,10 @@
 ---@class User.Maps.Opts: vim.keymap.set.Opts
 local O = {}
 
----@param self User.Maps.Opts
 ---@param T User.Maps.Opts
 function O:add(T)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('T', T, { 'table' }, false, 'User.Maps.Opts|table')
+        vim.validate('T', T, { 'table' }, false, 'User.Maps.Opts')
     else
         vim.validate({ T = { T, { 'table' } } })
     end
@@ -21,13 +20,14 @@ function O:add(T)
 end
 
 ---@param T? User.Maps.Opts
----@return User.Maps.Opts
+---@return User.Maps.Opts O
 function O.new(T)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('T', T, { 'table', 'nil' }, true, 'User.Maps.Opts|table')
+        vim.validate('T', T, { 'table', 'nil' }, true, 'User.Maps.Opts|nil')
     else
         vim.validate({ T = { T, { 'table', 'nil' }, true } })
     end
+
     return setmetatable(T or {}, { __index = O })
 end
 
