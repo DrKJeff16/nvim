@@ -5,65 +5,65 @@ local INFO = vim.log.levels.INFO
 local uv = vim.uv or vim.loop
 
 ---@class User.Update
-local Update = {}
+local Update = {
+    ---@param verbose boolean|nil
+    update = function(verbose)
+        if vim.fn.has('nvim-0.11') == 1 then
+            vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
+        else
+            vim.validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
+        end
+        verbose = verbose ~= nil and verbose or false
 
----@param verbose boolean|nil
-function Update.update(verbose)
-    if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
-    else
-        vim.validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
-    end
-    verbose = verbose ~= nil and verbose or false
+        local og_cwd = uv.cwd() or vim.fn.getcwd()
 
-    local og_cwd = uv.cwd() or vim.fn.getcwd()
+        vim.api.nvim_set_current_dir(vim.fn.stdpath('config'))
+        local cmd = vim.system({ 'git', 'pull', '--rebase' }, { text = true }):wait(10000)
 
-    vim.api.nvim_set_current_dir(vim.fn.stdpath('config'))
-    local cmd = vim.system({ 'git', 'pull', '--rebase' }, { text = true }):wait(10000)
-
-    vim.api.nvim_set_current_dir(og_cwd)
-    if verbose and cmd.stdout and cmd.stdout ~= '' then
-        vim.notify(cmd.stdout, INFO, {
-            animate = true,
-            hide_from_history = false,
-            timeout = 2250,
-            title = 'User API - Update',
-        })
-    end
-    if cmd.code ~= 0 then
-        vim.notify(('Failed to update Jnvim, try to do it manually'):format(MODSTR), ERROR, {
-            animate = true,
-            hide_from_history = false,
-            timeout = 5000,
-            title = 'User API - Update',
-        })
-        if verbose and cmd.stderr and cmd.stderr ~= '' then
-            vim.notify(cmd.stderr, WARN, {
+        vim.api.nvim_set_current_dir(og_cwd)
+        if verbose and cmd.stdout and cmd.stdout ~= '' then
+            vim.notify(cmd.stdout, INFO, {
                 animate = true,
                 hide_from_history = false,
                 timeout = 2250,
                 title = 'User API - Update',
             })
         end
-        return
-    end
+        if cmd.code ~= 0 then
+            vim.notify(('Failed to update Jnvim, try to do it manually'):format(MODSTR), ERROR, {
+                animate = true,
+                hide_from_history = false,
+                timeout = 5000,
+                title = 'User API - Update',
+            })
+            if verbose and cmd.stderr and cmd.stderr ~= '' then
+                vim.notify(cmd.stderr, WARN, {
+                    animate = true,
+                    hide_from_history = false,
+                    timeout = 2250,
+                    title = 'User API - Update',
+                })
+            end
+            return
+        end
 
-    if cmd.stdout and cmd.stdout:match('Already up to date') then
-        vim.notify(('(%s.update): Jnvim is up to date!'):format(MODSTR), INFO, {
+        if cmd.stdout and cmd.stdout:match('Already up to date') then
+            vim.notify(('(%s.update): Jnvim is up to date!'):format(MODSTR), INFO, {
+                animate = true,
+                hide_from_history = true,
+                timeout = 1750,
+                title = 'User API - Update',
+            })
+            return
+        end
+        vim.notify(('(%s.update): You need to restart Nvim!'):format(MODSTR), WARN, {
             animate = true,
-            hide_from_history = true,
-            timeout = 1750,
+            hide_from_history = false,
+            timeout = 5000,
             title = 'User API - Update',
         })
-        return
-    end
-    vim.notify(('(%s.update): You need to restart Nvim!'):format(MODSTR), WARN, {
-        animate = true,
-        hide_from_history = false,
-        timeout = 5000,
-        title = 'User API - Update',
-    })
-end
+    end,
+}
 
 function Update.setup()
     local desc = require('user_api.maps').desc

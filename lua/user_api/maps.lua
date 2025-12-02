@@ -4,59 +4,56 @@ local MODES = { 'n', 'i', 'v', 't', 'o', 'x' }
 local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
 local Value = require('user_api.check.value')
-local Util = require('user_api.util')
-local O = require('user_api.maps.objects')
 local in_list = vim.list_contains
 
-local Maps = {} ---@type User.Maps
+local Maps = { ---@type User.Maps
+    modes = MODES,
+    keymap = require('user_api.maps.keymap'),
+    wk = require('user_api.maps.wk'),
+    desc = function(desc, silent, bufnr, noremap, nowait, expr)
+        if vim.fn.has('nvim-0.11') == 1 then
+            vim.validate('desc', desc, { 'string', 'nil' }, true)
+            vim.validate('silent', silent, { 'boolean', 'nil' }, true)
+            vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
+            vim.validate('noremap', noremap, { 'boolean', 'nil' }, true)
+            vim.validate('nowait', nowait, { 'boolean', 'nil' }, true)
+            vim.validate('expr', expr, { 'boolean', 'nil' }, true)
+        else
+            vim.validate({
+                desc = { desc, { 'string', 'nil' }, true },
+                silent = { silent, { 'boolean', 'nil' }, true },
+                bufnr = { bufnr, { 'number', 'nil' }, true },
+                noremap = { noremap, { 'boolean', 'nil' }, true },
+                nowait = { nowait, { 'boolean', 'nil' }, true },
+                expr = { expr, { 'boolean', 'nil' }, true },
+            })
+        end
 
-Maps.modes = MODES
-Maps.keymap = require('user_api.maps.keymap')
-Maps.wk = require('user_api.maps.wk')
+        if not Value.type_not_empty('string', desc) then
+            desc = 'Unnamed Key'
+        end
+        if silent == nil then
+            silent = true
+        end
+        if noremap == nil then
+            noremap = true
+        end
 
-function Maps.desc(desc, silent, bufnr, noremap, nowait, expr)
-    if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('desc', desc, { 'string', 'nil' }, true)
-        vim.validate('silent', silent, { 'boolean', 'nil' }, true)
-        vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
-        vim.validate('noremap', noremap, { 'boolean', 'nil' }, true)
-        vim.validate('nowait', nowait, { 'boolean', 'nil' }, true)
-        vim.validate('expr', expr, { 'boolean', 'nil' }, true)
-    else
-        vim.validate({
-            desc = { desc, { 'string', 'nil' }, true },
-            silent = { silent, { 'boolean', 'nil' }, true },
-            bufnr = { bufnr, { 'number', 'nil' }, true },
-            noremap = { noremap, { 'boolean', 'nil' }, true },
-            nowait = { nowait, { 'boolean', 'nil' }, true },
-            expr = { expr, { 'boolean', 'nil' }, true },
-        })
-    end
+        local res = require('user_api.maps.objects').new()
+        res:add({ desc = desc, silent = silent, noremap = noremap })
 
-    if not Value.type_not_empty('string', desc) then
-        desc = 'Unnamed Key'
-    end
-    if silent == nil then
-        silent = true
-    end
-    if noremap == nil then
-        noremap = true
-    end
-
-    local res = O.new()
-    res:add({ desc = desc, silent = silent, noremap = noremap })
-
-    if nowait ~= nil then
-        res:add({ nowait = nowait })
-    end
-    if expr ~= nil then
-        res:add({ expr = expr })
-    end
-    if bufnr ~= nil then
-        res:add({ buffer = bufnr })
-    end
-    return res
-end
+        if nowait ~= nil then
+            res:add({ nowait = nowait })
+        end
+        if expr ~= nil then
+            res:add({ expr = expr })
+        end
+        if bufnr ~= nil then
+            res:add({ buffer = bufnr })
+        end
+        return res
+    end,
+}
 
 function Maps.nop(T, opts, mode, prefix)
     if vim.fn.has('nvim-0.11') == 1 then
@@ -84,7 +81,7 @@ function Maps.nop(T, opts, mode, prefix)
     opts = opts or {}
     opts.silent = Value.is_bool(opts.silent) and opts.silent or true
     if Value.is_int(opts.buffer) then
-        opts = Util.strip_fields(opts, 'buffer') ---@type User.Maps.Opts
+        opts = require('user_api.util').strip_fields(opts, 'buffer') ---@type User.Maps.Opts
     end
     prefix = prefix or ''
 
