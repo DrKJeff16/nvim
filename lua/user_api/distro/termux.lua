@@ -41,8 +41,7 @@ function Termux.validate()
     return true
 end
 
----@type User.Distro.Termux|function
-local M = setmetatable({}, {
+local M = setmetatable({}, { ---@type User.Distro.Termux|function
     __index = Termux,
     __newindex = function()
         vim.notify('User.Distro.Termux is Read-Only!', ERROR)

@@ -1,4 +1,3 @@
-local ERROR = vim.log.levels.ERROR
 local uv = vim.uv or vim.loop
 
 ---Checking Utilities.
@@ -7,6 +6,16 @@ local uv = vim.uv or vim.loop
 local Check = {
     value = require('user_api.check.value'),
     exists = require('user_api.check.exists'),
+    ---Check whether Neovim is running as root (`PID == 0`).
+    --- ---
+    is_root = function()
+        return uv.getuid() == 0
+    end,
+    ---Check whether Neovim is running in a Windows environment.
+    --- ---
+    is_windows = function()
+        return vim.fn.has('win32') == 1
+    end,
 }
 
 ---Check whether Nvim is running in a Linux Console rather than a `pty`.
@@ -20,22 +29,10 @@ function Check.in_console()
     return vim.list_contains({ 'linux' }, env.TERM) and not Check.value.fields('DISPLAY', env)
 end
 
----Check whether Neovim is running as root (`PID == 0`).
---- ---
-function Check.is_root()
-    return uv.getuid() == 0
-end
-
----Check whether Neovim is running in a Windows environment.
---- ---
-function Check.is_windows()
-    return vim.fn.has('win32') == 1
-end
-
 local M = setmetatable(Check, { ---@type User.Check
     __index = Check,
     __newindex = function()
-        vim.notify('User.Check is read-only!', ERROR)
+        vim.notify('User.Check is Read-Only!', vim.log.levels.ERROR)
     end,
 })
 return M

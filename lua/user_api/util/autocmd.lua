@@ -19,7 +19,7 @@ local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
 
 ---@class User.Util.Autocmd
----@field created? table
+---@field created? AuRepeatEvents[]
 local M = {}
 
 ---@param T AuPair

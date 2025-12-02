@@ -5,11 +5,11 @@ local curr_win = vim.api.nvim_get_current_win
 local in_list = vim.list_contains
 
 ---@class User.Util
-local Util = {}
-
-Util.notify = require('user_api.util.notify')
-Util.au = require('user_api.util.autocmd')
-Util.string = require('user_api.util.string')
+local Util = {
+    notify = require('user_api.util.notify'),
+    au = require('user_api.util.autocmd'),
+    string = require('user_api.util.string'),
+}
 
 function Util.has_words_before()
     local win = curr_win()
@@ -53,9 +53,9 @@ end
 ---@return table<string, any> res
 function Util.mv_tbl_values(T, steps, direction)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('T', T, 'table', false, 'table<string, any>')
-        vim.validate('steps', steps, 'number', true, 'integer')
-        vim.validate('direction', direction, 'string', true, "'l'|'r'")
+        vim.validate('T', T, { 'table' }, false, 'table<string, any>')
+        vim.validate('steps', steps, { 'number', 'nil' }, true, 'integer')
+        vim.validate('direction', direction, { 'string', 'nil' }, true, "'l'|'r'")
     else
         vim.validate({
             T = { T, { 'table' } },
@@ -104,8 +104,8 @@ end
 ---@return boolean
 function Util.xor(x, y)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('x', x, 'boolean', false)
-        vim.validate('y', y, 'boolean', false)
+        vim.validate('x', x, { 'boolean' }, false)
+        vim.validate('y', y, { 'boolean' }, false)
     else
         vim.validate({
             x = { x, { 'boolean' } },
@@ -121,7 +121,7 @@ end
 ---@return table<string, any> T
 function Util.strip_fields(T, fields)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('T', T, 'table', false, 'table<string, any>')
+        vim.validate('T', T, { 'table' }, false, 'table<string, any>')
         vim.validate('fields', fields, { 'string', 'number', 'table' }, false)
     else
         vim.validate({
@@ -157,9 +157,9 @@ end
 ---@return table<string, any> res
 function Util.strip_values(T, values, max_instances)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('T', T, 'table', false, 'table<string, any>')
-        vim.validate('values', values, 'table', false, 'any[]')
-        vim.validate('max_instances', max_instances, 'table', true, 'integer')
+        vim.validate('T', T, { 'table' }, false, 'table<string, any>')
+        vim.validate('values', values, { 'table' }, false, 'any[]')
+        vim.validate('max_instances', max_instances, { 'table', 'nil' }, true)
     else
         vim.validate({
             T = { T, { 'table' } },
@@ -493,8 +493,8 @@ end
 ---@return string
 function Util.displace_letter(c, direction)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('c', c, 'string', false)
-        vim.validate('direction', direction, 'string', true, "'next'|'prev'")
+        vim.validate('c', c, { 'string' }, false)
+        vim.validate('direction', direction, { 'string', 'nil' }, true)
     else
         vim.validate({
             c = { c, { 'string' } },
@@ -581,5 +581,12 @@ function Util.reverse_tbl(T)
     return T
 end
 
-return Util
+local M = setmetatable(Util, { ---@type User.Util
+    __index = Util,
+    __newindex = function()
+        vim.notify('User.Util is Read-Only!', ERROR)
+    end,
+})
+
+return M
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

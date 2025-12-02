@@ -1,5 +1,3 @@
-local executable = require('user_api.check.exists').executable
-
 ---@class User.Opts.Spec: vim.wo,vim.bo
 local Defaults = {
     autoindent = true,
@@ -48,6 +46,7 @@ local Defaults = {
 }
 
 if vim.fn.has('win32') == 1 then
+    local executable = require('user_api.check.exists').executable
     if executable('mingw32-make') then
         Defaults.makeprg = 'mingw32-make'
     end
@@ -68,4 +67,12 @@ if vim.fn.has('win32') == 1 then
     Defaults.shellslash = true
 end
 
-return Defaults
+local M = setmetatable(Defaults, { ---@type User.Opts.Spec
+    __index = Defaults,
+    __newindex = function()
+        vim.notify('User.Opts.Spec is Read-Only!', vim.log.levels.ERROR)
+    end,
+})
+
+return M
+--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

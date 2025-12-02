@@ -10,7 +10,7 @@ local Update = {}
 ---@param verbose boolean|nil
 function Update.update(verbose)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('verbose', verbose, 'boolean', true)
+        vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
     else
         vim.validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
     end
@@ -85,5 +85,12 @@ function Update.setup()
     end, { bang = true, desc = 'Update Jnvim' })
 end
 
-return Update
+local M = setmetatable(Update, { ---@type User.Update
+    __index = Update,
+    __newindex = function()
+        vim.notify('User.Update is Read-Only!', ERROR)
+    end,
+})
+
+return M
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

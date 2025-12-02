@@ -159,6 +159,11 @@ end
 ---@param T AllMaps
 ---@return AllMaps res
 function WK.convert_dict(T)
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('T', T, 'table', false, 'AllMaps')
+    else
+        vim.validate({ T = { T, { 'table' } } })
+    end
     local res = {} ---@type RegKeys
     for lhs, v in pairs(T) do
         local rhs = v[1] ---@type string|function
@@ -173,8 +178,8 @@ end
 ---@return false|nil
 function WK.register(T, opts)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('T', T, 'table', false, 'AllMaps')
-        vim.validate('opts', opts, 'table', true, 'RegPfx|User.Maps.Opts')
+        vim.validate('T', T, { 'table' }, false, 'AllMaps')
+        vim.validate('opts', opts, { 'table', 'nil' }, true, 'RegPfx|User.Maps.Opts')
     else
         vim.validate({
             T = { T, { 'table' } },
@@ -197,5 +202,12 @@ function WK.register(T, opts)
     require('which-key').add(filtered)
 end
 
-return WK
+local M = setmetatable(WK, { ---@type User.Maps.WK
+    __index = WK,
+    __newindex = function()
+        vim.notify('User.Maps.WK is Read-Only!', ERROR)
+    end,
+})
+
+return M
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

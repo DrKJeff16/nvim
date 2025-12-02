@@ -14,7 +14,7 @@ local M = setmetatable(Distro, { ---@type User.Distro|fun(verbose?: boolean)
     end,
     __call = function(_, verbose) ---@param verbose? boolean
         if vim.fn.has('nvim-0.11') == 1 then
-            vim.validate('verbose', verbose, 'boolean', true)
+            vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
         else
             vim.validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
         end

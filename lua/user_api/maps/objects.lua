@@ -5,7 +5,7 @@ local O = {}
 ---@param T User.Maps.Opts
 function O:add(T)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('T', T, 'table', false, 'User.Maps.Opts|table')
+        vim.validate('T', T, { 'table' }, false, 'User.Maps.Opts|table')
     else
         vim.validate({ T = { T, { 'table' } } })
     end
@@ -24,7 +24,7 @@ end
 ---@return User.Maps.Opts
 function O.new(T)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('T', T, 'table', true, 'User.Maps.Opts|table')
+        vim.validate('T', T, { 'table', 'nil' }, true, 'User.Maps.Opts|table')
     else
         vim.validate({ T = { T, { 'table', 'nil' }, true } })
     end

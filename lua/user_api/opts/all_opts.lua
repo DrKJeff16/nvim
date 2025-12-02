@@ -346,7 +346,7 @@ local AllOpts = {
 local M = setmetatable(AllOpts, { ---@type User.Opts.AllOpts
     __index = AllOpts,
     __newindex = function()
-        vim.notify('AllOpts is read only!', vim.log.levels.ERROR)
+        vim.notify('User.Opts.AllOpts is Read-Only!', vim.log.levels.ERROR)
     end,
 })
 

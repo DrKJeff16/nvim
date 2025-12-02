@@ -3,12 +3,10 @@ local ERROR = vim.log.levels.ERROR
 local INFO = vim.log.levels.INFO
 local deep_extend = vim.tbl_deep_extend
 local in_list = vim.list_contains
+local curr_buf = vim.api.nvim_get_current_buf
 local copy = vim.deepcopy
 
 local Value = require('user_api.check.value')
-local is_str = Value.is_str
-local is_bool = Value.is_bool
-local type_not_empty = Value.type_not_empty
 
 local Opts = {} ---@class User.Opts
 
@@ -84,7 +82,7 @@ function Opts.long_opts_convert(T, verbose)
     local parsed_opts = {} ---@type User.Opts.Spec
     local msg = ''
     local verb_str = ''
-    if not type_not_empty('table', T) then
+    if not Value.type_not_empty('table', T) then
         if verbose then
             vim.notify('(user.opts.long_opts_convert): All seems good', INFO)
         end
@@ -102,7 +100,7 @@ function Opts.long_opts_convert(T, verbose)
             parsed_opts[opt] = val
         else
             local new_opt = Value.tbl_values({ opt }, ALL_OPTIONS, true)
-            if is_str(new_opt) and new_opt ~= '' then
+            if Value.is_str(new_opt) and new_opt ~= '' then
                 parsed_opts[new_opt] = val
                 verb_str = ('%s%s ==> %s\n'):format(verb_str, opt, new_opt)
             else
@@ -125,8 +123,8 @@ end
 --- @param verbose? boolean Enable verbose printing if `true`
 function Opts.optset(O, verbose)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('O', O, 'table', false, 'User.Opts.Spec')
-        vim.validate('verbose', verbose, 'boolean', true)
+        vim.validate('O', O, { 'table' }, false, 'User.Opts.Spec')
+        vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
     else
         vim.validate({
             O = { O, { 'table' } },
@@ -135,7 +133,6 @@ function Opts.optset(O, verbose)
     end
     verbose = verbose ~= nil and verbose or false
 
-    local curr_buf = vim.api.nvim_get_current_buf
     if not vim.api.nvim_get_option_value('modifiable', { buf = curr_buf() }) then
         return
     end
@@ -185,7 +182,7 @@ end
 function Opts.toggle(O, verbose)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('O', O, { 'string', 'table' }, false, 'string[]|string')
-        vim.validate('verbose', verbose, 'boolean', true)
+        vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
     else
         vim.validate({
             O = { O, { 'string', 'table' } },
@@ -195,7 +192,7 @@ function Opts.toggle(O, verbose)
     verbose = verbose ~= nil and verbose or false
 
     ---@cast O string
-    if is_str(O) then
+    if Value.is_str(O) then
         O = { O }
     end
 
@@ -205,7 +202,7 @@ function Opts.toggle(O, verbose)
     for _, opt in ipairs(O) do
         if in_list(Opts.toggleable, opt) then
             local value = vim.o[opt]
-            if is_bool(value) then
+            if Value.is_bool(value) then
                 value = not value
             else
                 value = value == 'yes' and 'no' or 'yes'
@@ -252,40 +249,37 @@ function Opts.setup()
     Opts.setup_maps()
 end
 
----@return User.Opts|fun(override?: User.Opts.Spec, verbose?: boolean)
-function Opts.new()
-    return setmetatable(Opts, {
-        __index = Opts,
-        __newindex = function()
-            vim.notify(('(%s): This module is read only!'):format(MODSTR), ERROR)
-        end,
-        ---@param self User.Opts
-        ---@param override? User.Opts.Spec A table with custom options
-        ---@param verbose? boolean Flag to make the function return a string with invalid values, if any
-        __call = function(self, override, verbose)
-            if vim.fn.has('nvim-0.11') == 1 then
-                vim.validate('override', override, { 'table', 'nil' }, true, 'User.Opts.Spec')
-                vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
-            else
-                vim.validate({
-                    override = { override, { 'table', 'nil' }, true },
-                    verbose = { verbose, { 'boolean', 'nil' }, true },
-                })
-            end
-            override = override or {}
-            verbose = verbose ~= nil and verbose or false
+local M = setmetatable(Opts, { ---@type User.Opts|fun(override?: User.Opts.Spec, verbose?: boolean)
+    __index = Opts,
+    __newindex = function()
+        vim.notify(('(%s): This module is read only!'):format(MODSTR), ERROR)
+    end,
+    ---@param self User.Opts
+    ---@param override? User.Opts.Spec A table with custom options
+    ---@param verbose? boolean Flag to make the function return a string with invalid values, if any
+    __call = function(self, override, verbose)
+        if vim.fn.has('nvim-0.11') == 1 then
+            vim.validate('override', override, { 'table', 'nil' }, true, 'User.Opts.Spec')
+            vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
+        else
+            vim.validate({
+                override = { override, { 'table', 'nil' }, true },
+                verbose = { verbose, { 'boolean', 'nil' }, true },
+            })
+        end
+        override = override or {}
+        verbose = verbose ~= nil and verbose or false
 
-            local defaults = Opts.get_defaults()
-            if vim.tbl_isempty(self.options) then
-                self.options = Opts.long_opts_convert(defaults, verbose)
-            end
+        local defaults = Opts.get_defaults()
+        if vim.tbl_isempty(self.options) then
+            self.options = Opts.long_opts_convert(defaults, verbose)
+        end
 
-            local parsed_opts = Opts.long_opts_convert(override, verbose)
-            Opts.options = deep_extend('keep', parsed_opts, self.options) ---@type vim.bo|vim.wo
-            Opts.optset(Opts.options, verbose)
-        end,
-    })
-end
+        local parsed_opts = Opts.long_opts_convert(override, verbose)
+        Opts.options = deep_extend('keep', parsed_opts, self.options) ---@type vim.bo|vim.wo
+        Opts.optset(Opts.options, verbose)
+    end,
+})
 
-return Opts.new()
+return M
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

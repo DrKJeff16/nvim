@@ -71,9 +71,9 @@ Notify.Levels = {
 ---@param opts? notify.Options
 function Notify.notify(msg, lvl, opts)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('msg', msg, 'string', false)
-        vim.validate('lvl', lvl, { 'string', 'number' }, true)
-        vim.validate('opts', opts, 'table', true)
+        vim.validate('msg', msg, { 'string' }, false)
+        vim.validate('lvl', lvl, { 'string', 'number', 'nil' }, true)
+        vim.validate('opts', opts, { 'table', 'nil' }, true)
     else
         vim.validate({
             msg = { msg, { 'string' } },
@@ -113,6 +113,12 @@ end
 ---@param lvl VimNotifyLvl
 ---@return fun(args: vim.api.keyset.create_user_command.command_args)
 local function gen_cmd_lvl(lvl)
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('lvl', lvl, { 'number' }, false)
+    else
+        vim.validate({ lvl = { lvl, { 'number' } } })
+    end
+
     return function(args) ---@param args vim.api.keyset.create_user_command.command_args
         local data = args.args
         if data == '' then
@@ -149,5 +155,12 @@ vim.api.nvim_create_user_command('NotifyError', gen_cmd_lvl(vim.log.levels.ERROR
     force = true,
 })
 
-return Notify
+local M = setmetatable(Notify, { ---@type User.Util.Notify
+    __index = Notify,
+    __newindex = function()
+        vim.notify('User.Util.Notify is Read-Only!', ERROR)
+    end,
+})
+
+return M
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

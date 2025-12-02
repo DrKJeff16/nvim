@@ -231,5 +231,12 @@ function String.replace(str, target, new)
     return new_str
 end
 
-return String
+local M = setmetatable(String, { ---@type User.Util.String
+    __index = String,
+    __newindex = function()
+        vim.notify('User.Util.String is Read-Only!', vim.log.levels.ERROR)
+    end,
+})
+
+return M
 --- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

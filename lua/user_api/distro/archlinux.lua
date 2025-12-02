@@ -46,8 +46,7 @@ function Archlinux.validate()
     return true
 end
 
----@type User.Distro.Archlinux|function
-local M = setmetatable({}, {
+local M = setmetatable({}, { ---@type User.Distro.Archlinux|function
     __index = Archlinux,
     __newindex = function()
         vim.notify('User.Distro.Archlinux table is Read-Only!', ERROR)

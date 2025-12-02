@@ -65,10 +65,10 @@ Commands.commands = { ---@type table<string, User.Commands.CmdSpec>
 ---@param mappings? AllModeMaps
 function Commands.add_command(name, cmd, opts, mappings)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('name', name, 'string', false)
-        vim.validate('cmd', cmd, 'function', false)
-        vim.validate('opts', opts, 'table', true, 'vim.api.keyset.user_command')
-        vim.validate('mappings', mappings, 'table', true, 'AllModeMaps')
+        vim.validate('name', name, { 'string' }, false)
+        vim.validate('cmd', cmd, { 'function' }, false)
+        vim.validate('opts', opts, { 'table', 'nil' }, true, 'vim.api.keyset.user_command')
+        vim.validate('mappings', mappings, { 'table', 'nil' }, true, 'AllModeMaps')
     else
         vim.validate({
             name = { name, { 'string' } },
@@ -97,7 +97,7 @@ end
 ---@param cmds? table<string, User.Commands.CmdSpec>
 function Commands.setup(cmds)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('cmds', cmds, 'table', true, 'User.Commands.Spec')
+        vim.validate('cmds', cmds, { 'table', 'nil' }, true, 'User.Commands.Spec')
     else
         vim.validate({ cmds = { cmds, { 'table', 'nil' }, true } })
     end
