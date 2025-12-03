@@ -1,24 +1,15 @@
----@type vim.lsp.ClientConfig
-return {
+return { ---@type vim.lsp.ClientConfig
     cmd = { 'clangd' },
-    filetypes = {
-        'c',
-        'cpp',
-        'objc',
-        'objcpp',
-        'cuda',
-    },
-
+    filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda' },
     root_markers = {
         '.clangd',
         '.clang-tidy',
         '.clang-format',
         'compile_commands.json',
         'compile_flags.txt',
-        'configure.ac', -- AutoTools
+        'configure.ac',
         '.git',
     },
-
     settings = {
         clangd = {
             checkUpdates = false,

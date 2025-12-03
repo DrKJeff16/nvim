@@ -1,5 +1,4 @@
----@type vim.lsp.ClientConfig
-return {
+return { ---@type vim.lsp.ClientConfig
     cmd = { 'texlab' },
     filetypes = { 'tex', 'plaintex', 'bib' },
     root_markers = {
@@ -24,9 +23,7 @@ return {
             formatterLineLength = 80,
             forwardSearch = { args = {} },
             latexFormatter = 'latexindent',
-            latexindent = {
-                modifyLineBreaks = false,
-            },
+            latexindent = { modifyLineBreaks = false },
         },
     },
 }

@@ -1,5 +1,4 @@
----@type vim.lsp.ClientConfig
-return {
+return { ---@type vim.lsp.ClientConfig
     cmd = { 'bash-language-server', 'start' },
     filetypes = { 'bash', 'sh' },
     root_markers = { '.git' },

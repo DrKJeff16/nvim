@@ -1,5 +1,4 @@
----@type vim.lsp.ClientConfig
-return {
+return { ---@type vim.lsp.ClientConfig
     cmd = { 'marksman', 'server' },
     filetypes = { 'markdown', 'markdown.mdx' },
     root_markers = { '.git', '.marksman.toml' },

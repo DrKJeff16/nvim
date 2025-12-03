@@ -2,8 +2,7 @@ vim.filetype.add({
     pattern = { ['.*/hypr/.*%.conf'] = 'hyprlang' },
 })
 
----@type vim.lsp.ClientConfig
-return {
+return { ---@type vim.lsp.ClientConfig
     cmd = { 'hyprls', '--stdio' },
     filetypes = { 'hyprlang' },
     root_markers = { '.git' },

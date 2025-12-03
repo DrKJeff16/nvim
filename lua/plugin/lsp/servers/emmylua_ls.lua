@@ -1,5 +1,4 @@
----@type vim.lsp.ClientConfig
-return {
+return { ---@type vim.lsp.ClientConfig
     cmd = { 'emmylua_ls' },
     filetypes = { 'lua' },
     root_markers = { '.luarc.json', '.emmyrc.json', '.luacheckrc', '.git' },

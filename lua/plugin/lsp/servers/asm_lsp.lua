@@ -1,5 +1,4 @@
----@type vim.lsp.ClientConfig
-return {
+return { ---@type vim.lsp.ClientConfig
     cmd = { 'asm-lsp' },
     filetypes = { 'asm', 'vmasm' },
     root_markers = { '.asm-lsp.toml', '.git' },

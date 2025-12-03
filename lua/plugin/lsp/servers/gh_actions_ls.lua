@@ -1,5 +1,4 @@
----@type vim.lsp.ClientConfig
-return {
+return { ---@type vim.lsp.ClientConfig
     cmd = { 'gh-actions-language-server', '--stdio' },
     filetypes = { 'yaml' },
     init_options = {},

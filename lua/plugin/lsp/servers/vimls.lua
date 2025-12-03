@@ -1,5 +1,4 @@
----@type vim.lsp.ClientConfig
-return {
+return { ---@type vim.lsp.ClientConfig
     cmd = { 'vim-language-server', '--stdio' },
     filetypes = { 'vim' },
     init_options = {

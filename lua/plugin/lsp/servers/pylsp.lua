@@ -1,5 +1,4 @@
----@type vim.lsp.ClientConfig
-return {
+return { ---@type vim.lsp.ClientConfig
     cmd = { 'pylsp' },
     filetypes = { 'python' },
     root_markers = {
@@ -12,7 +11,7 @@ return {
     },
     settings = {
         pylsp = {
-            ---@type { [1]: 'pycodestyle' }|{ [1]: 'flake8' }
+            ---@type { [1]: 'pycodestyle'|'flake8' }
             configurationSources = { 'pycodestyle' },
             plugins = {
                 autopep8 = { enabled = true },
@@ -40,22 +39,11 @@ return {
                 jedi_hover = { enabled = true },
                 jedi_references = { enabled = true },
                 jedi_signature_help = { enabled = true },
-                jedi_symbols = {
-                    enabled = true,
-                    all_scopes = true,
-                    include_import_symbols = true,
-                },
+                jedi_symbols = { enabled = true, all_scopes = true, include_import_symbols = true },
                 mccabe = { enabled = true, threshold = 15 },
                 preload = {
                     enabled = true,
-                    modules = {
-                        'sys',
-                        'typing',
-                        'os',
-                        'argparse',
-                        'string',
-                        're',
-                    },
+                    modules = { 'sys', 'typing', 'os', 'argparse', 'string', 're' },
                 },
                 pycodestyle = {
                     enabled = true,

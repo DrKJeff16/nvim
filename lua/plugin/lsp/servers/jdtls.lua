@@ -1,8 +1,7 @@
 local environ = vim.fn.environ()
-local HOME = vim.fn.has_key(environ, 'HOME') and environ['HOME'] or environ['USERPROFILE']
+local HOME = vim.fn.has_key(environ, 'HOME') and environ.HOME or environ.USERPROFILE
 
----@type vim.lsp.ClientConfig
-return {
+return { ---@type vim.lsp.ClientConfig
     cmd = {
         'jdtls',
         '-configuration',
@@ -11,10 +10,7 @@ return {
         HOME .. '/.cache/jdtls/workspace',
     },
     filetypes = { 'java' },
-    init_options = {
-        jvm_args = {},
-        workspace = HOME .. '/.cache/jdtls/workspace',
-    },
+    init_options = { jvm_args = {}, workspace = HOME .. '/.cache/jdtls/workspace' },
     root_markers = {
         '.git',
         'build.gradle',
