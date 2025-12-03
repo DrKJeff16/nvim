@@ -367,19 +367,7 @@ function Util.setup_autocmd()
                     end,
                 },
                 {
-                    pattern = 'nvim-undotree',
-                    group = group,
-                    callback = function(ev)
-                        vim.keymap.set(
-                            'n',
-                            'q',
-                            vim.cmd.bdelete,
-                            { buffer = ev.buf, noremap = true }
-                        )
-                    end,
-                },
-                {
-                    pattern = 'startuptime',
+                    pattern = { 'nvim-undotree', 'startuptime', 'qf' },
                     group = group,
                     callback = function(ev)
                         vim.keymap.set(
@@ -482,7 +470,6 @@ function Util.setup_autocmd()
     }
 
     Util.au.created = vim.tbl_deep_extend('keep', Util.au.created or {}, autocmds) ---@type AuRepeatEvents[]
-
     for _, t in ipairs(Util.au.created) do
         Util.au.au_repeated_events(t)
     end
@@ -562,8 +549,8 @@ function Util.discard_dups(data)
     return res
 end
 
----@param T any[]
----@return any[]
+---@param T table
+---@return table reversed
 function Util.reverse_tbl(T)
     if vim.fn.has('nvim-0.11') == 1 then
         vim.validate('T', T, { 'table' }, false)
@@ -571,7 +558,7 @@ function Util.reverse_tbl(T)
         vim.validate({ T = { T, { 'table' } } })
     end
     if vim.tbl_isempty(T) then
-        error('(user_api.util.reverse_tbl): Empty or non-existant table', ERROR)
+        error('(user_api.util.reverse_tbl): Empty table!', ERROR)
     end
 
     local len = #T

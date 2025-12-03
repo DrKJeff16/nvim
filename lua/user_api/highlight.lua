@@ -69,16 +69,13 @@ end
 ---@param D HlDict
 function Hl.hl_from_dict(D)
     local Value = require('user_api.check.value')
-
-    local type_not_empty = Value.type_not_empty
-
-    if not type_not_empty('table', D) then
+    if not Value.type_not_empty('table', D) then
         vim.notify('(user_api.highlight.hl_from_dict): Unable to parse argument', ERROR)
         return
     end
 
     for k, v in pairs(D) do
-        if type_not_empty('string', k) and type_not_empty('table', v) then
+        if Value.type_not_empty('string', k) and Value.type_not_empty('table', v) then
             Hl.hl(k, v)
         else
             vim.notify('(user_api.highlight.hl_from_dict): Skipping bad highlight', ERROR)

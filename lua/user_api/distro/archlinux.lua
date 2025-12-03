@@ -1,7 +1,6 @@
 ---Modify runtimepath to also search the system-wide Vim directory
 ---(e.g. for Vim runtime files from Arch Linux packages)
 
-local WARN = vim.log.levels.WARN
 local ERROR = vim.log.levels.ERROR
 local in_list = vim.list_contains
 
@@ -24,7 +23,7 @@ local RTPATHS = { ---@type string[]
 Archlinux.rtpaths = setmetatable(RTPATHS, { ---@type string[]
     __index = RTPATHS,
     __newindex = function()
-        vim.notify('User.Distro.Archlinux.RTP table is Read-Only!', ERROR)
+        vim.notify('User.Distro.Archlinux.rtpaths is Read-Only!', ERROR)
     end,
 })
 
@@ -49,7 +48,7 @@ end
 local M = setmetatable({}, { ---@type User.Distro.Archlinux|function
     __index = Archlinux,
     __newindex = function()
-        vim.notify('User.Distro.Archlinux table is Read-Only!', ERROR)
+        vim.notify('User.Distro.Archlinux is Read-Only!', ERROR)
     end,
     __call = function(self) ---@param self User.Distro.Archlinux
         if not self.validate() then
@@ -60,9 +59,7 @@ local M = setmetatable({}, { ---@type User.Distro.Archlinux|function
                 vim.o.runtimepath = vim.o.runtimepath .. ',' .. path
             end
         end
-        if not pcall(vim.cmd.runtime, { 'archlinux.vim', bang = true }) then
-            vim.notify('Bad setup for Arch Linux!', WARN)
-        end
+        pcall(vim.cmd.runtime, { 'archlinux.vim', bang = true })
     end,
 })
 

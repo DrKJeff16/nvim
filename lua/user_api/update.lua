@@ -6,7 +6,7 @@ local uv = vim.uv or vim.loop
 
 ---@class User.Update
 local Update = {
-    ---@param verbose boolean|nil
+    ---@param verbose? boolean
     update = function(verbose)
         if vim.fn.has('nvim-0.11') == 1 then
             vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)

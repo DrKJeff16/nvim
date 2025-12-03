@@ -3,7 +3,6 @@
 local MODES = { 'n', 'i', 'v', 't', 'o', 'x' }
 local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
-local Value = require('user_api.check.value')
 local in_list = vim.list_contains
 
 local Maps = { ---@type User.Maps
@@ -29,6 +28,7 @@ local Maps = { ---@type User.Maps
             })
         end
 
+        local Value = require('user_api.check.value')
         if not Value.type_not_empty('string', desc) then
             desc = 'Unnamed Key'
         end
@@ -69,7 +69,10 @@ function Maps.nop(T, opts, mode, prefix)
             prefix = { prefix, { 'string', 'nil' }, true },
         })
     end
+
+    local Value = require('user_api.check.value')
     mode = (Value.is_str(mode) and in_list(MODES, mode)) and mode or 'n'
+
     if mode == 'i' then
         vim.notify(
             '(user_api.maps.nop): Refusing to NO-OP these keys in Insert mode: ' .. vim.inspect(T),
@@ -98,6 +101,7 @@ function Maps.nop(T, opts, mode, prefix)
 end
 
 function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
+    local Value = require('user_api.check.value')
     if not Value.type_not_empty('table', T) then
         error("(user_api.maps.map_dict): Keys either aren't table or table is empty", ERROR)
     end

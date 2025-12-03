@@ -19,6 +19,7 @@ local Opts = {
 
 ---@param ArgLead string
 ---@param CursorPos integer
+---@return string[] items
 local function complete_fun(ArgLead, _, CursorPos)
     local len = ArgLead:len()
     local CMD_LEN = ('OptsToggle '):len() + 1
@@ -35,6 +36,7 @@ local function complete_fun(ArgLead, _, CursorPos)
     return valid
 end
 
+---@return string[] valid
 function Opts.gen_toggleable()
     local valid = {} ---@type string[]
     local T = Opts.get_all_opts()
