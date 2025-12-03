@@ -173,7 +173,6 @@ L.setup({
     -- { import = 'plugin.checkmate' },
     -- { import = 'plugin.a_vim' },
     -- { import = 'plugin.twilight' },
-    -- { import = 'plugin.qwahl' },
     -- { import = 'plugin.undotree' },
 })
 
