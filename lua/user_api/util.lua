@@ -403,13 +403,13 @@ function Util.setup_autocmd()
                             vim.api.nvim_set_option_value('number', false, win_opts)
                             vim.api.nvim_set_option_value('wrap', true, win_opts)
                             vim.api.nvim_set_option_value('colorcolumn', '', win_opts)
-                            vim.keymap.set('n', 'q', vim.cmd.bdelete, { buffer = ev.buf })
 
-                            local fn = vim.schedule_wrap(function()
-                                vim.cmd.wincmd('=')
+                            vim.keymap.set('n', 'q', vim.cmd.helpclose, { buffer = ev.buf })
+
+                            vim.schedule(function()
                                 vim.cmd.noh()
+                                vim.cmd.wincmd('=')
                             end)
-                            fn()
                             return
                         end
                         if ft == 'ministarter' then
