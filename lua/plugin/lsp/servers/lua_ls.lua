@@ -7,9 +7,12 @@ local luarocks_path = vim.fn.expand('~/.luarocks/share/lua/5.1')
 
 ---@param client vim.lsp.Client
 local function on_init(client, _)
+    if not client.workspace_folders or vim.tbl_isempty(client.workspace_folders) then
+        return
+    end
     local path = client.workspace_folders[1].name
     local luarc = { path .. '/luarc.json', path .. '/.luarc.json' }
-    if client.workspace_folders and path ~= cfg and (fs_stat(luarc[1]) or fs_stat(luarc[2])) then
+    if path ~= cfg and (fs_stat(luarc[1]) or fs_stat(luarc[2])) then
         return
     end
 
