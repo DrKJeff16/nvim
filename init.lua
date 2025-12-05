@@ -124,6 +124,7 @@ L.setup({
     { import = 'plugin.neo-tree' },
     { import = 'plugin.snacks' },
     { import = 'plugin.lsp.clangd' },
+    { import = 'plugin.lsp.better-diagnostic' },
     { import = 'plugin.gitsigns' },
     { import = 'plugin.mini.diff' },
     { import = 'plugin.mini.bufremove' },
