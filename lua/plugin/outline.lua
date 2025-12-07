@@ -133,8 +133,8 @@ return { ---@type LazySpec
         local desc = require('user_api.maps').desc
         require('user_api.config').keymaps({
             n = {
-                ['<leader>O'] = { group = '+Outline' },
-                ['<leader>Ot'] = { vim.cmd.Outline, desc('Toggle Outline') },
+                ['<leader>o'] = { group = '+Outline' },
+                ['<leader>ot'] = { vim.cmd.Outline, desc('Toggle Outline') },
             },
         })
     end,
