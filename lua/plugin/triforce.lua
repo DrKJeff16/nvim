@@ -13,9 +13,8 @@ return { ---@type LazySpec
             keymap = { show_profile = '<leader>Tp' },
             auto_save_interval = 300,
             custom_languages = {
-                bash = { icon = '', name = 'Bash' },
-                c = { icon = '', name = 'C' },
-                lua = { icon = '', name = 'Lua' },
+                gleam = { icon = '✨', name = 'Gleam' },
+                odin = { icon = '🔷', name = 'Odin' },
             },
             level_progression = {
                 tier_1 = { min_level = 1, max_level = 15, xp_per_level = 600 },
