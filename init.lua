@@ -102,6 +102,7 @@ L.setup({
     { import = 'plugin.mini.mini' },
     { import = 'plugin.mini.basics' },
     { import = 'plugin.mini.extra' },
+    { import = 'plugin.mini.cmdline' },
     { import = 'plugin.mini.starter' },
     { import = 'plugin.mini.splitjoin' },
     { import = 'plugin.mini.move' },
