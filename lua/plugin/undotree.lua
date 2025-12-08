@@ -47,13 +47,18 @@ return { ---@type LazySpec
             local cmd = ctx.fargs[1]
             if cmd == 'toggle' then
                 require('undotree').toggle()
-            elseif cmd == 'open' then
-                require('undotree').open()
-            elseif cmd == 'close' then
-                require('undotree').close()
-            else
-                vim.notify('Invalid subcommand: ' .. (cmd or ''), vim.log.levels.ERROR)
+                return
             end
+            if cmd == 'open' then
+                require('undotree').open()
+                return
+            end
+            if cmd == 'close' then
+                require('undotree').close()
+                return
+            end
+
+            vim.notify(('Invalid subcommand: `%s`'):format(cmd or ''), vim.log.levels.ERROR)
         end, {
             nargs = '?',
             desc = 'Undotree command with subcommands: toggle, open, close',
