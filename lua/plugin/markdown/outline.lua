@@ -7,4 +7,4 @@ return {
     version = false,
     opts = { auto_open = false },
 }
---- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

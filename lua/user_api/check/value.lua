@@ -384,4 +384,4 @@ local M = setmetatable(Value, { ---@type User.Check.Value
 })
 
 return M
---- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

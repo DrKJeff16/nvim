@@ -15,4 +15,4 @@ return { ---@type LazySpec
     cond = require('user_api.check.exists').executable('git'),
     opts = {},
 }
---- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

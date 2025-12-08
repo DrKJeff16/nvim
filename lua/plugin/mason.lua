@@ -47,4 +47,4 @@ return { ---@type LazySpec[]
         opts = { automatic_enable = false, ensure_installed = { 'lua_ls' } },
     },
 }
---- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

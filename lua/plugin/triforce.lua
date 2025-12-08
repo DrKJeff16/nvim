@@ -27,4 +27,4 @@ return { ---@type LazySpec
         require('user_api.config').keymaps({ n = { ['<leader>T'] = { group = '+Triforce' } } })
     end,
 }
---- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

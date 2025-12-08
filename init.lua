@@ -212,4 +212,4 @@ if vim.fn.has('nvim-0.12') == 1 then
 end
 
 L.lsp().setup()
---- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

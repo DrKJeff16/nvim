@@ -293,4 +293,4 @@ vim.api.nvim_create_autocommand('User', {
         end
     end,
 })
---- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

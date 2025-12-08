@@ -12,4 +12,4 @@ function OneDark.setup()
 end
 
 return OneDark
---- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

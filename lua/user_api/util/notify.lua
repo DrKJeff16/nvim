@@ -163,4 +163,4 @@ local M = setmetatable(Notify, { ---@type User.Util.Notify
 })
 
 return M
---- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

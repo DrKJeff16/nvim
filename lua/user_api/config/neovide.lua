@@ -226,4 +226,4 @@ local M = setmetatable(Neovide, { ---@type User.Config.Neovide
 })
 
 return M
---- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

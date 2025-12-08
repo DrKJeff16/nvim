@@ -56,4 +56,4 @@ return { ---@type LazySpec
         vim.keymap.del({ 'n', 'i' }, '<leader>is')
     end,
 }
---- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
