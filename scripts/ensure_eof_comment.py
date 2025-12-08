@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Ensure EOF Vim comment in Lua files."""
-import subprocess
 from io import TextIOWrapper
 from os import walk
 from os.path import join
@@ -15,13 +14,6 @@ COMMENT: str = "--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:"
 def bootstrap_paths() -> Tuple[str]:
     """Bootstraps all the matching paths in current dir and below."""
     result = list()
-    cmd = "nvim --headless --clean -c \"lua vim.print(vim.fn.stdpath('config'))\" -c \"qa!\""
-    target = subprocess.run(
-        cmd,
-        shell=True,
-        capture_output=True
-    ).stderr.decode('utf-8')
-
     for root, dirs, files in walk("."):
         for file in files:
             if file.endswith(".lua"):
@@ -88,7 +80,7 @@ def eof_comment_search(files: Dict[str, TextIOWrapper]) -> Dict[str, TextIOWrapp
 def append_eof_comment(files: Dict[str, TextIOWrapper]) -> NoReturn:
     """Append EOF comment to files missing it."""
     for file in files.values():
-        file.write(f"{COMMENT}\n")
+        file.write(f"\n{COMMENT}\n")
         file.close()
 
 
