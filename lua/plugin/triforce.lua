@@ -12,6 +12,17 @@ return { ---@type LazySpec
             notifications = { enabled = true, level_up = true, achievements = true },
             keymap = { show_profile = '<leader>Tp' },
             auto_save_interval = 300,
+            achievements = {
+                {
+                    id = 'first_500',
+                    name = 'Newbie',
+                    desc = 'Type 500 Characters',
+                    icon = '✨',
+                    check = function(stats)
+                        return stats.chars_typed >= 500
+                    end,
+                },
+            },
             custom_languages = {
                 gleam = { icon = '✨', name = 'Gleam' },
                 odin = { icon = '🔷', name = 'Odin' },
