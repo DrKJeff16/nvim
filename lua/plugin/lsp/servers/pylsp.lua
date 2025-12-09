@@ -11,14 +11,13 @@ return { ---@type vim.lsp.ClientConfig
     },
     settings = {
         pylsp = {
-            ---@type { [1]: 'pycodestyle'|'flake8' }
-            configurationSources = { 'pycodestyle' },
+            configurationSources = { 'flake8' }, ---@type { [1]: 'pycodestyle'|'flake8' }
             plugins = {
                 autopep8 = { enabled = true },
                 flake8 = {
-                    enabled = false,
+                    enabled = true,
                     executable = 'flake8',
-                    hangClosing = true,
+                    hangClosing = false,
                     indentSize = 4,
                     maxComplexity = 15,
                     maxLineLength = 100,
@@ -28,7 +27,7 @@ return { ---@type vim.lsp.ClientConfig
                     enabled = true,
                     eager = true,
                     fuzzy = true,
-                    resolve_at_most = 30,
+                    resolve_at_most = 50,
                 },
                 jedi_definition = {
                     enabled = true,
@@ -41,12 +40,9 @@ return { ---@type vim.lsp.ClientConfig
                 jedi_signature_help = { enabled = true },
                 jedi_symbols = { enabled = true, all_scopes = true, include_import_symbols = true },
                 mccabe = { enabled = true, threshold = 15 },
-                preload = {
-                    enabled = true,
-                    modules = { 'sys', 'typing', 'os', 'argparse', 'string', 're' },
-                },
+                preload = { enabled = true, modules = { 'sys', 'typing', 'os', 'argparse' } },
                 pycodestyle = {
-                    enabled = true,
+                    enabled = false,
                     ignore = { 'D400', 'D401', 'F401' },
                     maxLineLength = 100,
                     indentSize = 4,
@@ -58,7 +54,7 @@ return { ---@type vim.lsp.ClientConfig
                     addIgnore = { 'D400', 'D401' },
                     ignore = { 'D400', 'D401' },
                 },
-                pyflakes = { enabled = true },
+                pyflakes = { enabled = false },
                 pylint = { enabled = false },
                 rope_autoimport = { completions = { enabled = true } },
                 rope_completion = { enabled = true, eager = true },
