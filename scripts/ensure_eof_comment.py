@@ -37,17 +37,33 @@ def error(*msg, end: str = "\n", sep: str = " ", flush: bool = False) -> NoRetur
     print(*msg, end=end, sep=sep, flush=flush, file=STDERR)
 
 
-def die(*msg, code: int = 0, **kwargs) -> NoReturn:
+def die(*msg, code: int = 0, end: str = "\n", sep: str = " ", flush: bool = False) -> NoReturn:
     """Kill program execution."""
-    end = kwargs.get("end", "\n")
-    sep = kwargs.get("sep", " ")
-    flush = kwargs.get("flush", False)
+    try:
+        end = str(end)
+    except KeyboardInterrupt:
+        Exit(1)
+    except Exception:
+        end = "\n"
 
-    if msg and len(msg) > 0:
-        if code == 0:
-            print(*msg, end=end, sep=sep, flush=flush)
-        else:
-            error(*msg, end=end, sep=sep, flush=flush)
+    try:
+        sep = str(sep)
+    except KeyboardInterrupt:
+        Exit(1)
+    except Exception:
+        sep = " "
+
+    try:
+        flush = bool(flush)
+    except KeyboardInterrupt:
+        Exit(1)
+    except Exception:
+        flush = False
+
+    if msg and len(msg) > 0 and code == 0:
+        print(*msg, end=end, sep=sep, flush=flush)
+    elif msg and len(msg) > 0:
+        error(*msg, end=end, sep=sep, flush=flush)
 
     Exit(code)
 
@@ -68,17 +84,13 @@ def open_batch_paths(paths: Tuple[str]) -> Dict[str, TextIOWrapper]:
     result = dict()
     for path in paths:
         try:
-            file = open(path, "r")
+            result[path] = open(path, "r")
         except KeyboardInterrupt:
             die("\nProgram interrupted!", code=1)
         except FileNotFoundError:
             error(f"File `{path}` is not available!")
-            continue
         except Exception:
             error(f"Something went wrong while trying to open `{path}`!")
-            continue
-
-        result[path] = file
 
     return result
 
@@ -100,11 +112,9 @@ def eof_comment_search(
         last_line = get_last_line(file)
         if last_line not in (COMMENT,):
             if last_line in ("-" + COMMENT, COMMENT.split(" "), "-" + "".join(COMMENT.split(" "))):
-                pair = [open(path, "r"), True]
+                result[path] = [open(path, "r"), True]
             else:
-                pair = [open(path, "a"), False]
-
-            result[path] = pair
+                result[path] = [open(path, "a"), False]
 
     return result
 
