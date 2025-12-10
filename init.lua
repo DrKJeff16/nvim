@@ -116,7 +116,7 @@ L.setup({
     { import = 'plugin.ts.context' },
     { import = 'plugin.ts.commentstring' },
     { import = 'plugin.ts.autotag' },
-    { import = 'plugin.conform' },
+    -- { import = 'plugin.conform' },
     { import = 'plugin.paredit' },
     { import = 'plugin.scope' },
     { import = 'plugin.markdown.render' },
