@@ -36,6 +36,6 @@ repos:
       - id: check_eof
         name: Run EOF Comments Check
         language: system
-        entry: python3 scripts/ensure_eof_comment.py . -e lua
+        entry: python3 scripts/ensure_eof_comment.py -e lua .
         types: [lua]
         verbose: true

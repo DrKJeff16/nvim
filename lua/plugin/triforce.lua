@@ -23,7 +23,16 @@ return { ---@type LazySpec
                     end,
                 },
             },
-            ignore_ft = { 'yaml', 'markdown', 'toml', 'dosini', 'conf', 'config', 'hyprlang' },
+            ignore_ft = {
+                'conf',
+                'config',
+                'dosini',
+                'hyprlang',
+                'make',
+                'markdown',
+                'toml',
+                'yaml',
+            },
             custom_languages = {
                 gleam = { icon = '✨', name = 'Gleam' },
                 odin = { icon = '🔷', name = 'Odin' },
@@ -33,7 +42,7 @@ return { ---@type LazySpec
                 tier_2 = { min_level = 16, max_level = 30, xp_per_level = 1200 },
                 tier_3 = { min_level = 31, max_level = math.huge, xp_per_level = 3000 },
             },
-            xp_rewards = { char = 1, line = 2, save = 20 },
+            xp_rewards = { char = 1, line = 2, save = 10 },
         })
 
         require('user_api.config').keymaps({ n = { ['<leader>T'] = { group = '+Triforce' } } })
