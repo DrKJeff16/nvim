@@ -23,6 +23,7 @@ return { ---@type LazySpec
                     end,
                 },
             },
+            ignore_ft = { 'yaml', 'markdown', 'toml', 'dosini', 'conf', 'config', 'hyprlang' },
             custom_languages = {
                 gleam = { icon = '✨', name = 'Gleam' },
                 odin = { icon = '🔷', name = 'Odin' },
