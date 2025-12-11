@@ -21,6 +21,20 @@ return { ---@type LazySpec
             top_down = true,
         })
         vim.notify = require('notify')
+
+        if require('user_api.check.exists').module('telescope') then
+            require('telescope').load_extension('notify')
+
+            local desc = require('user_api.maps').desc
+            require('user_api.config').keymaps({
+                n = {
+                    ['<leader>N'] = { group = '+Notify' },
+                    ['<leader>NT'] = { ':Telescope notify<CR>', desc('Notify Telescope Picker') },
+                    ['<leader><C-t>eN'] = { ':Telescope notify<CR>', desc('Notify Picker') },
+                },
+            })
+        end
+
         vim.schedule(function()
             require('user_api.highlight').hl_from_dict({
                 NotifyDEBUGBody = { link = 'Normal' },

@@ -120,7 +120,7 @@ local function load_ext(name) ---@param name string
     require('telescope').load_extension(name)
     -- Make sure `picker_list` doesn't load itself
     if name == 'picker_list' then
-        _G.telescope_picker_list_loaded = true
+        vim.g.telescope_picker_list_loaded = 1
         return
     end
     -- If `picker_list` is loaded, also register extension with it
@@ -192,64 +192,12 @@ local known_exts = { ---@type table<string, { [1]: string, keys?: AllMaps }>
             },
         },
     },
-    scope = {
-        'scope',
-        keys = {
-            ['<leader>S'] = { group = '+Scope' },
-            ['<leader>Sb'] = { ':Telescope buffers<CR>', desc('Scope Buffers (Telescope)') },
-            ['<leader><C-t>eS'] = { ':Telescope buffers<CR>', desc('Scope Buffers Picker') },
-        },
-    },
-    persisted = {
-        'persisted',
-        keys = { ['<leader><C-t>ef'] = { ':Telescope persisted<CR>', desc('Persisted Picker') } },
-    },
     ['telescope-makefile'] = {
         'make',
         keys = {
             ['<leader>fM'] = { group = '+Make' },
             ['<leader>fMT'] = { ':Telescope make<CR>', desc('Makefile Telescope Picker') },
             ['<leader><C-t>eM'] = { ':Telescope make<CR>', desc('Makefile Picker') },
-        },
-    },
-    aerial = {
-        'aerial',
-        keys = {
-            ['<leader><C-t>ea'] = { ':Telescope aerial<CR>', desc('Aerial Picker') },
-            ['<leader>laT'] = { ':Telescope aerial<CR>', desc('Aerial Telescope Picker') },
-        },
-    },
-    ['telescope._extensions.projects'] = {
-        'projects',
-        keys = {
-            ['<leader><C-t>ep'] = { ':Telescope projects<CR>', desc('Project Picker') },
-            ['<leader>pT'] = { ':Telescope projects<CR>', desc('Project Telescope Picker') },
-        },
-    },
-    notify = {
-        'notify',
-        keys = {
-            ['<leader>N'] = { group = '+Notify' },
-            ['<leader>NT'] = { ':Telescope notify<CR>', desc('Notify Telescope Picker') },
-            ['<leader><C-t>eN'] = { ':Telescope notify<CR>', desc('Notify Picker') },
-        },
-    },
-    noice = {
-        'noice',
-        keys = {
-            ['<leader><C-t>en'] = { group = '+Noice' },
-            ['<leader><C-t>enl'] = {
-                function()
-                    require('noice').cmd('last')
-                end,
-                desc('NoiceLast'),
-            },
-            ['<leader><C-t>enh'] = {
-                function()
-                    require('noice').cmd('history')
-                end,
-                desc('NoiceHistory'),
-            },
         },
     },
     ['lazygit.utils'] = {

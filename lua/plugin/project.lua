@@ -42,6 +42,27 @@ return { ---@type LazySpec
                 ['<leader>pf'] = { vim.cmd.ProjectFzf, desc('Run Fzf-Lua') },
             },
         })
+
+        if require('user_api.check.exists').module('telescope') then
+            require('telescope').load_extension('noice')
+            require('user_api.config').keymaps({
+                n = {
+                    ['<leader><C-t>en'] = { group = '+Noice' },
+                    ['<leader><C-t>enl'] = {
+                        function()
+                            require('noice').cmd('last')
+                        end,
+                        desc('NoiceLast'),
+                    },
+                    ['<leader><C-t>enh'] = {
+                        function()
+                            require('noice').cmd('history')
+                        end,
+                        desc('NoiceHistory'),
+                    },
+                },
+            })
+        end
     end,
 }
 -- vim:ts=4:sts=4:sw=4:et:ai:si:sta:

@@ -190,6 +190,18 @@ return { ---@type LazySpec
             status = {}, ---@type table<string, NoiceFilter>
             format = {}, ---@type NoiceFormatOptions
         })
+
+        if require('user_api.check.exists').module('telescope') then
+            require('telescope').load_extension('noice')
+
+            local desc = require('user_api.maps').desc
+            require('user_api.config').keymaps({
+                n = {
+                    ['<leader><C-t>ep'] = { ':Telescope projects<CR>', desc('Project Picker') },
+                    ['<leader>pT'] = { ':Telescope projects<CR>', desc('Project Telescope Picker') },
+                },
+            })
+        end
     end,
 }
 -- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
