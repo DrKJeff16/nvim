@@ -18,9 +18,9 @@ pylsp-rope = "*"
 python-lsp-isort = "*"
 isort = "*"
 pre-commit = "*"
+vim-eof-comment = "*"
 
 [dev-packages]
-vim-eof-comment = "*"
 
 [requires]
 python_version = "3.13"
