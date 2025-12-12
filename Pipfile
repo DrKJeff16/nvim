@@ -20,6 +20,7 @@ isort = "*"
 pre-commit = "*"
 
 [dev-packages]
+vim-eof-comment = "*"
 
 [requires]
 python_version = "3.13"
