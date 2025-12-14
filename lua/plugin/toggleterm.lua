@@ -87,4 +87,4 @@ return { ---@type LazySpec
         require('user_api.config').keymaps({ n = map, i = map, t = map })
     end,
 }
--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim: set ts=4 sts=4 sw=4 et ai si sta:

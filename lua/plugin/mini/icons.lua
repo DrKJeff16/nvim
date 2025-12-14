@@ -13,4 +13,4 @@ return { ---@type LazySpec
         _G.MiniIcons.tweak_lsp_kind('prepend')
     end,
 }
--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim: set ts=4 sts=4 sw=4 et ai si sta:

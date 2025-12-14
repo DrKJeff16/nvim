@@ -12,4 +12,4 @@ require('telescope-makefile').setup({
     make_bin = not require('user_api.check').is_windows() and 'make' or 'mingw32-make',
 })
 require('telescope').load_extension('make')
--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim: set ts=4 sts=4 sw=4 et ai si sta:

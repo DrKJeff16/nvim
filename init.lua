@@ -124,6 +124,7 @@ L.setup({
     -- { import = 'plugin.smart-backspace' },
     { import = 'plugin.neo-tree' },
     { import = 'plugin.snacks' },
+    { import = 'plugin.mason' },
     { import = 'plugin.lsp.clangd' },
     { import = 'plugin.lsp.better-diagnostic' },
     { import = 'plugin.gitsigns' },
@@ -159,7 +160,6 @@ L.setup({
     -- { import = 'plugin.gh-co' },
     -- { import = 'plugin.echo' },
     -- { import = 'plugin.doxygen-previewer' },
-    -- { import = 'plugin.mason' },
     -- { import = 'plugin.buffer-sticks' },
     -- { import = 'plugin.orgmode' },
     -- { import = 'plugin.doxygen' },
@@ -212,4 +212,4 @@ if vim.fn.has('nvim-0.12') == 1 then
 end
 
 L.lsp().setup()
--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim: set ts=4 sts=4 sw=4 et ai si sta:

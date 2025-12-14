@@ -595,4 +595,4 @@ return { ---@type LazySpec
         vim.api.nvim_set_hl(0, 'FzfLuaBorder', { link = 'FloatBorder' })
     end,
 }
--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim: set ts=4 sts=4 sw=4 et ai si sta:

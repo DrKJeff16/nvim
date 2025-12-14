@@ -125,4 +125,4 @@ return { ---@type LazySpec
         require('nvim-autopairs').add_rules(Rules)
     end,
 }
--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim: set ts=4 sts=4 sw=4 et ai si sta:

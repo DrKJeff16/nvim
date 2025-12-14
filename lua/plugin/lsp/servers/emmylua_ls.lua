@@ -4,4 +4,4 @@ return { ---@type vim.lsp.ClientConfig
     root_markers = { '.luarc.json', '.emmyrc.json', '.luacheckrc', '.git' },
     workspace_required = false,
 }
--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim: set ts=4 sts=4 sw=4 et ai si sta:

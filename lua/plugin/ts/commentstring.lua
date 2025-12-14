@@ -6,4 +6,4 @@ return {
         require('ts_context_commentstring').setup({ enable_autocmd = false })
     end,
 }
--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim: set ts=4 sts=4 sw=4 et ai si sta:

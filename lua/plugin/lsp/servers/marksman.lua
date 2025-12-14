@@ -3,4 +3,4 @@ return { ---@type vim.lsp.ClientConfig
     filetypes = { 'markdown', 'markdown.mdx' },
     root_markers = { '.git', '.marksman.toml' },
 }
--- vim:ts=4:sts=4:sw=4:et:ai:si:sta:
+-- vim: set ts=4 sts=4 sw=4 et ai si sta:
