@@ -4,23 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pynvim = "*"
-typing = "*"
-typing-extensions = "*"
-argparse = "*"
-argcomplete = "*"
-setuptools = "*"
-python-lsp-server = {extras = ["all"], version = "*"}
-mypy = "*"
-mypy-extensions = "*"
-pylsp-mypy = "*"
-pylsp-rope = "*"
-python-lsp-isort = "*"
-isort = "*"
-pre-commit = "*"
-vim-eof-comment = "*"
 
 [dev-packages]
+argcomplete = "*"
+pre-commit = "*"
+pynvim = "*"
+setuptools = "*"
 vim-eof-comment = "*"
 
 [requires]
