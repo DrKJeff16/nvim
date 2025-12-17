@@ -32,6 +32,7 @@ return { ---@type LazySpec
                 'markdown',
                 'toml',
                 'yaml',
+                'json',
             },
             custom_languages = {
                 gleam = { icon = '✨', name = 'Gleam' },
