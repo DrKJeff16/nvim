@@ -23,7 +23,9 @@ jobs:
           cp -rv init.lua lua README.md LICENSE Pipfile requirements.txt Jnvim
           zip -r -9 Jnvim.zip Jnvim
           tar cvJf Jnvim.tar.xz Jnvim
-          sha512sum Jnvim.zip Jnvim.tar.xz >| sha512sums.txt
+          tar cvzf Jnvim.tar.gz Jnvim
+          sha512sum Jnvim.zip Jnvim.tar.xz Jnvim.tar.gz >| sha512sums.txt
+          md5sum Jnvim.zip Jnvim.tar.xz Jnvim.tar.gz >| md5sums.txt
           rm -rfv Jnvim
       - name: Get Release
         id: get_current_release
@@ -45,8 +47,10 @@ jobs:
         if: github.ref_type == 'tag'
         with:
           files: |
+            Jnvim.tar.gz
             Jnvim.tar.xz
             Jnvim.zip
             Release.txt
             sha512sums.txt
+            md5sums.txt
           token: ${{ secrets.GITHUB_TOKEN }}
