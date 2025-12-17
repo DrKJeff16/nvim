@@ -3,35 +3,30 @@
 
 ---
 
-<div align="center">
-
 # Jnvim
 
-[Codeberg Mirror](https://codeberg.org/DrKJeff16/Jnvim) (MAIN) | [GitHub Mirror](https://github.com/DrKJeff16/Jnvim)
+[Codeberg Mirror](https://codeberg.org/DrKJeff16/nvim) (MAIN) | [GitHub Mirror](https://github.com/DrKJeff16/nvim)
 
-A **modular**, **_obsessively documented_**, **portable**, **platform-agnostic**
-[Neovim](https://github.com/neovim/neovim) config.
+A modular, obsessively documented, portable, platform-agnostic [Neovim](https://github.com/neovim/neovim) config.
 
-<a href="#"><img src="./assets/Jnvim.jpg" /></a>
-
-</div>
+![Screenshot](./assets/Jnvim.png)
 
 ---
 
 ## Table Of Contents
 
-1. [About](#about)
-    1. [Requirements](#requirements)
-    2. [Structure](#structure)
-    3. [Plugins](#plugins)
-2. [The User API](#the-user-api)
-    1. [`user_api.util`](#user_apiutil)
-    2. [`user_api.opts`](#user_apiutil)
-    3. [`user_api.check`](#user_apicheck)
-    4. [`user_api.maps`](#user_apimaps)
-        1. [`user_api.maps.keymap`](#user_apimapskeymap)
-        2. [`user_api.maps.wk`](#user_apimapswk)
-    5. [`user_api.highlight`](#user_apihighlight)
+- [About](#about)
+    - [Requirements](#requirements)
+    - [Structure](#structure)
+    - [Plugins](#plugins)
+- [The User API](#the-user-api)
+    - [`user_api.util`](#user_apiutil)
+    - [`user_api.opts`](#user_apiutil)
+    - [`user_api.check`](#user_apicheck)
+    - [`user_api.maps`](#user_apimaps)
+        - [`user_api.maps.keymap`](#user_apimapskeymap)
+        - [`user_api.maps.wk`](#user_apimapswk)
+    - [`user_api.highlight`](#user_apihighlight)
 
 ---
 
