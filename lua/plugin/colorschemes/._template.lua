@@ -1,22 +1,14 @@
-local exists = require('user_api.check.exists').module
-
 ---A submodule class for the `<NAME>` colorscheme.
 --- ---
----@class CscSubMod
+---@class TemplateSubMod
 local Template = {}
 
----@class CscSubMod.Variants
-Template.variants = {}
-
-Template.mod_cmd = 'silent! colorscheme template'
-
----@return boolean
 function Template.valid()
-    return exists('template')
+    return require('user_api.check.exists').module('template')
 end
 
 function Template.setup()
-    vim.cmd(Template.mod_cmd)
+    vim.cmd.colorscheme('template')
 end
 
 return Template

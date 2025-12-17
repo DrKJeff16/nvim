@@ -197,7 +197,10 @@ require('user_api.config').keymaps({
 require('user_api').setup()
 
 local Color = L.colorschemes()
-Color('Tokyonight')
+Color('Calvera')
+-- Color('Tokyonight')
+-- Color('Lavender')
+-- Color('Flow')
 -- Color('Thorn')
 -- Color('Nightfox')
 -- Color('Conifer')

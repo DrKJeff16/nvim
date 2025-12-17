@@ -4,10 +4,10 @@
 ---|CpcSubMod
 ---|DraculaSubMod
 ---|EmbarkSubMod
+---|FlowSubMod
 ---|GruvDarkSubMod
 ---|GruvboxSubMod
 ---|KanagawaSubMod
----|KPSubMod
 ---|KurayamiSubMod
 ---|MolokaiSubMod
 ---|NFoxSubMod
@@ -26,11 +26,14 @@ local ERROR = vim.log.levels.ERROR
 ---@class CscMod
 local Colorschemes = {}
 
----@enum (keys) AllCsc
+---@enum AllCsc
 Colorschemes.OPTIONS = {
+    Calvera = 'Calvera',
+    Lavender = 'Lavender',
     Thorn = 'Thorn',
     Kurayami = 'Kurayami',
     Conifer = 'Conifer',
+    Flow = 'Flow',
     Tokyonight = 'Tokyonight',
     Nightfox = 'Nightfox',
     Embark = 'Embark',
@@ -54,15 +57,18 @@ Colorschemes.OPTIONS = {
 -- stylua: ignore start
 
 Colorschemes.Ariake         = require('plugin.colorschemes.ariake')
+Colorschemes.Calvera        = require('plugin.colorschemes.calvera')
 Colorschemes.Catppuccin     = require('plugin.colorschemes.catppuccin')
 Colorschemes.Conifer        = require('plugin.colorschemes.conifer')
 Colorschemes.Dracula        = require('plugin.colorschemes.dracula')
 Colorschemes.Embark         = require('plugin.colorschemes.embark')
+Colorschemes.Flow           = require('plugin.colorschemes.flow')
 Colorschemes.Gruvbox        = require('plugin.colorschemes.gruvbox')
 Colorschemes.Gruvdark       = require('plugin.colorschemes.gruvdark')
 Colorschemes.Kanagawa       = require('plugin.colorschemes.kanagawa')
 Colorschemes.KanagawaPaper  = require('plugin.colorschemes.kanagawa_paper')
 Colorschemes.Kurayami       = require('plugin.colorschemes.kurayami')
+Colorschemes.Lavender       = require('plugin.colorschemes.lavender')
 Colorschemes.Molokai        = require('plugin.colorschemes.molokai')
 Colorschemes.Nightfox       = require('plugin.colorschemes.nightfox')
 Colorschemes.Onedark        = require('plugin.colorschemes.onedark')

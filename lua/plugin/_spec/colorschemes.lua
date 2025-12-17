@@ -5,6 +5,75 @@ local in_console = require('user_api.check').in_console
 
 return { ---@type LazySpec[]
     {
+        'niyabits/calvera-dark.nvim',
+        lazy = false,
+        priority = 1000,
+        version = false,
+        init = colorscheme_init('installed_calvera_dark'),
+        cond = not in_console(),
+        config = function()
+            --Lua:
+
+            -- Optional Example Configuration
+            vim.g.calvera_italic_keywords = false
+            vim.g.calvera_borders = true
+            vim.g.calvera_contrast = true
+            vim.g.calvera_hide_eob = true
+            vim.g.calvera_custom_colors = { contrast = '#0f111a' }
+        end,
+    },
+    {
+        url = 'https://codeberg.org/jthvai/lavender.nvim',
+        lazy = false,
+        priority = 1000,
+        version = false,
+        init = colorscheme_init('installed_lavender'),
+        cond = not in_console(),
+        config = function()
+            -- Default config in lua
+            vim.g.lavender = {
+                transparent = {
+                    background = false,
+                    float = false,
+                    popup = false,
+                    sidebar = false,
+                },
+                contrast = false,
+                signs = true,
+                italic = {
+                    comments = false,
+                    functions = false,
+                    keywords = false,
+                    variables = false,
+                },
+            }
+        end,
+    },
+    {
+        '0xstepit/flow.nvim',
+        lazy = false,
+        priority = 1000,
+        version = false,
+        init = colorscheme_init('installed_flow'),
+        cond = not in_console(),
+        opts = {
+            colors = {
+                mode = 'default', ---@type 'default'|'dark'|'light'
+                fluo = 'cyan', ---@type 'cyan'|'pink'|'yellow'|'orange'|'green'
+                custom = { saturation = '', light = '' },
+            },
+            theme = {
+                style = 'dark', ---@type 'dark'|'light'
+                contrast = 'default', ---@type 'default'|'high'
+                transparent = false,
+            },
+            ui = {
+                borders = 'fluo', ---@type 'theme'|'inverse'|'fluo'|'none'
+                aggressive_spell = false,
+            },
+        },
+    },
+    {
         'jpwol/thorn.nvim',
         lazy = false,
         priority = 1000,
