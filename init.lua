@@ -126,7 +126,7 @@ L.setup({
     { import = 'plugin.snacks' },
     { import = 'plugin.mason' },
     { import = 'plugin.lsp.clangd' },
-    { import = 'plugin.lsp.better-diagnostic' },
+    -- { import = 'plugin.lsp.better-diagnostic' },
     { import = 'plugin.gitsigns' },
     { import = 'plugin.mini.diff' },
     { import = 'plugin.mini.bufremove' },
