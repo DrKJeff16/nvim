@@ -197,7 +197,9 @@ require('user_api.config').keymaps({
 require('user_api').setup()
 
 local Color = L.colorschemes()
-Color('Calvera')
+Color('Catppuccin')
+-- Color('Everblush')
+-- Color('Calvera')
 -- Color('Tokyonight')
 -- Color('Lavender')
 -- Color('Flow')
@@ -205,7 +207,6 @@ Color('Calvera')
 -- Color('Nightfox')
 -- Color('Conifer')
 -- Color('Tokyodark')
--- Color('Catppuccin')
 -- Color('Spaceduck')
 
 vim.cmd.packadd('nohlsearch')

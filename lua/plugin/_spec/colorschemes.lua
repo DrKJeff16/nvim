@@ -5,6 +5,22 @@ local in_console = require('user_api.check').in_console
 
 return { ---@type LazySpec[]
     {
+        'Everblush/nvim',
+        name = 'everblush',
+        lazy = false,
+        priority = 1000,
+        version = false,
+        init = colorscheme_init('installed_everblush'),
+        cond = not in_console(),
+        config = function()
+            require('everblush').setup({
+                override = {},
+                transparent_background = false,
+                nvim_tree = { contrast = false },
+            })
+        end,
+    },
+    {
         'niyabits/calvera-dark.nvim',
         lazy = false,
         priority = 1000,

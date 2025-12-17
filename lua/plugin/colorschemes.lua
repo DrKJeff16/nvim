@@ -3,6 +3,7 @@
 ---|ConiferSubMod
 ---|CpcSubMod
 ---|DraculaSubMod
+---|EverblushSubMod
 ---|EmbarkSubMod
 ---|FlowSubMod
 ---|GruvDarkSubMod
@@ -28,6 +29,7 @@ local Colorschemes = {}
 
 ---@enum AllCsc
 Colorschemes.OPTIONS = {
+    Everblush = 'Everblush',
     Calvera = 'Calvera',
     Lavender = 'Lavender',
     Thorn = 'Thorn',
@@ -61,6 +63,7 @@ Colorschemes.Calvera        = require('plugin.colorschemes.calvera')
 Colorschemes.Catppuccin     = require('plugin.colorschemes.catppuccin')
 Colorschemes.Conifer        = require('plugin.colorschemes.conifer')
 Colorschemes.Dracula        = require('plugin.colorschemes.dracula')
+Colorschemes.Everblush      = require('plugin.colorschemes.everblush')
 Colorschemes.Embark         = require('plugin.colorschemes.embark')
 Colorschemes.Flow           = require('plugin.colorschemes.flow')
 Colorschemes.Gruvbox        = require('plugin.colorschemes.gruvbox')
