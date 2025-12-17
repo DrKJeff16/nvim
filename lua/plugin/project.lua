@@ -44,22 +44,10 @@ return { ---@type LazySpec
         })
 
         if require('user_api.check.exists').module('telescope') then
-            require('telescope').load_extension('noice')
+            require('telescope').load_extension('projects')
             require('user_api.config').keymaps({
                 n = {
-                    ['<leader><C-t>en'] = { group = '+Noice' },
-                    ['<leader><C-t>enl'] = {
-                        function()
-                            require('noice').cmd('last')
-                        end,
-                        desc('NoiceLast'),
-                    },
-                    ['<leader><C-t>enh'] = {
-                        function()
-                            require('noice').cmd('history')
-                        end,
-                        desc('NoiceHistory'),
-                    },
+                    ['<leader>pT'] = { vim.cmd.ProjectTelescope, desc('Run `:ProjectTelescope`') },
                 },
             })
         end

@@ -33,9 +33,3 @@ repos:
         entry: selene
         types: [lua]
         verbose: true
-      - id: check_eof
-        name: Run EOF Comments Check
-        language: system
-        entry: vim-eof-comment -e lua,md .
-        types: [lua]
-        verbose: true
