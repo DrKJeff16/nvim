@@ -4,7 +4,7 @@
 ---@return function
 local function wincmd(arg)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('arg', arg, 'string', false)
+        vim.validate('arg', arg, { 'string' }, false)
     else
         vim.validate({ arg = { arg, { 'string' } } })
     end
@@ -82,9 +82,10 @@ return { ---@type LazySpec
         })
 
         local desc = require('user_api.maps').desc
-        local cmd = ':exe v:count1 . "ToggleTerm"<CR>'
-        local map = { ['<A-t>'] = { cmd, desc('Toggleterm') } }
-        require('user_api.config').keymaps({ n = map, i = map, t = map })
+        local map = { ['<A-t>'] = { ':exe v:count1 . "ToggleTerm"<CR>', desc('Toggleterm') } }
+        local i_map =
+            { ['<A-t>'] = { '<Esc>:exe v:count1 . "ToggleTerm"<CR>', desc('Toggleterm') } }
+        require('user_api.config').keymaps({ n = map, i = i_map, t = map })
     end,
 }
 -- vim: set ts=4 sts=4 sw=4 et ai si sta:
