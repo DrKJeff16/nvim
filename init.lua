@@ -147,6 +147,7 @@ L.setup({
     { import = 'plugin.persistence' },
     { import = 'plugin.ibl' },
     { import = 'plugin.rainbow-delimiters' },
+    { import = 'plugin.cheaty' },
     -- { import = 'plugin.lsp-toggle' },
     -- { import = 'plugin.fzf-nerdfont' },
     -- { import = 'plugin.co-author' },
