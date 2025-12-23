@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec[]
     {
         'mason-org/mason.nvim',
@@ -55,7 +54,7 @@ return { ---@type LazySpec[]
         'mason-org/mason-lspconfig.nvim',
         version = false,
         dependencies = { 'neovim/nvim-lspconfig' },
-        opts = { automatic_enable = false, ensure_installed = { 'lua_ls' } },
+        opts = { automatic_enable = true, ensure_installed = {} },
     },
 }
 -- vim: set ts=4 sts=4 sw=4 et ai si sta:
