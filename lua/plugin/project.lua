@@ -34,12 +34,14 @@ return { ---@type LazySpec
         require('user_api.config').keymaps({
             n = {
                 ['<leader>p'] = { group = '+Project' },
-                ['<leader>pp'] = { vim.cmd.Project, desc('Open Project UI') },
-                ['<leader>pC'] = { vim.cmd.ProjectConfig, desc('Print Project Config') },
-                ['<leader>pr'] = { vim.cmd.ProjectRecents, desc('Print Recent Projects') },
-                ['<leader>pl'] = { vim.cmd.ProjectLog, desc('Open Project Log Window') },
-                ['<leader>ph'] = { vim.cmd.ProjectHealth, desc('Run `:checkhealth project`') },
+                ['<leader>pC'] = { vim.cmd.ProjectConfig, desc('Toggle Config Window') },
+                ['<leader>pH'] = { vim.cmd.ProjectHealth, desc('Run `:checkhealth project`') },
                 ['<leader>pf'] = { vim.cmd.ProjectFzf, desc('Run Fzf-Lua') },
+                ['<leader>ph'] = { vim.cmd.ProjectHistory, desc('Toggle History Window') },
+                ['<leader>pl'] = { vim.cmd.ProjectLog, desc('Toggle Log Window') },
+                ['<leader>pp'] = { vim.cmd.Project, desc('Open Project UI') },
+                ['<leader>pr'] = { vim.cmd.ProjectRecents, desc('Select Recent Project') },
+                ['<leader>ps'] = { vim.cmd.ProjectSession, desc('Select From Current Session') },
             },
         })
 
