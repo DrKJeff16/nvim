@@ -20,7 +20,7 @@ local Opts = {
 ---@param ArgLead string
 ---@param CursorPos integer
 ---@return string[] items
-local function complete_fun(ArgLead, _, CursorPos)
+local function toggle_completer(ArgLead, _, CursorPos)
     local len = ArgLead:len()
     local CMD_LEN = ('OptsToggle '):len() + 1
     if len == 0 or CursorPos < CMD_LEN then
@@ -66,7 +66,7 @@ Opts.toggleable = Opts.gen_toggleable()
 ---@return User.Opts.Spec parsed_opts
 function Opts.long_opts_convert(T, verbose)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('T', T, 'table', false)
+        vim.validate('T', T, { 'table' }, false)
         vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
     else
         vim.validate({
@@ -227,7 +227,7 @@ function Opts.setup_cmds()
         Opts.toggle(cmds, ctx.bang)
     end, {
         nargs = '+',
-        complete = complete_fun,
+        complete = toggle_completer,
         bang = true,
         desc = 'Toggle toggleable Vim Options',
     })

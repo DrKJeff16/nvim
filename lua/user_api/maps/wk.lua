@@ -127,11 +127,22 @@ end
 ---@param opts? User.Maps.Opts|vim.keymap.set.Opts|RegPfx
 ---@return RegKey|RegPfx
 function WK.convert(lhs, rhs, opts)
+    if vim.fn.has('nvim-0.11') == 1 then
+        vim.validate('lhs', lhs, { 'string' }, false)
+        vim.validate('rhs', rhs, { 'string', 'function' }, false)
+        vim.validate('opts', opts, { 'table', 'nil' }, true)
+    else
+        vim.validate({
+            lhs = { lhs, { 'string' } },
+            rhs = { rhs, { 'string', 'function' } },
+            opts = { opts, { 'table', 'nil' }, true },
+        })
+    end
     if not WK.available() then
         error('(user.maps.wk.convert): `which_key` not available', WARN)
     end
     local Value = require('user_api.check.value')
-    opts = Value.is_tbl(opts) and opts or {}
+    opts = opts or {}
 
     local res = { lhs, rhs } ---@type RegKey|RegPfx
     if Value.is_bool(opts.hidden) then
@@ -154,7 +165,7 @@ end
 ---@return AllMaps res
 function WK.convert_dict(T)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('T', T, 'table', false, 'AllMaps')
+        vim.validate('T', T, { 'table' }, false, 'AllMaps')
     else
         vim.validate({ T = { T, { 'table' } } })
     end
@@ -174,8 +185,8 @@ end
 ---@return false|nil
 function WK.register(T, opts)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('T', T, { 'table' }, false, 'AllMaps')
-        vim.validate('opts', opts, { 'table', 'nil' }, true, 'RegPfx|User.Maps.Opts')
+        vim.validate('T', T, { 'table' }, false)
+        vim.validate('opts', opts, { 'table', 'nil' }, true)
     else
         vim.validate({
             T = { T, { 'table' } },
@@ -188,10 +199,9 @@ function WK.register(T, opts)
         return false
     end
 
+    local Value = require('user_api.check.value')
     opts = opts or O.new({ mode = 'n' })
-    opts.mode = (require('user_api.check.value').is_str(opts.mode) and in_list(MODES, opts.mode))
-            and opts.mode
-        or 'n'
+    opts.mode = (Value.is_str(opts.mode) and in_list(MODES, opts.mode)) and opts.mode or 'n'
 
     local filtered = {} ---@type (KeyMapRhsArr|AllMaps|AllModeMaps)[]
     for _, val in pairs(T) do

@@ -5,6 +5,7 @@ local String = {}
 
 ---@class User.Util.String.Alphabet
 String.alphabet = {
+    ---@class User.Util.String.Alphabet.UpperList
     upper_list = {
         'A',
         'B',
@@ -33,6 +34,7 @@ String.alphabet = {
         'Y',
         'Z',
     },
+    ---@class User.Util.String.Alphabet.LowerList
     lower_list = {
         'a',
         'b',
@@ -61,6 +63,7 @@ String.alphabet = {
         'y',
         'z',
     },
+    ---@class User.Util.String.Alphabet.UpperMap
     upper_map = {
         A = 'A',
         B = 'B',
@@ -89,6 +92,7 @@ String.alphabet = {
         Y = 'Y',
         Z = 'Z',
     },
+    ---@class User.Util.String.Alphabet.LowerMap
     lower_map = {
         a = 'a',
         b = 'b',
@@ -117,16 +121,22 @@ String.alphabet = {
         y = 'y',
         z = 'z',
     },
+    ---@class User.Util.String.Alphabet.Vowels
     vowels = {
+        ---@class User.Util.String.Alphabet.Vowels.UpperList
         upper_list = { 'A', 'E', 'I', 'O', 'U' },
+        ---@class User.Util.String.Alphabet.Vowels.LowerList
         lower_list = { 'a', 'e', 'i', 'o', 'u' },
+        ---@class User.Util.String.Alphabet.Vowels.UpperMap
         upper_map = { A = 'A', E = 'E', I = 'I', O = 'O', U = 'U' },
+        ---@class User.Util.String.Alphabet.Vowels.LowerMap
         lower_map = { a = 'a', e = 'e', i = 'i', o = 'o', u = 'u' },
     },
 }
 
 ---@class User.Util.String.Digits
 String.digits = {
+    ---@class User.Util.String.Digits.All
     all = {
         ['0'] = '0',
         ['1'] = '1',
@@ -139,9 +149,13 @@ String.digits = {
         ['8'] = '8',
         ['9'] = '9',
     },
+    ---@class User.Util.String.Digits.OddList
     odd_list = { '1', '3', '5', '7', '9' },
+    ---@class User.Util.String.Digits.EvenList
     even_list = { '0', '2', '4', '6', '8' },
+    ---@class User.Util.String.Digits.EvenMap
     even_map = { ['0'] = '0', ['2'] = '2', ['4'] = '4', ['6'] = '6', ['8'] = '8' },
+    ---@class User.Util.String.Digits.OddMap
     odd_map = { ['1'] = '1', ['3'] = '3', ['5'] = '5', ['7'] = '7', ['9'] = '9' },
 }
 
@@ -151,9 +165,9 @@ String.digits = {
 ---@return string new_str
 function String.capitalize(str, use_dot, triggers)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('str', str, 'string', false)
-        vim.validate('use_dot', use_dot, 'boolean', true)
-        vim.validate('triggers', triggers, 'table', true, 'string[]')
+        vim.validate('str', str, { 'string' }, false)
+        vim.validate('use_dot', use_dot, { 'boolean', 'nil' }, true)
+        vim.validate('triggers', triggers, { 'table', 'nil' }, true, 'string[]')
     else
         vim.validate({
             str = { str, { 'string' } },
@@ -165,16 +179,8 @@ function String.capitalize(str, use_dot, triggers)
         return str
     end
 
-    local type_not_empty = require('user_api.check.value').type_not_empty
     use_dot = use_dot ~= nil and use_dot or false
-    triggers = type_not_empty('table', triggers) and triggers or { ' ', '' }
-
-    if not in_list(triggers, ' ') then
-        table.insert(triggers, ' ')
-    end
-    if not in_list(triggers, '') then
-        table.insert(triggers, '')
-    end
+    triggers = vim.tbl_deep_extend('force', triggers or {}, { ' ', '' })
 
     local strlen = str:len()
     local prev_char, new_str, i = '', '', 1
@@ -208,9 +214,9 @@ end
 ---@param new string
 function String.replace(str, target, new)
     if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('str', str, 'string', false)
-        vim.validate('target', target, 'string', false)
-        vim.validate('new', new, 'string', false)
+        vim.validate('str', str, { 'string' }, false)
+        vim.validate('target', target, { 'string' }, false)
+        vim.validate('new', new, { 'string' }, false)
     else
         vim.validate({
             str = { str, { 'string' } },
