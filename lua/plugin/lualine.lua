@@ -270,264 +270,264 @@ local in_list = vim.list_contains
 ---@param force_auto? boolean
 ---@return string
 local function theme_select(theme, force_auto)
-    if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('theme', theme, 'string', true)
-        vim.validate('force_auto', force_auto, 'boolean', true)
-    else
-        vim.validate({
-            theme = { theme, { 'string', 'nil' } },
-            force_auto = { force_auto, { 'boolean', 'nil' } },
-        })
-    end
-    force_auto = force_auto ~= nil and force_auto or false
-    if in_list({ 'auto', '' }, theme) or force_auto then
-        return 'auto'
-    end
-
-    local themes = { 'tokyonight', 'catppuccin', 'nightfox', 'onedark' }
-    if not in_list(themes, theme) then
-        return 'auto'
-    end
-
-    for _, t in ipairs(themes) do
-        if t == theme and exists(theme) then
-            return theme
-        end
-    end
+  if vim.fn.has('nvim-0.11') == 1 then
+    vim.validate('theme', theme, 'string', true)
+    vim.validate('force_auto', force_auto, 'boolean', true)
+  else
+    vim.validate({
+      theme = { theme, { 'string', 'nil' } },
+      force_auto = { force_auto, { 'boolean', 'nil' } },
+    })
+  end
+  force_auto = force_auto ~= nil and force_auto or false
+  if in_list({ 'auto', '' }, theme) or force_auto then
     return 'auto'
+  end
+
+  local themes = { 'tokyonight', 'catppuccin', 'nightfox', 'onedark' }
+  if not in_list(themes, theme) then
+    return 'auto'
+  end
+
+  for _, t in ipairs(themes) do
+    if t == theme and exists(theme) then
+      return theme
+    end
+  end
+  return 'auto'
 end
 
 return { ---@type LazySpec
-    'nvim-lualine/lualine.nvim',
-    event = 'VeryLazy',
-    version = false,
-    dependencies = {
-        'nvim-tree/nvim-web-devicons',
-        { 'arkav/lualine-lsp-progress', version = false },
-    },
-    cond = not require('user_api.check').in_console(),
-    config = function()
-        local Presets = {} ---@class LuaLine.Presets
+  'nvim-lualine/lualine.nvim',
+  event = 'VeryLazy',
+  version = false,
+  dependencies = {
+    'nvim-tree/nvim-web-devicons',
+    { 'arkav/lualine-lsp-progress', version = false },
+  },
+  cond = not require('user_api.check').in_console(),
+  config = function()
+    local Presets = {} ---@class LuaLine.Presets
 
-        ---@type LuaLine.ComponentsDict|table<string, LuaLine.Components.Spec>
-        Presets.components = {}
-        Presets.components.buffers = {
-            'buffers',
-            filetype_names = {
-                TelescopePrompt = 'Telescope',
-                dashboard = 'Dashboard',
-                packer = 'Packer',
-                lazy = 'Lazy',
-                fzf = 'FZF',
-                alpha = 'Alpha',
-                NvimTree = 'Nvim Tree',
-                qf = 'Quickfix',
-            },
-            symbols = { modified = ' ●', alternate_file = '#', directory = '' },
-            buffers_color = { active = 'lualine_c_normal', inactive = 'lualine_c_inactive' },
-            max_length = math.floor(vim.o.columns / 4),
-        }
-        Presets.components.diff = {
-            'diff',
-            colored = true,
-            symbols = { added = '+', modified = '~', removed = '-' },
-            diff_color = {
-                added = 'LuaLineDiffAdd',
-                modified = 'LuaLineDiffChange',
-                removed = 'LuaLineDiffDelete',
-            },
-        }
-        Presets.components.branch = { 'branch' }
-        Presets.components.encoding = { 'encoding' }
-        Presets.components.hostname = { 'hostname' }
-        Presets.components.location = { 'location' }
-        Presets.components.selectioncount = { 'selectioncount' }
-        Presets.components.filesize = { 'filesize' }
-        Presets.components.filename = {
-            'filename',
-            file_status = true,
-            newfile_status = true,
-            path = 4,
-        }
-        Presets.components.filetype = {
-            'filetype',
-            colored = false,
-            icon_only = false,
-            icon = { align = 'right' },
-        }
-        Presets.components.fileformat = {
-            'fileformat',
-            symbols = { unix = '', dos = '', mac = '' },
-        }
-        Presets.components.searchcount = { 'searchcount', maxcount = 999, timeout = 500 }
-        Presets.components.tabs = {
-            'tabs',
-            tab_max_length = math.floor(vim.o.columns / 3),
-            mode = 2,
-            path = 1,
-            tabs_color = { active = 'lualine_b_normal', inactive = 'lualine_b_inactive' },
-        }
-        Presets.components.windows = {
-            'windows',
-            max_length = math.floor(vim.o.columns / 5),
-            disabled_buftypes = { 'help', 'prompt', 'quickfix', 'terminal' },
-            windows_color = {
-                active = 'lualine_z_normal',
-                inactive = 'lualine_z_inactive',
-            },
-        }
-        Presets.components.diagnostics = {
-            'diagnostics',
-            sources = { 'nvim_workspace_diagnostic' },
-            sections = { 'error', 'warn' },
-            diagnostics_color = {
-                error = 'DiagnosticError',
-                warn = 'DiagnosticWarn',
-                info = 'DiagnosticInfo',
-                hint = 'DiagnosticHint',
-            },
-            symbols = { error = '󰅚 ', hint = '󰌶 ', info = ' ', warn = '󰀪 ' },
-            colored = true,
-            update_in_insert = false,
-            always_visible = true,
-        }
-        Presets.components.datetime = { 'datetime', style = 'uk' }
-        Presets.components.mode = {
-            'mode',
-            fmt = function(str)
-                return str:sub(1, 1)
-            end,
-        }
+    ---@type LuaLine.ComponentsDict|table<string, LuaLine.Components.Spec>
+    Presets.components = {}
+    Presets.components.buffers = {
+      'buffers',
+      filetype_names = {
+        TelescopePrompt = 'Telescope',
+        dashboard = 'Dashboard',
+        packer = 'Packer',
+        lazy = 'Lazy',
+        fzf = 'FZF',
+        alpha = 'Alpha',
+        NvimTree = 'Nvim Tree',
+        qf = 'Quickfix',
+      },
+      symbols = { modified = ' ●', alternate_file = '#', directory = '' },
+      buffers_color = { active = 'lualine_c_normal', inactive = 'lualine_c_inactive' },
+      max_length = math.floor(vim.o.columns / 4),
+    }
+    Presets.components.diff = {
+      'diff',
+      colored = true,
+      symbols = { added = '+', modified = '~', removed = '-' },
+      diff_color = {
+        added = 'LuaLineDiffAdd',
+        modified = 'LuaLineDiffChange',
+        removed = 'LuaLineDiffDelete',
+      },
+    }
+    Presets.components.branch = { 'branch' }
+    Presets.components.encoding = { 'encoding' }
+    Presets.components.hostname = { 'hostname' }
+    Presets.components.location = { 'location' }
+    Presets.components.selectioncount = { 'selectioncount' }
+    Presets.components.filesize = { 'filesize' }
+    Presets.components.filename = {
+      'filename',
+      file_status = true,
+      newfile_status = true,
+      path = 4,
+    }
+    Presets.components.filetype = {
+      'filetype',
+      colored = false,
+      icon_only = false,
+      icon = { align = 'right' },
+    }
+    Presets.components.fileformat = {
+      'fileformat',
+      symbols = { unix = '', dos = '', mac = '' },
+    }
+    Presets.components.searchcount = { 'searchcount', maxcount = 999, timeout = 500 }
+    Presets.components.tabs = {
+      'tabs',
+      tab_max_length = math.floor(vim.o.columns / 3),
+      mode = 2,
+      path = 1,
+      tabs_color = { active = 'lualine_b_normal', inactive = 'lualine_b_inactive' },
+    }
+    Presets.components.windows = {
+      'windows',
+      max_length = math.floor(vim.o.columns / 5),
+      disabled_buftypes = { 'help', 'prompt', 'quickfix', 'terminal' },
+      windows_color = {
+        active = 'lualine_z_normal',
+        inactive = 'lualine_z_inactive',
+      },
+    }
+    Presets.components.diagnostics = {
+      'diagnostics',
+      sources = { 'nvim_workspace_diagnostic' },
+      sections = { 'error', 'warn' },
+      diagnostics_color = {
+        error = 'DiagnosticError',
+        warn = 'DiagnosticWarn',
+        info = 'DiagnosticInfo',
+        hint = 'DiagnosticHint',
+      },
+      symbols = { error = '󰅚 ', hint = '󰌶 ', info = ' ', warn = '󰀪 ' },
+      colored = true,
+      update_in_insert = false,
+      always_visible = true,
+    }
+    Presets.components.datetime = { 'datetime', style = 'uk' }
+    Presets.components.mode = {
+      'mode',
+      fmt = function(str)
+        return str:sub(1, 1)
+      end,
+    }
 
-        if exists('nvim-possession') then
-            Presets.components.possession = {
-                require('nvim-possession').status,
-                cond = function()
-                    return require('nvim-possession').status() ~= nil
-                end,
-            }
-        end
+    if exists('nvim-possession') then
+      Presets.components.possession = {
+        require('nvim-possession').status,
+        cond = function()
+          return require('nvim-possession').status() ~= nil
+        end,
+      }
+    end
 
-        if exists('triforce') then
-            Presets.components.triforce_lvl = {
-                function()
-                    return require('triforce.lualine').level()
-                end,
-            }
-            Presets.components.triforce_achv = {
-                function()
-                    return require('triforce.lualine').achievements({ show_count = true })
-                end,
-            }
-            Presets.components.triforce_streak = {
-                function()
-                    return require('triforce.lualine').streak({ show_days = true })
-                end,
-            }
-            Presets.components.triforce_session_time = {
-                function()
-                    return require('triforce.lualine').session_time({
-                        format = Termux.validate() and 'short' or 'long',
-                        show_duration = true,
-                    })
-                end,
-            }
-        end
+    if exists('triforce') then
+      Presets.components.triforce_lvl = {
+        function()
+          return require('triforce.lualine').level()
+        end,
+      }
+      Presets.components.triforce_achv = {
+        function()
+          return require('triforce.lualine').achievements({ show_count = true })
+        end,
+      }
+      Presets.components.triforce_streak = {
+        function()
+          return require('triforce.lualine').streak({ show_days = true })
+        end,
+      }
+      Presets.components.triforce_session_time = {
+        function()
+          return require('triforce.lualine').session_time({
+            format = Termux.validate() and 'short' or 'long',
+            show_duration = true,
+          })
+        end,
+      }
+    end
 
-        if exists('lualine.components.lsp_progress') then
-            local colors = {
-                red = '#ec5f67',
-                green = '#98be65',
-                blue = '#51afef',
-                yellow = '#ECBE7B',
-                cyan = '#008080',
-                magenta = '#c678dd',
-                violet = '#a9a1e1',
-                orange = '#FF8800',
-                darkblue = '#081633',
-            }
-            Presets.components.lsp_progress = { ---@type LuaLine.Components.Spec
-                'lsp_progress',
-                colors = {
-                    percentage = colors.cyan,
-                    title = colors.cyan,
-                    message = colors.cyan,
-                    spinner = colors.cyan,
-                    lsp_client_name = colors.magenta,
-                    use = true,
-                },
-                separators = {
-                    component = ' ',
-                    progress = ' | ',
-                    message = { pre = '(', post = ')' },
-                    percentage = { pre = '', post = '%% ' },
-                    title = { pre = '', post = ': ' },
-                    lsp_client_name = { pre = '[', post = ']' },
-                    spinner = { pre = '', post = '' },
-                },
-                display_components = {
-                    'lsp_client_name',
-                    'spinner',
-                    { 'title', 'percentage', 'message' },
-                },
-                timer = { progress_enddelay = 500, spinner = 1000, lsp_client_name_enddelay = 1000 },
-                spinner_symbols = {
-                    '🌑 ',
-                    '🌒 ',
-                    '🌓 ',
-                    '🌔 ',
-                    '🌕 ',
-                    '🌖 ',
-                    '🌗 ',
-                    '🌘 ',
-                },
-            }
-        end
+    if exists('lualine.components.lsp_progress') then
+      local colors = {
+        red = '#ec5f67',
+        green = '#98be65',
+        blue = '#51afef',
+        yellow = '#ECBE7B',
+        cyan = '#008080',
+        magenta = '#c678dd',
+        violet = '#a9a1e1',
+        orange = '#FF8800',
+        darkblue = '#081633',
+      }
+      Presets.components.lsp_progress = { ---@type LuaLine.Components.Spec
+        'lsp_progress',
+        colors = {
+          percentage = colors.cyan,
+          title = colors.cyan,
+          message = colors.cyan,
+          spinner = colors.cyan,
+          lsp_client_name = colors.magenta,
+          use = true,
+        },
+        separators = {
+          component = ' ',
+          progress = ' | ',
+          message = { pre = '(', post = ')' },
+          percentage = { pre = '', post = '%% ' },
+          title = { pre = '', post = ': ' },
+          lsp_client_name = { pre = '[', post = ']' },
+          spinner = { pre = '', post = '' },
+        },
+        display_components = {
+          'lsp_client_name',
+          'spinner',
+          { 'title', 'percentage', 'message' },
+        },
+        timer = { progress_enddelay = 500, spinner = 1000, lsp_client_name_enddelay = 1000 },
+        spinner_symbols = {
+          '🌑 ',
+          '🌒 ',
+          '🌓 ',
+          '🌔 ',
+          '🌕 ',
+          '🌖 ',
+          '🌗 ',
+          '🌘 ',
+        },
+      }
+    end
 
-        Presets.default = {
-            lualine_a = { Presets.components.mode },
-            lualine_b = Termux.validate() and { Presets.components.filename }
-                or { Presets.components.branch, Presets.components.filename },
-            lualine_c = Termux.validate() and { Presets.components.diagnostics }
-                or { Presets.components.diagnostics, Presets.components.diff },
-            lualine_x = {
-                Presets.components.lsp_progress,
-                Presets.components.triforce_lvl,
-                Presets.components.triforce_session_time,
-                -- Presets.components.triforce_achv,
-                -- Presets.components.triforce_streak,
-                Presets.components.fileformat,
-                Presets.components.filetype,
-            },
-            lualine_y = { Presets.components.progress },
-            lualine_z = { Presets.components.location },
-        }
-        Presets.default_inactive = {
-            lualine_a = {},
-            lualine_b = { Presets.components.filename },
-            lualine_c = {},
-            lualine_x = { Presets.components.filetype },
-            lualine_y = {},
-            lualine_z = { Presets.components.location },
-        }
+    Presets.default = {
+      lualine_a = { Presets.components.mode },
+      lualine_b = Termux.validate() and { Presets.components.filename }
+        or { Presets.components.branch, Presets.components.filename },
+      lualine_c = Termux.validate() and { Presets.components.diagnostics }
+        or { Presets.components.diagnostics, Presets.components.diff },
+      lualine_x = {
+        Presets.components.lsp_progress,
+        Presets.components.triforce_lvl,
+        Presets.components.triforce_session_time,
+        -- Presets.components.triforce_achv,
+        -- Presets.components.triforce_streak,
+        Presets.components.fileformat,
+        Presets.components.filetype,
+      },
+      lualine_y = { Presets.components.progress },
+      lualine_z = { Presets.components.location },
+    }
+    Presets.default_inactive = {
+      lualine_a = {},
+      lualine_b = { Presets.components.filename },
+      lualine_c = {},
+      lualine_x = { Presets.components.filetype },
+      lualine_y = {},
+      lualine_z = { Presets.components.location },
+    }
 
-        require('lualine').setup({
-            options = {
-                icons_enabled = true,
-                theme = theme_select('catppuccin', true),
-                component_separators = { left = '', right = '' },
-                section_separators = { left = '', right = '' },
-                ignore_focus = {},
-                always_divide_middle = Termux.validate(),
-                globalstatus = true,
-                refresh = { statusline = 1000, tabline = 1000, winbar = 1000 },
-            },
-            sections = Presets.default,
-            inactive_sections = Presets.default_inactive,
-            inactive_tabline = {},
-            inactive_winbar = {},
-            extensions = { 'lazy', 'man', 'nvim-tree', 'toggleterm' },
-        })
-    end,
+    require('lualine').setup({
+      options = {
+        icons_enabled = true,
+        theme = theme_select('catppuccin', true),
+        component_separators = { left = '', right = '' },
+        section_separators = { left = '', right = '' },
+        ignore_focus = {},
+        always_divide_middle = Termux.validate(),
+        globalstatus = true,
+        refresh = { statusline = 1000, tabline = 1000, winbar = 1000 },
+      },
+      sections = Presets.default,
+      inactive_sections = Presets.default_inactive,
+      inactive_tabline = {},
+      inactive_winbar = {},
+      extensions = { 'lazy', 'man', 'nvim-tree', 'toggleterm' },
+    })
+  end,
 }
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

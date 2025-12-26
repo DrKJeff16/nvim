@@ -7,9 +7,9 @@
 
 ---@class User.Maps
 local Maps = {
-    modes = { 'n', 'i', 'v', 't', 'o', 'x' },
-    wk = {}, ---@type User.Maps.WK
-    keymap = {}, ---@type User.Maps.Keymap
+  modes = { 'n', 'i', 'v', 't', 'o', 'x' },
+  wk = {}, ---@type User.Maps.WK
+  keymap = {}, ---@type User.Maps.Keymap
 }
 
 ---@param desc string|nil
@@ -40,4 +40,4 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr) end
 ---@param mode? MapModes
 ---@param prefix? string
 function Maps.nop(T, opts, mode, prefix) end
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

@@ -10,18 +10,18 @@ local ERROR = vim.log.levels.ERROR
 --- ---
 ---@class User.Hl
 local Hl = {
-    ---@param name string The highlight group
-    ---@param opts vim.api.keyset.highlight The highlight options
-    ---@param ns? integer The highlighting namespace **(OPTIONAL)**
-    hl = function(name, opts, ns)
-        local type_not_empty = require('user_api.check.value').type_not_empty
-        if not (type_not_empty('string', name) and type_not_empty('table', opts)) then
-            vim.notify('(user_api.highlight.hl): Bad argument', ERROR)
-            return
-        end
+  ---@param name string The highlight group
+  ---@param opts vim.api.keyset.highlight The highlight options
+  ---@param ns? integer The highlighting namespace **(OPTIONAL)**
+  hl = function(name, opts, ns)
+    local type_not_empty = require('user_api.check.value').type_not_empty
+    if not (type_not_empty('string', name) and type_not_empty('table', opts)) then
+      vim.notify('(user_api.highlight.hl): Bad argument', ERROR)
+      return
+    end
 
-        vim.api.nvim_set_hl(ns or 0, name, opts)
-    end,
+    vim.api.nvim_set_hl(ns or 0, name, opts)
+  end,
 }
 
 ---Set highlight groups based on an array of `HlPair` type highlight groups.
@@ -39,19 +39,19 @@ local Hl = {
 --- ---
 ---@param A HlPair[] The array of `HlPair` objects
 function Hl.hl_from_arr(A)
-    local type_not_empty = require('user_api.check.value').type_not_empty
-    if not type_not_empty('table', A) then
-        vim.notify('(user_api.highlight.hl_from_arr): Bad argument', ERROR)
-        return
-    end
+  local type_not_empty = require('user_api.check.value').type_not_empty
+  if not type_not_empty('table', A) then
+    vim.notify('(user_api.highlight.hl_from_arr): Bad argument', ERROR)
+    return
+  end
 
-    for _, t in ipairs(A) do
-        if type_not_empty('string', t.name) and type_not_empty('table', t.opts) then
-            Hl.hl(t.name, t.opts)
-        else
-            vim.notify('(user_api.highlight.hl_from_arr): Skipping invalid table', ERROR)
-        end
+  for _, t in ipairs(A) do
+    if type_not_empty('string', t.name) and type_not_empty('table', t.opts) then
+      Hl.hl(t.name, t.opts)
+    else
+      vim.notify('(user_api.highlight.hl_from_arr): Skipping invalid table', ERROR)
     end
+  end
 end
 
 ---Set highlight groups using a `HlDict` type table.
@@ -68,27 +68,27 @@ end
 --- ---
 ---@param D HlDict
 function Hl.hl_from_dict(D)
-    local Value = require('user_api.check.value')
-    if not Value.type_not_empty('table', D) then
-        vim.notify('(user_api.highlight.hl_from_dict): Unable to parse argument', ERROR)
-        return
-    end
+  local Value = require('user_api.check.value')
+  if not Value.type_not_empty('table', D) then
+    vim.notify('(user_api.highlight.hl_from_dict): Unable to parse argument', ERROR)
+    return
+  end
 
-    for k, v in pairs(D) do
-        if Value.type_not_empty('string', k) and Value.type_not_empty('table', v) then
-            Hl.hl(k, v)
-        else
-            vim.notify('(user_api.highlight.hl_from_dict): Skipping bad highlight', ERROR)
-        end
+  for k, v in pairs(D) do
+    if Value.type_not_empty('string', k) and Value.type_not_empty('table', v) then
+      Hl.hl(k, v)
+    else
+      vim.notify('(user_api.highlight.hl_from_dict): Skipping bad highlight', ERROR)
     end
+  end
 end
 
 local M = setmetatable(Hl, { ---@type User.Hl
-    __index = Hl,
-    __newindex = function()
-        vim.notify('User.Hl is Read-Only!', ERROR)
-    end,
+  __index = Hl,
+  __newindex = function()
+    vim.notify('User.Hl is Read-Only!', ERROR)
+  end,
 })
 
 return M
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

@@ -1,6 +1,6 @@
 return { ---@type vim.lsp.ClientConfig
-    cmd = { 'gh-actions-language-server', '--stdio' },
-    filetypes = { 'yaml' },
-    init_options = {},
+  cmd = { 'gh-actions-language-server', '--stdio' },
+  filetypes = { 'yaml' },
+  init_options = {},
 }
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

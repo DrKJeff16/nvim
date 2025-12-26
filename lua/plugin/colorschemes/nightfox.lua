@@ -4,13 +4,13 @@
 local Nightfox = {}
 
 function Nightfox.valid()
-    return require('user_api.check.exists').module('nightfox')
+  return require('user_api.check.exists').module('nightfox')
 end
 
 function Nightfox.setup()
-    vim.cmd.colorscheme('nightfox')
-    require('nightfox').compile()
+  vim.cmd.colorscheme('nightfox')
+  require('nightfox').compile()
 end
 
 return Nightfox
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

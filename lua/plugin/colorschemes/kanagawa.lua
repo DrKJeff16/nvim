@@ -4,12 +4,12 @@
 local Kanagawa = {}
 
 function Kanagawa.valid()
-    return require('user_api.check.exists').module('kanagawa')
+  return require('user_api.check.exists').module('kanagawa')
 end
 
 function Kanagawa.setup()
-    vim.cmd.colorscheme('kanagawa')
+  vim.cmd.colorscheme('kanagawa')
 end
 
 return Kanagawa
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

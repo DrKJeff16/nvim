@@ -1,9 +1,9 @@
 ---@module 'lazy'
 
 return { ---@type LazySpec
-    'qwavies/smart-backspace.nvim',
-    event = { 'InsertEnter', 'CmdlineEnter' },
-    version = false,
-    opts = { enabled = true, silent = true, disabled_filetypes = { 'py', 'hs', 'md', 'txt' } },
+  'qwavies/smart-backspace.nvim',
+  event = { 'InsertEnter', 'CmdlineEnter' },
+  version = false,
+  opts = { enabled = true, silent = true, disabled_filetypes = { 'py', 'hs', 'md', 'txt' } },
 }
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

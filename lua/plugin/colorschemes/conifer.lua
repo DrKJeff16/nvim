@@ -9,12 +9,12 @@ local Conifer = {}
 Conifer.variants = { 'lunar', 'solar' }
 
 function Conifer.valid()
-    return require('user_api.check.exists').module('conifer')
+  return require('user_api.check.exists').module('conifer')
 end
 
 function Conifer.setup()
-    vim.cmd.colorscheme('conifer')
+  vim.cmd.colorscheme('conifer')
 end
 
 return Conifer
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

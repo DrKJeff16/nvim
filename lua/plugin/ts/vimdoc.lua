@@ -1,9 +1,8 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
-  'saghen/blink.indent',
+  'ibhagwan/ts-vimdoc.nvim',
+  lazy = true,
   version = false,
-  cond = not require('user_api.check').in_console(),
-  opts = {},
+  dependencies = { 'nvim-treesitter/nvim-treesitter' },
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

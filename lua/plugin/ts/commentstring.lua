@@ -1,9 +1,9 @@
 ---@module 'lazy'
 
 return {
-    'JoosepAlviste/nvim-ts-context-commentstring',
-    config = function()
-        require('ts_context_commentstring').setup({ enable_autocmd = false })
-    end,
+  'JoosepAlviste/nvim-ts-context-commentstring',
+  config = function()
+    require('ts_context_commentstring').setup({ enable_autocmd = false })
+  end,
 }
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

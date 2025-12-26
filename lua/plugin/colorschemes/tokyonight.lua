@@ -9,12 +9,12 @@ local TokyoNight = {}
 TokyoNight.variants = { 'storm', 'night', 'moon', 'day' }
 
 function TokyoNight.valid()
-    return require('user_api.check.exists').module('tokyonight')
+  return require('user_api.check.exists').module('tokyonight')
 end
 
 function TokyoNight.setup()
-    vim.cmd.colorscheme('tokyonight')
+  vim.cmd.colorscheme('tokyonight')
 end
 
 return TokyoNight
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

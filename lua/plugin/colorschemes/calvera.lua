@@ -4,12 +4,12 @@
 local Calavera = {}
 
 function Calavera.valid()
-    return require('user_api.check.exists').module('calvera')
+  return require('user_api.check.exists').module('calvera')
 end
 
 function Calavera.setup()
-    require('calvera').set()
+  require('calvera').set()
 end
 
 return Calavera
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

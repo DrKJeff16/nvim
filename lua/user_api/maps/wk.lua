@@ -119,7 +119,7 @@ local WK = {}
 
 ---@return boolean
 function WK.available()
-    return require('user_api.check.exists').module('which-key')
+  return require('user_api.check.exists').module('which-key')
 end
 
 ---@param lhs string
@@ -127,95 +127,95 @@ end
 ---@param opts? User.Maps.Opts|vim.keymap.set.Opts|RegPfx
 ---@return RegKey|RegPfx
 function WK.convert(lhs, rhs, opts)
-    if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('lhs', lhs, { 'string' }, false)
-        vim.validate('rhs', rhs, { 'string', 'function' }, false)
-        vim.validate('opts', opts, { 'table', 'nil' }, true)
-    else
-        vim.validate({
-            lhs = { lhs, { 'string' } },
-            rhs = { rhs, { 'string', 'function' } },
-            opts = { opts, { 'table', 'nil' }, true },
-        })
-    end
-    if not WK.available() then
-        error('(user.maps.wk.convert): `which_key` not available', WARN)
-    end
-    local Value = require('user_api.check.value')
-    opts = opts or {}
+  if vim.fn.has('nvim-0.11') == 1 then
+    vim.validate('lhs', lhs, { 'string' }, false)
+    vim.validate('rhs', rhs, { 'string', 'function' }, false)
+    vim.validate('opts', opts, { 'table', 'nil' }, true)
+  else
+    vim.validate({
+      lhs = { lhs, { 'string' } },
+      rhs = { rhs, { 'string', 'function' } },
+      opts = { opts, { 'table', 'nil' }, true },
+    })
+  end
+  if not WK.available() then
+    error('(user.maps.wk.convert): `which_key` not available', WARN)
+  end
+  local Value = require('user_api.check.value')
+  opts = opts or {}
 
-    local res = { lhs, rhs } ---@type RegKey|RegPfx
-    if Value.is_bool(opts.hidden) then
-        res.hidden = opts.hidden
-    end
+  local res = { lhs, rhs } ---@type RegKey|RegPfx
+  if Value.is_bool(opts.hidden) then
+    res.hidden = opts.hidden
+  end
 
-    if Value.type_not_empty('string', opts.group) then
-        res.group = opts.group
-        return res
-    end
-
-    if Value.type_not_empty('string', opts.desc) then
-        res.desc = opts.desc
-    end
-
+  if Value.type_not_empty('string', opts.group) then
+    res.group = opts.group
     return res
+  end
+
+  if Value.type_not_empty('string', opts.desc) then
+    res.desc = opts.desc
+  end
+
+  return res
 end
 
 ---@param T AllMaps
 ---@return AllMaps res
 function WK.convert_dict(T)
-    if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('T', T, { 'table' }, false, 'AllMaps')
-    else
-        vim.validate({ T = { T, { 'table' } } })
-    end
+  if vim.fn.has('nvim-0.11') == 1 then
+    vim.validate('T', T, { 'table' }, false, 'AllMaps')
+  else
+    vim.validate({ T = { T, { 'table' } } })
+  end
 
-    local Value = require('user_api.check.value')
-    local res = {} ---@type RegKeys
-    for lhs, v in pairs(T) do
-        local rhs = v[1] ---@type string|function
-        local opts = Value.is_tbl(v[2]) and v[2] or {} ---@type User.Maps.Opts
-        table.insert(res, WK.convert(lhs, rhs, opts))
-    end
-    return res
+  local Value = require('user_api.check.value')
+  local res = {} ---@type RegKeys
+  for lhs, v in pairs(T) do
+    local rhs = v[1] ---@type string|function
+    local opts = Value.is_tbl(v[2]) and v[2] or {} ---@type User.Maps.Opts
+    table.insert(res, WK.convert(lhs, rhs, opts))
+  end
+  return res
 end
 
 ---@param T AllMaps
 ---@param opts? RegPfx|User.Maps.Opts
 ---@return false|nil
 function WK.register(T, opts)
-    if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('T', T, { 'table' }, false)
-        vim.validate('opts', opts, { 'table', 'nil' }, true)
-    else
-        vim.validate({
-            T = { T, { 'table' } },
-            opts = { opts, { 'table', 'nil' }, true },
-        })
-    end
+  if vim.fn.has('nvim-0.11') == 1 then
+    vim.validate('T', T, { 'table' }, false)
+    vim.validate('opts', opts, { 'table', 'nil' }, true)
+  else
+    vim.validate({
+      T = { T, { 'table' } },
+      opts = { opts, { 'table', 'nil' }, true },
+    })
+  end
 
-    if not WK.available() then
-        vim.notify('(user.maps.wk.register): `which_key` unavailable', ERROR)
-        return false
-    end
+  if not WK.available() then
+    vim.notify('(user.maps.wk.register): `which_key` unavailable', ERROR)
+    return false
+  end
 
-    local Value = require('user_api.check.value')
-    opts = opts or O.new({ mode = 'n' })
-    opts.mode = (Value.is_str(opts.mode) and in_list(MODES, opts.mode)) and opts.mode or 'n'
+  local Value = require('user_api.check.value')
+  opts = opts or O.new({ mode = 'n' })
+  opts.mode = (Value.is_str(opts.mode) and in_list(MODES, opts.mode)) and opts.mode or 'n'
 
-    local filtered = {} ---@type (KeyMapRhsArr|AllMaps|AllModeMaps)[]
-    for _, val in pairs(T) do
-        table.insert(filtered, val)
-    end
-    require('which-key').add(filtered)
+  local filtered = {} ---@type (KeyMapRhsArr|AllMaps|AllModeMaps)[]
+  for _, val in pairs(T) do
+    table.insert(filtered, val)
+  end
+  require('which-key').add(filtered)
 end
 
 local M = setmetatable(WK, { ---@type User.Maps.WK
-    __index = WK,
-    __newindex = function()
-        vim.notify('User.Maps.WK is Read-Only!', ERROR)
-    end,
+  __index = WK,
+  __newindex = function()
+    vim.notify('User.Maps.WK is Read-Only!', ERROR)
+  end,
 })
 
 return M
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

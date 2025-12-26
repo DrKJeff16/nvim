@@ -1,10 +1,10 @@
 ---@module 'lazy'
 return { ---@type LazySpec
-    'StikyPiston/cheaty.nvim',
-    dev = true,
-    version = false,
-    config = function()
-        require('cheaty').setup()
-    end,
+  'StikyPiston/cheaty.nvim',
+  dev = true,
+  version = false,
+  config = function()
+    require('cheaty').setup()
+  end,
 }
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

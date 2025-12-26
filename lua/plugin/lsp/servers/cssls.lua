@@ -1,12 +1,12 @@
 return { ---@type vim.lsp.ClientConfig
-    cmd = { 'vscode-css-language-server', '--stdio' },
-    filetypes = { 'css', 'scss', 'less' },
-    init_options = { provideFormatter = true },
-    root_markers = { 'package.json', '.git' },
-    settings = {
-        css = { validate = true },
-        less = { validate = true },
-        scss = { validate = true },
-    },
+  cmd = { 'vscode-css-language-server', '--stdio' },
+  filetypes = { 'css', 'scss', 'less' },
+  init_options = { provideFormatter = true },
+  root_markers = { 'package.json', '.git' },
+  settings = {
+    css = { validate = true },
+    less = { validate = true },
+    scss = { validate = true },
+  },
 }
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

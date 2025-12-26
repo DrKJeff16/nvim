@@ -1,30 +1,30 @@
 ---@class UserAPI
 local User = {
-    opts = require('user_api.opts'),
-    distro = require('user_api.distro'),
-    config = require('user_api.config'),
+  opts = require('user_api.opts'),
+  distro = require('user_api.distro'),
+  config = require('user_api.config'),
 }
 
 function User.setup()
-    require('user_api.commands').setup()
-    require('user_api.update').setup()
+  require('user_api.commands').setup()
+  require('user_api.update').setup()
 
-    User.opts.setup()
-    User.distro()
+  User.opts.setup()
+  User.distro()
 
-    require('user_api.util').setup_autocmd()
+  require('user_api.util').setup_autocmd()
 
-    User.config.neovide.setup()
+  User.config.neovide.setup()
 
-    User.config.keymaps({ n = { ['<leader>U'] = { group = '+User API' } } })
+  User.config.keymaps({ n = { ['<leader>U'] = { group = '+User API' } } })
 end
 
 local M = setmetatable(User, { ---@type UserAPI
-    __index = User,
-    __newindex = function()
-        vim.notify('User API is Read-Only!', vim.log.levels.ERROR)
-    end,
+  __index = User,
+  __newindex = function()
+    vim.notify('User API is Read-Only!', vim.log.levels.ERROR)
+  end,
 })
 
 return M
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

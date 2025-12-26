@@ -1,9 +1,9 @@
 return { ---@type vim.lsp.ClientConfig
-    cmd = { 'docker-langserver', '--stdio' },
-    filetypes = { 'dockerfile' },
-    root_markers = { 'Dockerfile' },
-    settings = {
-        docker = { languageserver = { formatter = { ignoreMultilineInstructions = true } } },
-    },
+  cmd = { 'docker-langserver', '--stdio' },
+  filetypes = { 'dockerfile' },
+  root_markers = { 'Dockerfile' },
+  settings = {
+    docker = { languageserver = { formatter = { ignoreMultilineInstructions = true } } },
+  },
 }
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

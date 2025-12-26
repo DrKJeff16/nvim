@@ -4,12 +4,12 @@
 local Ariake = {}
 
 function Ariake.valid()
-    return require('user_api.check.exists').module('ariake')
+  return require('user_api.check.exists').module('ariake')
 end
 
 function Ariake.setup()
-    vim.cmd.colorscheme('ariake')
+  vim.cmd.colorscheme('ariake')
 end
 
 return Ariake
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

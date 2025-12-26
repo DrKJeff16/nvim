@@ -29,31 +29,31 @@ local Colorschemes = {}
 
 ---@enum AllCsc
 Colorschemes.OPTIONS = {
-    Everblush = 'Everblush',
-    Calvera = 'Calvera',
-    Lavender = 'Lavender',
-    Thorn = 'Thorn',
-    Kurayami = 'Kurayami',
-    Conifer = 'Conifer',
-    Flow = 'Flow',
-    Tokyonight = 'Tokyonight',
-    Nightfox = 'Nightfox',
-    Embark = 'Embark',
-    Kanagawa = 'Kanagawa',
-    Vague = 'Vague',
-    Catppuccin = 'Catppuccin',
-    Tokyodark = 'Tokyodark',
-    KanagawaPaper = 'KanagawaPaper',
-    Spaceduck = 'Spaceduck',
-    Onedark = 'Onedark',
-    Gruvdark = 'Gruvdark',
-    Gruvbox = 'Gruvbox',
-    Vscode = 'Vscode',
-    Ariake = 'Ariake',
-    Dracula = 'Dracula',
-    Molokai = 'Molokai',
-    SpaceVimDark = 'SpaceVimDark',
-    SpaceNvim = 'SpaceNvim',
+  Everblush = 'Everblush',
+  Calvera = 'Calvera',
+  Lavender = 'Lavender',
+  Thorn = 'Thorn',
+  Kurayami = 'Kurayami',
+  Conifer = 'Conifer',
+  Flow = 'Flow',
+  Tokyonight = 'Tokyonight',
+  Nightfox = 'Nightfox',
+  Embark = 'Embark',
+  Kanagawa = 'Kanagawa',
+  Vague = 'Vague',
+  Catppuccin = 'Catppuccin',
+  Tokyodark = 'Tokyodark',
+  KanagawaPaper = 'KanagawaPaper',
+  Spaceduck = 'Spaceduck',
+  Onedark = 'Onedark',
+  Gruvdark = 'Gruvdark',
+  Gruvbox = 'Gruvbox',
+  Vscode = 'Vscode',
+  Ariake = 'Ariake',
+  Dracula = 'Dracula',
+  Molokai = 'Molokai',
+  SpaceVimDark = 'SpaceVimDark',
+  SpaceNvim = 'SpaceNvim',
 }
 
 -- stylua: ignore start
@@ -88,66 +88,66 @@ Colorschemes.Vscode         = require('plugin.colorschemes.vscode')
 
 ---@type CscMod|fun(color?: string|AllCsc|nil)
 local M = setmetatable({}, {
-    __index = Colorschemes,
-    ---@param self CscMod
-    ---@param color? string|AllCsc|nil
-    __call = function(self, color)
-        if vim.fn.has('nvim-0.11') == 1 then
-            vim.validate('color', color, { 'string', 'nil' }, true)
-        else
-            vim.validate({ color = { color, { 'string', 'nil' }, true } })
-        end
+  __index = Colorschemes,
+  ---@param self CscMod
+  ---@param color? string|AllCsc|nil
+  __call = function(self, color)
+    if vim.fn.has('nvim-0.11') == 1 then
+      vim.validate('color', color, { 'string', 'nil' }, true)
+    else
+      vim.validate({ color = { color, { 'string', 'nil' }, true } })
+    end
 
-        local Keys = { ---@type AllMaps
-            ['<leader>u'] = { group = '+UI' },
-            ['<leader>uc'] = { group = '+Colorschemes' },
+    local Keys = { ---@type AllMaps
+      ['<leader>u'] = { group = '+UI' },
+      ['<leader>uc'] = { group = '+Colorschemes' },
+    }
+    local valid = {} ---@type string[]
+    local csc_group = 'A'
+    local i = 1
+    for _, name in pairs(self.OPTIONS) do
+      local TColor = self[name] ---@type AllColorSubMods
+      if TColor and TColor.valid and TColor.valid() then
+        table.insert(valid, name)
+        Keys['<leader>uc' .. csc_group] = { group = '+Group ' .. csc_group }
+        Keys[('<leader>uc%s%s'):format(csc_group, i)] = {
+          TColor.setup,
+          require('user_api.maps').desc(('Set Colorscheme `%s`'):format(name)),
         }
-        local valid = {} ---@type string[]
-        local csc_group = 'A'
-        local i = 1
-        for _, name in pairs(self.OPTIONS) do
-            local TColor = self[name] ---@type AllColorSubMods
-            if TColor and TColor.valid and TColor.valid() then
-                table.insert(valid, name)
-                Keys['<leader>uc' .. csc_group] = { group = '+Group ' .. csc_group }
-                Keys[('<leader>uc%s%s'):format(csc_group, i)] = {
-                    TColor.setup,
-                    require('user_api.maps').desc(('Set Colorscheme `%s`'):format(name)),
-                }
-                if i == 9 then
-                    i = 1
-                    csc_group = require('user_api.util').displace_letter(csc_group, 'next')
-                elseif i < 9 then
-                    i = i + 1
-                end
-            end
+        if i == 9 then
+          i = 1
+          csc_group = require('user_api.util').displace_letter(csc_group, 'next')
+        elseif i < 9 then
+          i = i + 1
         end
-        if vim.tbl_isempty(valid) then
-            vim.notify('No valid colorschemes!', ERROR)
-        end
+      end
+    end
+    if vim.tbl_isempty(valid) then
+      vim.notify('No valid colorschemes!', ERROR)
+    end
 
-        require('user_api.config').keymaps({ n = Keys })
+    require('user_api.config').keymaps({ n = Keys })
 
-        if not (color and vim.list_contains(valid, color)) then
-            color = valid[1]
-        end
+    if not (color and vim.list_contains(valid, color)) then
+      color = valid[1]
+    end
 
-        local Color = self[color] ---@type AllColorSubMods
-        if Color and Color.valid() then
-            Color.setup()
-            return
-        end
+    local Color = self[color] ---@type AllColorSubMods
+    if Color and Color.valid() then
+      Color.setup()
+      return
+    end
 
-        for _, csc in ipairs(valid) do
-            Color = self[csc] ---@type AllColorSubMods
-            if Color.valid and vim.is_callable(Color.valid) and Color.valid() then
-                Color.setup()
-                return
-            end
-        end
-        vim.cmd.colorscheme('default')
-    end,
+    for _, csc in ipairs(valid) do
+      Color = self[csc] ---@type AllColorSubMods
+      if Color.valid and vim.is_callable(Color.valid) and Color.valid() then
+        Color.setup()
+        return
+      end
+    end
+    vim.cmd.colorscheme('default')
+  end,
 })
 
 return M
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:

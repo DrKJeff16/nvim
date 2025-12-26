@@ -1,15 +1,15 @@
 ---@class User.Config
 local Config = {
-    keymaps = require('user_api.config.keymaps'),
-    neovide = require('user_api.config.neovide'),
+  keymaps = require('user_api.config.keymaps'),
+  neovide = require('user_api.config.neovide'),
 }
 
 local M = setmetatable(Config, { ---@type User.Config
-    __index = Config,
-    __newindex = function()
-        vim.notify('User.Config is Read-Only!', vim.log.levels.ERROR)
-    end,
+  __index = Config,
+  __newindex = function()
+    vim.notify('User.Config is Read-Only!', vim.log.levels.ERROR)
+  end,
 })
 
 return M
--- vim: set ts=4 sts=4 sw=4 et ai si sta:
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:
