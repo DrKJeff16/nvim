@@ -24,6 +24,7 @@ local ensure_langs = {
   'jsonc',
   'kconfig',
   'kitty',
+  'latex',
   'lua',
   'luadoc',
   'luap',
