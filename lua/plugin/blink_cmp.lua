@@ -46,6 +46,10 @@ function BUtil.reset_sources(snipps, buf)
     table.insert(BUtil.Sources, 1, 'sshconfig')
     return
   end
+  if ft == 'tex' then
+    table.insert(BUtil.Sources, 1, 'latex')
+    return
+  end
 
   local git_fts = { 'git', 'gitcommit', 'gitattributes', 'gitrebase' }
   if in_list(git_fts, ft) then
@@ -61,8 +65,8 @@ end
 ---@return string[] sources
 function BUtil.gen_sources(snipps, buf)
   if vim_has('nvim-0.11') then
-    vim.validate('snipps', snipps, 'boolean', true)
-    vim.validate('buf', buf, 'boolean', true)
+    vim.validate('snipps', snipps, { 'boolean', 'nil' }, true)
+    vim.validate('buf', buf, { 'boolean', 'nil' }, true)
   else
     vim.validate({
       snipps = { snipps, { 'boolean', 'nil' }, true },
@@ -216,6 +220,13 @@ function BUtil.reset_providers()
       opts = {},
     }
   end
+  if exists('blink-cmp-latex') then
+    BUtil.Providers.latex = {
+      name = 'Latex',
+      module = 'blink-cmp-latex',
+      opts = { insert_command = false },
+    }
+  end
   if exists('orgmode') then
     BUtil.Providers.orgmode = { name = 'Orgmode', module = 'orgmode.org.autocompletion.blink' }
   end
@@ -255,6 +266,7 @@ return { ---@type LazySpec
   version = false,
   dependencies = {
     'saghen/blink.compat',
+    'erooke/blink-cmp-latex',
     {
       'L3MON4D3/LuaSnip',
       version = false,
