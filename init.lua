@@ -138,7 +138,7 @@ L.setup({
   { import = 'plugin.outline' },
   { import = 'plugin.lualine' },
   { import = 'plugin.bufferline' },
-  { import = 'plugin.zen-mode' },
+  -- { import = 'plugin.zen-mode' },
   { import = 'plugin.todo_comments' },
   { import = 'plugin.triforce' },
   { import = 'plugin.helpview' },
@@ -175,7 +175,6 @@ L.setup({
   -- { import = 'plugin.scrollbar' },
   -- { import = 'plugin.refactoring' },
   -- { import = 'plugin.checkmate' },
-  -- { import = 'plugin.a_vim' },
   -- { import = 'plugin.twilight' },
   -- { import = 'plugin.undotree' },
 })
