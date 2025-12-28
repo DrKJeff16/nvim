@@ -109,6 +109,7 @@ L.setup({
   { import = 'plugin.lspkind' },
   { import = 'plugin.blink_cmp' },
   { import = 'plugin.project' },
+  { import = 'plugin.bmessages' },
   { import = 'plugin.lazydev' },
   { import = 'plugin.Comment' },
   { import = 'plugin.yanky' },
