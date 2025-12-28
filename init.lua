@@ -1,7 +1,6 @@
 _G.MYVIMRC = vim.fn.stdpath('config') .. '/init.lua'
 
 local INFO = vim.log.levels.INFO
-local in_list = vim.list_contains
 
 ---[SOURCE](https://stackoverflow.com/questions/7183998/in-lua-what-is-the-right-way-to-handle-varargs-which-contains-nil).
 ---@param ... any
@@ -11,7 +10,7 @@ function _G.notify_inspect(...)
   local i = 1
   while i <= nargs do
     local selection = select(i, ...)
-    if not in_list({ 'string', 'number', 'boolean' }, type(selection)) then
+    if not vim.list_contains({ 'string', 'number', 'boolean' }, type(selection)) then
       selection = vim.inspect(selection)
     end
 
@@ -133,6 +132,7 @@ L.setup({
   { import = 'plugin.mini.diff' },
   { import = 'plugin.mini.bufremove' },
   { import = 'plugin.mini.trailspace' },
+  { import = 'plugin.mini.animate' },
   { import = 'plugin.toggleterm' },
   { import = 'plugin.screenkey' },
   { import = 'plugin.hoversplit' },
