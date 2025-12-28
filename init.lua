@@ -139,6 +139,7 @@ L.setup({
   { import = 'plugin.outline' },
   { import = 'plugin.lualine' },
   { import = 'plugin.bufferline' },
+  { import = 'plugin.smoothcursor' },
   -- { import = 'plugin.zen-mode' },
   { import = 'plugin.todo_comments' },
   { import = 'plugin.triforce' },
