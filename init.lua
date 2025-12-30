@@ -140,6 +140,8 @@ L.setup({
   { import = 'plugin.lualine' },
   { import = 'plugin.bufferline' },
   { import = 'plugin.smoothcursor' },
+  { import = 'plugin.toml' },
+  { import = 'plugin.record-screen' },
   -- { import = 'plugin.zen-mode' },
   { import = 'plugin.todo_comments' },
   { import = 'plugin.triforce' },
