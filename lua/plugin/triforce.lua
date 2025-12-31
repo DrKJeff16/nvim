@@ -4,7 +4,12 @@ return { ---@type LazySpec
   'gisketch/triforce.nvim',
   dev = true,
   version = false,
-  dependencies = { 'nvzone/volt' },
+  dependencies = {
+    {
+      'nvzone/volt',
+      dev = true,
+    },
+  },
   config = function()
     require('triforce').setup({
       enabled = true,
