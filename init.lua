@@ -141,6 +141,7 @@ L.setup({
   { import = 'plugin.bufferline' },
   { import = 'plugin.smoothcursor' },
   { import = 'plugin.toml' },
+  { import = 'plugin.python.import' },
   -- { import = 'plugin.zen-mode' },
   { import = 'plugin.todo_comments' },
   { import = 'plugin.triforce' },
