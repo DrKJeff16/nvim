@@ -52,6 +52,11 @@ return { ---@type LazySpec
         tier_2 = { min_level = 16, max_level = 30, xp_per_level = 1200 },
         tier_3 = { min_level = 31, max_level = math.huge, xp_per_level = 3000 },
       },
+      levels = {
+        { level = 2, title = 'Newbie' },
+        { level = 40, title = 'Sargeant' },
+        { level = 80, title = 'Lieutenant' },
+      },
       xp_rewards = { char = 1, line = 2, save = 10 },
     })
 
