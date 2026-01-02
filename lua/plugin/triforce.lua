@@ -14,12 +14,21 @@ return { ---@type LazySpec
       auto_save_interval = 300,
       achievements = {
         {
-          id = 'first_500',
-          name = 'Newbie',
-          desc = 'Type 500 Characters',
+          id = 'first_session',
+          name = 'Starter',
+          desc = 'Open up your first session',
           icon = '✨',
           check = function(stats)
-            return stats.chars_typed >= 500
+            return stats.sessions >= 1
+          end,
+        },
+        {
+          id = 'first_300',
+          name = 'Newbie',
+          desc = 'Type 300 Characters',
+          icon = '✨',
+          check = function(stats)
+            return stats.chars_typed >= 300
           end,
         },
       },
