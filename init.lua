@@ -132,7 +132,7 @@ L.setup({
   { import = 'plugin.mini.diff' },
   { import = 'plugin.mini.bufremove' },
   { import = 'plugin.mini.trailspace' },
-  { import = 'plugin.mini.animate' },
+  -- { import = 'plugin.mini.animate' },
   { import = 'plugin.toggleterm' },
   { import = 'plugin.screenkey' },
   { import = 'plugin.hoversplit' },
