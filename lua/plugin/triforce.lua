@@ -55,7 +55,18 @@ return { ---@type LazySpec
       xp_rewards = { char = 1, line = 2, save = 10 },
     })
 
-    require('user_api.config').keymaps({ n = { ['<leader>T'] = { group = '+Triforce' } } })
+    local desc = require('user_api.maps').desc
+    require('user_api.config').keymaps({
+      n = {
+        ['<leader>T'] = { group = '+Triforce' },
+        ['<leader>TC'] = {
+          function()
+            vim.cmd.Triforce('config')
+          end,
+          desc('Show Config'),
+        },
+      },
+    })
   end,
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:
