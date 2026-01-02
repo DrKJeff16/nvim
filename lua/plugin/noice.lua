@@ -1,6 +1,5 @@
 ---@diagnostic disable:missing-fields
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'folke/noice.nvim',
   version = false,

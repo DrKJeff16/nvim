@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'nvim-neo-tree/neo-tree.nvim',
   lazy = false,

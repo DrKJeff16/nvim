@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'emiasims/nvim-luaref',
   lazy = false,

@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'onsails/lspkind.nvim',
   lazy = false,

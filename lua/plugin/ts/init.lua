@@ -21,7 +21,6 @@ local ensure_langs = {
   'jsdoc',
   'json',
   'json5',
-  'jsonc',
   'kconfig',
   'kitty',
   'latex',

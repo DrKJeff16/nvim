@@ -4,12 +4,7 @@ return { ---@type LazySpec
   'gisketch/triforce.nvim',
   dev = true,
   version = false,
-  dependencies = {
-    {
-      'nvzone/volt',
-      dev = true,
-    },
-  },
+  dependencies = { { 'nvzone/volt', dev = true } },
   config = function()
     require('triforce').setup({
       enabled = true,
@@ -33,11 +28,11 @@ return { ---@type LazySpec
         'config',
         'dosini',
         'hyprlang',
+        'json',
         'make',
         'markdown',
         'toml',
         'yaml',
-        'json',
       },
       custom_languages = {
         gleam = { icon = '✨', name = 'Gleam' },

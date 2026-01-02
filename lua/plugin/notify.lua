@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'rcarriga/nvim-notify',
   priority = 1000,

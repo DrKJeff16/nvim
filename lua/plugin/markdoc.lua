@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'OXY2DEV/markdoc.nvim',
   version = false,
