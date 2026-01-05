@@ -1,5 +1,3 @@
-_G.MYVIMRC = vim.fn.stdpath('config') .. '/init.lua'
-
 local INFO = vim.log.levels.INFO
 
 ---[SOURCE](https://stackoverflow.com/questions/7183998/in-lua-what-is-the-right-way-to-handle-varargs-which-contains-nil).
