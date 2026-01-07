@@ -151,6 +151,7 @@ L.setup({
   { import = 'plugin.ibl' },
   { import = 'plugin.rainbow-delimiters' },
   { import = 'plugin.cheaty' },
+  { import = 'plugin.music-player' },
   -- { import = 'plugin.lsp-toggle' },
   -- { import = 'plugin.fzf-nerdfont' },
   -- { import = 'plugin.co-author' },
