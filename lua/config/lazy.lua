@@ -136,10 +136,7 @@ function Lazy.setup(specs)
   Lazy.setup_keys()
 end
 
-function Lazy.colorschemes()
-  local csc = require('plugin.colorschemes')
-  return csc
-end
+Lazy.colorschemes = require('plugin.colorschemes')
 
 function Lazy.lsp()
   local lsp = require('plugin.lsp')

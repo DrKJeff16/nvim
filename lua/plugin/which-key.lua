@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'folke/which-key.nvim',
   lazy = false,

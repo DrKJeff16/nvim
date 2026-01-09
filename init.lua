@@ -94,6 +94,7 @@ L.setup({
   { import = 'plugin.luaref' },
   { import = 'plugin.fzf-lua' },
   { import = 'plugin._spec' },
+  { import = 'plugin.which-colorscheme' },
   -- { import = 'plugin.blink-indent' },
   { import = 'plugin.lastplace' },
   { import = 'plugin.mini.mini' },
@@ -201,18 +202,17 @@ require('user_api.config').keymaps({
 -- Initialize the User API
 require('user_api').setup()
 
-local Color = L.colorschemes()
-Color('Tokyonight')
--- Color('Catppuccin')
--- Color('Everblush')
--- Color('Calvera')
--- Color('Lavender')
--- Color('Flow')
--- Color('Thorn')
--- Color('Nightfox')
--- Color('Conifer')
--- Color('Tokyodark')
--- Color('Spaceduck')
+L.colorschemes('tokyonight')
+-- L.colorschemes('catppuccin')
+-- L.colorschemes('everblush')
+-- L.colorschemes('calvera')
+-- L.colorschemes('lavender')
+-- L.colorschemes('flow')
+-- L.colorschemes('thorn')
+-- L.colorschemes('nightfox')
+-- L.colorschemes('conifer')
+-- L.colorschemes('tokyodark')
+-- L.colorschemes('spaceduck')
 
 vim.cmd.packadd('nohlsearch')
 
