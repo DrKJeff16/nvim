@@ -8,7 +8,7 @@ function _G.notify_inspect(...)
   local i = 1
   while i <= nargs do
     local selection = select(i, ...)
-    if not vim.list_contains({ 'string', 'number', 'boolean' }, type(selection)) then
+    if not vim.list_contains({ 'string', 'number', 'boolean', 'nil' }, type(selection)) then
       selection = vim.inspect(selection)
     end
 
