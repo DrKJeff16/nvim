@@ -128,6 +128,7 @@ L.setup({
   -- { import = 'plugin.lsp.better-diagnostic' },
   { import = 'plugin.gitsigns' },
   { import = 'plugin.mini.diff' },
+  -- { import = 'plugin.mini.pairs' },
   { import = 'plugin.mini.bufremove' },
   { import = 'plugin.mini.trailspace' },
   -- { import = 'plugin.mini.animate' },
