@@ -16,6 +16,7 @@
 ---|SpaceDuckSubMod
 ---|SpaceNvimSubMod
 ---|SpaceVimSubMod
+---|TeideSubMod
 ---|ThornSubMod
 ---|TNSubMod
 ---|TokyoDarkSubMod
@@ -29,6 +30,7 @@ local Colorschemes = {}
 
 ---@enum AllCsc
 Colorschemes.OPTIONS = {
+  Teide = 'Teide',
   Everblush = 'Everblush',
   Calvera = 'Calvera',
   Lavender = 'Lavender',
@@ -78,6 +80,7 @@ Colorschemes.Onedark        = require('plugin.colorschemes.onedark')
 Colorschemes.SpaceNvim      = require('plugin.colorschemes.space-nvim')
 Colorschemes.SpaceVimDark   = require('plugin.colorschemes.space_vim_dark')
 Colorschemes.Spaceduck      = require('plugin.colorschemes.spaceduck')
+Colorschemes.Teide          = require('plugin.colorschemes.teide')
 Colorschemes.Thorn          = require('plugin.colorschemes.thorn')
 Colorschemes.Tokyodark      = require('plugin.colorschemes.tokyodark')
 Colorschemes.Tokyonight     = require('plugin.colorschemes.tokyonight')

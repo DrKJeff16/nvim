@@ -5,6 +5,32 @@ local in_console = require('user_api.check').in_console
 
 return { ---@type LazySpec[]
   {
+    'serhez/teide.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require('teide').setup({
+        style = 'dimmed',
+        light_style = 'light',
+        transparent = false,
+        terminal_colors = true,
+        styles = {
+          comments = { italic = false },
+          keywords = { italic = false },
+          functions = { italic = false },
+          variables = { italic = false },
+          sidebars = 'dark',
+          floats = 'dark',
+        },
+        light_brightness = 0.3,
+        dim_inactive = false,
+        lualine_bold = false,
+        cache = true,
+        plugins = { all = package.loaded.lazy == nil, auto = true },
+      })
+    end,
+  },
+  {
     'Everblush/nvim',
     name = 'everblush',
     lazy = false,
@@ -28,9 +54,6 @@ return { ---@type LazySpec[]
     init = colorscheme_init('installed_calvera_dark'),
     cond = not in_console(),
     config = function()
-      --Lua:
-
-      -- Optional Example Configuration
       vim.g.calvera_italic_keywords = false
       vim.g.calvera_borders = true
       vim.g.calvera_contrast = true
