@@ -146,12 +146,13 @@ return { ---@type LazySpec[]
     version = false,
     init = colorscheme_init('installed_tokyonight'),
     config = function()
-      require('tokyonight').setup({ ---@diagnostic disable-line:missing-fields
+      require('tokyonight').setup({
         cache = true,
-        on_colors = function(colors) ---@param colors ColorScheme
+        on_colors = function(colors)
           colors.error = '#df4f4f'
           colors.info = colors.teal
         end,
+        on_highlights = function() end,
         terminal_colors = true,
         transparent = false,
         sidebars = {
@@ -160,12 +161,12 @@ return { ---@type LazySpec[]
           'diffview',
           'help',
           'lazy',
+          'neo-tree',
           'noice',
           'packer',
           'qf',
           'terminal',
           'toggleterm',
-          'neo-tree',
           'trouble',
           'vista_kind',
         },
@@ -331,14 +332,14 @@ return { ---@type LazySpec[]
     lazy = false,
     priority = 1000,
     version = false,
+    cond = not in_console(),
     init = colorscheme_init('installed_onedark'),
     config = function()
       require('onedark').setup({
-        style = 'warm',
+        style = 'deep',
         transparent = false,
         term_colors = true,
         ending_tildes = true,
-        cmp_itemkind_reverse = true,
         toggle_style_key = nil,
         toggle_style_list = { 'deep', 'warmer', 'darker' },
         code_style = {
@@ -356,10 +357,9 @@ return { ---@type LazySpec[]
           operators = 'altfont',
         },
         lualine = { transparent = false },
-        diagnostics = { darker = false, undercurl = false, background = true },
+        diagnostics = { darker = true, undercurl = true, background = true },
       })
     end,
-    cond = not in_console(),
   },
   {
     'EdenEast/nightfox.nvim',

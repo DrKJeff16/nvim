@@ -16,9 +16,7 @@ return { ---@type LazySpec
           'tokyonight-night',
           'tokyonight-day',
         },
-        -- Skip section B
-        C = { '', 'catppuccin' }, -- Blank strings are ignored
-        D = { 'foo' }, -- If `foo` is not a colorscheme it'll get skipped
+        B = { 'onedark', 'catppuccin' },
       },
       grouping = {
         random = true,
