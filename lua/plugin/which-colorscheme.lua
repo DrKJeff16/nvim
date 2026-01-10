@@ -7,8 +7,23 @@ return { ---@type LazySpec
   config = function()
     require('which-colorscheme').setup({
       prefix = '<leader>uc',
-      group = 'Colorschemes',
-      random = true,
+      group_name = 'Colorschemes',
+      custom_groups = {
+        A = {
+          'tokyonight',
+          'tokyonight-storm',
+          'tokyonight-moon',
+          'tokyonight-night',
+          'tokyonight-day',
+        },
+        -- Skip section B
+        C = { '', 'catppuccin' }, -- Blank strings are ignored
+        D = { 'foo' }, -- If `foo` is not a colorscheme it'll get skipped
+      },
+      grouping = {
+        random = true,
+        uppercase_groups = true,
+      },
     })
   end,
 }
