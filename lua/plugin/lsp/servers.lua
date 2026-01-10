@@ -52,6 +52,7 @@ local Clients = {
   taplo = server_load('taplo', 'taplo'),
   yamlls = server_load('yamlls', 'yaml-language-server'),
   hyprls = server_load('hyprls', 'hyprls'),
+  julials = server_load('julials', 'julia'),
 }
 
 return Clients
