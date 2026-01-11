@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'Zeioth/dooku.nvim',
   version = false,

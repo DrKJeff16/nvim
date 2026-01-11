@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'wsdjeg/picker.nvim',
   version = false,

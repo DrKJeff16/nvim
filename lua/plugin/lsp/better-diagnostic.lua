@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'sontungexpt/better-diagnostic-virtual-text',
   event = 'LspAttach',
@@ -7,15 +6,15 @@ return { ---@type LazySpec
   config = function()
     require('better-diagnostic-virtual-text').setup({
       ui = {
-        wrap_line_after = false, -- wrap the line after this length to avoid the virtual text is too long
-        left_kept_space = 3, --- the number of spaces kept on the left side of the virtual text, make sure it enough to custom for each line
-        right_kept_space = 3, --- the number of spaces kept on the right side of the virtual text, make sure it enough to custom for each line
+        wrap_line_after = false,
+        left_kept_space = 3,
+        right_kept_space = 3,
         arrow = '  ',
         up_arrow = '  ',
         down_arrow = '  ',
-        above = false, -- the virtual text will be displayed above the line
+        above = false,
       },
-      priority = 2003, -- the priority of virtual text
+      priority = 2003,
       inline = true,
     })
   end,

@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'p00f/clangd_extensions.nvim',
   ft = { 'c', 'cpp' },

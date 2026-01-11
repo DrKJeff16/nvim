@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'fei6409/log-highlight.nvim',
   version = false,

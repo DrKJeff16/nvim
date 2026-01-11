@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'windwp/nvim-ts-autotag',
   config = function()

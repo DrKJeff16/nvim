@@ -1,6 +1,4 @@
 ---@module 'lazy'
----@module 'snacks'
-
 return { ---@type LazySpec
   'folke/snacks.nvim',
   lazy = false,

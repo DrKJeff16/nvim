@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'hat0uma/doxygen-previewer.nvim',
   cmd = { 'DoxygenOpen', 'DoxygenUpdate', 'DoxygenStop', 'DoxygenLog', 'DoxygenTempDoxyfileOpen' },

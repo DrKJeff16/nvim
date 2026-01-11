@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'goolord/alpha-nvim',
   priority = 1000,

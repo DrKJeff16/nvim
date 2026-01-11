@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'numToStr/Comment.nvim',
   version = false,

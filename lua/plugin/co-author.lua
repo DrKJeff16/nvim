@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   '2kabhishek/co-author.nvim',
   version = false,

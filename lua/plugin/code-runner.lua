@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'wsdjeg/code-runner.nvim',
   version = false,

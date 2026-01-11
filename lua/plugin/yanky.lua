@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'gbprod/yanky.nvim',
   version = false,

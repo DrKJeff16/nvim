@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'julienvincent/nvim-paredit',
   version = false,

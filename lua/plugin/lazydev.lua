@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'folke/lazydev.nvim',
   ft = { 'lua' },

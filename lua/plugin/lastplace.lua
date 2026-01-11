@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'nxhung2304/lastplace.nvim',
   version = false,

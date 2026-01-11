@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 ---@param arg string
 ---@return function
 local function wincmd(arg)

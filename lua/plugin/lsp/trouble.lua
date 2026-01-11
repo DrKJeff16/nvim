@@ -61,13 +61,13 @@ Trouble.Opts = { ---@type trouble.Config
     zo = 'fold_open',
     zr = 'fold_reduce',
     zx = 'fold_update',
-    gb = { -- example of a custom action that toggles the active view filter
+    gb = {
       action = function(view)
         view:filter({ buf = vim.api.nvim_get_current_buf() }, { toggle = true })
       end,
       desc = 'Toggle Current Buffer Filter',
     },
-    s = { -- example of a custom action that toggles the severity
+    s = {
       action = function(view)
         local f = view:get_filter('severity')
         local severity = (f and (f.filter.severity + 1) or 1) % 5
@@ -81,23 +81,8 @@ Trouble.Opts = { ---@type trouble.Config
     },
   },
   modes = { ---@type table<string, trouble.Mode>
-    -- sources define their own modes, which you can use directly,
-    -- or override like in the example below
-    lsp_references = {
-      -- some modes are configurable, see the source code for more details
-      params = {
-        include_declaration = true,
-      },
-    },
-    -- The LSP base mode for:
-    -- * lsp_definitions, lsp_references, lsp_implementations
-    -- * lsp_type_definitions, lsp_declarations, lsp_command
-    lsp_base = {
-      params = {
-        -- don't include the current location in the results
-        include_current = true,
-      },
-    },
+    lsp_references = { params = { include_declaration = true } },
+    lsp_base = { params = { include_current = true } },
     diagnostics = {
       mode = 'diagnostics',
       auto_preview = true,
@@ -111,27 +96,17 @@ Trouble.Opts = { ---@type trouble.Config
     },
     test = {
       mode = 'diagnostics',
-      preview = {
-        type = 'split',
-        relative = 'win',
-        position = 'right',
-        size = 0.3,
-      },
+      preview = { type = 'split', relative = 'win', position = 'right', size = 0.3 },
     },
-    diagnostics_buffer = {
-      mode = 'diagnostics',
-      filter = { buf = 0 },
-    },
+    diagnostics_buffer = { mode = 'diagnostics', filter = { buf = 0 } },
     symbols = {
       desc = 'document symbols',
       mode = 'lsp_document_symbols',
       focus = false,
       win = { position = 'right' },
       filter = {
-        -- remove Package since luals uses it for control flow structures
         ['not'] = { ft = 'lua', kind = 'Package' },
         any = {
-          -- all symbol kinds for help / markdown files
           ft = { 'help', 'markdown' },
           kind = {
             'Class',

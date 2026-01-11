@@ -9,19 +9,9 @@ return { ---@type LazySpec
       prefix = '<leader>uc',
       group_name = 'Colorschemes',
       custom_groups = {
-        A = {
-          'tokyonight',
-          'tokyonight-storm',
-          'tokyonight-moon',
-          'tokyonight-night',
-          'tokyonight-day',
-        },
-        B = { 'onedark', 'catppuccin' },
+        A = { 'tokyonight', 'catppuccin', 'kanagawa', 'nightfox', 'carbonfox', 'onedark' },
       },
-      grouping = {
-        random = true,
-        uppercase_groups = true,
-      },
+      grouping = { random = true, uppercase_groups = true },
     })
   end,
 }

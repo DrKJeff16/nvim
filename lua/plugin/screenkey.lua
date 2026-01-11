@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'NStefan002/screenkey.nvim',
   dev = true,

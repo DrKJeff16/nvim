@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'nvim-mini/mini.cmdline',
   version = false,

@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'rhysd/vim-syntax-codeowners',
   lazy = false,

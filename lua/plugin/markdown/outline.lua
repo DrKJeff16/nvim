@@ -1,7 +1,5 @@
 ---@module 'lazy'
-
----@type LazySpec
-return {
+return { ---@type LazySpec
   'tttol/md-outline.nvim',
   ft = { 'markdown' },
   version = false,

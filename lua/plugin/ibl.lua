@@ -1,5 +1,4 @@
 ---@module 'lazy'
----@module 'ibl'
 
 ---@param htype string
 ---@param func function

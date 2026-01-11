@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'tiagovla/scope.nvim',
   version = false,

@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'ibhagwan/fzf-lua',
   version = false,

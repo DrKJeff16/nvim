@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'bngarren/checkmate.nvim',
   ft = 'markdown',

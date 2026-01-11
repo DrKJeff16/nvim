@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'epwalsh/pomo.nvim',
   cmd = { 'TimerStart', 'TimerRepeat', 'TimerSession' },

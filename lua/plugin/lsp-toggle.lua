@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'NeoSahadeo/lsp-toggle.nvim',
   version = false,

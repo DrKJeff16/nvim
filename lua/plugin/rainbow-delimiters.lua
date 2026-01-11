@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'HiPhish/rainbow-delimiters.nvim',
   version = false,

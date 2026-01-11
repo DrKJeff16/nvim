@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'sindrets/diffview.nvim',
   cmd = {

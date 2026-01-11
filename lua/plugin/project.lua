@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'DrKJeff16/project.nvim',
   dev = true,

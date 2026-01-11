@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'folke/zen-mode.nvim',
   version = false,

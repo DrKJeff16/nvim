@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'nvim-treesitter/nvim-treesitter-context',
   cond = not require('user_api.check').in_console(),

@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'gisketch/triforce.nvim',
   dev = true,

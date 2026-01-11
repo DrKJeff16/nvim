@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'folke/ts-comments.nvim',
   version = false,

@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'folke/persistence.nvim',
   event = 'BufReadPre',

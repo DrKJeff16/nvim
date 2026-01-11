@@ -1,10 +1,7 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'hedyhli/outline.nvim',
-  keys = {
-    { '<leader>ot', '<CMD>Outline<CR>', desc = 'Toggle Outline' },
-  },
+  keys = { { '<leader>ot', '<CMD>Outline<CR>', desc = 'Toggle Outline' } },
   cmd = { 'Outline' },
   version = false,
   config = function()

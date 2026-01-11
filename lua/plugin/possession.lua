@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'gennaro-tedesco/nvim-possession',
   version = false,

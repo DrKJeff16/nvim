@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'dstein64/vim-startuptime',
   cmd = 'StartupTime',

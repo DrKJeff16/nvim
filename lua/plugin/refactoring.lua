@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'ThePrimeagen/refactoring.nvim',
   lazy = false,

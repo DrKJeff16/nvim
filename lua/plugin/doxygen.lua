@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
   'vim-scripts/DoxygenToolkit.vim',
   ft = { 'c', 'cpp' },
