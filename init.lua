@@ -154,6 +154,7 @@ L.setup({
   { import = 'plugin.rainbow-delimiters' },
   { import = 'plugin.cheaty' },
   { import = 'plugin.music-player' },
+  -- { import = 'plugin.local-session' },
   -- { import = 'plugin.lsp-toggle' },
   -- { import = 'plugin.fzf-nerdfont' },
   -- { import = 'plugin.co-author' },
