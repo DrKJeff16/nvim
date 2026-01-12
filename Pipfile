@@ -9,6 +9,7 @@ name = "pypi"
 pre-commit = "*"
 pynvim = "*"
 vim-eof-comment = "*"
+pip = "*"
 
 [requires]
-python_version = "3.13"
+python_version = "3.14"
