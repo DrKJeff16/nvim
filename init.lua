@@ -116,6 +116,7 @@ L.setup({
   { import = 'plugin.ts.commentstring' },
   { import = 'plugin.ts.autotag' },
   { import = 'plugin.ts.vimdoc' },
+  { import = 'plugin.goto-preview' },
   -- { import = 'plugin.conform' },
   { import = 'plugin.paredit' },
   { import = 'plugin.scope' },
