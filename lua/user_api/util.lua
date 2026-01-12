@@ -413,6 +413,10 @@ function Util.setup_autocmd()
             if not vim.api.nvim_get_option_value('modifiable', buf_opts) then
               return
             end
+            if ft == 'man' and bt == 'nofile' then
+              vim.keymap.set('n', 'q', vim.cmd.quitall, { buffer = ev.buf })
+              return
+            end
             if ft == 'lua' and executable('stylua') then
               require('user_api.config').keymaps({
                 n = {
