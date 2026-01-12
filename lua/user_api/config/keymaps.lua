@@ -261,6 +261,7 @@ Keymaps.Keys = { ---@type AllModeMaps
 ---@param leader string `<leader>` key string (defaults to `<Space>`)
 ---@param local_leader? string `<localleader>` string (defaults to `<Space>`)
 ---@param force? boolean Force leader switch (defaults to `false`)
+---@overload fun(leader: string, local_leader: string)
 function Keymaps.set_leader(leader, local_leader, force)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('leader', leader, { 'string' }, false)
@@ -349,7 +350,7 @@ function Keymaps.delete(K, bufnr)
   return ditched_keys
 end
 
----@type User.Config.Keymaps|fun(keys: AllModeMaps, bufnr?: integer, defaults?: boolean)
+---@type User.Config.Keymaps|fun(keys: AllModeMaps)|fun(keys: AllModeMaps, bufnr: integer)|fun(keys: AllModeMaps, bufnr?: integer, defaults: boolean)|fun(keys: AllModeMaps, bufnr: integer, defaults: boolean)
 local M = setmetatable({}, {
   __index = Keymaps,
   __newindex = function()

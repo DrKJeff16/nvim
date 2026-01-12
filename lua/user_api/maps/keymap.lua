@@ -25,7 +25,14 @@
 ---@alias KeyMapDicts table<string, KeyMapRhsDict>
 
 ---@alias AllMaps table<string, KeyMapRhsArr|RegKey|RegPfx>
----@alias AllModeMaps table<MapModes, AllMaps>
+
+---@class AllModeMaps
+---@field n? AllMaps
+---@field i? AllMaps
+---@field v? AllMaps
+---@field t? AllMaps
+---@field o? AllMaps
+---@field x? AllMaps
 
 ---@class KeyMapTbl
 ---@field lhs string
@@ -33,20 +40,20 @@
 ---@field opts? User.Maps.Opts
 
 ---@class KeyMapModeDict
----@field n KeyMapDict
----@field i KeyMapDict
----@field v KeyMapDict
----@field t KeyMapDict
----@field o KeyMapDict
----@field x KeyMapDict
+---@field n? KeyMapDict
+---@field i? KeyMapDict
+---@field v? KeyMapDict
+---@field t? KeyMapDict
+---@field o? KeyMapDict
+---@field x? KeyMapDict
 
 ---@class KeyMapModeDicts
----@field n KeyMapTbl[]
----@field i KeyMapTbl[]
----@field v KeyMapTbl[]
----@field t KeyMapTbl[]
----@field o KeyMapTbl[]
----@field x KeyMapTbl[]
+---@field n? KeyMapTbl[]
+---@field i? KeyMapTbl[]
+---@field v? KeyMapTbl[]
+---@field t? KeyMapTbl[]
+---@field o? KeyMapTbl[]
+---@field x? KeyMapTbl[]
 
 local ERROR = vim.log.levels.ERROR
 

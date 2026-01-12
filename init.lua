@@ -147,11 +147,11 @@ L.setup({
   { import = 'plugin.triforce' },
   { import = 'plugin.helpview' },
   { import = 'plugin.startuptime' },
-  { import = 'plugin.codeowners' },
   { import = 'plugin.persistence' },
-  { import = 'plugin.ibl' },
-  { import = 'plugin.rainbow-delimiters' },
-  -- { import = 'plugin.blink-indent' },
+  -- { import = 'plugin.ibl' },
+  -- { import = 'plugin.rainbow-delimiters' },
+  { import = 'plugin.blink-indent' },
+  { import = 'plugin.codeowners' },
   -- { import = 'plugin.mini.test' },
   -- { import = 'plugin.zen-mode' },
   -- { import = 'plugin.cheaty' },
@@ -218,7 +218,7 @@ L.colorschemes('tokyonight')
 
 vim.cmd.packadd('nohlsearch')
 
-if vim.fn.has('nvim-0.12') == 1 then
+if require('user_api.check.exists').vim_has('nvim-0.12') then
   vim.cmd.packadd('nvim.undotree')
 end
 

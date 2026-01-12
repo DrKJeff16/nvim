@@ -5,11 +5,11 @@ local curr_win = vim.api.nvim_get_current_win
 local in_list = vim.list_contains
 
 ---@class User.Util
-local Util = {
-  notify = require('user_api.util.notify'),
-  au = require('user_api.util.autocmd'),
-  string = require('user_api.util.string'),
-}
+local Util = {}
+
+Util.notify = require('user_api.util.notify')
+Util.au = require('user_api.util.autocmd')
+Util.string = require('user_api.util.string')
 
 function Util.has_words_before()
   local win = curr_win()
@@ -21,6 +21,10 @@ end
 ---@param s string[]|string
 ---@param bufnr? integer
 ---@return table<string, any> res
+---@overload fun(s: string): res: table<string, any>
+---@overload fun(s: string, bufnr: integer): res: table<string, any>
+---@overload fun(s: string[]): res: table<string, any>
+---@overload fun(s: string[], bufnr: integer): res: table<string, any>
 function Util.get_opts_tbl(s, bufnr)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('s', s, { 'string', 'table' }, false, 'string[]|string')
@@ -50,6 +54,9 @@ end
 ---@param steps? integer
 ---@param direction? 'l'|'r'
 ---@return table<string, any> res
+---@overload fun(T: table<string, any>): res: table<string, any>
+---@overload fun(T: table<string, any>, steps: integer): res: table<string, any>
+---@overload fun(T: table<string, any>, steps?: integer, direction: 'l'|'r'): res: table<string, any>
 function Util.mv_tbl_values(T, steps, direction)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('T', T, { 'table' }, false, 'table<string, any>')
@@ -116,8 +123,13 @@ function Util.xor(x, y)
 end
 
 ---@param T table<string, any>
----@param fields string|integer|(string|integer)[]
+---@param fields (string|integer)[]|string|integer
 ---@return table<string, any> T
+---@overload fun(T: table<string, any>, fields: string)
+---@overload fun(T: table<string, any>, fields: integer)
+---@overload fun(T: table<string, any>, fields: string[])
+---@overload fun(T: table<string, any>, fields: integer[])
+---@overload fun(T: table<string, any>, fields: (string|integer)[])
 function Util.strip_fields(T, fields)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('T', T, { 'table' }, false, 'table<string, any>')
@@ -154,6 +166,7 @@ end
 ---@param values any[]
 ---@param max_instances? integer
 ---@return table<string, any> res
+---@overload fun(T: table<string, any>, values: any[]): res: table<string, any>
 function Util.strip_values(T, values, max_instances)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('T', T, { 'table' }, false, 'table<string, any>')
@@ -196,6 +209,9 @@ end
 ---@param s? string
 ---@param bufnr? integer
 ---@return function
+---@overload fun(): function
+---@overload fun(s: string): function
+---@overload fun(s: string, bufnr: integer): function
 function Util.ft_set(s, bufnr)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('s', s, { 'string', 'nil' }, true)
@@ -213,6 +229,9 @@ function Util.ft_set(s, bufnr)
 end
 
 ---@param bufnr? integer
+---@return string|''|'acwrite'|'help'|'nofile'|'nowrite'|'prompt'|'quickfix'|'terminal' bt
+---@overload fun(): bt: string|''|'acwrite'|'help'|'nofile'|'nowrite'|'prompt'|'quickfix'|'terminal'
+---@overload fun(bufnr: integer): bt: string|''|'acwrite'|'help'|'nofile'|'nowrite'|'prompt'|'quickfix'|'terminal'
 function Util.bt_get(bufnr)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
@@ -224,7 +243,9 @@ function Util.bt_get(bufnr)
 end
 
 ---@param bufnr? integer
----@return string
+---@return string ft
+---@overload fun(): ft: string
+---@overload fun(bufnr: integer): ft: string
 function Util.ft_get(bufnr)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
@@ -475,7 +496,9 @@ end
 
 ---@param c string
 ---@param direction? 'next'|'prev'
----@return string
+---@return string displaced
+---@overload fun(c: string): displaced: string
+---@overload fun(c: string, direction: 'next'|'prev'): displaced: string
 function Util.displace_letter(c, direction)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('c', c, { 'string' }, false)
@@ -508,8 +531,10 @@ function Util.displace_letter(c, direction)
   return mv(UPPER, 1, 'l')[c]
 end
 
----@param data string|table
----@return string|table res
+---@param data string[]|string
+---@return string[]|string res
+---@overload fun(data: string): res: string
+---@overload fun(data: string[]): res: string[]
 function Util.discard_dups(data)
   local Value = require('user_api.check.value')
   if not (Value.type_not_empty('string', data) or Value.type_not_empty('table', data)) then
@@ -547,8 +572,8 @@ function Util.discard_dups(data)
   return res
 end
 
----@param T table
----@return table reversed
+---@param T any[]
+---@return any[] reversed
 function Util.reverse_tbl(T)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('T', T, { 'table' }, false)
