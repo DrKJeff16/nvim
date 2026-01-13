@@ -3,7 +3,6 @@
 local ensure_langs = {
   'bash',
   'c',
-  'comment',
   'commonlisp',
   'cpp',
   'css',
@@ -65,6 +64,18 @@ return { ---@type LazySpec
   config = function()
     require('nvim-treesitter').setup({ install_dir = vim.fn.stdpath('data') .. '/site' })
     require('nvim-treesitter').install(ensure_langs)
+
+    vim.api.nvim_create_autocmd('User', {
+      pattern = 'TSUpdate',
+      callback = function()
+        require('nvim-treesitter.parsers').comment = { ---@diagnostic disable-line:missing-fields
+          install_info = { ---@diagnostic disable-line:missing-fields
+            url = 'https://github.com/OXY2DEV/tree-sitter-comment',
+            queries = 'queries/',
+          },
+        }
+      end,
+    })
 
     vim.api.nvim_create_autocmd('FileType', {
       pattern = {
