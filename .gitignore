@@ -1,7 +1,10 @@
 # Lazy Lock File
 /lazy-lock.json
 
-# FALLBACK INIT (for bug reporting)
+# Tree-sitter parsers
+/parser/
+
+# Fallback Init (for bug reporting)
 /fallback.lua
 /repro.lua
 /minimal_init.lua
