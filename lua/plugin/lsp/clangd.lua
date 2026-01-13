@@ -6,7 +6,7 @@ return { ---@type LazySpec
   version = false,
   cond = require('user_api.check.exists').executable('clangd'),
   opts = {
-    inlay_hints = { inline = false },
+    inlay_hints = { inline = true },
     ast = {
       role_icons = {
         type = '',
