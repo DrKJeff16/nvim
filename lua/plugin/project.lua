@@ -6,10 +6,10 @@ return { ---@type LazySpec
   config = function()
     require('project').setup({
       log = { enabled = true, logpath = vim.fn.stdpath('state') },
-      scope_chdir = 'tab',
-      use_lsp = true,
       telescope = { prefer_file_browser = true, sort = 'newest' },
       fzf_lua = { enabled = true },
+      scope_chdir = 'tab',
+      use_lsp = true,
       exclude_dirs = {
         '/usr/*',
         '~/.build/*',
@@ -35,6 +35,8 @@ return { ---@type LazySpec
         ['<leader>p'] = { group = '+Project' },
         ['<leader>pC'] = { vim.cmd.ProjectConfig, desc('Toggle Config Window') },
         ['<leader>pH'] = { vim.cmd.ProjectHealth, desc('Run `:checkhealth project`') },
+        ['<leader>pa'] = { vim.cmd.ProjectAdd, desc('Add New Project') },
+        ['<leader>pd'] = { vim.cmd.ProjectDelete, desc('Delete Existing Project') },
         ['<leader>pf'] = { vim.cmd.ProjectFzf, desc('Run Fzf-Lua') },
         ['<leader>ph'] = { vim.cmd.ProjectHistory, desc('Toggle History Window') },
         ['<leader>pl'] = { vim.cmd.ProjectLog, desc('Toggle Log Window') },
@@ -47,9 +49,7 @@ return { ---@type LazySpec
     if require('user_api.check.exists').module('telescope') then
       require('telescope').load_extension('projects')
       require('user_api.config').keymaps({
-        n = {
-          ['<leader>pT'] = { vim.cmd.ProjectTelescope, desc('Run `:ProjectTelescope`') },
-        },
+        n = { ['<leader>pT'] = { vim.cmd.ProjectTelescope, desc('Open Telescope Picker') } },
       })
     end
   end,
