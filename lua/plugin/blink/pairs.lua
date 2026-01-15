@@ -2,8 +2,8 @@
 ---@module 'blink.pairs'
 return { ---@type LazySpec
   'saghen/blink.pairs',
-  version = false, -- (recommended) only required with prebuilt binaries
-  build = 'cargo build --release',
+  version = false,
+  build = require('user_api.check.exists').executable('cargo') and 'cargo build --release' or false,
   opts = { ---@type blink.pairs.Config
     mappings = { enabled = true, cmdline = true, disabled_filetypes = {}, pairs = {} },
     highlights = {
