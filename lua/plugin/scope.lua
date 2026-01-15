@@ -24,8 +24,8 @@ return { ---@type LazySpec
       require('user_api.config').keymaps({
         n = {
           ['<leader>S'] = { group = '+Scope' },
-          ['<leader>Sb'] = { ':Telescope buffers<CR>', desc('Scope Buffers (Telescope)') },
-          ['<leader><C-t>eS'] = { ':Telescope buffers<CR>', desc('Scope Buffers Picker') },
+          ['<leader>Sb'] = { '<CMD>Telescope scope buffers<CR>', desc('Scope Buffers (Telescope)') },
+          ['<leader><C-t>eS'] = { '<CMD>Telescope scope buffers<CR>', desc('Scope Buffers Picker') },
         },
       })
     end

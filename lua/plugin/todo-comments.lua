@@ -1,7 +1,6 @@
 ---@module 'lazy'
 
-local uv = vim.uv or vim.loop
-local in_list = vim.list_contains
+local ERROR = vim.log.levels.ERROR
 
 ---@param direction 'next'|'prev'
 ---@param keywords string[]
@@ -16,21 +15,19 @@ local function jump(direction, keywords)
       keywords = { keywords, 'table' },
     })
   end
-  if not in_list({ 'next', 'prev' }, direction) then
-    error(('(plugin.todo_comments:jump): Invalid direction `%s`!'):format(direction))
+  if not vim.list_contains({ 'next', 'prev' }, direction) then
+    error(('Invalid direction `%s`!'):format(direction), ERROR)
   end
   if vim.tbl_isempty(keywords) then
-    error('(plugin.todo_comments:jump): No available keywords!')
+    error('No available keywords!', ERROR)
   end
 
   local direction_map = {
     next = require('todo-comments').jump_next,
     prev = require('todo-comments').jump_prev,
   }
-  return function()
-    local func = direction_map[direction]
-    func({ keywords = keywords })
-  end
+
+  return direction_map[direction]
 end
 
 return { ---@type LazySpec
@@ -105,7 +102,7 @@ return { ---@type LazySpec
         multiline_pattern = '^.',
         multiline_context = 1,
         before = '',
-        keyword = 'wide_fg',
+        keyword = 'wide',
         after = 'fg',
         pattern = [[.*<(KEYWORDS)\s*:]],
         comments_only = true,
@@ -162,21 +159,18 @@ return { ---@type LazySpec
         ['<leader>cw'] = { group = "+'WARNING'" },
         ['<leader>ct'] = { group = "+'TODO'" },
         ['<leader>cn'] = { group = "+'NOTE'" },
-        ['<leader>ctn'] = { jump('next', KEYWORDS.TODO), desc("Next 'TODO' Comment") },
-        ['<leader>ctp'] = { jump('prev', KEYWORDS.TODO), desc("Previous 'TODO' Comment") },
-        ['<leader>cfn'] = { jump('next', KEYWORDS.FIX), desc("Next 'FIX' Comment") },
-        ['<leader>cfp'] = { jump('prev', KEYWORDS.FIX), desc("Previous 'FIX' Comment") },
-        ['<leader>cwn'] = { jump('next', KEYWORDS.WARN), desc("Next 'WARNING' Comment") },
-        ['<leader>cwp'] = {
-          jump('prev', KEYWORDS.WARN),
-          desc("Previous 'WARNING' Comment"),
-        },
-        ['<leader>cnn'] = { jump('next', KEYWORDS.NOTE), desc("Next 'NOTE' Comment") },
-        ['<leader>cnp'] = { jump('prev', KEYWORDS.NOTE), desc("Previous 'NOTE' Comment") },
+        ['<leader>ctn'] = { jump('next', KEYWORDS.TODO), desc('Next `TODO` Comment') },
+        ['<leader>ctp'] = { jump('prev', KEYWORDS.TODO), desc('Previous `TODO` Comment') },
+        ['<leader>cfn'] = { jump('next', KEYWORDS.FIX), desc('Next `FIX` Comment') },
+        ['<leader>cfp'] = { jump('prev', KEYWORDS.FIX), desc('Previous `FIX` Comment') },
+        ['<leader>cwn'] = { jump('next', KEYWORDS.WARN), desc('Next `WARNING` Comment') },
+        ['<leader>cwp'] = { jump('prev', KEYWORDS.WARN), desc('Previous `WARNING` Comment') },
+        ['<leader>cnn'] = { jump('next', KEYWORDS.NOTE), desc('Next `NOTE` Comment') },
+        ['<leader>cnp'] = { jump('prev', KEYWORDS.NOTE), desc('Previous `NOTE` Comment') },
         ['<leader>cl'] = { vim.cmd.TodoLocList, desc('Open Loclist For TODO Comments') },
         ['<leader>cT'] = {
           function()
-            vim.cmd.TodoTelescope(('keywords=TODO,FIX cwd='):format(uv.cwd()))
+            vim.cmd.TodoTelescope(('keywords=TODO,FIX cwd='):format((vim.uv or vim.loop).cwd()))
           end,
           desc('Open TODO Telescope'),
         },

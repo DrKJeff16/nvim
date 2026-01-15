@@ -5,7 +5,7 @@ return { ---@type LazySpec
   cond = not require('user_api.check').in_console(),
   config = function()
     require('smoothcursor').setup({
-      type = 'default', ---@type 'default'|'exp'|'matrix'
+      type = 'exp', ---@type 'default'|'exp'|'matrix'
       cursor = '',
       max_threshold = 6,
       texthl = 'SmoothCursor',

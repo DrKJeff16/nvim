@@ -4,16 +4,7 @@ return { ---@type LazySpec
   lazy = false,
   version = false,
   priority = 1000,
-  keys = {
-    {
-      '<leader><A-s>',
-      function()
-        require('snacks').picker.commands()
-      end,
-      mode = { 'n' },
-      desc = 'Snacks Picker',
-    },
-  },
+  keys = { { '<leader><leader>', require('snacks').picker.commands, desc = 'Snacks Picker' } },
   config = function()
     require('snacks').setup({
       picker = {
@@ -57,13 +48,7 @@ return { ---@type LazySpec
           file = { max_size = 1024 * 1024, max_line_length = 500, ft = nil },
           man_pager = nil,
         },
-        jump = {
-          jumplist = true,
-          tagstack = true,
-          reuse_win = false,
-          close = true,
-          match = false,
-        },
+        jump = { jumplist = true, tagstack = true, reuse_win = false, close = true, match = false },
         toggles = {
           follow = 'f',
           hidden = 'h',
@@ -74,7 +59,7 @@ return { ---@type LazySpec
         win = {
           input = {
             keys = {
-              -- ["<Esc>"] = { "close", mode = { "n", "i" } },
+              ['<Esc>'] = { 'close', mode = { 'n', 'i' } },
               G = 'list_bottom',
               ['/'] = 'toggle_focus',
               ['<A-d>'] = { 'inspect', mode = { 'n', 'i' } },
@@ -108,19 +93,13 @@ return { ---@type LazySpec
               ['<C-t>'] = { 'tab', mode = { 'n', 'i' } },
               ['<C-u>'] = { 'list_scroll_up', mode = { 'i', 'n' } },
               ['<C-v>'] = { 'edit_vsplit', mode = { 'i', 'n' } },
-              ['<C-w>'] = {
-                '<c-s-w>',
-                mode = { 'i' },
-                expr = true,
-                desc = 'delete word',
-              },
+              ['<C-w>'] = { '<c-s-w>', mode = { 'i' }, expr = true, desc = 'delete word' },
               ['<C-w>H'] = 'layout_left',
               ['<C-w>J'] = 'layout_bottom',
               ['<C-w>K'] = 'layout_top',
               ['<C-w>L'] = 'layout_right',
               ['<CR>'] = { 'confirm', mode = { 'n', 'i' } },
               ['<Down>'] = { 'list_down', mode = { 'i', 'n' } },
-              ['<Esc>'] = 'cancel',
               ['<S-Tab>'] = { 'select_and_prev', mode = { 'i', 'n' } },
               ['<Tab>'] = { 'select_and_next', mode = { 'i', 'n' } },
               ['<Up>'] = { 'list_up', mode = { 'i', 'n' } },
@@ -179,12 +158,7 @@ return { ---@type LazySpec
             wo = { conceallevel = 2, concealcursor = 'nvc' },
           },
           preview = {
-            keys = {
-              ['<A-w>'] = 'cycle_win',
-              ['<Esc>'] = 'cancel',
-              i = 'focus_input',
-              q = 'close',
-            },
+            keys = { ['<A-w>'] = 'cycle_win', ['<Esc>'] = 'cancel', i = 'focus_input', q = 'close' },
           },
         },
         icons = {
@@ -213,12 +187,7 @@ return { ---@type LazySpec
             untracked = '?',
           },
           diagnostics = { Error = ' ', Warn = ' ', Hint = ' ', Info = ' ' },
-          lsp = {
-            unavailable = '',
-            enabled = ' ',
-            disabled = ' ',
-            attached = '󰖩 ',
-          },
+          lsp = { unavailable = '', enabled = ' ', disabled = ' ', attached = '󰖩 ' },
           kinds = {
             Array = ' ',
             Boolean = '󰨙 ',
@@ -260,8 +229,8 @@ return { ---@type LazySpec
             Variable = '󰀫 ',
           },
         },
-        db = { sqlite3_path = nil }, ---@type snacks.picker.db.Config
-        debug = { ---@type snacks.picker.debug
+        db = { sqlite3_path = nil },
+        debug = {
           scores = false,
           leaks = false,
           explorer = false,

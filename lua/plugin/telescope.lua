@@ -133,7 +133,6 @@ local Keys = { ---@type AllMaps
   ['<leader><C-t>'] = { group = '+Telescope' },
   ['<leader><C-t>b'] = { group = '+Builtins' },
   ['<leader><C-t>e'] = { group = '+Extensions' },
-  ['<leader><leader>'] = { ':Telescope<CR>', desc('Default Telescope Picker', true, nil, false) },
   ['<leader>HH'] = { ':Telescope help_tags<CR>', desc('Telescope Help Tags') },
   ['<leader>HM'] = { ':Telescope man_pages<CR>', desc('Telescope Man Pages') },
   ['<leader>GB'] = { ':Telescope git_branches<CR>', desc('Telescope Git Branches') },
@@ -212,7 +211,6 @@ local known_exts = { ---@type table<string, { [1]: string, keys?: AllMaps }>
     keys = {
       ['<leader><C-t>eP'] = { ':Telescope picker_list<CR>', desc('Picker List') },
       ['<leader><C-t>bp'] = { ':Telescope picker_list<CR>', desc('Picker List (Extension)') },
-      ['<leader><leader>'] = { ':Telescope picker_list<CR>', desc('Telescope Picker List') },
     },
   },
 }
