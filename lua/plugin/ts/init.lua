@@ -3,6 +3,7 @@
 local ensure_langs = {
   'bash',
   'c',
+  'comment',
   'commonlisp',
   'cpp',
   'css',
@@ -21,7 +22,6 @@ local ensure_langs = {
   'json',
   'kconfig',
   'kitty',
-  'latex',
   'lua',
   'luadoc',
   'luap',
@@ -52,8 +52,54 @@ local ensure_langs = {
   'zsh',
 }
 
+local patterns = {
+  'bash',
+  'c',
+  'cpp',
+  'css',
+  'desktop',
+  'diff',
+  'dosini',
+  'editorconfig',
+  'gitattributes',
+  'gitconfig',
+  'gitignore',
+  'gitrebase',
+  'gpg',
+  'html',
+  'hyprlang',
+  'json',
+  'kitty',
+  'lua',
+  'markdown',
+  'meson',
+  'ninja',
+  'passwd',
+  'python',
+  'query',
+  'readline',
+  'regex',
+  'requirements',
+  'rust',
+  'scss',
+  'sh',
+  'sshconfig',
+  'tmux',
+  'toml',
+  'udevconf',
+  'udevrules',
+  'vim',
+  'yaml',
+  'zathurarc',
+  'zsh',
+}
+
 if not require('user_api.distro.termux').validate() then
   table.insert(ensure_langs, 'gitcommit')
+  table.insert(ensure_langs, 'latex')
+
+  table.insert(patterns, 'gitcommit')
+  table.insert(patterns, 'tex')
 end
 
 return { ---@type LazySpec
@@ -65,62 +111,8 @@ return { ---@type LazySpec
     require('nvim-treesitter').setup({ install_dir = vim.fn.stdpath('data') .. '/site' })
     require('nvim-treesitter').install(ensure_langs)
 
-    vim.api.nvim_create_autocmd('User', {
-      pattern = 'TSUpdate',
-      callback = function()
-        require('nvim-treesitter.parsers').comment = { ---@diagnostic disable-line:missing-fields
-          install_info = { ---@diagnostic disable-line:missing-fields
-            url = 'https://github.com/OXY2DEV/tree-sitter-comment',
-            queries = 'queries/',
-          },
-        }
-      end,
-    })
-
     vim.api.nvim_create_autocmd('FileType', {
-      pattern = {
-        'bash',
-        'c',
-        'cpp',
-        'css',
-        'desktop',
-        'diff',
-        'dosini',
-        'editorconfig',
-        'gitattributes',
-        'gitcommit',
-        'gitconfig',
-        'gitignore',
-        'gitrebase',
-        'gpg',
-        'html',
-        'hyprlang',
-        'json',
-        'kitty',
-        'lua',
-        'markdown',
-        'meson',
-        'ninja',
-        'passwd',
-        'python',
-        'query',
-        'readline',
-        'regex',
-        'requirements',
-        'rust',
-        'scss',
-        'sh',
-        'sshconfig',
-        'tex',
-        'tmux',
-        'toml',
-        'udevconf',
-        'udevrules',
-        'vim',
-        'yaml',
-        'zathurarc',
-        'zsh',
-      },
+      pattern = patterns,
       callback = function(ev)
         if not vim.api.nvim_buf_is_loaded(ev.buf) then
           return
