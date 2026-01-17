@@ -64,6 +64,12 @@ end
 --- ---
 ---@param specs LazySpec[]
 function Lazy.setup(specs)
+  if require('user_api.check.exists').vim_has('nvim-0.11') then
+    vim.validate('specs', specs, { 'table' }, false)
+  else
+    vim.validate({ specs = { specs, { 'table' } } })
+  end
+
   Lazy.bootstrap()
 
   require('lazy').setup({
@@ -118,7 +124,7 @@ function Lazy.setup(specs)
     ui = {
       backdrop = not require('user_api.check').in_console() and 60 or 100,
       border = 'double',
-      title = 'L        A        Z        Y',
+      title = 'L           A           Z           Y',
       title_pos = 'center',
       wrap = true,
       pills = true,
