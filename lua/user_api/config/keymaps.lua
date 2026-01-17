@@ -26,14 +26,15 @@ local function rcfile_tab()
 end
 
 ---@param check string
----@return function
+---@return function checkhealth_fun
 local function gen_checkhealth(check)
   return function()
     vim.cmd.checkhealth(check)
   end
 end
 
----@param vertical? boolean
+---@param vertical boolean|nil
+---@overload fun()
 local function gen_fun_blank(vertical)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('vertical', vertical, { 'boolean', 'nil' }, true)
@@ -55,7 +56,8 @@ local function gen_fun_blank(vertical)
   end
 end
 
----@param force? boolean
+---@param force boolean|nil
+---@overload fun()
 local function buf_del(force)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('force', force, 'boolean', true)
@@ -259,8 +261,9 @@ Keymaps.Keys = { ---@type AllModeMaps
 ---Set both the `<leader>` and `<localleader>` keys.
 --- ---
 ---@param leader string `<leader>` key string (defaults to `<Space>`)
----@param local_leader? string `<localleader>` string (defaults to `<Space>`)
----@param force? boolean Force leader switch (defaults to `false`)
+---@param local_leader string|nil `<localleader>` string (defaults to `<Space>`)
+---@param force boolean|nil Force leader switch (defaults to `false`)
+---@overload fun(leader: string)
 ---@overload fun(leader: string, local_leader: string)
 function Keymaps.set_leader(leader, local_leader, force)
   if vim.fn.has('nvim-0.11') == 1 then

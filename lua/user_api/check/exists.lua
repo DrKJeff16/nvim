@@ -33,8 +33,6 @@ end
 
 ---@param expr string[]|string
 ---@return boolean has
----@overload fun(expr: string): has: boolean
----@overload fun(expr: string[]): has: boolean
 function Exists.vim_has(expr)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('expr', expr, { 'string', 'table' }, false)
@@ -58,8 +56,6 @@ end
 
 ---@param expr string[]|string
 ---@return boolean exists
----@overload fun(expr: string): exists: boolean
----@overload fun(expr: string[]): exists: boolean
 function Exists.vim_exists(expr)
   if Exists.vim_has('nvim-0.11') then
     vim.validate('expr', expr, { 'string', 'table' }, false)
@@ -84,10 +80,9 @@ function Exists.vim_exists(expr)
 end
 
 ---@param vars string[]|string
----@param callback? function
+---@param callback function|nil
 ---@return boolean found
----@overload fun(vars: string[], callback?: function): found: boolean
----@overload fun(vars: string, callback?: function): found: boolean
+---@overload fun(vars: string[]|string): found: boolean
 function Exists.env_vars(vars, callback)
   if Exists.vim_has('nvim-0.11') then
     vim.validate('vars', vars, { 'string', 'table' }, false)
@@ -122,8 +117,6 @@ end
 
 ---@param exe string[]|string
 ---@return boolean found
----@overload fun(exe: string): found: boolean
----@overload fun(exe: string[]): found: boolean
 function Exists.executable(exe)
   if Exists.vim_has('nvim-0.11') then
     vim.validate('exe', exe, { 'string', 'table' }, false)

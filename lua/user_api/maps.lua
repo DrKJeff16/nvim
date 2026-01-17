@@ -5,55 +5,56 @@ local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
 local in_list = vim.list_contains
 
-local Maps = { ---@type User.Maps
-  modes = MODES,
-  keymap = require('user_api.maps.keymap'),
-  wk = require('user_api.maps.wk'),
-  desc = function(desc, silent, bufnr, noremap, nowait, expr)
-    if vim.fn.has('nvim-0.11') == 1 then
-      vim.validate('desc', desc, { 'string', 'nil' }, true)
-      vim.validate('silent', silent, { 'boolean', 'nil' }, true)
-      vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
-      vim.validate('noremap', noremap, { 'boolean', 'nil' }, true)
-      vim.validate('nowait', nowait, { 'boolean', 'nil' }, true)
-      vim.validate('expr', expr, { 'boolean', 'nil' }, true)
-    else
-      vim.validate({
-        desc = { desc, { 'string', 'nil' }, true },
-        silent = { silent, { 'boolean', 'nil' }, true },
-        bufnr = { bufnr, { 'number', 'nil' }, true },
-        noremap = { noremap, { 'boolean', 'nil' }, true },
-        nowait = { nowait, { 'boolean', 'nil' }, true },
-        expr = { expr, { 'boolean', 'nil' }, true },
-      })
-    end
+local Maps = {} ---@type User.Maps
 
-    local Value = require('user_api.check.value')
-    if not Value.type_not_empty('string', desc) then
-      desc = 'Unnamed Key'
-    end
-    if silent == nil then
-      silent = true
-    end
-    if noremap == nil then
-      noremap = true
-    end
+Maps.modes = MODES
+Maps.keymap = require('user_api.maps.keymap')
+Maps.wk = require('user_api.maps.wk')
 
-    local res = require('user_api.maps.objects').new()
-    res:add({ desc = desc, silent = silent, noremap = noremap })
+function Maps.desc(desc, silent, bufnr, noremap, nowait, expr)
+  if vim.fn.has('nvim-0.11') == 1 then
+    vim.validate('desc', desc, { 'string', 'nil' }, true)
+    vim.validate('silent', silent, { 'boolean', 'nil' }, true)
+    vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
+    vim.validate('noremap', noremap, { 'boolean', 'nil' }, true)
+    vim.validate('nowait', nowait, { 'boolean', 'nil' }, true)
+    vim.validate('expr', expr, { 'boolean', 'nil' }, true)
+  else
+    vim.validate({
+      desc = { desc, { 'string', 'nil' }, true },
+      silent = { silent, { 'boolean', 'nil' }, true },
+      bufnr = { bufnr, { 'number', 'nil' }, true },
+      noremap = { noremap, { 'boolean', 'nil' }, true },
+      nowait = { nowait, { 'boolean', 'nil' }, true },
+      expr = { expr, { 'boolean', 'nil' }, true },
+    })
+  end
 
-    if nowait ~= nil then
-      res:add({ nowait = nowait })
-    end
-    if expr ~= nil then
-      res:add({ expr = expr })
-    end
-    if bufnr ~= nil then
-      res:add({ buffer = bufnr })
-    end
-    return res
-  end,
-}
+  local Value = require('user_api.check.value')
+  if not Value.type_not_empty('string', desc) then
+    desc = 'Unnamed Key'
+  end
+  if silent == nil then
+    silent = true
+  end
+  if noremap == nil then
+    noremap = true
+  end
+
+  local res = require('user_api.maps.objects').new()
+  res:add({ desc = desc, silent = silent, noremap = noremap })
+
+  if nowait ~= nil then
+    res:add({ nowait = nowait })
+  end
+  if expr ~= nil then
+    res:add({ expr = expr })
+  end
+  if bufnr ~= nil then
+    res:add({ buffer = bufnr })
+  end
+  return res
+end
 
 function Maps.nop(T, opts, mode, prefix)
   if vim.fn.has('nvim-0.11') == 1 then

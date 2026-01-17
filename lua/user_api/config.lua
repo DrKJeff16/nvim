@@ -1,8 +1,8 @@
 ---@class User.Config
-local Config = {
-  keymaps = require('user_api.config.keymaps'),
-  neovide = require('user_api.config.neovide'),
-}
+local Config = {}
+
+Config.keymaps = require('user_api.config.keymaps')
+Config.neovide = require('user_api.config.neovide')
 
 local M = setmetatable(Config, { ---@type User.Config
   __index = Config,

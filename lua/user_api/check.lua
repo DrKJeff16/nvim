@@ -3,26 +3,31 @@ local uv = vim.uv or vim.loop
 ---Checking Utilities.
 --- ---
 ---@class User.Check
-local Check = {
-  value = require('user_api.check.value'),
-  exists = require('user_api.check.exists'),
-  ---Check whether Neovim is running as root (`PID == 0`).
-  --- ---
-  is_root = function()
-    return uv.getuid() == 0
-  end,
-  ---Check whether Neovim is running in a Windows environment.
-  --- ---
-  is_windows = function()
-    return vim.fn.has('win32') == 1
-  end,
-}
+local Check = {}
+
+Check.value = require('user_api.check.value')
+Check.exists = require('user_api.check.exists')
+
+---Check whether Neovim is running as root (`PID == 0`).
+--- ---
+---@return boolean is_root
+function Check.is_root()
+  return uv.getuid() == 0
+end
+
+---Check whether Neovim is running in a Windows environment.
+--- ---
+---@return boolean is_windows
+function Check.is_windows()
+  return vim.fn.has('win32') == 1
+end
 
 ---Check whether Nvim is running in a Linux Console rather than a `pty`.
 ---
 ---This function can be useful for (un)loading certain elements
 ---that conflict with the Linux console, for example.
 --- ---
+---@return boolean in_console
 function Check.in_console()
   --- FIXME: This is not a good enough check. Must find a better solution
   local env = vim.fn.environ() ---@type table<string, string>

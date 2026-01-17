@@ -4,8 +4,6 @@
 local MODSTR = 'user_api.check.value'
 local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
-local tbl_isempty = vim.tbl_isempty
-local in_list = vim.list_contains
 
 ---@param t Types
 ---@return fun(var: any, multiple?: boolean): boolean
@@ -93,8 +91,9 @@ Value.is_tbl = type_fun('table')
 ---i.e. _greater than or equal to `0` and a **whole number**_.
 --- ---
 ---@param var any Any data type to be checked if it's an integer
----@param multiple? boolean Tell the integer you're checking for multiple values. (Default: `false`)
----@return boolean
+---@param multiple boolean|nil Tell the integer you're checking for multiple values. (Default: `false`)
+---@return boolean is_int
+---@overload fun(var: any): is_int: boolean
 function Value.is_int(var, multiple)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('multiple', multiple, { 'boolean', 'nil' }, true)
@@ -132,8 +131,9 @@ end
 ---**THIS FUNCTION IS NOT RECURSIVE!**
 --- ---
 ---@param data (string|number)[]|string|number|table
----@param multiple? boolean
----@return boolean
+---@param multiple boolean|nil
+---@return boolean is_empty
+---@overload fun(data: (string|number)[]|string|number|table): is_empty: boolean
 function Value.empty(data, multiple)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('data', data, { 'string', 'table', 'number' }, false)
@@ -153,9 +153,9 @@ function Value.empty(data, multiple)
     return data == 0
   end
   if not multiple then
-    return tbl_isempty(data)
+    return vim.tbl_isempty(data)
   end
-  if tbl_isempty(data) then
+  if vim.tbl_isempty(data) then
     vim.notify(('(%s.empty): No values to check!'):format(MODSTR), WARN)
     return true
   end
@@ -174,8 +174,9 @@ end
 ---@param num number The number to be checked
 ---@param low number The low limit
 ---@param high number The high limit
----@param eq? { low: boolean, high: boolean } A table that defines how equalities will be made
----@return boolean
+---@param eq { low: boolean, high: boolean }|nil A table that defines how equalities will be made
+---@return boolean in_range
+---@overload fun(num: number, low: number, high: number): in_range: boolean
 function Value.num_range(num, low, high, eq)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('num', num, { 'number' }, false)
@@ -226,7 +227,7 @@ end
 
 ---@param field (string|integer)[]|string|integer
 ---@param T table<string|integer, any>
----@return boolean
+---@return boolean found
 function Value.fields(field, T)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('field', field, { 'string', 'number', 'table', 'nil' }, true)
@@ -251,8 +252,9 @@ end
 
 ---@param values any[]|table<string, any>
 ---@param T table
----@param return_keys? boolean
+---@param return_keys boolean|nil
 ---@return boolean|string|integer|(string|integer)[] res
+---@overload fun(values: any[]|table<string, any>, T: table): res: boolean|string|integer|(string|integer)[]
 function Value.tbl_values(values, T, return_keys)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('values', values, { 'table' }, false, 'any[]|table<string, any>')
@@ -302,10 +304,10 @@ function Value.single_type_tbl(type_str, T)
       T = { T, { 'table' } },
     })
   end
-  if not in_list({ 'boolean', 'function', 'number', 'string', 'table' }, type_str) then
+  if not vim.list_contains({ 'boolean', 'function', 'number', 'string', 'table' }, type_str) then
     error(('(%s.single_type_tbl): Wrong type `%s`.'):format(MODSTR, type_str))
   end
-  if tbl_isempty(T) then
+  if vim.tbl_isempty(T) then
     vim.notify(('(%s.single_type_tbl): Expected a non-empty table!'):format(MODSTR), ERROR)
     return false
   end
@@ -333,7 +335,7 @@ function Value.type_not_empty(type_str, data)
   else
     vim.validate({ type_str = { type_str, { 'string' } } })
   end
-  if not in_list({ 'integer', 'number', 'string', 'table' }, type_str) then
+  if not vim.list_contains({ 'integer', 'number', 'string', 'table' }, type_str) then
     error(('(%s.type_not_empty): Invalid type `%s`!'):format(MODSTR, type_str))
   end
   if data == nil then
@@ -346,7 +348,7 @@ function Value.type_not_empty(type_str, data)
     number = Value.is_num,
     table = Value.is_tbl,
   }
-  if not in_list(vim.tbl_keys(valid_types), type_str) then
+  if not vim.list_contains(vim.tbl_keys(valid_types), type_str) then
     return false
   end
   return valid_types[type_str](data) and not Value.empty(data)
@@ -358,8 +360,8 @@ end
 ---If the table is empty, then it'll return `false`.
 --- ---
 ---@param index integer
----@param T table
----@return boolean
+---@param T any[]
+---@return boolean found
 function Value.in_tbl_range(index, T)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('index', index, { 'number' }, false, 'integer')
@@ -370,7 +372,7 @@ function Value.in_tbl_range(index, T)
       T = { T, { 'table' } },
     })
   end
-  if tbl_isempty(T) then
+  if vim.tbl_isempty(T) then
     return false
   end
   return index >= 1 and index <= #T

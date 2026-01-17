@@ -9,20 +9,21 @@ local ERROR = vim.log.levels.ERROR
 ---A set of utilities to make Vim highlighting easier.
 --- ---
 ---@class User.Hl
-local Hl = {
-  ---@param name string The highlight group
-  ---@param opts vim.api.keyset.highlight The highlight options
-  ---@param ns? integer The highlighting namespace **(OPTIONAL)**
-  hl = function(name, opts, ns)
-    local type_not_empty = require('user_api.check.value').type_not_empty
-    if not (type_not_empty('string', name) and type_not_empty('table', opts)) then
-      vim.notify('(user_api.highlight.hl): Bad argument', ERROR)
-      return
-    end
+local Hl = {}
 
-    vim.api.nvim_set_hl(ns or 0, name, opts)
-  end,
-}
+---@param name string The highlight group
+---@param opts vim.api.keyset.highlight The highlight options
+---@param ns integer|nil The highlighting namespace
+---@overload fun(name: string, opts: vim.api.keyset.highlight)
+function Hl.hl(name, opts, ns)
+  local type_not_empty = require('user_api.check.value').type_not_empty
+  if not (type_not_empty('string', name) and type_not_empty('table', opts)) then
+    vim.notify('(user_api.highlight.hl): Bad argument', ERROR)
+    return
+  end
+
+  vim.api.nvim_set_hl(ns or 0, name, opts)
+end
 
 ---Set highlight groups based on an array of `HlPair` type highlight groups.
 --- ---
@@ -38,7 +39,9 @@ local Hl = {
 ---See more at `:h nvim_set_hl`.
 --- ---
 ---@param A HlPair[] The array of `HlPair` objects
-function Hl.hl_from_arr(A)
+---@param ns integer|nil
+---@overload fun(A: HlPair[])
+function Hl.hl_from_arr(A, ns)
   local type_not_empty = require('user_api.check.value').type_not_empty
   if not type_not_empty('table', A) then
     vim.notify('(user_api.highlight.hl_from_arr): Bad argument', ERROR)
@@ -47,7 +50,7 @@ function Hl.hl_from_arr(A)
 
   for _, t in ipairs(A) do
     if type_not_empty('string', t.name) and type_not_empty('table', t.opts) then
-      Hl.hl(t.name, t.opts)
+      Hl.hl(t.name, t.opts, ns or nil)
     else
       vim.notify('(user_api.highlight.hl_from_arr): Skipping invalid table', ERROR)
     end
@@ -67,7 +70,9 @@ end
 ---To know what options are valid try `:h nvim_set_hl`.
 --- ---
 ---@param D HlDict
-function Hl.hl_from_dict(D)
+---@param ns integer|nil
+---@overload fun(D: HlDict)
+function Hl.hl_from_dict(D, ns)
   local Value = require('user_api.check.value')
   if not Value.type_not_empty('table', D) then
     vim.notify('(user_api.highlight.hl_from_dict): Unable to parse argument', ERROR)
@@ -76,7 +81,7 @@ function Hl.hl_from_dict(D)
 
   for k, v in pairs(D) do
     if Value.type_not_empty('string', k) and Value.type_not_empty('table', v) then
-      Hl.hl(k, v)
+      Hl.hl(k, v, ns or nil)
     else
       vim.notify('(user_api.highlight.hl_from_dict): Skipping bad highlight', ERROR)
     end

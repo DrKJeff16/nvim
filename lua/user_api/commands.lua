@@ -6,58 +6,59 @@
 local desc = require('user_api.maps').desc
 
 ---@class User.Commands
-local Commands = {
-  commands = { ---@type table<string, User.Commands.CmdSpec>
-    Redir = {
-      function(ctx)
-        local l =
-          vim.split(vim.api.nvim_exec2(ctx.args, { output = true }).output, '\n', { plain = true })
-        local bufnr = vim.api.nvim_create_buf(true, true)
-        local win = vim.api.nvim_open_win(bufnr, true, { vertical = false })
-        vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, l)
-        vim.bo[bufnr].filetype = 'Redir'
-        vim.bo[bufnr].modified = false
-        vim.wo[win].number = false
-        vim.wo[win].signcolumn = 'no'
+local Commands = {}
 
-        vim.keymap.set('n', 'q', function()
-          vim.api.nvim_buf_delete(bufnr, { force = true })
-          pcall(vim.api.nvim_win_close, win, true)
-        end, { buffer = bufnr })
+Commands.commands = {} ---@type table<string, User.Commands.CmdSpec>
 
-        vim.schedule(function()
-          vim.cmd.wincmd('=')
-        end)
-      end,
-      {
-        nargs = '+',
-        complete = 'command',
-        desc = 'Redirect command output to scratch buffer',
-      },
-      mappings = {
-        n = {
-          ['<Leader>UC'] = { group = '+Commands' },
-          ['<Leader>UCR'] = { ':Redir ', desc('Prompt to `Redir` command', false) },
-          ['<M-r>'] = { ':Redir ', desc('Prompt `Redir`', false) },
-        },
-      },
-    },
-    DeleteInactiveBuffers = {
-      function(ctx)
-        local notify = ctx.bang ~= nil and ctx.bang or false
-        for _, buf in ipairs(vim.fn.getbufinfo()) do
-          if vim.tbl_isempty(buf.windows) and buf.listed == 1 and buf.loaded == 1 then
-            notify = true
-            vim.cmd.bdelete({ buf.bufnr, bang = true })
-          end
-        end
-        if notify then
-          vim.notify('Deleted inactive buffers.', vim.log.levels.INFO)
-        end
-      end,
-      { desc = 'Delete listed unmodified buffers out of window', bang = true },
+Commands.commands.Redir = {
+  function(ctx)
+    local l =
+      vim.split(vim.api.nvim_exec2(ctx.args, { output = true }).output, '\n', { plain = true })
+    local bufnr = vim.api.nvim_create_buf(true, true)
+    local win = vim.api.nvim_open_win(bufnr, true, { vertical = false })
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, l)
+    vim.bo[bufnr].filetype = 'Redir'
+    vim.bo[bufnr].modified = false
+    vim.wo[win].number = false
+    vim.wo[win].signcolumn = 'no'
+
+    vim.keymap.set('n', 'q', function()
+      vim.api.nvim_buf_delete(bufnr, { force = true })
+      pcall(vim.api.nvim_win_close, win, true)
+    end, { buffer = bufnr })
+
+    vim.schedule(function()
+      vim.cmd.wincmd('=')
+    end)
+  end,
+  {
+    nargs = '+',
+    complete = 'command',
+    desc = 'Redirect command output to scratch buffer',
+  },
+  mappings = {
+    n = {
+      ['<Leader>UC'] = { group = '+Commands' },
+      ['<Leader>UCR'] = { ':Redir ', desc('Prompt to `Redir` command', false) },
+      ['<M-r>'] = { ':Redir ', desc('Prompt `Redir`', false) },
     },
   },
+}
+
+Commands.commands.DeleteInactiveBuffers = {
+  function(ctx)
+    local notify = ctx.bang ~= nil and ctx.bang or false
+    for _, buf in ipairs(vim.fn.getbufinfo()) do
+      if vim.tbl_isempty(buf.windows) and buf.listed == 1 and buf.loaded == 1 then
+        notify = true
+        vim.cmd.bdelete({ buf.bufnr, bang = true })
+      end
+    end
+    if notify then
+      vim.notify('Deleted inactive buffers.', vim.log.levels.INFO)
+    end
+  end,
+  { desc = 'Delete listed unmodified buffers out of window', bang = true },
 }
 
 ---@param name string
@@ -95,7 +96,8 @@ function Commands.setup_keys()
   end
 end
 
----@param cmds? table<string, User.Commands.CmdSpec>
+---@param cmds table<string, User.Commands.CmdSpec>|nil
+---@overload fun()
 function Commands.setup(cmds)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('cmds', cmds, { 'table', 'nil' }, true, 'User.Commands.Spec')
@@ -103,7 +105,7 @@ function Commands.setup(cmds)
     vim.validate({ cmds = { cmds, { 'table', 'nil' }, true } })
   end
 
-  Commands.commands = vim.tbl_deep_extend('keep', cmds or {}, vim.deepcopy(Commands.commands))
+  Commands.commands = vim.tbl_deep_extend('keep', cmds or {}, Commands.commands)
   for cmd, T in pairs(Commands.commands) do
     local exec, opts = T[1], T[2] or {}
     vim.api.nvim_create_user_command(cmd, exec, opts)

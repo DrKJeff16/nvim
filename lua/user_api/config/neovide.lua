@@ -3,7 +3,7 @@ local ERROR = vim.log.levels.ERROR
 
 ---Helper function for transparency formatting.
 --- ---
----@return string
+---@return string alpha_str
 local function alpha()
   return ('%x'):format(math.floor(255 * (vim.g.transparency or 1.0)))
 end
@@ -61,12 +61,10 @@ local o_opts = { linespace = 0, guifont = 'FiraCode Nerd Font Mono:h19' }
 ---@class User.Config.Neovide
 local Neovide = {}
 
----@type table<string, any>
-Neovide.g_opts = {}
+Neovide.g_opts = {} ---@type table<string, any>
+Neovide.active = false ---@type boolean
 
-Neovide.active = false
-
----@return Config.Neovide.Opts
+---@return Config.Neovide.Opts defaults
 function Neovide.get_defaults()
   return { g = g_opts, o = o_opts }
 end
@@ -76,9 +74,15 @@ function Neovide.check()
   return require('user_api.check.exists').executable('neovide') and vim.g.neovide
 end
 
----@param opacity? number
----@param transparency? number
----@param bg? string
+---@param opacity number
+---@param transparency number
+---@param bg string
+---@overload fun()
+---@overload fun(opacity: number)
+---@overload fun(opacity: number, transparency: number)
+---@overload fun(opacity: number|nil, transparency: number)
+---@overload fun(opacity: number|nil, transparency: number, bg: string)
+---@overload fun(opacity: number|nil, transparency: number|nil, bg: string)
 function Neovide.set_transparency(opacity, transparency, bg)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('opacity', opacity, 'number', true)
@@ -162,9 +166,15 @@ function Neovide.setup_maps()
   })
 end
 
----@param T? table
----@param transparent? boolean
----@param verbose? boolean
+---@param T table|nil
+---@param transparent boolean|nil
+---@param verbose boolean|nil
+---@overload fun(T: table)
+---@overload fun(T: table, transparent: boolean)
+---@overload fun(T: table, transparent: boolean|nil, verbose: boolean)
+---@overload fun(T: table|nil, transparent: boolean)
+---@overload fun(T: table|nil, transparent: boolean, verbose: boolean)
+---@overload fun(T: table|nil, transparent: boolean|nil, verbose: boolean)
 function Neovide.setup(T, transparent, verbose)
   if vim.fn.has('nvim-0.11') == 1 then
     vim.validate('T', T, { 'table', 'nil' }, true)
