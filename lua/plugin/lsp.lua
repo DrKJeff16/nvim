@@ -1,13 +1,10 @@
-local in_list = vim.list_contains
 local mk_caps = vim.lsp.protocol.make_client_capabilities
-local d_extend = vim.tbl_deep_extend
-local copy = vim.deepcopy
 
 ---@param original lsp.ClientCapabilities|table<string, boolean|string|number|unknown[]|vim.NIL>
 ---@param inserts? lsp.ClientCapabilities|table<string, boolean|string|number|unknown[]|vim.NIL>
 ---@return lsp.ClientCapabilities|table<string, boolean|string|number|unknown[]|vim.NIL>
 local function insert_client(original, inserts)
-  return d_extend('keep', inserts or {}, original)
+  return vim.tbl_deep_extend('keep', inserts or {}, original)
 end
 
 ---@class Lsp.Server
@@ -18,10 +15,14 @@ Server.Clients = require('plugin.lsp.servers')
 
 ---@param T lsp.ClientCapabilities|nil
 ---@return lsp.ClientCapabilities caps
+---@overload fun(): caps: lsp.ClientCapabilities
 function Server.make_capabilities(T)
-  local caps = d_extend('keep', T or {}, mk_caps())
-  caps = d_extend('keep', copy(caps), require('blink.cmp').get_lsp_capabilities({}, true))
-  return caps
+  return vim.tbl_deep_extend(
+    'keep',
+    T or {},
+    require('blink.cmp').get_lsp_capabilities({}, true),
+    mk_caps()
+  )
 end
 
 ---@param name string
@@ -29,35 +30,35 @@ end
 ---@return vim.lsp.Config config
 function Server.populate(name, config)
   if require('user_api.check.value').type_not_empty('table', config.capabilities) then
-    local old_caps = copy(config.capabilities)
+    local old_caps = vim.deepcopy(config.capabilities)
     local caps = Server.make_capabilities(old_caps)
-    config.capabilities = insert_client(copy(config.capabilities), caps)
+    config.capabilities = insert_client(vim.deepcopy(config.capabilities), caps)
   else
     config.capabilities = Server.make_capabilities()
   end
 
-  if in_list({ 'html', 'jsonls' }, name) then
-    config.capabilities = insert_client(copy(config.capabilities), {
+  if vim.list_contains({ 'html', 'jsonls' }, name) then
+    config.capabilities = insert_client(vim.deepcopy(config.capabilities), {
       textDocument = { completion = { completionItem = { snippetSupport = true } } },
     })
     return config
   end
 
   if name == 'rust_analyzer' then
-    config.capabilities = insert_client(copy(config.capabilities), {
+    config.capabilities = insert_client(vim.deepcopy(config.capabilities), {
       experimental = { serverStatusNotification = true },
     })
     return config
   end
   if name == 'clangd' then
-    config.capabilities = insert_client(copy(config.capabilities), {
+    config.capabilities = insert_client(vim.deepcopy(config.capabilities), {
       offsetEncoding = { 'utf-8', 'utf-16' },
       textDocument = { completion = { editsNearCursor = true } },
     })
     return config
   end
   if name == 'gh_actions_ls' then
-    config.capabilities = insert_client(copy(config.capabilities), {
+    config.capabilities = insert_client(vim.deepcopy(config.capabilities), {
       workspace = { didChangeWorkspaceFolders = { dynamicRegistration = true } },
     })
     return config
@@ -75,7 +76,7 @@ function Server.populate(name, config)
       if not config.settings then
         config.settings = {}
       end
-      config.settings = insert_client(copy(config.settings), {
+      config.settings = insert_client(vim.deepcopy(config.settings), {
         json = {
           validate = { enable = true },
           schemas = require('schemastore').json.schemas(),
@@ -86,7 +87,7 @@ function Server.populate(name, config)
       if not config.settings then
         config.settings = {}
       end
-      config.settings = insert_client(copy(config.settings), {
+      config.settings = insert_client(vim.deepcopy(config.settings), {
         yaml = {
           schemaStore = { enable = false, url = '' },
           schemas = require('schemastore').yaml.schemas(),
@@ -119,12 +120,12 @@ function Server.setup()
     severity_sort = false,
   })
 
-  vim.lsp.log.set_level(vim.log.levels.WARN)
+  vim.lsp.log.set_level(vim.log.levels.ERROR)
 
   for name, client in pairs(Server.Clients) do
     if client then
       vim.lsp.config(name, Server.populate(name, client))
-      if not in_list(Server.client_names, name) then
+      if not vim.list_contains(Server.client_names, name) then
         table.insert(Server.client_names, name)
       end
     end
@@ -136,14 +137,6 @@ function Server.setup()
   require('user_api.config').keymaps({
     n = {
       ['<leader>l'] = { group = '+LSP' },
-      ['<leader>li'] = {
-        function()
-          if require('user_api.check.exists').module('lspconfig') then
-            vim.cmd.LspInfo()
-          end
-        end,
-        desc('Get LSP Config Info'),
-      },
       ['<leader>lC'] = {
         function()
           vim.notify(vim.inspect(Server.client_names))
@@ -166,7 +159,8 @@ end
 
 ---@param config vim.lsp.Config
 ---@param name string
----@param exe? string
+---@param exe string|nil
+---@overload fun(config: vim.lsp.Config, name: string)
 function Server.add(config, name, exe)
   exe = require('user_api.check.value').type_not_empty('string', exe) and exe or name
   if not require('user_api.check.exists').executable(exe) then
@@ -175,8 +169,8 @@ function Server.add(config, name, exe)
 
   local cfg = Server.Clients[name]
 
-  Server.Clients[name] = cfg and d_extend('force', cfg, config) or config
-  Server.Clients[name] = Server.populate(name, copy(Server.Clients[name]))
+  Server.Clients[name] = cfg and vim.tbl_deep_extend('force', cfg, config) or config
+  Server.Clients[name] = Server.populate(name, vim.deepcopy(Server.Clients[name]))
   Server.setup()
 end
 
