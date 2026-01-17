@@ -9,7 +9,7 @@ return { ---@type LazySpec
       telescope = { prefer_file_browser = true, sort = 'newest' },
       fzf_lua = { enabled = true },
       scope_chdir = 'tab',
-      use_lsp = true,
+      lsp = { enabled = true },
       exclude_dirs = {
         '/usr/*',
         '~/.build/*',
