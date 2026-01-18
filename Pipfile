@@ -10,6 +10,7 @@ pre-commit = "*"
 pynvim = "*"
 vim-eof-comment = "*"
 pip = "*"
+update-version = "*"
 
 [requires]
 python_version = "3.14"
