@@ -167,6 +167,8 @@ end
 ---@return LazyToggles
 function Lazy.get_default_toggles()
   return { ---@type LazyToggles
+    snacks = true,
+    notify = true,
     Comment = true,
     blink_cmp = true,
     blink_pairs = true,
@@ -201,7 +203,6 @@ function Lazy.get_default_toggles()
     music_player = true,
     neo_tree = true,
     noice = true,
-    notify = true,
     outline = true,
     paredit = true,
     persistence = true,
@@ -211,7 +212,6 @@ function Lazy.get_default_toggles()
     scope = true,
     screenkey = true,
     smoothcursor = true,
-    snacks = true,
     startuptime = true,
     todo_comments = true,
     toggleterm = true,
@@ -242,14 +242,15 @@ function Lazy.setup(toggles)
   toggles = toggles or Lazy.get_default_toggles()
   toggles = not vim.tbl_isempty(toggles) and toggles or Lazy.get_default_toggles()
 
+  Lazy.bootstrap()
+
   local dict = Lazy.get_default_specs()
   local specs = { { import = 'plugin._spec' } } ---@type (string|LazyPluginSpec|LazySpecImport)[]
-  local dict_keys = vim.tbl_keys(dict) ---@type string[]
   local err = ''
   for name, val in pairs(toggles) do
     if type(val) == 'boolean' then
       ---@cast val boolean
-      if val and vim.list_contains(dict_keys, name) then
+      if val then
         table.insert(specs, dict[name])
       else
         err = ('%s`%s` is not a valid toggle! Try adding the spec manually.\n'):format(err, name)
@@ -267,8 +268,6 @@ function Lazy.setup(toggles)
       vim.notify(err, WARN)
     end)
   end
-
-  Lazy.bootstrap()
 
   require('lazy').setup({
     spec = specs,
