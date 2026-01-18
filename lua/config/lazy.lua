@@ -1,21 +1,125 @@
-local MODSTR = 'config.lazy'
-local uv = vim.uv or vim.loop
-local key_variant = require('config.util').key_variant
+---@module 'config._meta'
 
+local MODSTR = 'config.lazy'
+local WARN = vim.log.levels.WARN
 local LAZY_DATA = vim.fn.stdpath('data') .. '/lazy'
 local LAZY_STATE = vim.fn.stdpath('state') .. '/lazy'
 local LAZYPATH = LAZY_DATA .. '/lazy.nvim'
 local README_PATH = LAZY_STATE .. '/readme'
+local key_variant = require('config.util').key_variant
 
 ---@class Config.Lazy
 local Lazy = {}
+
+---@return LazyPlugins spec
+function Lazy.get_default_specs()
+  return { ---@type LazyPlugins
+    Comment = { import = 'plugin.Comment' },
+    _spec = { import = 'plugin._spec' },
+    autopairs = { import = 'plugin.autopairs' },
+    blink_cmp = { import = 'plugin.blink.cmp' },
+    blink_indent = { import = 'plugin.blink.indent' },
+    blink_pairs = { import = 'plugin.blink.pairs' },
+    bmessages = { import = 'plugin.bmessages' },
+    buffer_sticks = { import = 'plugin.buffer-sticks' },
+    bufferline = { import = 'plugin.bufferline' },
+    cheaty = { import = 'plugin.cheaty' },
+    checkmate = { import = 'plugin.checkmate' },
+    co_author = { import = 'plugin.co-author' },
+    code_runner = { import = 'plugin.code-runner' },
+    codeowners = { import = 'plugin.codeowners' },
+    diffview = { import = 'plugin.diffview' },
+    dooku = { import = 'plugin.dooku' },
+    doxygen_init = { import = 'plugin.doxygen.init' },
+    doxygen_previewer = { import = 'plugin.doxygen.previewer' },
+    echo = { import = 'plugin.echo' },
+    fzf_lua = { import = 'plugin.fzf-lua' },
+    fzf_nerdfont = { import = 'plugin.fzf-nerdfont' },
+    gh_co = { import = 'plugin.gh-co' },
+    git_gitsigns = { import = 'plugin.git.gitsigns' },
+    git_lazygit = { import = 'plugin.git.lazygit' },
+    goto_preview = { import = 'plugin.goto-preview' },
+    helpview = { import = 'plugin.helpview' },
+    hoversplit = { import = 'plugin.hoversplit' },
+    ibl = { import = 'plugin.ibl' },
+    lastplace = { import = 'plugin.lastplace' },
+    lazydev = { import = 'plugin.lazydev' },
+    local_session = { import = 'plugin.local-session' },
+    log_highlight = { import = 'plugin.log-highlight' },
+    lsp_better_diagnostic = { import = 'plugin.lsp.better-diagnostic' },
+    lsp_clangd = { import = 'plugin.lsp.clangd' },
+    lsp_toggle = { import = 'plugin.lsp-toggle' },
+    lspkind = { import = 'plugin.lspkind' },
+    lualine = { import = 'plugin.lualine' },
+    luaref = { import = 'plugin.luaref' },
+    markdoc = { import = 'plugin.markdoc' },
+    markdown_outline = { import = 'plugin.markdown.outline' },
+    markdown_render = { import = 'plugin.markdown.render' },
+    mason = { import = 'plugin.mason' },
+    mini_animate = { import = 'plugin.mini.animate' },
+    mini_basics = { import = 'plugin.mini.basics' },
+    mini_bufremove = { import = 'plugin.mini.bufremove' },
+    mini_cmdline = { import = 'plugin.mini.cmdline' },
+    mini_diff = { import = 'plugin.mini.diff' },
+    mini_extra = { import = 'plugin.mini.extra' },
+    mini_icons = { import = 'plugin.mini.icons' },
+    mini_mini = { import = 'plugin.mini.mini' },
+    mini_move = { import = 'plugin.mini.move' },
+    mini_paicn = { import = 'plugin.mini.pairs' },
+    mini_splitjoin = { import = 'plugin.mini.splitjoin' },
+    mini_starter = { import = 'plugin.mini.starter' },
+    mini_test = { import = 'plugin.mini.test' },
+    mini_trailspace = { import = 'plugin.mini.trailspace' },
+    music_player = { import = 'plugin.music-player' },
+    neo_tree = { import = 'plugin.neo-tree' },
+    noice = { import = 'plugin.noice' },
+    notify = { import = 'plugin.notify' },
+    nvim_test = { import = 'plugin.nvim-test' },
+    orgmode = { import = 'plugin.orgmode' },
+    outline = { import = 'plugin.outline' },
+    paredit = { import = 'plugin.paredit' },
+    persistence = { import = 'plugin.persistence' },
+    picker = { import = 'plugin.picker' },
+    pomo = { import = 'plugin.pomo' },
+    possession = { import = 'plugin.possession' },
+    project = { import = 'plugin.project' },
+    python_import = { import = 'plugin.python.import' },
+    rainbow_delimiters = { import = 'plugin.rainbow-delimiters' },
+    refactoring = { import = 'plugin.refactoring' },
+    referencer = { import = 'plugin.referencer' },
+    replua = { import = 'plugin.replua' },
+    scope = { import = 'plugin.scope' },
+    screenkey = { import = 'plugin.screenkey' },
+    scrollbar = { import = 'plugin.scrollbar' },
+    smart_backspace = { import = 'plugin.smart-backspace' },
+    smoothcursor = { import = 'plugin.smoothcursor' },
+    snacks = { import = 'plugin.snacks' },
+    startuptime = { import = 'plugin.startuptime' },
+    todo_comments = { import = 'plugin.todo-comments' },
+    toggleterm = { import = 'plugin.toggleterm' },
+    toml = { import = 'plugin.toml' },
+    triforce = { import = 'plugin.triforce' },
+    ts_autotag = { import = 'plugin.ts.autotag' },
+    ts_commentstring = { import = 'plugin.ts.commentstring' },
+    ts_context = { import = 'plugin.ts.context' },
+    ts_init = { import = 'plugin.ts.init' },
+    ts_vimdoc = { import = 'plugin.ts.vimdoc' },
+    twilight = { import = 'plugin.twilight' },
+    undotree = { import = 'plugin.undotree' },
+    web_devicons = { import = 'plugin.web-devicons' },
+    which_colorscheme = { import = 'plugin.which-colorscheme' },
+    which_key = { import = 'plugin.which-key' },
+    yanky = { import = 'plugin.yanky' },
+    zen_mode = { import = 'plugin.zen-mode' },
+  }
+end
 
 function Lazy.bootstrap()
   if vim.g.lazy_bootstrapped == 1 then
     return
   end
 
-  if not uv.fs_stat(LAZYPATH) then
+  if not (vim.uv or vim.loop).fs_stat(LAZYPATH) then
     local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
     local out = vim.fn.system({ 'git', 'clone', '--filter=blob:none', lazyrepo, LAZYPATH })
     if vim.v.shell_error ~= 0 then
@@ -60,26 +164,114 @@ function Lazy.setup_keys()
   })
 end
 
+---@return LazyToggles
+function Lazy.get_default_toggles()
+  return { ---@type LazyToggles
+    Comment = true,
+    blink_cmp = true,
+    blink_pairs = true,
+    bmessages = true,
+    bufferline = true,
+    codeowners = true,
+    fzf_lua = true,
+    git_gitsigns = true,
+    goto_preview = true,
+    helpview = true,
+    hoversplit = true,
+    ibl = true,
+    lastplace = true,
+    lazydev = true,
+    lsp_clangd = true,
+    lspkind = true,
+    lualine = true,
+    luaref = true,
+    markdown_render = true,
+    mason = true,
+    mini_basics = true,
+    mini_bufremove = true,
+    mini_cmdline = true,
+    mini_diff = true,
+    mini_extra = true,
+    mini_icons = true,
+    mini_mini = true,
+    mini_move = true,
+    mini_splitjoin = true,
+    mini_starter = true,
+    mini_trailspace = true,
+    music_player = true,
+    neo_tree = true,
+    noice = true,
+    notify = true,
+    outline = true,
+    paredit = true,
+    persistence = true,
+    project = true,
+    python_import = true,
+    rainbow_delimiters = true,
+    scope = true,
+    screenkey = true,
+    smoothcursor = true,
+    snacks = true,
+    startuptime = true,
+    todo_comments = true,
+    toggleterm = true,
+    toml = true,
+    triforce = true,
+    ts_autotag = true,
+    ts_commentstring = true,
+    ts_context = true,
+    ts_init = true,
+    ts_vimdoc = true,
+    web_devicons = true,
+    which_colorscheme = true,
+    which_key = true,
+    yanky = true,
+  }
+end
+
 ---Sets up `lazy.nvim`. Only runs once!
 --- ---
----@param specs LazySpec[]
-function Lazy.setup(specs)
+---@param toggles (string|LazyPluginSpec|LazySpecImport)[]|LazyToggles|table<string, boolean|LazyPluginSpec|string|LazySpecImport>|nil
+---@overload fun()
+function Lazy.setup(toggles)
   if require('user_api.check.exists').vim_has('nvim-0.11') then
-    vim.validate('specs', specs, { 'table' }, false)
+    vim.validate('toggles', toggles, { 'table', 'nil' }, true)
   else
-    vim.validate({ specs = { specs, { 'table' } } })
+    vim.validate({ toggles = { toggles, { 'table', 'nil' }, true } })
+  end
+  toggles = toggles or Lazy.get_default_toggles()
+  toggles = not vim.tbl_isempty(toggles) and toggles or Lazy.get_default_toggles()
+
+  local dict = Lazy.get_default_specs()
+  local specs = { { import = 'plugin._spec' } } ---@type (string|LazyPluginSpec|LazySpecImport)[]
+  local dict_keys = vim.tbl_keys(dict) ---@type string[]
+  local err = ''
+  for name, val in pairs(toggles) do
+    if type(val) == 'boolean' then
+      ---@cast val boolean
+      if val and vim.list_contains(dict_keys, name) then
+        table.insert(specs, dict[name])
+      else
+        err = ('%s`%s` is not a valid toggle! Try adding the spec manually.\n'):format(err, name)
+      end
+    elseif vim.list_contains({ 'string', 'table' }, type(val)) then
+      ---@cast val LazyPluginSpec|LazySpecImport|string
+      table.insert(specs, val)
+    else
+      err = ('%sInvalid toggle/spec: `%s`'):format(err, vim.inspect(val))
+    end
+  end
+
+  if err ~= '' then
+    vim.schedule(function()
+      vim.notify(err, WARN)
+    end)
   end
 
   Lazy.bootstrap()
 
   require('lazy').setup({
-    spec = specs or {
-      { import = 'plugin.startuptime' },
-      { import = 'plugin._spec.colorschemes' },
-      { import = 'plugin._spec' },
-      { import = 'plugin.notify' },
-      { import = 'plugin.mini.icons' },
-    },
+    spec = specs,
     root = LAZY_DATA,
     defaults = { lazy = false, version = false },
     install = { colorscheme = { 'habamax' }, missing = true },
