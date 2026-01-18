@@ -249,40 +249,40 @@ function Opts.setup_maps()
   })
 end
 
-function Opts.setup()
+---@param override User.Opts.Spec|nil A table with custom options
+---@param verbose boolean|nil Flag to make the function return a string with invalid values, if any
+---@overload fun()
+---@overload fun(override: User.Opts.Spec)
+---@overload fun(override: User.Opts.Spec|nil, verbose: boolean)
+function Opts.setup(override, verbose)
   Opts.setup_cmds()
   Opts.setup_maps()
+
+  if vim.fn.has('nvim-0.11') == 1 then
+    vim.validate('override', override, { 'table', 'nil' }, true, 'User.Opts.Spec')
+    vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
+  else
+    vim.validate({
+      override = { override, { 'table', 'nil' }, true },
+      verbose = { verbose, { 'boolean', 'nil' }, true },
+    })
+  end
+  verbose = verbose ~= nil and verbose or false
+
+  local defaults = Opts.get_defaults()
+  if vim.tbl_isempty(Opts.options) then
+    Opts.options = Opts.long_opts_convert(defaults, verbose)
+  end
+
+  local parsed_opts = Opts.long_opts_convert(override or {}, verbose)
+  Opts.options = vim.tbl_deep_extend('keep', parsed_opts, Opts.options) ---@type vim.bo|vim.wo
+  Opts.optset(Opts.options, verbose)
 end
 
----@type User.Opts|fun()|fun(override: User.Opts.Spec|nil)|fun(override: User.Opts.Spec, verbose: boolean|nil)
-local M = setmetatable(Opts, {
+local M = setmetatable(Opts, { ---@type User.Opts
   __index = Opts,
   __newindex = function()
     vim.notify(('(%s): This module is read only!'):format(MODSTR), ERROR)
-  end,
-  ---@param self User.Opts
-  ---@param override? User.Opts.Spec A table with custom options
-  ---@param verbose? boolean Flag to make the function return a string with invalid values, if any
-  __call = function(self, override, verbose)
-    if vim.fn.has('nvim-0.11') == 1 then
-      vim.validate('override', override, { 'table', 'nil' }, true, 'User.Opts.Spec')
-      vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
-    else
-      vim.validate({
-        override = { override, { 'table', 'nil' }, true },
-        verbose = { verbose, { 'boolean', 'nil' }, true },
-      })
-    end
-    verbose = verbose ~= nil and verbose or false
-
-    local defaults = Opts.get_defaults()
-    if vim.tbl_isempty(self.options) then
-      self.options = Opts.long_opts_convert(defaults, verbose)
-    end
-
-    local parsed_opts = Opts.long_opts_convert(override or {}, verbose)
-    Opts.options = vim.tbl_deep_extend('keep', parsed_opts, self.options) ---@type vim.bo|vim.wo
-    Opts.optset(Opts.options, verbose)
   end,
 })
 

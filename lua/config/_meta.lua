@@ -101,7 +101,7 @@
 ---@field yanky? LazySpecImport
 ---@field zen_mode? LazySpecImport
 
----@class LazyToggles
+---@class LazyToggle
 ---@field Comment? boolean
 ---@field autopairs? boolean
 ---@field blink_cmp? boolean
@@ -198,5 +198,7 @@
 ---@field which_key? boolean
 ---@field yanky? boolean
 ---@field zen_mode? boolean
+
+---@alias LazyToggles LazyToggle|table<string, boolean>
 
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

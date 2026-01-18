@@ -1,4 +1,6 @@
 local INFO = vim.log.levels.INFO
+local Opts = require('user_api.opts')
+local Keymaps = require('user_api.config.keymaps')
 
 ---[SOURCE](https://stackoverflow.com/questions/7183998/in-lua-what-is-the-right-way-to-handle-varargs-which-contains-nil).
 ---@param ... any
@@ -20,13 +22,16 @@ end
 
 vim.g.loaded_perl_provider = 0
 
-require('user_api').opts({
+Keymaps.set_leader('<Space>')
+
+Opts.setup({
   autoread = true,
   background = 'dark',
   backspace = 'indent,eol,start',
   backup = false,
+  -- clipboard = 'unnamedplus', -- Uncomment to use system clipboard
   cmdwinheight = require('user_api.distro.termux').validate() and 15 or 25,
-  colorcolumn = '100',
+  colorcolumn = '101',
   confirm = true,
   copyindent = true,
   equalalways = true,
@@ -72,32 +77,31 @@ require('user_api').opts({
   wrap = require('user_api.distro.termux').validate(),
 })
 
-require('user_api.opts').set_cursor_blink()
-
----Set `<Leader>` key.
-require('user_api.config.keymaps').set_leader('<Space>')
+Opts.set_cursor_blink()
 
 ---Disable `netrw` regardless of whether `nvim_tree/neo_tree` exist or not.
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
----Uncomment to use system clipboard
--- vim.o.clipboard = 'unnamedplus'
-
 local L = require('config.lazy')
-L.setup()
+L.setup({
+  autopairs = true,
+  blink_indent = true,
+  blink_pairs = false,
+  bmessages = false,
+  cheaty = false,
+  ibl = false,
+  luaref = false,
+  mason = false,
+  rainbow_delimiters = false,
+})
 
 local desc = require('user_api.maps').desc
-require('user_api.config').keymaps({
+Keymaps({
   n = {
     ['<leader>vM'] = { vim.cmd.messages, desc('Run `:messages`') },
     ['<leader>vN'] = { vim.cmd.Notifications, desc('Run `:Notifications`') },
-    ['<C-/>'] = {
-      function()
-        vim.cmd.norm('gcc')
-      end,
-      desc('Toggle Comment'),
-    },
+    ['<C-/>'] = { '<CMD>norm gcc<CR><Up>', desc('Toggle Comment') },
   },
   v = { ['<C-/>'] = { [[:'<,'>normal gcc<CR>]], desc('Toggle Comment') } },
 }, nil, true)

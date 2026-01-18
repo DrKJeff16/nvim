@@ -231,7 +231,7 @@ end
 
 ---Sets up `lazy.nvim`. Only runs once!
 --- ---
----@param toggles (string|LazyPluginSpec|LazySpecImport)[]|LazyToggles|table<string, boolean|LazyPluginSpec|string|LazySpecImport>|nil
+---@param toggles LazySpec[]|LazyToggles|nil
 ---@overload fun()
 function Lazy.setup(toggles)
   if require('user_api.check.exists').vim_has('nvim-0.11') then
@@ -239,19 +239,21 @@ function Lazy.setup(toggles)
   else
     vim.validate({ toggles = { toggles, { 'table', 'nil' }, true } })
   end
-  toggles = toggles or Lazy.get_default_toggles()
-  toggles = not vim.tbl_isempty(toggles) and toggles or Lazy.get_default_toggles()
+  toggles = vim.tbl_deep_extend('keep', toggles or {}, Lazy.get_default_toggles())
 
   Lazy.bootstrap()
 
   local dict = Lazy.get_default_specs()
+  local dict_keys = vim.tbl_keys(dict) ---@type string[]
   local specs = { { import = 'plugin._spec' } } ---@type (string|LazyPluginSpec|LazySpecImport)[]
   local err = ''
   for name, val in pairs(toggles) do
     if type(val) == 'boolean' then
       ---@cast val boolean
-      if val then
-        table.insert(specs, dict[name])
+      if vim.tbl_contains(dict_keys, name) then
+        if val then
+          table.insert(specs, dict[name])
+        end
       else
         err = ('%s`%s` is not a valid toggle! Try adding the spec manually.\n'):format(err, name)
       end
