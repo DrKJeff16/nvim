@@ -4,15 +4,6 @@ return { ---@type LazySpec
   lazy = false,
   version = false,
   priority = 1000,
-  keys = {
-    {
-      '<leader><leader>',
-      function()
-        require('snacks').picker.commands()
-      end,
-      desc = 'Snacks Picker',
-    },
-  },
   config = function()
     require('snacks').setup({
       picker = {
@@ -252,6 +243,16 @@ return { ---@type LazySpec
       input = { enabled = true },
       layout = { enabled = true },
       notify = { enabled = true },
+    })
+
+    local desc = require('user_api.maps').desc
+    require('user_api.config').keymaps({
+      n = {
+        ['<leader><leader>'] = {
+          require('snacks').picker.commands,
+          desc('Snacks Picker'),
+        },
+      },
     })
   end,
 }
