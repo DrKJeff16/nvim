@@ -1,8 +1,11 @@
+---@alias ClientCaps lsp.ClientCapabilities|table<string, boolean|string|number|unknown[]|vim.NIL>
+
 local mk_caps = vim.lsp.protocol.make_client_capabilities
 
----@param original lsp.ClientCapabilities|table<string, boolean|string|number|unknown[]|vim.NIL>
----@param inserts? lsp.ClientCapabilities|table<string, boolean|string|number|unknown[]|vim.NIL>
----@return lsp.ClientCapabilities|table<string, boolean|string|number|unknown[]|vim.NIL>
+---@param original ClientCaps
+---@param inserts ClientCaps
+---@return ClientCaps client_caps
+---@overload fun(original: ClientCaps): client_caps: ClientCaps
 local function insert_client(original, inserts)
   return vim.tbl_deep_extend('keep', inserts or {}, original)
 end
@@ -13,7 +16,7 @@ local Server = {}
 Server.client_names = {} ---@type string[]
 Server.Clients = require('plugin.lsp.servers')
 
----@param T lsp.ClientCapabilities|nil
+---@param T lsp.ClientCapabilities
 ---@return lsp.ClientCapabilities caps
 ---@overload fun(): caps: lsp.ClientCapabilities
 function Server.make_capabilities(T)
@@ -30,35 +33,34 @@ end
 ---@return vim.lsp.Config config
 function Server.populate(name, config)
   if require('user_api.check.value').type_not_empty('table', config.capabilities) then
-    local old_caps = vim.deepcopy(config.capabilities)
-    local caps = Server.make_capabilities(old_caps)
-    config.capabilities = insert_client(vim.deepcopy(config.capabilities), caps)
+    config.capabilities =
+      insert_client(config.capabilities, Server.make_capabilities(config.capabilities or {}))
   else
     config.capabilities = Server.make_capabilities()
   end
 
   if vim.list_contains({ 'html', 'jsonls' }, name) then
-    config.capabilities = insert_client(vim.deepcopy(config.capabilities), {
+    config.capabilities = insert_client(config.capabilities, {
       textDocument = { completion = { completionItem = { snippetSupport = true } } },
     })
     return config
   end
 
   if name == 'rust_analyzer' then
-    config.capabilities = insert_client(vim.deepcopy(config.capabilities), {
+    config.capabilities = insert_client(config.capabilities, {
       experimental = { serverStatusNotification = true },
     })
     return config
   end
   if name == 'clangd' then
-    config.capabilities = insert_client(vim.deepcopy(config.capabilities), {
+    config.capabilities = insert_client(config.capabilities, {
       offsetEncoding = { 'utf-8', 'utf-16' },
       textDocument = { completion = { editsNearCursor = true } },
     })
     return config
   end
   if name == 'gh_actions_ls' then
-    config.capabilities = insert_client(vim.deepcopy(config.capabilities), {
+    config.capabilities = insert_client(config.capabilities, {
       workspace = { didChangeWorkspaceFolders = { dynamicRegistration = true } },
     })
     return config
@@ -72,26 +74,15 @@ function Server.populate(name, config)
     return config
   end
   if exists('schemastore') then
+    local SS = require('schemastore')
     if name == 'jsonls' then
-      if not config.settings then
-        config.settings = {}
-      end
-      config.settings = insert_client(vim.deepcopy(config.settings), {
-        json = {
-          validate = { enable = true },
-          schemas = require('schemastore').json.schemas(),
-        },
+      config.settings = insert_client(config.settings or {}, {
+        json = { validate = { enable = true }, schemas = SS.json.schemas() },
       })
     end
     if name == 'yamlls' then
-      if not config.settings then
-        config.settings = {}
-      end
-      config.settings = insert_client(vim.deepcopy(config.settings), {
-        yaml = {
-          schemaStore = { enable = false, url = '' },
-          schemas = require('schemastore').yaml.schemas(),
-        },
+      config.settings = insert_client(config.settings or {}, {
+        yaml = { schemaStore = { enable = false, url = '' }, schemas = SS.yaml.schemas() },
       })
     end
   end
@@ -159,10 +150,22 @@ end
 
 ---@param config vim.lsp.Config
 ---@param name string
----@param exe string|nil
+---@param exe string
 ---@overload fun(config: vim.lsp.Config, name: string)
 function Server.add(config, name, exe)
-  exe = require('user_api.check.value').type_not_empty('string', exe) and exe or name
+  if vim.fn.has('nvim-0.11') == 1 then
+    vim.validate('config', config, { 'table' }, false)
+    vim.validate('name', name, { 'string' }, false)
+    vim.validate('exe', exe, { 'string', 'nil' }, true)
+  else
+    vim.validate({
+      config = { config, { 'table' } },
+      name = { name, { 'string' } },
+      exe = { exe, { 'string', 'nil' }, true },
+    })
+  end
+  exe = (exe and exe ~= '') and exe or name
+
   if not require('user_api.check.exists').executable(exe) then
     return
   end

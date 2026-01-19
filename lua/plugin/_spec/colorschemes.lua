@@ -63,6 +63,7 @@ return { ---@type LazySpec[]
   },
   {
     url = 'https://codeberg.org/jthvai/lavender.nvim',
+    enabled = false,
     lazy = false,
     priority = 1000,
     version = false,

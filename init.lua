@@ -2,8 +2,6 @@ local INFO = vim.log.levels.INFO
 local Opts = require('user_api.opts')
 local Keymaps = require('user_api.config.keymaps')
 
----[SOURCE](https://stackoverflow.com/questions/7183998/in-lua-what-is-the-right-way-to-handle-varargs-which-contains-nil).
----@param ... any
 function _G.notify_inspect(...)
   local nargs = select('#', ...) ---@type integer
   local txt = ''
@@ -91,7 +89,6 @@ L.setup({
   bmessages = false,
   cheaty = false,
   ibl = false,
-  luaref = false,
   mason = false,
   rainbow_delimiters = false,
 })
@@ -103,7 +100,7 @@ Keymaps({
     ['<leader>vN'] = { vim.cmd.Notifications, desc('Run `:Notifications`') },
     ['<C-/>'] = { '<CMD>norm gcc<CR><Up>', desc('Toggle Comment') },
   },
-  v = { ['<C-/>'] = { [[:'<,'>normal gcc<CR>]], desc('Toggle Comment') } },
+  v = { ['<C-/>'] = { ":'<,'>normal gcc<CR><Up>", desc('Toggle Comment') } },
 }, nil, true)
 
 -- Initialize the User API

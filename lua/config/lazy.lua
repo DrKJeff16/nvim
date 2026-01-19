@@ -231,7 +231,7 @@ end
 
 ---Sets up `lazy.nvim`. Only runs once!
 --- ---
----@param toggles LazySpec[]|LazyToggles|nil
+---@param toggles table<integer, LazySpec>|LazyToggles
 ---@overload fun()
 function Lazy.setup(toggles)
   if require('user_api.check.exists').vim_has('nvim-0.11') then
