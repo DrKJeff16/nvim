@@ -1,6 +1,11 @@
 ---@alias ClientCaps lsp.ClientCapabilities|table<string, boolean|string|number|unknown[]|vim.NIL>
 
+local ERROR = vim.diagnostic.severity.ERROR
+local WARN = vim.diagnostic.severity.WARN
+local INFO = vim.diagnostic.severity.INFO
+local HINT = vim.diagnostic.severity.HINT
 local mk_caps = vim.lsp.protocol.make_client_capabilities
+local uv = vim.uv or vim.loop
 
 ---@param original ClientCaps
 ---@param inserts ClientCaps
@@ -16,13 +21,13 @@ local Server = {}
 Server.client_names = {} ---@type string[]
 Server.Clients = require('plugin.lsp.servers')
 
----@param T lsp.ClientCapabilities
+---@param old_caps lsp.ClientCapabilities
 ---@return lsp.ClientCapabilities caps
 ---@overload fun(): caps: lsp.ClientCapabilities
-function Server.make_capabilities(T)
+function Server.make_capabilities(old_caps)
   return vim.tbl_deep_extend(
     'keep',
-    T or {},
+    old_caps or {},
     require('blink.cmp').get_lsp_capabilities({}, true),
     mk_caps()
   )
@@ -96,14 +101,7 @@ function Server.setup()
     capabilities = Server.make_capabilities(),
   })
   vim.diagnostic.config({
-    signs = {
-      text = {
-        [vim.diagnostic.severity.ERROR] = '',
-        [vim.diagnostic.severity.WARN] = '',
-        [vim.diagnostic.severity.INFO] = '',
-        [vim.diagnostic.severity.HINT] = '󰌵',
-      },
-    },
+    signs = { text = { [ERROR] = '', [WARN] = '', [INFO] = '', [HINT] = '󰌵' } },
     float = true,
     underline = true,
     virtual_lines = false,
@@ -112,7 +110,6 @@ function Server.setup()
   })
 
   vim.lsp.log.set_level(vim.log.levels.ERROR)
-
   for name, client in pairs(Server.Clients) do
     if client then
       vim.lsp.config(name, Server.populate(name, client))
@@ -120,6 +117,23 @@ function Server.setup()
         table.insert(Server.client_names, name)
       end
     end
+  end
+
+  Server.timer = uv.new_timer()
+  if Server.timer then
+    Server.timer:start(
+      10000,
+      900000,
+      vim.schedule_wrap(function()
+        local fd = uv.fs_open(vim.lsp.log.get_filename(), 'w', tonumber('644', 8))
+        if not fd then
+          return
+        end
+
+        uv.fs_ftruncate(fd, 0)
+        uv.fs_close(fd)
+      end)
+    )
   end
 
   vim.lsp.enable(Server.client_names)
