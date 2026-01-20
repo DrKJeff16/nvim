@@ -1,3 +1,11 @@
+---@class User.Keymaps.Delete
+---@field n? string[]
+---@field i? string[]
+---@field v? string[]
+---@field t? string[]
+---@field o? string[]
+---@field x? string[]
+
 local VIMRC = vim.fn.stdpath('config') .. '/init.lua'
 local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
@@ -320,12 +328,13 @@ function Keymaps.set_leader(leader, local_leader, force)
   vim.g.leader_set = true
 end
 
----@param K table<('n'|'i'|'v'|'t'|'o'|'x'), string[]>|string[]
----@param bufnr? integer
----@return table<('n'|'i'|'v'|'t'|'o'|'x'), nil[]>|nil
+---@param K User.Keymaps.Delete
+---@param bufnr integer
+---@return User.Keymaps.Delete|nil deleted_keys
+---@overload fun(K: User.Keymaps.Delete): deleted_keys: User.Keymaps.Delete|nil
 function Keymaps.delete(K, bufnr)
   if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('K', K, 'table', false)
+    vim.validate('K', K, { 'table' }, false)
     vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
   else
     vim.validate({
@@ -338,17 +347,16 @@ function Keymaps.delete(K, bufnr)
     return
   end
 
-  local ditched_keys = {} ---@type table<('n'|'i'|'v'|'t'|'o'|'x'), nil[]>
+  local ditched_keys = {} ---@type User.Keymaps.Delete
   for k, v in pairs(K) do
-    if require('user_api.check.value').is_int(k) then
-      Keymaps.delete(v, bufnr)
+    for _, key in ipairs(v) do
+      if bufnr then
+        vim.keymap.del(k, key, { buffer = bufnr })
+      else
+        vim.keymap.del(k, key, {})
+      end
     end
-    if bufnr then
-      vim.keymap.del(k, v, { buffer = bufnr })
-    else
-      vim.keymap.del(k, v, {})
-    end
-    ditched_keys[k][v] = nil
+    ditched_keys[k] = v
   end
   return ditched_keys
 end
