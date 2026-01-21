@@ -1,7 +1,6 @@
 ---@class User.Commands.CmdSpec
 ---@field [1] fun(ctx?: vim.api.keyset.create_user_command.command_args)
 ---@field [2]? vim.api.keyset.user_command
----@field mappings? AllModeMaps
 
 local desc = require('user_api.maps').desc
 
@@ -36,13 +35,6 @@ Commands.commands.Redir = {
     complete = 'command',
     desc = 'Redirect command output to scratch buffer',
   },
-  mappings = {
-    n = {
-      ['<Leader>UC'] = { group = '+Commands' },
-      ['<Leader>UCR'] = { ':Redir ', desc('Prompt to `Redir` command', false) },
-      ['<M-r>'] = { ':Redir ', desc('Prompt `Redir`', false) },
-    },
-  },
 }
 
 Commands.commands.DeleteInactiveBuffers = {
@@ -64,19 +56,14 @@ Commands.commands.DeleteInactiveBuffers = {
 ---@param name string
 ---@param cmd fun(ctx?: vim.api.keyset.create_user_command.command_args)
 ---@param opts? vim.api.keyset.user_command
----@param mappings? AllModeMaps
-function Commands.add_command(name, cmd, opts, mappings)
+function Commands.add_command(name, cmd, opts)
   require('user_api.check.exists').validate({
     name = { name, { 'string' } },
     cmd = { cmd, { 'function' } },
     opts = { opts, { 'table', 'nil' }, true },
-    mappings = { mappings, { 'table', 'nil' }, true },
   })
 
   local cmnd = { cmd, opts or {} } ---@type User.Commands.CmdSpec
-  if mappings then
-    cmnd.mappings = mappings
-  end
   Commands.setup({ [name] = cmnd })
 end
 
@@ -89,11 +76,15 @@ function Commands.setup(cmds)
   for cmd, T in pairs(Commands.commands) do
     local exec, opts = T[1], T[2] or {}
     vim.api.nvim_create_user_command(cmd, exec, opts)
-
-    if T.mappings then
-      require('user_api.config').keymaps(T.mappings)
-    end
   end
+
+  require('user_api.config').keymaps({
+    n = {
+      ['<Leader>UC'] = { group = '+Commands' },
+      ['<Leader>UCR'] = { ':Redir ', desc('Prompt to `Redir` command', false) },
+      ['<M-r>'] = { ':Redir ', desc('Prompt `Redir`', false) },
+    },
+  })
 end
 
 local M = setmetatable(Commands, { ---@type User.Commands
