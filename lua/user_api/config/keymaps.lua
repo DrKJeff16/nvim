@@ -344,7 +344,11 @@ function Keymaps.delete(K, bufnr)
   return ditched_keys
 end
 
----@type User.Config.Keymaps|fun(keys: AllModeMaps)|fun(keys: AllModeMaps, bufnr: integer)|fun(keys: AllModeMaps, bufnr: integer|nil, defaults: boolean)|fun(keys: AllModeMaps, bufnr: integer, defaults: boolean)
+---@type User.Config.Keymaps
+---@overload fun(keys: AllModeMaps)
+---@overload fun(keys: AllModeMaps, bufnr: integer)
+---@overload fun(keys: AllModeMaps, bufnr: integer|nil, defaults: boolean)
+---@overload fun(keys: AllModeMaps, bufnr: integer, defaults: boolean)
 local M = setmetatable({}, {
   __index = Keymaps,
   __newindex = function()

@@ -80,15 +80,6 @@ function Commands.add_command(name, cmd, opts, mappings)
   Commands.setup({ [name] = cmnd })
 end
 
-function Commands.setup_keys()
-  local Keymaps = require('user_api.config').keymaps
-  for _, cmd in pairs(Commands.commands) do
-    if cmd.mappings and not vim.tbl_isempty(cmd.mappings) then
-      Keymaps(cmd.mappings)
-    end
-  end
-end
-
 ---@param cmds table<string, User.Commands.CmdSpec>|nil
 ---@overload fun()
 function Commands.setup(cmds)
@@ -98,9 +89,11 @@ function Commands.setup(cmds)
   for cmd, T in pairs(Commands.commands) do
     local exec, opts = T[1], T[2] or {}
     vim.api.nvim_create_user_command(cmd, exec, opts)
-  end
 
-  Commands.setup_keys()
+    if T.mappings then
+      require('user_api.config').keymaps(T.mappings)
+    end
+  end
 end
 
 local M = setmetatable(Commands, { ---@type User.Commands
