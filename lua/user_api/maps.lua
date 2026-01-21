@@ -86,6 +86,14 @@ function Maps.nop(T, opts, mode, prefix)
 end
 
 function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
+  require('user_api.check.exists').validate({
+    T = { T, { 'table' } },
+    map_func = { map_func, { 'string' } },
+    has_modes = { has_modes, { 'boolean', 'nil' }, true },
+    mode = { mode, { 'string', 'table', 'nil' }, true },
+    bufnr = { bufnr, { 'number', 'nil' }, true },
+  })
+
   local Value = require('user_api.check.value')
   if not Value.type_not_empty('table', T) then
     error("(user_api.maps.map_dict): Keys either aren't table or table is empty", ERROR)
@@ -109,8 +117,7 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
         if map_func == 'keymap' then
           func = Maps.keymap[mode_choice]
           for lhs, v in pairs(t) do
-            v[2] = Value.is_tbl(v[2]) and v[2] or {}
-            func(lhs, v[1], v[2])
+            func(lhs, v[1], v[2] or {})
           end
           keymap_ran = true
         end
