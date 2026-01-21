@@ -19,6 +19,25 @@ function Opts.get_defaults()
   return require('user_api.opts.config')
 end
 
+---@param ArgLead string
+---@param CursorPos integer
+---@return string[] items
+local function toggle_completer(ArgLead, _, CursorPos)
+  local len = ArgLead:len()
+  local CMD_LEN = ('OptsToggle '):len() + 1
+  if len == 0 or CursorPos < CMD_LEN then
+    return Opts.toggleable
+  end
+
+  local valid = {} ---@type string[]
+  for _, o in ipairs(Opts.toggleable) do
+    if o:match(ArgLead) ~= nil and o:find('^' .. ArgLead) then
+      table.insert(valid, o)
+    end
+  end
+  return valid
+end
+
 ---@return string[] valid
 function Opts.gen_toggleable()
   local valid = {} ---@type string[]
@@ -183,6 +202,27 @@ function Opts.toggle(O, verbose)
   end
 end
 
+function Opts.setup_cmds()
+  require('user_api.commands').add_command('OptsToggle', function(ctx)
+    local cmds = {}
+    for _, v in ipairs(ctx.fargs) do
+      if not (in_list(Opts.toggleable, v) or ctx.bang) then
+        vim.notify(('(OptsToggle): Cannot toggle option `%s`, aborting'):format(v), ERROR)
+        return
+      end
+      if in_list(Opts.toggleable, v) and not in_list(cmds, v) then
+        table.insert(cmds, v)
+      end
+    end
+    Opts.toggle(cmds, ctx.bang)
+  end, {
+    nargs = '+',
+    complete = toggle_completer,
+    bang = true,
+    desc = 'Toggle toggleable Vim Options',
+  })
+end
+
 function Opts.setup_maps()
   local desc = require('user_api.maps').desc
   require('user_api.config').keymaps({
@@ -200,8 +240,6 @@ end
 ---@overload fun(override: User.Opts.Spec)
 ---@overload fun(override: User.Opts.Spec|nil, verbose: boolean)
 function Opts.setup(override, verbose)
-  Opts.setup_maps()
-
   require('user_api.check.exists').validate({
     override = { override, { 'table', 'nil' }, true },
     verbose = { verbose, { 'boolean', 'nil' }, true },

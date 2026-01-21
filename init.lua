@@ -106,6 +106,9 @@ Keymaps({
 -- Initialize the User API
 require('user_api').setup()
 
+Opts.setup_cmds()
+Opts.setup_maps()
+
 L.colorschemes('tokyonight')
 -- L.colorschemes('catppuccin')
 -- L.colorschemes('everblush')
