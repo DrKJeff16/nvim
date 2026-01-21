@@ -270,15 +270,10 @@ local in_list = vim.list_contains
 ---@param force_auto? boolean
 ---@return string
 local function theme_select(theme, force_auto)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('theme', theme, 'string', true)
-    vim.validate('force_auto', force_auto, 'boolean', true)
-  else
-    vim.validate({
-      theme = { theme, { 'string', 'nil' } },
-      force_auto = { force_auto, { 'boolean', 'nil' } },
-    })
-  end
+  require('user_api.check.exists').validate({
+    theme = { theme, { 'string', 'nil' } },
+    force_auto = { force_auto, { 'boolean', 'nil' } },
+  })
   force_auto = force_auto ~= nil and force_auto or false
   if in_list({ 'auto', '' }, theme) or force_auto then
     return 'auto'

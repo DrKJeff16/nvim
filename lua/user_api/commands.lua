@@ -66,19 +66,12 @@ Commands.commands.DeleteInactiveBuffers = {
 ---@param opts? vim.api.keyset.user_command
 ---@param mappings? AllModeMaps
 function Commands.add_command(name, cmd, opts, mappings)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('name', name, { 'string' }, false)
-    vim.validate('cmd', cmd, { 'function' }, false)
-    vim.validate('opts', opts, { 'table', 'nil' }, true, 'vim.api.keyset.user_command')
-    vim.validate('mappings', mappings, { 'table', 'nil' }, true, 'AllModeMaps')
-  else
-    vim.validate({
-      name = { name, { 'string' } },
-      cmd = { cmd, { 'function' } },
-      opts = { opts, { 'table', 'nil' }, true },
-      mappings = { mappings, { 'table', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    name = { name, { 'string' } },
+    cmd = { cmd, { 'function' } },
+    opts = { opts, { 'table', 'nil' }, true },
+    mappings = { mappings, { 'table', 'nil' }, true },
+  })
 
   local cmnd = { cmd, opts or {} } ---@type User.Commands.CmdSpec
   if mappings then
@@ -99,11 +92,7 @@ end
 ---@param cmds table<string, User.Commands.CmdSpec>|nil
 ---@overload fun()
 function Commands.setup(cmds)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('cmds', cmds, { 'table', 'nil' }, true, 'User.Commands.Spec')
-  else
-    vim.validate({ cmds = { cmds, { 'table', 'nil' }, true } })
-  end
+  require('user_api.check.exists').validate({ cmds = { cmds, { 'table', 'nil' }, true } })
 
   Commands.commands = vim.tbl_deep_extend('keep', cmds or {}, Commands.commands)
   for cmd, T in pairs(Commands.commands) do

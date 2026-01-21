@@ -164,17 +164,11 @@ String.digits = {
 ---@param triggers? string[]
 ---@return string new_str
 function String.capitalize(str, use_dot, triggers)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('str', str, { 'string' }, false)
-    vim.validate('use_dot', use_dot, { 'boolean', 'nil' }, true)
-    vim.validate('triggers', triggers, { 'table', 'nil' }, true, 'string[]')
-  else
-    vim.validate({
-      str = { str, { 'string' } },
-      use_dot = { use_dot, { 'boolean', 'nil' }, true },
-      triggers = { triggers, { 'table', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    str = { str, { 'string' } },
+    use_dot = { use_dot, { 'boolean', 'nil' }, true },
+    triggers = { triggers, { 'table', 'nil' }, true },
+  })
   if str == '' then
     return str
   end
@@ -213,17 +207,11 @@ end
 ---@param target string
 ---@param new string
 function String.replace(str, target, new)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('str', str, { 'string' }, false)
-    vim.validate('target', target, { 'string' }, false)
-    vim.validate('new', new, { 'string' }, false)
-  else
-    vim.validate({
-      str = { str, { 'string' } },
-      target = { target, { 'string' } },
-      new = { new, { 'string' } },
-    })
-  end
+  require('user_api.check.exists').validate({
+    str = { str, { 'string' } },
+    target = { target, { 'string' } },
+    new = { new, { 'string' } },
+  })
   if in_list({ str:len(), target:len(), new:len() }, 0) or new == target then
     return str
   end

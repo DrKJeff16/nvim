@@ -13,11 +13,7 @@ local M = setmetatable(Distro, { ---@type User.Distro|fun()|fun(verbose?: boolea
     vim.notify('User.Distro is Read-Only!', ERROR)
   end,
   __call = function(_, verbose) ---@param verbose? boolean
-    if vim.fn.has('nvim-0.11') == 1 then
-      vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
-    else
-      vim.validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
-    end
+    require('user_api.check.exists').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
     verbose = verbose ~= nil and verbose or false
 
     local msg = ''

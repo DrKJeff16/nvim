@@ -1,11 +1,7 @@
 ---@param color string|nil
 ---@overload fun()
 return function(color)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('color', color, { 'string', 'nil' }, true)
-  else
-    vim.validate({ color = { color, { 'string', 'nil' }, true } })
-  end
+  require('user_api.check.exists').validate({ color = { color, { 'string', 'nil' }, true } })
   color = color or 'tokyonight'
   color = color:lower()
 

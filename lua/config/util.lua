@@ -16,11 +16,7 @@ local CfgUtil = {
   ---@param cmd? 'ed'|'tabnew'|'split'|'vsplit'
   ---@return function
   key_variant = function(cmd)
-    if vim.fn.has('nvim-0.11') == 1 then
-      vim.validate('cmd', cmd, { 'string', 'nil' }, true, "'ed'|'tabnew'|'split'|'vsplit'")
-    else
-      vim.validate({ cmd = { cmd, { 'string', 'nil' }, true } })
-    end
+    require('user_api.check.exists').validate({ cmd = { cmd, { 'string', 'nil' }, true } })
     cmd = cmd or 'ed'
     cmd = vim.list_contains({ 'ed', 'tabnew', 'split', 'vsplit' }, cmd) and cmd or 'ed'
 
@@ -34,11 +30,7 @@ local CfgUtil = {
   end,
   ---@param force? boolean
   set_tgc = function(force)
-    if vim.fn.has('nvim-0.11') == 1 then
-      vim.validate('force', force, { 'boolean', 'nil' }, true)
-    else
-      vim.validate({ force = { force, { 'boolean', 'nil' }, true } })
-    end
+    require('user_api.check.exists').validate({ force = { force, { 'boolean', 'nil' }, true } })
     force = force ~= nil and force or false
 
     vim.o.termguicolors = not force
@@ -51,15 +43,10 @@ local CfgUtil = {
   ---@param callback? function
   ---@return function
   flag_installed = function(name, callback)
-    if vim.fn.has('nvim-0.11') == 1 then
-      vim.validate('name', name, { 'string' }, false)
-      vim.validate('callback', callback, { 'function', 'nil' }, true)
-    else
-      vim.validate({
-        name = { name, { 'string' } },
-        callback = { callback, { 'function', 'nil' }, true },
-      })
-    end
+    require('user_api.check.exists').validate({
+      name = { name, { 'string' } },
+      callback = { callback, { 'function', 'nil' }, true },
+    })
     if name == '' then
       error(('(%s.flag_installed): Unable to set `vim.g` var'):format(MODSTR), ERROR)
     end
@@ -77,11 +64,7 @@ local CfgUtil = {
   ---@param mod_str string
   ---@return function
   require = function(mod_str)
-    if vim.fn.has('nvim-0.11') == 1 then
-      vim.validate('mod_str', mod_str, 'string', false)
-    else
-      vim.validate({ mod_str = { mod_str, 'string' } })
-    end
+    require('user_api.check.exists').validate({ mod_str = { mod_str, { 'string' } } })
 
     return function()
       if require('user_api.check.exists').module(mod_str) then
@@ -97,15 +80,10 @@ local CfgUtil = {
 ---@param force_tgc? boolean
 ---@return function init
 function CfgUtil.colorscheme_init(fields, force_tgc)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('fields', fields, { 'string', 'table' }, false, 'string|table<string, any>')
-    vim.validate('force_tgc', force_tgc, { 'boolean', 'nil' }, true)
-  else
-    vim.validate({
-      fields = { fields, { 'string', 'table' } },
-      force_tgc = { force_tgc, { 'boolean', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    fields = { fields, { 'string', 'table' } },
+    force_tgc = { force_tgc, { 'boolean', 'nil' }, true },
+  })
   force_tgc = force_tgc ~= nil and force_tgc or false
 
   return function()

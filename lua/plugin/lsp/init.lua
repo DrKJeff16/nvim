@@ -7,6 +7,24 @@ local HINT = vim.diagnostic.severity.HINT
 local mk_caps = vim.lsp.protocol.make_client_capabilities
 local uv = vim.uv or vim.loop
 
+local function timer_cb()
+  local logfile = vim.lsp.log.get_filename()
+  local stat = uv.fs_stat(logfile)
+  if not stat or stat.size < 2097152 then
+    return
+  end
+
+  local fd = uv.fs_open(logfile, 'w', tonumber('644', 8))
+  if not fd then
+    return
+  end
+
+  uv.fs_ftruncate(fd, 0)
+  uv.fs_close(fd)
+
+  vim.notify('LSP Log has been cleared!', vim.log.levels.INFO)
+end
+
 ---@param original ClientCaps
 ---@param inserts ClientCaps
 ---@return ClientCaps client_caps
@@ -20,6 +38,45 @@ local Server = {}
 
 Server.client_names = {} ---@type string[]
 Server.Clients = require('plugin.lsp.servers')
+
+function Server.make_timer()
+  if Server.timer and Server.timer:is_active() then
+    return
+  end
+
+  Server.timer = uv.new_timer()
+  if not Server.timer then
+    return
+  end
+
+  local group = vim.api.nvim_create_augroup('lsp_autoclear', { clear = true })
+  vim.api.nvim_create_autocmd({ 'VimLeavePre' }, {
+    group = group,
+    callback = function()
+      if not Server.timer then
+        return
+      end
+      if not Server.timer:is_active() then
+        return
+      end
+
+      Server.timer:stop()
+    end,
+  })
+  vim.api.nvim_create_autocmd('LspAttach', {
+    group = group,
+    callback = function()
+      if Server.timer and Server.timer:is_active() then
+        return
+      end
+      if not Server.timer then
+        return
+      end
+
+      Server.timer:start(10000, 900000, vim.schedule_wrap(timer_cb))
+    end,
+  })
+end
 
 ---@param old_caps lsp.ClientCapabilities
 ---@return lsp.ClientCapabilities caps
@@ -118,23 +175,9 @@ function Server.setup()
       end
     end
   end
+  table.sort(Server.client_names)
 
-  Server.timer = uv.new_timer()
-  if Server.timer then
-    Server.timer:start(
-      10000,
-      900000,
-      vim.schedule_wrap(function()
-        local fd = uv.fs_open(vim.lsp.log.get_filename(), 'w', tonumber('644', 8))
-        if not fd then
-          return
-        end
-
-        uv.fs_ftruncate(fd, 0)
-        uv.fs_close(fd)
-      end)
-    )
-  end
+  Server.make_timer()
 
   vim.lsp.enable(Server.client_names)
 
@@ -167,17 +210,11 @@ end
 ---@param exe string
 ---@overload fun(config: vim.lsp.Config, name: string)
 function Server.add(config, name, exe)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('config', config, { 'table' }, false)
-    vim.validate('name', name, { 'string' }, false)
-    vim.validate('exe', exe, { 'string', 'nil' }, true)
-  else
-    vim.validate({
-      config = { config, { 'table' } },
-      name = { name, { 'string' } },
-      exe = { exe, { 'string', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    config = { config, { 'table' } },
+    name = { name, { 'string' } },
+    exe = { exe, { 'string', 'nil' }, true },
+  })
   exe = (exe and exe ~= '') and exe or name
 
   if not require('user_api.check.exists').executable(exe) then

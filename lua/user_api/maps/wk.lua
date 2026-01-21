@@ -127,17 +127,11 @@ end
 ---@param opts? User.Maps.Opts|vim.keymap.set.Opts|RegPfx
 ---@return RegKey|RegPfx
 function WK.convert(lhs, rhs, opts)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('lhs', lhs, { 'string' }, false)
-    vim.validate('rhs', rhs, { 'string', 'function' }, false)
-    vim.validate('opts', opts, { 'table', 'nil' }, true)
-  else
-    vim.validate({
-      lhs = { lhs, { 'string' } },
-      rhs = { rhs, { 'string', 'function' } },
-      opts = { opts, { 'table', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    lhs = { lhs, { 'string' } },
+    rhs = { rhs, { 'string', 'function' } },
+    opts = { opts, { 'table', 'nil' }, true },
+  })
   if not WK.available() then
     error('(user.maps.wk.convert): `which_key` not available', WARN)
   end
@@ -164,11 +158,7 @@ end
 ---@param T AllMaps
 ---@return AllMaps res
 function WK.convert_dict(T)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('T', T, { 'table' }, false, 'AllMaps')
-  else
-    vim.validate({ T = { T, { 'table' } } })
-  end
+  require('user_api.check.exists').validate({ T = { T, { 'table' } } })
 
   local Value = require('user_api.check.value')
   local res = {} ---@type RegKeys
@@ -184,15 +174,10 @@ end
 ---@param opts? RegPfx|User.Maps.Opts
 ---@return false|nil
 function WK.register(T, opts)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('T', T, { 'table' }, false)
-    vim.validate('opts', opts, { 'table', 'nil' }, true)
-  else
-    vim.validate({
-      T = { T, { 'table' } },
-      opts = { opts, { 'table', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    T = { T, { 'table' } },
+    opts = { opts, { 'table', 'nil' }, true },
+  })
 
   if not WK.available() then
     vim.notify('(user.maps.wk.register): `which_key` unavailable', ERROR)

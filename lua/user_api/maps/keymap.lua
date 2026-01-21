@@ -64,17 +64,11 @@ local function variant(mode)
   ---@param rhs string|function
   ---@param opts? vim.keymap.set.Opts
   return function(lhs, rhs, opts)
-    if vim.fn.has('nvim-0.11') == 1 then
-      vim.validate('lhs', lhs, { 'string' }, false)
-      vim.validate('rhs', rhs, { 'string', 'function' }, false)
-      vim.validate('opts', opts, { 'table', 'nil' }, true, 'vim.keymap.set.Opts')
-    else
-      vim.validate({
-        lhs = { lhs, { 'string' } },
-        rhs = { rhs, { 'string', 'function' } },
-        opts = { opts, { 'table', 'nil' }, true },
-      })
-    end
+    require('user_api.check.exists').validate({
+      lhs = { lhs, { 'string' } },
+      rhs = { rhs, { 'string', 'function' } },
+      opts = { opts, { 'table', 'nil' }, true },
+    })
 
     vim.keymap.set(mode, lhs, rhs, opts or {})
   end

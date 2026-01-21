@@ -68,15 +68,10 @@ Opts.toggleable = Opts.gen_toggleable()
 ---@return User.Opts.Spec parsed_opts
 ---@overload fun(T: User.Opts.Spec): parsed_opts: User.Opts.Spec
 function Opts.long_opts_convert(T, verbose)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('T', T, { 'table' }, false)
-    vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
-  else
-    vim.validate({
-      T = { T, { 'table' } },
-      verbose = { verbose, { 'boolean', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    T = { T, { 'table' } },
+    verbose = { verbose, { 'boolean', 'nil' }, true },
+  })
   verbose = verbose ~= nil and verbose or false
 
   local Value = require('user_api.check.value')
@@ -123,15 +118,10 @@ end
 ---@param verbose boolean|nil Enable verbose printing if `true`
 ---@overload fun(O: User.Opts.Spec)
 function Opts.optset(O, verbose)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('O', O, { 'table' }, false, 'User.Opts.Spec')
-    vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
-  else
-    vim.validate({
-      O = { O, { 'table' } },
-      verbose = { verbose, { 'boolean', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    O = { O, { 'table' } },
+    verbose = { verbose, { 'boolean', 'nil' }, true },
+  })
   verbose = verbose ~= nil and verbose or false
 
   if not vim.api.nvim_get_option_value('modifiable', { buf = curr_buf() }) then
@@ -182,15 +172,10 @@ end
 ---@param verbose boolean|nil
 ---@overload fun(O: string[]|string)
 function Opts.toggle(O, verbose)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('O', O, { 'string', 'table' }, false, 'string[]|string')
-    vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
-  else
-    vim.validate({
-      O = { O, { 'string', 'table' } },
-      verbose = { verbose, { 'boolean', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    O = { O, { 'string', 'table' } },
+    verbose = { verbose, { 'boolean', 'nil' }, true },
+  })
   verbose = verbose ~= nil and verbose or false
 
   local Value = require('user_api.check.value')
@@ -258,15 +243,10 @@ function Opts.setup(override, verbose)
   Opts.setup_cmds()
   Opts.setup_maps()
 
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('override', override, { 'table', 'nil' }, true, 'User.Opts.Spec')
-    vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
-  else
-    vim.validate({
-      override = { override, { 'table', 'nil' }, true },
-      verbose = { verbose, { 'boolean', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    override = { override, { 'table', 'nil' }, true },
+    verbose = { verbose, { 'boolean', 'nil' }, true },
+  })
   verbose = verbose ~= nil and verbose or false
 
   local defaults = Opts.get_defaults()

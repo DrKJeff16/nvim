@@ -1,12 +1,10 @@
 ---@module 'lazy'
+
 ---@param arg string
 ---@return function
 local function wincmd(arg)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('arg', arg, { 'string' }, false)
-  else
-    vim.validate({ arg = { arg, { 'string' } } })
-  end
+  require('user_api.check.exists').validate({ arg = { arg, { 'string' } } })
+
   return function()
     vim.cmd.wincmd(arg)
   end

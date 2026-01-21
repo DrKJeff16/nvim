@@ -234,11 +234,7 @@ end
 ---@param toggles table<integer, LazySpec>|LazyToggles
 ---@overload fun()
 function Lazy.setup(toggles)
-  if require('user_api.check.exists').vim_has('nvim-0.11') then
-    vim.validate('toggles', toggles, { 'table', 'nil' }, true)
-  else
-    vim.validate({ toggles = { toggles, { 'table', 'nil' }, true } })
-  end
+  require('user_api.check.exists').validate({ toggles = { toggles, { 'table', 'nil' }, true } })
   toggles = vim.tbl_deep_extend('keep', toggles or {}, Lazy.get_default_toggles())
 
   Lazy.bootstrap()

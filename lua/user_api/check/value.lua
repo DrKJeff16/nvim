@@ -32,12 +32,11 @@ local function type_fun(t)
   ---@param var any
   ---@param multiple? boolean
   return function(var, multiple)
-    if vim.fn.has('nvim-0.11') == 1 then
-      vim.validate('multiple', multiple, { 'boolean', 'nil' }, true)
-    else
-      vim.validate({ multiple = { multiple, { 'boolean', 'nil' }, true } })
-    end
+    require('user_api.check.exists').validate({
+      multiple = { multiple, { 'boolean', 'nil' }, true },
+    })
     multiple = multiple ~= nil and multiple or false
+
     if not multiple then
       return var ~= nil and type(var) == t
     end
@@ -95,11 +94,7 @@ Value.is_tbl = type_fun('table')
 ---@return boolean is_int
 ---@overload fun(var: any): is_int: boolean
 function Value.is_int(var, multiple)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('multiple', multiple, { 'boolean', 'nil' }, true)
-  else
-    vim.validate({ multiple = { multiple, { 'boolean', 'nil' }, true } })
-  end
+  require('user_api.check.exists').validate({ multiple = { multiple, { 'boolean', 'nil' }, true } })
   multiple = multiple ~= nil and multiple or false
 
   if not multiple then
@@ -135,15 +130,10 @@ end
 ---@return boolean is_empty
 ---@overload fun(data: (string|number)[]|string|number|table): is_empty: boolean
 function Value.empty(data, multiple)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('data', data, { 'string', 'table', 'number' }, false)
-    vim.validate('multiple', multiple, { 'boolean', 'nil' }, true)
-  else
-    vim.validate({
-      data = { data, { 'string', 'table', 'number' } },
-      multiple = { multiple, { 'boolean', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    data = { data, { 'string', 'table', 'number' } },
+    multiple = { multiple, { 'boolean', 'nil' }, true },
+  })
   multiple = multiple ~= nil and multiple or false
 
   if Value.is_str(data) then
@@ -178,19 +168,12 @@ end
 ---@return boolean in_range
 ---@overload fun(num: number, low: number, high: number): in_range: boolean
 function Value.num_range(num, low, high, eq)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('num', num, { 'number' }, false)
-    vim.validate('low', low, { 'number' }, false)
-    vim.validate('high', high, { 'number' }, false)
-    vim.validate('eq', eq, { 'table', 'nil' }, true)
-  else
-    vim.validate({
-      num = { num, { 'number' } },
-      low = { low, { 'number' } },
-      high = { high, { 'number' } },
-      eq = { eq, { 'table', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    num = { num, { 'number' } },
+    low = { low, { 'number' } },
+    high = { high, { 'number' } },
+    eq = { eq, { 'table', 'nil' }, true },
+  })
 
   eq = Value.type_not_empty('table', eq) and eq or { low = true, high = true }
   eq.high = Value.is_bool(eq.high) and eq.high or true
@@ -229,15 +212,10 @@ end
 ---@param T table<string|integer, any>
 ---@return boolean found
 function Value.fields(field, T)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('field', field, { 'string', 'number', 'table', 'nil' }, true)
-    vim.validate('T', T, 'table', false)
-  else
-    vim.validate({
-      field = { field, { 'string', 'number', 'table', 'nil' }, true },
-      T = { T, { 'table' } },
-    })
-  end
+  require('user_api.check.exists').validate({
+    field = { field, { 'string', 'number', 'table', 'nil' }, true },
+    T = { T, { 'table' } },
+  })
 
   if not Value.is_tbl(field) then
     return T[field] ~= nil
@@ -256,17 +234,11 @@ end
 ---@return boolean|string|integer|(string|integer)[] res
 ---@overload fun(values: any[]|table<string, any>, T: table): res: boolean|string|integer|(string|integer)[]
 function Value.tbl_values(values, T, return_keys)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('values', values, { 'table' }, false, 'any[]|table<string, any>')
-    vim.validate('T', T, { 'table' }, false)
-    vim.validate('return_keys', return_keys, { 'boolean', 'nil' }, true)
-  else
-    vim.validate({
-      values = { values, { 'table' } },
-      T = { T, { 'table' } },
-      return_keys = { return_keys, { 'boolean', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    values = { values, { 'table' } },
+    T = { T, { 'table' } },
+    return_keys = { return_keys, { 'boolean', 'nil' }, true },
+  })
   return_keys = return_keys ~= nil and return_keys or false
 
   local res = return_keys and {} or false ---@type boolean|string|integer|(string|integer)[]
@@ -295,15 +267,11 @@ end
 ---@param T table
 ---@return boolean is_single_type
 function Value.single_type_tbl(type_str, T)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('type_str', type_str, { 'string' }, false)
-    vim.validate('T', T, { 'table' }, false)
-  else
-    vim.validate({
-      type_str = { type_str, { 'string' } },
-      T = { T, { 'table' } },
-    })
-  end
+  require('user_api.check.exists').validate({
+    type_str = { type_str, { 'string' } },
+    T = { T, { 'table' } },
+  })
+
   if not vim.list_contains({ 'boolean', 'function', 'number', 'string', 'table' }, type_str) then
     error(('(%s.single_type_tbl): Wrong type `%s`.'):format(MODSTR, type_str))
   end
@@ -330,11 +298,8 @@ end
 ---@param data any
 ---@return boolean result
 function Value.type_not_empty(type_str, data)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('type_str', type_str, { 'string' }, false)
-  else
-    vim.validate({ type_str = { type_str, { 'string' } } })
-  end
+  require('user_api.check.exists').validate({ type_str = { type_str, { 'string' } } })
+
   if not vim.list_contains({ 'integer', 'number', 'string', 'table' }, type_str) then
     error(('(%s.type_not_empty): Invalid type `%s`!'):format(MODSTR, type_str))
   end
@@ -363,15 +328,11 @@ end
 ---@param T any[]
 ---@return boolean found
 function Value.in_tbl_range(index, T)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('index', index, { 'number' }, false, 'integer')
-    vim.validate('T', T, { 'table' }, false)
-  else
-    vim.validate({
-      index = { index, { 'number' } },
-      T = { T, { 'table' } },
-    })
-  end
+  require('user_api.check.exists').validate({
+    index = { index, { 'number' } },
+    T = { T, { 'table' } },
+  })
+
   if vim.tbl_isempty(T) then
     return false
   end

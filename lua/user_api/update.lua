@@ -10,11 +10,7 @@ local Update = {}
 ---@param verbose? boolean
 ---@overload fun()
 function Update.update(verbose)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
-  else
-    vim.validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
-  end
+  require('user_api.check.exists').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
   verbose = verbose ~= nil and verbose or false
 
   local og_cwd = uv.cwd() or vim.fn.getcwd()

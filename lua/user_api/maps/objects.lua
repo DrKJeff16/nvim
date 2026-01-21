@@ -5,11 +5,7 @@ local O = {}
 
 ---@param T User.Maps.Opts
 function O:add(T)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('T', T, { 'table' }, false)
-  else
-    vim.validate({ T = { T, { 'table' } } })
-  end
+  require('user_api.check.exists').validate({ T = { T, { 'table' } } })
   if vim.tbl_isempty(T) then
     return
   end
@@ -24,11 +20,7 @@ end
 ---@param T? User.Maps.Opts
 ---@return User.Maps.Opts new_object
 function O.new(T)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('T', T, { 'table', 'nil' }, true, 'User.Maps.Opts|nil')
-  else
-    vim.validate({ T = { T, { 'table', 'nil' }, true } })
-  end
+  require('user_api.check.exists').validate({ T = { T, { 'table', 'nil' }, true } })
 
   return setmetatable(T or {}, { __index = O })
 end

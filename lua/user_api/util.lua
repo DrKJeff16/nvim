@@ -26,15 +26,10 @@ end
 ---@overload fun(s: string[]): res: table<string, any>
 ---@overload fun(s: string[], bufnr: integer): res: table<string, any>
 function Util.get_opts_tbl(s, bufnr)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('s', s, { 'string', 'table' }, false, 'string[]|string')
-    vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
-  else
-    vim.validate({
-      s = { s, { 'string', 'table' } },
-      bufnr = { bufnr, { 'number', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    s = { s, { 'string', 'table' } },
+    bufnr = { bufnr, { 'number', 'nil' }, true },
+  })
   bufnr = bufnr or curr_buf()
 
   local Value = require('user_api.check.value')
@@ -58,17 +53,11 @@ end
 ---@overload fun(T: table<string, any>, steps: integer): res: table<string, any>
 ---@overload fun(T: table<string, any>, steps?: integer, direction: 'l'|'r'): res: table<string, any>
 function Util.mv_tbl_values(T, steps, direction)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('T', T, { 'table' }, false, 'table<string, any>')
-    vim.validate('steps', steps, { 'number', 'nil' }, true, 'integer')
-    vim.validate('direction', direction, { 'string', 'nil' }, true, "'l'|'r'")
-  else
-    vim.validate({
-      T = { T, { 'table' } },
-      steps = { steps, { 'number', 'nil' }, true },
-      direction = { direction, { 'string', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    T = { T, { 'table' } },
+    steps = { steps, { 'number', 'nil' }, true },
+    direction = { direction, { 'string', 'nil' }, true },
+  })
   steps = steps > 0 and steps or 1
   direction = (direction ~= nil and in_list({ 'l', 'r' }, direction)) and direction or 'r'
 
@@ -109,15 +98,10 @@ end
 ---@param y boolean
 ---@return boolean
 function Util.xor(x, y)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('x', x, { 'boolean' }, false)
-    vim.validate('y', y, { 'boolean' }, false)
-  else
-    vim.validate({
-      x = { x, { 'boolean' } },
-      y = { y, { 'boolean' } },
-    })
-  end
+  require('user_api.check.exists').validate({
+    x = { x, { 'boolean' } },
+    y = { y, { 'boolean' } },
+  })
 
   return (x and not y) or (not x and y)
 end
@@ -131,15 +115,10 @@ end
 ---@overload fun(T: table<string, any>, fields: integer[])
 ---@overload fun(T: table<string, any>, fields: (string|integer)[])
 function Util.strip_fields(T, fields)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('T', T, { 'table' }, false, 'table<string, any>')
-    vim.validate('fields', fields, { 'string', 'number', 'table' }, false)
-  else
-    vim.validate({
-      T = { T, { 'table' } },
-      fields = { fields, { 'string', 'number', 'table' } },
-    })
-  end
+  require('user_api.check.exists').validate({
+    T = { T, { 'table' } },
+    fields = { fields, { 'string', 'number', 'table' } },
+  })
 
   local Value = require('user_api.check.value')
   if Value.is_str(fields) then ---@cast fields string
@@ -168,17 +147,11 @@ end
 ---@return table<string, any> res
 ---@overload fun(T: table<string, any>, values: any[]): res: table<string, any>
 function Util.strip_values(T, values, max_instances)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('T', T, { 'table' }, false, 'table<string, any>')
-    vim.validate('values', values, { 'table' }, false, 'any[]')
-    vim.validate('max_instances', max_instances, { 'table', 'nil' }, true)
-  else
-    vim.validate({
-      T = { T, { 'table' } },
-      values = { values, { 'table' } },
-      max_instances = { max_instances, { 'table', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    T = { T, { 'table' } },
+    values = { values, { 'table' } },
+    max_instances = { max_instances, { 'table', 'nil' }, true },
+  })
 
   local Value = require('user_api.check.value')
   if not (Value.type_not_empty('table', T) or Value.type_not_empty('table', values)) then
@@ -213,15 +186,10 @@ end
 ---@overload fun(s: string): function
 ---@overload fun(s: string, bufnr: integer): function
 function Util.ft_set(s, bufnr)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('s', s, { 'string', 'nil' }, true)
-    vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
-  else
-    vim.validate({
-      s = { s, { 'string', 'nil' }, true },
-      bufnr = { bufnr, { 'number', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    s = { s, { 'string', 'nil' }, true },
+    bufnr = { bufnr, { 'number', 'nil' }, true },
+  })
 
   return function()
     vim.api.nvim_set_option_value('filetype', s or '', { buf = bufnr or curr_buf() })
@@ -233,11 +201,7 @@ end
 ---@overload fun(): bt: string|''|'acwrite'|'help'|'nofile'|'nowrite'|'prompt'|'quickfix'|'terminal'
 ---@overload fun(bufnr: integer): bt: string|''|'acwrite'|'help'|'nofile'|'nowrite'|'prompt'|'quickfix'|'terminal'
 function Util.bt_get(bufnr)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
-  else
-    vim.validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
-  end
+  require('user_api.check.exists').validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
 
   return vim.bo[bufnr or curr_buf()].buftype
 end
@@ -247,11 +211,8 @@ end
 ---@overload fun(): ft: string
 ---@overload fun(bufnr: integer): ft: string
 function Util.ft_get(bufnr)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
-  else
-    vim.validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
-  end
+  require('user_api.check.exists').validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
+
   return vim.bo[bufnr or curr_buf()].filetype
 end
 
@@ -260,11 +221,7 @@ end
 ---@return table T
 ---@return any val
 function Util.pop_values(T, V)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('T', T, { 'table' }, false)
-  else
-    vim.validate({ T = { T, { 'table' } } })
-  end
+  require('user_api.check.exists').validate({ T = { T, { 'table' } } })
 
   local idx = 0
   for i, v in ipairs(T) do
@@ -500,24 +457,18 @@ end
 ---@overload fun(c: string): displaced: string
 ---@overload fun(c: string, direction: 'next'|'prev'): displaced: string
 function Util.displace_letter(c, direction)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('c', c, { 'string' }, false)
-    vim.validate('direction', direction, { 'string', 'nil' }, true)
-  else
-    vim.validate({
-      c = { c, { 'string' } },
-      direction = { direction, { 'string', 'nil' }, true },
-    })
-  end
-  local Value = require('user_api.check.value')
-  local mv = Util.mv_tbl_values
-  local A = vim.deepcopy(Util.string.alphabet)
-
+  require('user_api.check.exists').validate({
+    c = { c, { 'string' } },
+    direction = { direction, { 'string', 'nil' }, true },
+  })
+  direction = in_list({ 'next', 'prev' }, direction) and direction or 'next'
   if c == '' then
     return 'a'
   end
 
-  direction = in_list({ 'next', 'prev' }, direction) and direction or 'next'
+  local Value = require('user_api.check.value')
+  local mv = Util.mv_tbl_values
+  local A = vim.deepcopy(Util.string.alphabet)
   local LOWER, UPPER = A.lower_map, A.upper_map
   if direction == 'prev' then
     if Value.fields(c, LOWER) then
@@ -575,11 +526,7 @@ end
 ---@param T any[]
 ---@return any[] reversed
 function Util.reverse_tbl(T)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('T', T, { 'table' }, false)
-  else
-    vim.validate({ T = { T, { 'table' } } })
-  end
+  require('user_api.check.exists').validate({ T = { T, { 'table' } } })
   if vim.tbl_isempty(T) then
     error('(user_api.util.reverse_tbl): Empty table!', ERROR)
   end

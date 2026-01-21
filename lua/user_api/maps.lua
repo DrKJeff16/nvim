@@ -12,23 +12,14 @@ Maps.keymap = require('user_api.maps.keymap')
 Maps.wk = require('user_api.maps.wk')
 
 function Maps.desc(desc, silent, bufnr, noremap, nowait, expr)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('desc', desc, { 'string', 'nil' }, true)
-    vim.validate('silent', silent, { 'boolean', 'nil' }, true)
-    vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
-    vim.validate('noremap', noremap, { 'boolean', 'nil' }, true)
-    vim.validate('nowait', nowait, { 'boolean', 'nil' }, true)
-    vim.validate('expr', expr, { 'boolean', 'nil' }, true)
-  else
-    vim.validate({
-      desc = { desc, { 'string', 'nil' }, true },
-      silent = { silent, { 'boolean', 'nil' }, true },
-      bufnr = { bufnr, { 'number', 'nil' }, true },
-      noremap = { noremap, { 'boolean', 'nil' }, true },
-      nowait = { nowait, { 'boolean', 'nil' }, true },
-      expr = { expr, { 'boolean', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    desc = { desc, { 'string', 'nil' }, true },
+    silent = { silent, { 'boolean', 'nil' }, true },
+    bufnr = { bufnr, { 'number', 'nil' }, true },
+    noremap = { noremap, { 'boolean', 'nil' }, true },
+    nowait = { nowait, { 'boolean', 'nil' }, true },
+    expr = { expr, { 'boolean', 'nil' }, true },
+  })
 
   local Value = require('user_api.check.value')
   if not Value.type_not_empty('string', desc) then
@@ -57,19 +48,12 @@ function Maps.desc(desc, silent, bufnr, noremap, nowait, expr)
 end
 
 function Maps.nop(T, opts, mode, prefix)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('T', T, { 'string', 'table' }, false)
-    vim.validate('opts', opts, { 'table', 'nil' }, true)
-    vim.validate('mode', mode, { 'string', 'nil' }, true)
-    vim.validate('prefix', prefix, { 'string', 'nil' }, true)
-  else
-    vim.validate({
-      T = { T, { 'string', 'table' } },
-      opts = { opts, { 'table', 'nil' }, true },
-      mode = { mode, { 'string', 'nil' }, true },
-      prefix = { prefix, { 'string', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    T = { T, { 'string', 'table' } },
+    opts = { opts, { 'table', 'nil' }, true },
+    mode = { mode, { 'string', 'nil' }, true },
+    prefix = { prefix, { 'string', 'nil' }, true },
+  })
 
   local Value = require('user_api.check.value')
   mode = (Value.is_str(mode) and in_list(MODES, mode)) and mode or 'n'

@@ -2,7 +2,6 @@
 
 local exists = require('user_api.check.exists').module
 local executable = require('user_api.check.exists').executable
-local vim_has = require('user_api.check.exists').vim_has
 local copy = vim.deepcopy
 local in_list = vim.list_contains
 local curr_buf = vim.api.nvim_get_current_buf
@@ -17,15 +16,10 @@ BUtil.curr_ft = ''
 ---@param snipps? boolean
 ---@param buf? boolean
 function BUtil.reset_sources(snipps, buf)
-  if vim_has('nvim-0.11') then
-    vim.validate('snipps', snipps, 'boolean', true, 'boolean?')
-    vim.validate('buf', buf, 'boolean', true, 'boolean?')
-  else
-    vim.validate({
-      snipps = { snipps, { 'boolean', 'nil' }, true },
-      buf = { buf, { 'boolean', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    snipps = { snipps, { 'boolean', 'nil' }, true },
+    buf = { buf, { 'boolean', 'nil' }, true },
+  })
   snipps = snipps ~= nil and snipps or false
   buf = buf ~= nil and buf or true
 
@@ -64,15 +58,10 @@ end
 ---@param buf? boolean
 ---@return string[] sources
 function BUtil.gen_sources(snipps, buf)
-  if vim_has('nvim-0.11') then
-    vim.validate('snipps', snipps, { 'boolean', 'nil' }, true)
-    vim.validate('buf', buf, { 'boolean', 'nil' }, true)
-  else
-    vim.validate({
-      snipps = { snipps, { 'boolean', 'nil' }, true },
-      buf = { buf, { 'boolean', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    snipps = { snipps, { 'boolean', 'nil' }, true },
+    buf = { buf, { 'boolean', 'nil' }, true },
+  })
 
   BUtil.reset_sources(snipps, buf)
   return BUtil.Sources
@@ -235,11 +224,7 @@ end
 ---@param P table<string, blink.cmp.SourceProviderConfigPartial>|nil
 ---@return table<string, blink.cmp.SourceProviderConfigPartial>
 function BUtil.gen_providers(P)
-  if vim_has('nvim-0.11') then
-    vim.validate('P', P, 'table', true, 'BlinkCmp.Util.Providers')
-  else
-    vim.validate({ P = { P, { 'table', 'nil' }, true } })
-  end
+  require('user_api.check.exists').validate({ P = { P, { 'table', 'nil' }, true } })
 
   BUtil.reset_providers()
   BUtil.Providers = vim.tbl_deep_extend('keep', P or {}, copy(BUtil.Providers))
@@ -249,11 +234,8 @@ end
 ---@param key string
 ---@return function
 local function gen_termcode_fun(key)
-  if vim_has('nvim-0.11') then
-    vim.validate('key', key, 'string', false)
-  else
-    vim.validate({ key = { key, { 'string' } } })
-  end
+  require('user_api.check.exists').validate({ key = { key, { 'string' } } })
+
   return function()
     local termcode = vim.api.nvim_replace_termcodes(key, true, false, true)
     vim.api.nvim_feedkeys(termcode, 'i', false)

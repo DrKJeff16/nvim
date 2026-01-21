@@ -110,11 +110,9 @@ function Autocmd.new()
     ---@param self Lsp.SubMods.Autocmd
     ---@param override? AuRepeat
     __call = function(self, override)
-      if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('override', override, { 'table', 'nil' }, true)
-      else
-        vim.validate({ override = { override, { 'table', 'nil' }, true } })
-      end
+      require('user_api.check.exists').validate({
+        override = { override, { 'table', 'nil' }, true },
+      })
 
       self.autocommands = vim.tbl_deep_extend('keep', override or {}, self.autocommands)
       require('user_api.util.autocmd').au_repeated(self.autocommands)

@@ -223,11 +223,9 @@ function Trouble.new()
     ---@param self Lsp.SubMods.Trouble
     ---@param override? trouble.Config
     __call = function(self, override)
-      if vim.fn.has('nvim-0.11') == 1 then
-        vim.validate('override', override, { 'table', 'nil' }, true)
-      else
-        vim.validate({ override = { override, { 'table', 'nil' }, true } })
-      end
+      require('user_api.check.exists').validate({
+        override = { override, { 'table', 'nil' }, true },
+      })
 
       self.Opts = vim.tbl_deep_extend('force', self.Opts, override or {})
       require('trouble').setup(self.Opts)

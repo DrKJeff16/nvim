@@ -6,15 +6,10 @@ local ERROR = vim.log.levels.ERROR
 ---@param keywords string[]
 ---@return function
 local function jump(direction, keywords)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('direction', direction, 'string', false, "'next'|'prev'")
-    vim.validate('keywords', keywords, 'table', false, 'string[]')
-  else
-    vim.validate({
-      direction = { direction, 'string' },
-      keywords = { keywords, 'table' },
-    })
-  end
+  require('user_api.check.exists').validate({
+    direction = { direction, { 'string' } },
+    keywords = { keywords, { 'table' } },
+  })
   if not vim.list_contains({ 'next', 'prev' }, direction) then
     error(('Invalid direction `%s`!'):format(direction), ERROR)
   end

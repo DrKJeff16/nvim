@@ -70,17 +70,11 @@ Notify.Levels = {
 ---@param lvl? NotifyLvl|VimNotifyLvl
 ---@param opts? notify.Options
 function Notify.notify(msg, lvl, opts)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('msg', msg, { 'string' }, false)
-    vim.validate('lvl', lvl, { 'string', 'number', 'nil' }, true)
-    vim.validate('opts', opts, { 'table', 'nil' }, true)
-  else
-    vim.validate({
-      msg = { msg, { 'string' } },
-      lvl = { lvl, { 'string', 'number', 'nil' }, true },
-      opts = { opts, { 'table', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    msg = { msg, { 'string' } },
+    lvl = { lvl, { 'string', 'number', 'nil' }, true },
+    opts = { opts, { 'table', 'nil' }, true },
+  })
   lvl = lvl or 'info'
   lvl = (not vim.tbl_contains({ 'string', 'number' }, type(lvl))) and 'info' or lvl
   opts = opts or Notify.Opts
@@ -113,11 +107,7 @@ end
 ---@param lvl VimNotifyLvl
 ---@return fun(args: vim.api.keyset.create_user_command.command_args)
 local function gen_cmd_lvl(lvl)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('lvl', lvl, { 'number' }, false)
-  else
-    vim.validate({ lvl = { lvl, { 'number' } } })
-  end
+  require('user_api.check.exists').validate({ lvl = { lvl, { 'number' } } })
 
   return function(args) ---@param args vim.api.keyset.create_user_command.command_args
     local data = args.args

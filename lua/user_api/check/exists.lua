@@ -1,3 +1,10 @@
+---Non-legacy validation spec (>=v0.11)
+---@class ValidateSpec
+---@field [1] any
+---@field [2] vim.validate.Validator
+---@field [3]? boolean
+---@field [4]? string
+
 local MODSTR = 'user_api.check.exists'
 local ERROR = vim.log.levels.ERROR
 
@@ -14,14 +21,32 @@ end
 ---@class User.Check.Existance
 local Exists = {}
 
+---Dynamic `vim.validate()` wrapper. Covers both legacy and newer implementations
+---@param T table<string, vim.validate.Spec|ValidateSpec>
+function Exists.validate(T)
+  local max = vim.fn.has('nvim-0.11') == 1 and 3 or 4
+  for name, spec in pairs(T) do
+    while #spec > max do
+      table.remove(spec, #spec)
+    end
+
+    T[name] = spec
+  end
+
+  for name, spec in pairs(T) do
+    if vim.fn.has('nvim-0.11') == 1 then
+      table.insert(spec, 1, name)
+      vim.validate(unpack(spec))
+    else
+      vim.validate(spec)
+    end
+  end
+end
+
 ---@param mod string
 ---@return boolean exists
 function Exists.module(mod)
-  if Exists.vim_has('nvim-0.11') then
-    vim.validate('mod', mod, { 'string' }, false)
-  else
-    vim.validate({ mod = { mod, { 'string' } } })
-  end
+  Exists.validate({ mod = { mod, { 'string' } } })
 
   if not get_value().type_not_empty('string', mod) then
     error(('`(%s.module)`: Input is not valid'):format(MODSTR), ERROR)
@@ -34,11 +59,7 @@ end
 ---@param expr string[]|string
 ---@return boolean has
 function Exists.vim_has(expr)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('expr', expr, { 'string', 'table' }, false)
-  else
-    vim.validate({ expr = { expr, { 'string', 'table' } } })
-  end
+  Exists.validate({ expr = { expr, { 'string', 'table' } } })
 
   ---@cast expr string
   if get_value().type_not_empty('string', expr) then
@@ -57,11 +78,8 @@ end
 ---@param expr string[]|string
 ---@return boolean exists
 function Exists.vim_exists(expr)
-  if Exists.vim_has('nvim-0.11') then
-    vim.validate('expr', expr, { 'string', 'table' }, false)
-  else
-    vim.validate({ expr = { expr, { 'string', 'table' } } })
-  end
+  Exists.validate({ expr = { expr, { 'string', 'table' } } })
+
   ---@cast expr string
   if get_value().type_not_empty('string', expr) then
     return vim.fn.exists(expr) == 1
@@ -84,15 +102,10 @@ end
 ---@return boolean found
 ---@overload fun(vars: string[]|string): found: boolean
 function Exists.env_vars(vars, callback)
-  if Exists.vim_has('nvim-0.11') then
-    vim.validate('vars', vars, { 'string', 'table' }, false)
-    vim.validate('callback', callback, { 'function', 'nil' }, true)
-  else
-    vim.validate({
-      vars = { vars, { 'string', 'table' } },
-      callback = { callback, { 'function', 'nil' }, true },
-    })
-  end
+  Exists.validate({
+    vars = { vars, { 'string', 'table' } },
+    callback = { callback, { 'function', 'nil' }, true },
+  })
 
   local environment = vim.fn.environ()
   local res = false
@@ -118,11 +131,7 @@ end
 ---@param exe string[]|string
 ---@return boolean found
 function Exists.executable(exe)
-  if Exists.vim_has('nvim-0.11') then
-    vim.validate('exe', exe, { 'string', 'table' }, false)
-  else
-    vim.validate({ exe = { exe, { 'string', 'table' } } })
-  end
+  Exists.validate({ exe = { exe, { 'string', 'table' } } })
 
   local res = false
 
@@ -144,11 +153,8 @@ end
 ---@param path string
 ---@return boolean is_dir
 function Exists.vim_isdir(path)
-  if Exists.vim_has('nvim-0.11') then
-    vim.validate('path', path, { 'string' }, false)
-  else
-    vim.validate({ path = { path, { 'string' } } })
-  end
+  Exists.validate({ path = { path, { 'string' } } })
+
   return get_value().type_not_empty('string', path) and (vim.fn.isdirectory(path) == 1) or false
 end
 

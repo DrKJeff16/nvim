@@ -44,11 +44,9 @@ end
 ---@param vertical boolean|nil
 ---@overload fun()
 local function gen_fun_blank(vertical)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('vertical', vertical, { 'boolean', 'nil' }, true)
-  else
-    vim.validate({ vertical = { vertical, { 'boolean', 'nil' }, true } })
-  end
+  require('user_api.check.exists').validate({
+    vertical = { vertical, { 'boolean', 'nil' }, true },
+  })
   vertical = vertical ~= nil and vertical or false
 
   return function()
@@ -67,11 +65,7 @@ end
 ---@param force boolean|nil
 ---@overload fun()
 local function buf_del(force)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('force', force, 'boolean', true)
-  else
-    vim.validate({ force = { force, { 'boolean', 'nil' }, true } })
-  end
+  require('user_api.check.exists').validate({ force = { force, { 'boolean', 'nil' }, true } })
   force = force ~= nil and force or false
 
   local ft_triggers = { 'NvimTree', 'noice', 'trouble' }
@@ -274,17 +268,11 @@ Keymaps.Keys = { ---@type AllModeMaps
 ---@overload fun(leader: string)
 ---@overload fun(leader: string, local_leader: string)
 function Keymaps.set_leader(leader, local_leader, force)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('leader', leader, { 'string' }, false)
-    vim.validate('local_leader', local_leader, { 'string', 'nil' }, true)
-    vim.validate('force', force, { 'boolean', 'nil' }, true)
-  else
-    vim.validate({
-      leader = { leader, { 'string' } },
-      local_leader = { local_leader, { 'string', 'nil' }, true },
-      force = { force, { 'boolean', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    leader = { leader, { 'string' } },
+    local_leader = { local_leader, { 'string', 'nil' }, true },
+    force = { force, { 'boolean', 'nil' }, true },
+  })
   leader = leader ~= '' and leader or '<Space>'
   local_leader = (local_leader ~= nil and local_leader ~= '') and local_leader or leader
   force = force ~= nil and force or false
@@ -333,15 +321,10 @@ end
 ---@return User.Keymaps.Delete|nil deleted_keys
 ---@overload fun(K: User.Keymaps.Delete): deleted_keys: User.Keymaps.Delete|nil
 function Keymaps.delete(K, bufnr)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('K', K, { 'table' }, false)
-    vim.validate('bufnr', bufnr, { 'number', 'nil' }, true)
-  else
-    vim.validate({
-      K = { K, { 'table' } },
-      bufnr = { bufnr, { 'number', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    K = { K, { 'table' } },
+    bufnr = { bufnr, { 'number', 'nil' }, true },
+  })
   bufnr = bufnr or nil
   if vim.tbl_isemyty(K) then
     return
@@ -371,17 +354,11 @@ local M = setmetatable({}, {
   ---@param bufnr? integer
   ---@param defaults? boolean
   __call = function(_, keys, bufnr, defaults)
-    if vim.fn.has('nvim-0.11') == 1 then
-      vim.validate('keys', keys, { 'table' }, false, 'AllModeMaps')
-      vim.validate('bufnr', bufnr, { 'number', 'nil' }, true, 'integer')
-      vim.validate('defaults', defaults, { 'boolean', 'nil' }, true)
-    else
-      vim.validate({
-        keys = { keys, { 'table' } },
-        bufnr = { bufnr, { 'number', 'nil' }, true },
-        defaults = { defaults, { 'boolean', 'nil' }, true },
-      })
-    end
+    require('user_api.check.exists').validate({
+      keys = { keys, { 'table' } },
+      bufnr = { bufnr, { 'number', 'nil' }, true },
+      defaults = { defaults, { 'boolean', 'nil' }, true },
+    })
     bufnr = bufnr or nil
     defaults = defaults ~= nil and defaults or false
     if vim.tbl_isempty(keys) then

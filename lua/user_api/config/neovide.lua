@@ -84,17 +84,11 @@ end
 ---@overload fun(opacity: number|nil, transparency: number, bg: string)
 ---@overload fun(opacity: number|nil, transparency: number|nil, bg: string)
 function Neovide.set_transparency(opacity, transparency, bg)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('opacity', opacity, 'number', true)
-    vim.validate('transparency', transparency, 'number', true)
-    vim.validate('bg', bg, 'string', true)
-  else
-    vim.validate({
-      opacity = { opacity, { 'number', 'nil' } },
-      transparency = { transparency, { 'number', 'nil' } },
-      bg = { bg, { 'string', 'nil' } },
-    })
-  end
+  require('user_api.check.exists').validate({
+    opacity = { opacity, { 'number', 'nil' } },
+    transparency = { transparency, { 'number', 'nil' } },
+    bg = { bg, { 'string', 'nil' } },
+  })
 
   local num_range = require('user_api.check.value').num_range
   local eq = { high = true, low = true }
@@ -121,15 +115,10 @@ end
 ---@param O any[]
 ---@param pfx string
 function Neovide.parse_g_opts(O, pfx)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('O', O, { 'table' }, false, 'any[]')
-    vim.validate('pfx', pfx, { 'string' }, false)
-  else
-    vim.validate({
-      O = { O, { 'table' } },
-      pfx = { pfx, { 'string' } },
-    })
-  end
+  require('user_api.check.exists').validate({
+    O = { O, { 'table' } },
+    pfx = { pfx, { 'string' } },
+  })
   pfx = pfx:sub(1, 8) == 'neovide_' and pfx or 'neovide_'
 
   for k, v in ipairs(O) do
@@ -176,17 +165,11 @@ end
 ---@overload fun(T: table|nil, transparent: boolean, verbose: boolean)
 ---@overload fun(T: table|nil, transparent: boolean|nil, verbose: boolean)
 function Neovide.setup(T, transparent, verbose)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('T', T, { 'table', 'nil' }, true)
-    vim.validate('transparent', transparent, { 'boolean', 'nil' }, true)
-    vim.validate('verbose', verbose, { 'boolean', 'nil' }, true)
-  else
-    vim.validate({
-      T = { T, { 'table', 'nil' }, true },
-      transparent = { transparent, { 'boolean', 'nil' }, true },
-      verbose = { verbose, { 'boolean', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    T = { T, { 'table', 'nil' }, true },
+    transparent = { transparent, { 'boolean', 'nil' }, true },
+    verbose = { verbose, { 'boolean', 'nil' }, true },
+  })
 
   if not Neovide.check() then
     return

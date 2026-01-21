@@ -3,15 +3,10 @@
 ---@return vim.lsp.Config|nil config
 ---@overload fun(name: string): server: vim.lsp.Config|nil
 local function server_load(name, exe)
-  if vim.fn.has('nvim-0.11') == 1 then
-    vim.validate('name', name, 'string', false)
-    vim.validate('exe', exe, 'string', true)
-  else
-    vim.validate({
-      name = { name, 'string' },
-      exe = { exe, { 'string', 'nil' }, true },
-    })
-  end
+  require('user_api.check.exists').validate({
+    name = { name, 'string' },
+    exe = { exe, { 'string', 'nil' }, true },
+  })
   exe = exe or name
   exe = exe ~= '' and exe or name
   if not require('user_api.check.exists').executable(exe) then
