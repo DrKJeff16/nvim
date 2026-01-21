@@ -25,14 +25,7 @@
 ---@alias KeyMapDicts table<string, KeyMapRhsDict>
 
 ---@alias AllMaps table<string, KeyMapRhsArr|RegKey|RegPfx>
-
----@class AllModeMaps
----@field n? AllMaps
----@field i? AllMaps
----@field v? AllMaps
----@field t? AllMaps
----@field o? AllMaps
----@field x? AllMaps
+---@alias AllModeMaps table<'n'|'i'|'v'|'t'|'o'|'x', AllMaps>
 
 ---@class KeyMapTbl
 ---@field lhs string
@@ -78,7 +71,8 @@ local Keymap = {
   x = variant('x'),
 }
 
-local M = setmetatable({}, { ---@type User.Maps.Keymap
+---@type User.Maps.Keymap|table<MapModes, fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)>
+local M = setmetatable({}, {
   __index = Keymap,
   __newindex = function()
     vim.notify('User.Maps.Keymap is Read-Only!', ERROR)

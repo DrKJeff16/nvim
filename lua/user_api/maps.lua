@@ -74,11 +74,12 @@ function Maps.nop(T, opts, mode, prefix)
   prefix = prefix or ''
 
   local func = Maps.keymap[mode]
-  ---@cast T string
   if Value.is_str(T) then
+    ---@cast T string
     func(prefix .. T, '<Nop>', opts)
     return
   end
+
   ---@cast T string[]
   for _, v in ipairs(T) do
     func(prefix .. v, '<Nop>', opts)
@@ -108,7 +109,7 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
   has_modes = Value.is_bool(has_modes) and has_modes or false
   bufnr = Value.is_int(bufnr) and bufnr or nil
 
-  local func ---@type fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)
+  local func
   if has_modes then
     local keymap_ran = false
     ---@cast T AllModeMaps
@@ -117,7 +118,11 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
         if map_func == 'keymap' then
           func = Maps.keymap[mode_choice]
           for lhs, v in pairs(t) do
-            func(lhs, v[1], v[2] or {})
+            if v[2] and v[3] then
+              func(lhs, v[2], v[3] or {})
+            elseif v[1] then
+              func(lhs, v[1], v[2] or {})
+            end
           end
           keymap_ran = true
         end
@@ -175,8 +180,11 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
     func = Maps.keymap[mode]
     ---@cast T AllMaps
     for lhs, v in pairs(T) do
-      v[2] = Value.is_tbl(v[2]) and v[2] or {}
-      func(lhs, v[1], v[2])
+      if v[2] and v[3] then
+        func(lhs, v[2], v[3])
+      elseif v[1] then
+        func(lhs, v[1], v[2] or {})
+      end
     end
     return
   end

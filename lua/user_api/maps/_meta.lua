@@ -9,7 +9,7 @@
 local Maps = {
   modes = { 'n', 'i', 'v', 't', 'o', 'x' },
   wk = {}, ---@type User.Maps.WK
-  keymap = {}, ---@type User.Maps.Keymap
+  keymap = {}, ---@type User.Maps.Keymap|table<MapModes, fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)>
 }
 
 ---@return User.Maps.Opts res
