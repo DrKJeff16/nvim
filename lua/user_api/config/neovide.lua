@@ -54,10 +54,6 @@ local g_opts = {
 ---@class Config.Neovide.Opts.O
 local o_opts = { linespace = 0, guifont = 'FiraCode Nerd Font Mono:h19' }
 
----@class Config.Neovide.Opts
----@field g Config.Neovide.Opts.G
----@field o Config.Neovide.Opts.O
-
 ---@class User.Config.Neovide
 local Neovide = {}
 
@@ -66,12 +62,17 @@ Neovide.active = false ---@type boolean
 
 ---@return Config.Neovide.Opts defaults
 function Neovide.get_defaults()
-  return { g = g_opts, o = o_opts }
+  ---@class Config.Neovide.Opts
+  ---@field g Config.Neovide.Opts.G
+  ---@field o Config.Neovide.Opts.O
+  local defaults = { g = g_opts, o = o_opts }
+
+  return defaults
 end
 
 ---@return boolean active
 function Neovide.check()
-  return require('user_api.check.exists').executable('neovide') and vim.g.neovide
+  return require('user_api.check.exists').executable('neovide') and vim.g.neovide or false
 end
 
 ---@param opacity number
@@ -80,9 +81,6 @@ end
 ---@overload fun()
 ---@overload fun(opacity: number)
 ---@overload fun(opacity: number, transparency: number)
----@overload fun(opacity: number|nil, transparency: number)
----@overload fun(opacity: number|nil, transparency: number, bg: string)
----@overload fun(opacity: number|nil, transparency: number|nil, bg: string)
 function Neovide.set_transparency(opacity, transparency, bg)
   require('user_api.check.exists').validate({
     opacity = { opacity, { 'number', 'nil' } },
@@ -155,15 +153,12 @@ function Neovide.setup_maps()
   })
 end
 
----@param T table|nil
----@param transparent boolean|nil
----@param verbose boolean|nil
+---@param T table
+---@param transparent boolean
+---@param verbose boolean
+---@overload fun()
 ---@overload fun(T: table)
 ---@overload fun(T: table, transparent: boolean)
----@overload fun(T: table, transparent: boolean|nil, verbose: boolean)
----@overload fun(T: table|nil, transparent: boolean)
----@overload fun(T: table|nil, transparent: boolean, verbose: boolean)
----@overload fun(T: table|nil, transparent: boolean|nil, verbose: boolean)
 function Neovide.setup(T, transparent, verbose)
   require('user_api.check.exists').validate({
     T = { T, { 'table', 'nil' }, true },
