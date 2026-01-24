@@ -2,17 +2,17 @@
 
 local MODSTR = 'config.lazy'
 local WARN = vim.log.levels.WARN
-local LAZY_DATA = vim.fn.stdpath('data') .. '/lazy'
-local LAZY_STATE = vim.fn.stdpath('state') .. '/lazy'
-local LAZYPATH = LAZY_DATA .. '/lazy.nvim'
-local README_PATH = LAZY_STATE .. '/readme'
+local LAZY_DATA = vim.fs.joinpath(vim.fn.stdpath('data'), 'lazy')
+local LAZY_STATE = vim.fs.joinpath(vim.fn.stdpath('state'), 'lazy')
+local LAZYPATH = vim.fs.joinpath(LAZY_DATA, 'lazy.nvim')
+local README_PATH = vim.fs.joinpath(LAZY_STATE, 'readme')
 local key_variant = require('config.util').key_variant
 
 ---@class Config.Lazy
-local Lazy = {}
+local M = {}
 
 ---@return LazyPlugins spec
-function Lazy.get_default_specs()
+function M.get_default_specs()
   return { ---@type LazyPlugins
     Comment = { import = 'plugin.Comment' },
     _spec = { import = 'plugin._spec' },
@@ -114,7 +114,7 @@ function Lazy.get_default_specs()
   }
 end
 
-function Lazy.bootstrap()
+function M.bootstrap()
   if vim.g.lazy_bootstrapped == 1 then
     return
   end
@@ -139,14 +139,14 @@ function Lazy.bootstrap()
   vim.g.lazy_bootstrapped = 1
 end
 
-function Lazy.setup_keys()
+function M.setup_keys()
   local desc = require('user_api.maps').desc
   local lazy = require('lazy')
   require('user_api.config').keymaps({
     n = {
       ['<leader>L'] = { group = '+Lazy' },
       ['<leader>Le'] = { group = '+Edit Lazy File' },
-      ['<leader>Lee'] = { key_variant('ed'), desc('Open `Lazy` File') },
+      ['<leader>Lee'] = { key_variant('edit'), desc('Open `Lazy` File') },
       ['<leader>Les'] = { key_variant('split'), desc('Open `Lazy` File Horizontal Window') },
       ['<leader>Let'] = { key_variant('tabnew'), desc('Open `Lazy` File Tab') },
       ['<leader>Lev'] = { key_variant('vsplit'), desc('Open `Lazy`File Vertical Window') },
@@ -165,7 +165,7 @@ function Lazy.setup_keys()
 end
 
 ---@return LazyToggles
-function Lazy.get_default_toggles()
+function M.get_default_toggles()
   return { ---@type LazyToggles
     snacks = true,
     notify = true,
@@ -233,13 +233,13 @@ end
 --- ---
 ---@param toggles table<integer, LazySpec>|LazyToggles
 ---@overload fun()
-function Lazy.setup(toggles)
+function M.setup(toggles)
   require('user_api.check.exists').validate({ toggles = { toggles, { 'table', 'nil' }, true } })
-  toggles = vim.tbl_deep_extend('keep', toggles or {}, Lazy.get_default_toggles())
+  toggles = vim.tbl_deep_extend('keep', toggles or {}, M.get_default_toggles())
 
-  Lazy.bootstrap()
+  M.bootstrap()
 
-  local dict = Lazy.get_default_specs()
+  local dict = M.get_default_specs()
   local dict_keys = vim.tbl_keys(dict) ---@type string[]
   local specs = { { import = 'plugin._spec' } } ---@type (string|LazyPluginSpec|LazySpecImport)[]
   local err = ''
@@ -295,11 +295,11 @@ function Lazy.setup(toggles)
     },
     rocks = {
       enabled = require('config.util').luarocks_check(),
-      root = vim.fn.stdpath('data') .. '/lazy-rocks',
+      root = vim.fs.joinpath(vim.fn.stdpath('data'), 'lazy-rocks'),
     },
     pkg = {
       enabled = true,
-      cache = LAZY_STATE .. '/pkg-cache.lua',
+      cache = vim.fs.joinpath(LAZY_STATE, 'pkg-cache.lua'),
       versions = true,
       sources = require('config.util').luarocks_check() and { 'lazy', 'packspec' }
         or { 'lazy', 'packspec', 'rockspec' },
@@ -324,26 +324,28 @@ function Lazy.setup(toggles)
       files = { 'README.md', 'lua/**/README.md' },
       skip_if_doc_exists = true,
     },
-    state = LAZY_STATE .. '/state.json',
+    state = vim.fs.joinpath(LAZY_STATE, 'state.json'),
     profiling = { loader = true, require = true },
+    debug = false,
+    headless = { colors = true, log = true, process = true, task = true },
   })
 
-  Lazy.setup_keys()
+  M.setup_keys()
 end
 
-Lazy.colorschemes = require('plugin.colorschemes')
+M.colorschemes = require('plugin.colorschemes')
 
-function Lazy.lsp()
+function M.lsp()
   local lsp = require('plugin.lsp')
   return lsp
 end
 
-local M = setmetatable(Lazy, { ---@type Config.Lazy
-  __index = Lazy,
+local Lazy = setmetatable(M, { ---@type Config.Lazy
+  __index = M,
   __newindex = function()
     vim.notify('Config.Lazy is Read-Only!', vim.log.levels.ERROR)
   end,
 })
 
-return M
+return Lazy
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

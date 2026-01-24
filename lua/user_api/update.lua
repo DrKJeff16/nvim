@@ -12,16 +12,8 @@ function Update.update(verbose)
   require('user_api.check.exists').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
   verbose = verbose ~= nil and verbose or false
 
-  local cmd = vim
-    .system({
-      'git',
-      'pull',
-      '--rebase',
-    }, {
-      text = true,
-      cwd = vim.fn.stdpath('config'),
-    })
-    :wait(10000)
+  local command = { 'git', 'pull', '--rebase' }
+  local cmd = vim.system(command, { text = true, cwd = vim.fn.stdpath('config') }):wait(10000)
   if verbose and cmd.stdout and cmd.stdout ~= '' then
     vim.notify(cmd.stdout, INFO, {
       animate = true,
