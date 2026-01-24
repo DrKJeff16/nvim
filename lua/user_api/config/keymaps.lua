@@ -1,10 +1,4 @@
----@class User.Keymaps.Delete
----@field n? string[]
----@field i? string[]
----@field v? string[]
----@field t? string[]
----@field o? string[]
----@field x? string[]
+---@alias User.Keymaps.Delete table<'n'|'i'|'v'|'t'|'o'|'x', string[]>
 
 local VIMRC = vim.fn.stdpath('config') .. '/init.lua'
 local ERROR = vim.log.levels.ERROR
@@ -14,9 +8,6 @@ local nop = require('user_api.maps').nop
 local desc = require('user_api.maps').desc
 local ft_get = require('user_api.util').ft_get
 local bt_get = require('user_api.util').bt_get
-local modes = require('user_api.maps').modes
-local curr_buf = vim.api.nvim_get_current_buf
-local in_list = vim.list_contains
 
 ---@param cmd 'edit'|'split'|'vsplit'|'tabnew'
 ---@return function
@@ -64,18 +55,18 @@ local function buf_del(force)
   local ft_triggers = { 'NvimTree', 'noice', 'trouble' }
   local pre_exc = { ft = { 'help', 'lazy', 'man', 'noice' }, bt = { 'help' } }
   return function()
-    local buf = curr_buf()
+    local buf = vim.api.nvim_get_current_buf()
     local prev_ft, prev_bt = ft_get(buf), bt_get(buf)
     if not force then
       force = prev_bt == 'terminal'
     end
 
     vim.cmd.bdelete({ bang = force })
-    if in_list(pre_exc.ft, prev_ft) or in_list(pre_exc.bt, prev_bt) then
+    if vim.list_contains(pre_exc.ft, prev_ft) or vim.list_contains(pre_exc.bt, prev_bt) then
       return
     end
 
-    if in_list(ft_triggers, ft_get(curr_buf())) then
+    if vim.list_contains(ft_triggers, ft_get(vim.api.nvim_get_current_buf())) then
       vim.cmd.bprevious()
     end
   end
@@ -122,7 +113,7 @@ Keymaps.Keys = { ---@type AllModeMaps
     ['<leader>fS'] = { ':w ', desc('Prompt Save File', false) },
     ['<leader>fii'] = {
       function()
-        local bufnr = curr_buf()
+        local bufnr = vim.api.nvim_get_current_buf()
         if not vim.api.nvim_get_option_value('modifiable', { buf = bufnr }) then
           vim.notify('Unable to indent. File is not modifiable!', ERROR)
           return
@@ -172,11 +163,11 @@ Keymaps.Keys = { ---@type AllModeMaps
     ['<leader>Hmx'] = { '<CMD>horizontal Man<CR>', desc('Open Man Page (Horizontal)') },
     ['<C-w>N'] = {
       function()
-        local ft = ft_get(curr_buf())
+        local ft = ft_get(vim.api.nvim_get_current_buf())
         vim.cmd.wincmd('n')
         vim.cmd.wincmd('o')
 
-        local opts = { buf = curr_buf() }
+        local opts = { buf = vim.api.nvim_get_current_buf() }
         vim.api.nvim_set_option_value('ft', ft, opts)
         vim.api.nvim_set_option_value('modifiable', true, opts)
         vim.api.nvim_set_option_value('modified', false, opts)
@@ -346,37 +337,33 @@ local M = setmetatable({}, {
       vim.notify('`keymaps.set_leader()` not called!', WARN)
     end
 
+    local modes = require('user_api.maps').modes
     local parsed_keys = {} ---@type AllModeMaps
     for k, v in pairs(keys) do
-      if not in_list(modes, k) then
+      if not vim.list_contains(modes, k) then
         vim.notify(('Ignoring badly formatted table\n`%s`'):format(vim.inspect(keys)), WARN)
       else
         parsed_keys[k] = v
       end
     end
-    if Keymaps.no_oped == nil then
-      Keymaps.no_oped = false
-    end
+
+    Keymaps.no_oped = Keymaps.no_oped ~= nil and Keymaps.no_oped or false
 
     -- Noop keys after `<leader>` to avoid accidents
     for _, mode in ipairs(modes) do
       if Keymaps.no_oped then
         break
       end
-      if in_list({ 'n', 'v' }, mode) then
+      if vim.list_contains({ 'n', 'v' }, mode) then
         nop(Keymaps.NOP, { noremap = false, silent = true }, mode, '<leader>')
       end
     end
 
     Keymaps.no_oped = true
     Keymaps.Keys = vim.tbl_deep_extend('keep', parsed_keys, vim.deepcopy(Keymaps.Keys)) ---@type AllModeMaps
-    require('user_api.maps').map_dict(
-      defaults and Keymaps.Keys or parsed_keys,
-      'wk.register',
-      true,
-      nil,
-      bufnr
-    )
+
+    local passed = defaults and Keymaps.Keys or parsed_keys
+    require('user_api.maps').map_dict(passed, 'wk.register', true, nil, bufnr)
   end,
 })
 
