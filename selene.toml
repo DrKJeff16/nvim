@@ -3,3 +3,4 @@ std = "vim"
 [lints]
 global_usage = "allow"
 mixed_table  = "allow"
+# vim: set ts=4 sts=4 sw=4 et ai si sta:
