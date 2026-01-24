@@ -9,10 +9,21 @@ return { ---@type LazySpec
       prefix = '<leader>uc',
       group_name = 'Colorschemes',
       custom_groups = {
-        A = { 'tokyonight', 'catppuccin', 'kanagawa', 'nightfox', 'carbonfox', 'onedark' },
+        A = {
+          'tokyonight',
+          'catppuccin',
+          'kanagawa',
+          'nightfox',
+          'carbonfox',
+          'onedark',
+          'minicyan',
+          'vscode',
+        },
       },
       grouping = { random = true, uppercase_groups = true },
     })
+
+    require('user_api.config').keymaps({ n = { ['<leader>u'] = { group = '+UI' } } })
   end,
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:
