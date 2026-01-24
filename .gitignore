@@ -61,3 +61,11 @@
 *.old
 *.pacnew
 *.pacsave
+
+# Python Environments
+.venv
+Pipfile
+Pipfile.lock
+requirements.txt
+uv.lock
+venv
