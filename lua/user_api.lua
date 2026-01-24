@@ -5,6 +5,11 @@ User.opts = require('user_api.opts')
 User.distro = require('user_api.distro')
 User.config = require('user_api.config')
 
+function User.disable_netrw()
+  vim.g.loaded_netrw = 1
+  vim.g.loaded_netrwPlugin = 1
+end
+
 function User.setup()
   require('user_api.commands').setup()
   require('user_api.update').setup()

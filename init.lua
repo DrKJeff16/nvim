@@ -3,9 +3,8 @@ local Opts = require('user_api.opts')
 local Keymaps = require('user_api.config.keymaps')
 
 function _G.notify_inspect(...)
-  local nargs = select('#', ...) ---@type integer
-  local txt = ''
-  local i = 1
+  ---@type integer, integer, string
+  local nargs, i, txt = select('#', ...), 1, ''
   while i <= nargs do
     local selection = select(i, ...)
     if not vim.list_contains({ 'string', 'number', 'boolean', 'nil' }, type(selection)) then
@@ -73,13 +72,10 @@ Opts.setup({
   textwidth = 100,
   title = true,
   wrap = require('user_api.distro.termux').validate(),
-})
-
-Opts.set_cursor_blink()
+}, false, true)
 
 ---Disable `netrw` regardless of whether `nvim_tree/neo_tree` exist or not.
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
+require('user_api').disable_netrw()
 
 local L = require('config.lazy')
 L.setup({
