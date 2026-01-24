@@ -6,7 +6,8 @@ return { ---@type LazySpec
   version = false,
   cond = not require('user_api.check').in_console(),
   config = function()
-    require('screenkey').setup({
+    local SK = require('screenkey')
+    SK.setup({
       win_opts = {
         row = 0,
         col = math.floor((vim.o.columns - 60) / 2) - 1,
@@ -38,19 +39,18 @@ return { ---@type LazySpec
       disable = {
         filetypes = {},
         buftypes = { 'terminal' },
-        modes = { 'i' },
+        modes = { 'i', 'v', 't', 'V' },
       },
       show_leader = true,
       group_mappings = true,
       display_infront = {},
       display_behind = {},
       filter = function(keys)
-        for i, k in ipairs(keys) do
-          if require('screenkey').statusline_component_is_active() and k.key == '%' then
-            keys[i].key = '%%'
-          end
-        end
-        return keys
+        local active = SK.statusline_component_is_active
+        return vim.tbl_map(function(value) ---@param value screenkey.queued_key
+          value.key = (active() and value.key == '%') and '%%' or value.key
+          return value
+        end, keys)
       end,
       separator = ' ',
       keys = {
@@ -95,7 +95,7 @@ return { ---@type LazySpec
 
     local desc = require('user_api.maps').desc
     require('user_api.config').keymaps({
-      n = { ['<leader><C-s>'] = { require('screenkey').toggle, desc('Toggle Screenkey') } },
+      n = { ['<leader><C-s>'] = { SK.toggle, desc('Toggle Screenkey') } },
     })
   end,
 }
