@@ -235,14 +235,18 @@ end
 
 ---@param override User.Opts.Spec A table with custom options
 ---@param verbose boolean Flag to make the function return a string with invalid values, if any
+---@param cursor_blink boolean Whether to enable cursor blinking
 ---@overload fun()
 ---@overload fun(override: User.Opts.Spec)
-function Opts.setup(override, verbose)
+---@overload fun(override: User.Opts.Spec, verbose: boolean)
+function Opts.setup(override, verbose, cursor_blink)
   require('user_api.check.exists').validate({
     override = { override, { 'table', 'nil' }, true },
     verbose = { verbose, { 'boolean', 'nil' }, true },
+    cursor_blink = { cursor_blink, { 'boolean', 'nil' }, true },
   })
   verbose = verbose ~= nil and verbose or false
+  cursor_blink = cursor_blink ~= nil and cursor_blink or false
 
   if vim.tbl_isempty(Opts.options) then
     Opts.options = Opts.long_opts_convert(Opts.get_defaults(), verbose)
@@ -251,6 +255,10 @@ function Opts.setup(override, verbose)
   local parsed_opts = Opts.long_opts_convert(override or {}, verbose)
   Opts.options = vim.tbl_deep_extend('keep', parsed_opts, Opts.options) ---@type vim.bo|vim.wo
   Opts.optset(Opts.options, verbose)
+
+  if cursor_blink then
+    Opts.set_cursor_blink()
+  end
 end
 
 local M = setmetatable(Opts, { ---@type User.Opts

@@ -143,6 +143,9 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
             if bufnr ~= nil then
               tbl.buffer = bufnr
             end
+            if Value.is_str(v.proxy) then
+              tbl.proxy = v.proxy
+            end
             if Value.is_str(v.group) then
               tbl.group = v.group
             end
@@ -202,6 +205,9 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
 
       if bufnr ~= nil then
         tbl.buffer = bufnr
+      end
+      if Value.is_str(v.proxy) then
+        tbl.proxy = v.proxy
       end
       if Value.is_str(v.group) then
         tbl.group = v.group

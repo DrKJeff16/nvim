@@ -16,7 +16,7 @@ return { ---@type LazySpec
     end,
     preset = 'helix', ---@type false|'classic'|'modern'|'helix'
     notify = true,
-    keys = { scroll_down = '<C-d>', scroll_up = '<C-u>' },
+    keys = { scroll_down = '<A-d>', scroll_up = '<A-u>' },
     show_help = true,
     show_keys = true,
     debug = false,
