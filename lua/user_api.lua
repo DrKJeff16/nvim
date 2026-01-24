@@ -10,12 +10,22 @@ function User.disable_netrw()
   vim.g.loaded_netrwPlugin = 1
 end
 
-function User.setup()
-  require('user_api.commands').setup()
+---@param commands table<string, User.Commands.CmdSpec>|nil
+---@param verbose boolean
+---@overload fun()
+---@overload fun(commands: table<string, User.Commands.CmdSpec>)
+function User.setup(commands, verbose)
+  require('user_api.check.exists').validate({
+    commands = { commands, { 'table', 'nil' }, true },
+    verbose = { verbose, { 'boolean', 'nil' }, true },
+  })
+  verbose = verbose ~= nil and verbose or false
+
+  require('user_api.commands').setup(commands or {})
   require('user_api.update').setup()
 
   User.opts.setup()
-  User.distro()
+  User.distro(verbose)
 
   require('user_api.util').setup_autocmd()
 

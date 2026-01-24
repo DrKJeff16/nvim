@@ -67,7 +67,7 @@ function Commands.add_command(name, cmd, opts)
   Commands.setup({ [name] = cmnd })
 end
 
----@param cmds table<string, User.Commands.CmdSpec>|nil
+---@param cmds table<string, User.Commands.CmdSpec>
 ---@overload fun()
 function Commands.setup(cmds)
   require('user_api.check.exists').validate({ cmds = { cmds, { 'table', 'nil' }, true } })

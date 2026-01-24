@@ -7,7 +7,10 @@ local Distro = {}
 Distro.archlinux = require('user_api.distro.archlinux')
 Distro.termux = require('user_api.distro.termux')
 
-local M = setmetatable(Distro, { ---@type User.Distro|fun()|fun(verbose?: boolean)
+---@type User.Distro
+---@overload fun()
+---@overload fun(verbose: boolean)
+local M = setmetatable(Distro, {
   __index = Distro,
   __newindex = function()
     vim.notify('User.Distro is Read-Only!', ERROR)
