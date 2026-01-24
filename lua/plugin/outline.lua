@@ -1,7 +1,6 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'hedyhli/outline.nvim',
-  keys = { { '<leader>ot', '<CMD>Outline<CR>', desc = 'Toggle Outline' } },
   cmd = { 'Outline' },
   version = false,
   config = function()
@@ -16,7 +15,7 @@ return { ---@type LazySpec
         center_on_jump = true,
         show_numbers = false,
         show_relative_numbers = false,
-        wrap = false,
+        wrap = require('user_api.distro.termux').validate(),
         show_cursorline = true,
         hide_cursor = false,
         focus_on_open = true,
@@ -40,10 +39,7 @@ return { ---@type LazySpec
           },
         },
       },
-      guides = {
-        enabled = true,
-        markers = { bottom = '└', middle = '├', vertical = '│' },
-      },
+      guides = { enabled = true, markers = { bottom = '└', middle = '├', vertical = '│' } },
       symbol_folding = {
         autofold_depth = false,
         auto_unfold = { hovered = true, only = true },
@@ -85,21 +81,12 @@ return { ---@type LazySpec
         up_and_jump = '<C-k>',
       },
       providers = {
-        priority = { 'lsp', 'coc', 'markdown', 'norg', 'man' },
+        priority = { 'lsp', 'man', 'markdown' },
         lsp = { blacklist_clients = {} },
         markdown = { filetypes = { 'markdown' } },
       },
       symbols = {
-        filter = {
-          'Package',
-          'Module',
-          'Function',
-          'Class',
-          'StaticMethod',
-          'Method',
-          'Enum',
-        },
-        icon_fetcher = nil,
+        filter = { 'Package', 'Module', 'Function', 'Class', 'StaticMethod', 'Method', 'Enum' },
         icon_source = 'lspkind',
         icons = {
           Array = { icon = '󰅪', hl = 'Constant' },
@@ -138,7 +125,13 @@ return { ---@type LazySpec
       },
     })
 
-    require('user_api.config').keymaps({ n = { ['<leader>o'] = { group = '+Outline' } } })
+    local desc = require('user_api.maps').desc
+    require('user_api.config').keymaps({
+      n = {
+        ['<leader>o'] = { group = '+Outline' },
+        ['<leader>ot'] = { require('outline').toggle_outline, desc('Toggle Outline') },
+      },
+    })
   end,
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:
