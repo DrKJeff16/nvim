@@ -14,7 +14,7 @@ return { ---@type LazySpec
       linewise_hybrid_mode = false,
       filetypes = { 'help' },
       ignore_previews = {},
-      ignore_buftypes = {},
+      ignore_buftypes = { '' },
       condition = nil,
       max_buf_lines = 500,
       draw_range = { 2 * vim.o.lines, 2 * vim.o.lines },
