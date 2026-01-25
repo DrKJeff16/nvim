@@ -27,6 +27,7 @@
 ---@field gh_co? LazySpecImport
 ---@field git_gitsigns? LazySpecImport
 ---@field git_lazygit? LazySpecImport
+---@field git_utils? LazySpecImport
 ---@field goto_preview? LazySpecImport
 ---@field helpview? LazySpecImport
 ---@field hoversplit? LazySpecImport
@@ -125,6 +126,7 @@
 ---@field gh_co? boolean
 ---@field git_gitsigns? boolean
 ---@field git_lazygit? boolean
+---@field git_utils? boolean
 ---@field goto_preview? boolean
 ---@field helpview? boolean
 ---@field hoversplit? boolean
