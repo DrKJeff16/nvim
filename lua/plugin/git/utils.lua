@@ -16,6 +16,7 @@ return { ---@type LazySpec
     'nvim-telescope/telescope.nvim',
     'sindrets/diffview.nvim',
   },
+  cond = require('user_api.check.exists').executable('git'),
   config = function()
     require('nvim-git-utils').setup({
       log = { enabled = true, icon = '' },
