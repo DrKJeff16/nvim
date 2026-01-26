@@ -25,7 +25,7 @@ function User.setup(commands, verbose)
   require('user_api.update').setup()
 
   User.opts.setup()
-  User.distro(verbose)
+  User.distro.setup(verbose)
 
   require('user_api.util').setup_autocmd()
 

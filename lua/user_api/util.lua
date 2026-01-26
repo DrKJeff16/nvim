@@ -203,7 +203,7 @@ end
 function Util.bt_get(bufnr)
   require('user_api.check.exists').validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
 
-  return vim.bo[bufnr or curr_buf()].buftype
+  return vim.api.nvim_get_option_value('buftype', { buf = bufnr or curr_buf() })
 end
 
 ---@param bufnr? integer
@@ -213,7 +213,7 @@ end
 function Util.ft_get(bufnr)
   require('user_api.check.exists').validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
 
-  return vim.bo[bufnr or curr_buf()].filetype
+  return vim.api.nvim_get_option_value('filetype', { buf = bufnr or curr_buf() })
 end
 
 ---@param T any[]

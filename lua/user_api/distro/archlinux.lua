@@ -35,9 +35,7 @@ function Archlinux.validate()
       table.insert(new_rtpaths, p)
     end
   end
-
-  -- If no dirs...
-  if not require('user_api.check.value').type_not_empty('table', new_rtpaths) then
+  if vim.tbl_isempty(new_rtpaths) then
     return false
   end
 
@@ -45,21 +43,23 @@ function Archlinux.validate()
   return true
 end
 
-local M = setmetatable({}, { ---@type User.Distro.Archlinux|function
+function Archlinux.setup()
+  if not Archlinux.validate() then
+    return
+  end
+  for _, path in ipairs(Archlinux.rtpaths) do
+    if is_dir(path) then
+      vim.o.runtimepath = vim.o.runtimepath .. ',' .. path
+    end
+  end
+  pcall(vim.cmd.runtime, { 'archlinux.vim', bang = true })
+end
+
+---@type User.Distro.Archlinux
+local M = setmetatable({}, {
   __index = Archlinux,
   __newindex = function()
     vim.notify('User.Distro.Archlinux is Read-Only!', ERROR)
-  end,
-  __call = function(self) ---@param self User.Distro.Archlinux
-    if not self.validate() then
-      return
-    end
-    for _, path in ipairs(self.rtpaths) do
-      if is_dir(path) then
-        vim.o.runtimepath = vim.o.runtimepath .. ',' .. path
-      end
-    end
-    pcall(vim.cmd.runtime, { 'archlinux.vim', bang = true })
   end,
 })
 

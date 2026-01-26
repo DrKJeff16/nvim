@@ -16,10 +16,12 @@ Commands.commands.Redir = {
     local bufnr = vim.api.nvim_create_buf(true, true)
     local win = vim.api.nvim_open_win(bufnr, true, { vertical = false })
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, l)
-    vim.bo[bufnr].filetype = 'Redir'
-    vim.bo[bufnr].modified = false
-    vim.wo[win].number = false
-    vim.wo[win].signcolumn = 'no'
+
+    local buf_opts, win_opts = { buf = bufnr }, { win = win } ---@type vim.api.keyset.option, vim.api.keyset.option
+    vim.api.nvim_set_option_value('filetype', 'Redir', buf_opts)
+    vim.api.nvim_set_option_value('modified', false, buf_opts)
+    vim.api.nvim_set_option_value('number', false, win_opts)
+    vim.api.nvim_set_option_value('signcolumn', 'no', win_opts)
 
     vim.keymap.set('n', 'q', function()
       vim.api.nvim_buf_delete(bufnr, { force = true })

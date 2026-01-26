@@ -62,7 +62,6 @@ return { ---@type LazySpec
           v = {
             ['<leader>G'] = { group = '+Git' },
             ['<leader>Gh'] = { group = '+GitSigns Hunks' },
-
             ['<leader>Ghs'] = {
               function()
                 GS.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
@@ -97,8 +96,8 @@ return { ---@type LazySpec
         untracked = { text = '┆' },
       },
       signs_staged_enable = true,
-      signcolumn = vim.wo.signcolumn == 'yes',
-      numhl = vim.wo.number,
+      signcolumn = vim.o.signcolumn == 'yes',
+      numhl = vim.o.number,
       linehl = false,
       word_diff = false,
       watch_gitdir = { follow_files = true },

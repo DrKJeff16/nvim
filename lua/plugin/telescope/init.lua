@@ -231,11 +231,11 @@ vim.api.nvim_create_autocommand('User', {
   group = vim.api.nvim_create_augroup('UserTelescope', { clear = true }),
   pattern = 'TelescopePreviewerLoaded',
   callback = function(ev)
-    local win = vim.api.nvim_get_current_win()
+    local win_opts = { win = vim.api.nvim_get_current_win() } ---@type vim.api.keyset.option
     if ev.data.filetype ~= 'help' then
-      vim.wo[win].number = true
+      vim.api.nvim_set_option_value('number', true, win_opts)
     elseif ev.data.bufname:match('*.csv') then
-      vim.wo[win].wrap = false
+      vim.api.nvim_set_option_value('wrap', false, win_opts)
     end
   end,
 })

@@ -81,7 +81,7 @@ function BUtil.reset_providers()
               return vim.api.nvim_win_get_buf(win)
             end)
             :filter(function(bufnr) ---@param bufnr integer
-              return vim.bo[bufnr].buftype ~= 'nofile'
+              return vim.api.nvim_get_option_value('buftype', { buf = bufnr }) ~= 'nofile'
             end)
             :totable()
         end,
