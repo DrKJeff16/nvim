@@ -2,7 +2,6 @@
 ---(e.g. for Vim runtime files from Arch Linux packages)
 
 local ERROR = vim.log.levels.ERROR
-local in_list = vim.list_contains
 
 local function is_dir(dir) ---@param dir string
   return vim.fn.isdirectory(dir) == 1
@@ -31,7 +30,7 @@ function Archlinux.validate()
   -- First check for each dir's existance
   local new_rtpaths = {} ---@type string[]
   for _, p in ipairs(Archlinux.rtpaths) do
-    if vim.fn.isdirectory(p) == 1 and not in_list(new_rtpaths, p) then
+    if vim.fn.isdirectory(p) == 1 and not vim.list_contains(new_rtpaths, p) then
       table.insert(new_rtpaths, p)
     end
   end
@@ -55,8 +54,7 @@ function Archlinux.setup()
   pcall(vim.cmd.runtime, { 'archlinux.vim', bang = true })
 end
 
----@type User.Distro.Archlinux
-local M = setmetatable({}, {
+local M = setmetatable({}, { ---@type User.Distro.Archlinux
   __index = Archlinux,
   __newindex = function()
     vim.notify('User.Distro.Archlinux is Read-Only!', ERROR)

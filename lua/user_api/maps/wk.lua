@@ -97,6 +97,7 @@
 --- ---
 ---@class RegPfx: vim.keymap.set.Opts
 ---@field mode? MapModes
+---@field proxy? string|fun(): string
 ---@field hidden? boolean
 ---@field group? string
 
@@ -124,8 +125,9 @@ end
 
 ---@param lhs string
 ---@param rhs string|function
----@param opts? User.Maps.Opts|vim.keymap.set.Opts|RegPfx
----@return RegKey|RegPfx
+---@param opts User.Maps.Opts|vim.keymap.set.Opts|wk.Spec
+---@return wk.Spec converted
+---@overload fun(lhs: string, rhs: string|function): converted: wk.Spec
 function WK.convert(lhs, rhs, opts)
   require('user_api.check.exists').validate({
     lhs = { lhs, { 'string' } },
@@ -138,18 +140,25 @@ function WK.convert(lhs, rhs, opts)
   local Value = require('user_api.check.value')
   opts = opts or {}
 
-  local res = { lhs, rhs } ---@type RegKey|RegPfx
+  local res = { lhs, rhs } ---@type wk.Spec
   if Value.is_bool(opts.hidden) then
     res.hidden = opts.hidden
+    opts.hidden = nil
+  end
+
+  if Value.type_not_empty('string', opts.group) then
+    res.proxy = opts.proxy
+    opts.proxy = nil
   end
 
   if Value.type_not_empty('string', opts.group) then
     res.group = opts.group
-    return res
+    opts.group = nil
   end
 
   if Value.type_not_empty('string', opts.desc) then
     res.desc = opts.desc
+    opts.desc = nil
   end
 
   return res
@@ -161,7 +170,7 @@ function WK.convert_dict(T)
   require('user_api.check.exists').validate({ T = { T, { 'table' } } })
 
   local Value = require('user_api.check.value')
-  local res = {} ---@type RegKeys
+  local res = {} ---@type AllMaps
   for lhs, v in pairs(T) do
     local rhs = v[1] ---@type string|function
     local opts = Value.is_tbl(v[2]) and v[2] or {} ---@type User.Maps.Opts
@@ -171,8 +180,9 @@ function WK.convert_dict(T)
 end
 
 ---@param T AllMaps
----@param opts? RegPfx|User.Maps.Opts
+---@param opts User.Maps.Opts|wk.Spec
 ---@return false|nil
+---@overload fun(T: AllMaps): false|nil
 function WK.register(T, opts)
   require('user_api.check.exists').validate({
     T = { T, { 'table' } },
@@ -188,7 +198,7 @@ function WK.register(T, opts)
   opts = opts or O.new({ mode = 'n' })
   opts.mode = (Value.is_str(opts.mode) and in_list(MODES, opts.mode)) and opts.mode or 'n'
 
-  local filtered = {} ---@type (KeyMapRhsArr|AllMaps|AllModeMaps)[]
+  local filtered = {} ---@type wk.Spec
   for _, val in pairs(T) do
     table.insert(filtered, val)
   end

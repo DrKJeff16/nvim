@@ -11,12 +11,12 @@ local Termux = {}
 Termux.PREFIX = vim.fn.has_key(vim.fn.environ(), 'PREFIX') and vim.fn.environ().PREFIX or '' ---@type string
 
 local RTPATHS = {
-  ('%s/share/vim/vimfiles/after'):format(Termux.PREFIX),
-  ('%s/share/vim/vimfiles'):format(Termux.PREFIX),
-  ('%s/share/nvim/runtime'):format(Termux.PREFIX),
-  ('%s/local/share/vim/vimfiles/after'):format(Termux.PREFIX),
-  ('%s/local/share/vim/vimfiles'):format(Termux.PREFIX),
-  ('%s/local/share/nvim/runtime'):format(Termux.PREFIX),
+  vim.fs.joinpath(Termux.PREFIX, 'share/vim/vimfiles/after'),
+  vim.fs.joinpath(Termux.PREFIX, 'share/vim/vimfiles'),
+  vim.fs.joinpath(Termux.PREFIX, 'share/nvim/runtime'),
+  vim.fs.joinpath(Termux.PREFIX, 'local/share/vim/vimfiles/after'),
+  vim.fs.joinpath(Termux.PREFIX, 'local/share/vim/vimfiles'),
+  vim.fs.joinpath(Termux.PREFIX, 'local/share/nvim/runtime'),
 }
 
 Termux.rtpaths = setmetatable(RTPATHS, { ---@type string[]

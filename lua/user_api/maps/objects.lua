@@ -1,7 +1,19 @@
-local in_list = vim.list_contains
-
 ---@class User.Maps.Opts: vim.keymap.set.Opts
 local O = {}
+
+local valid = {
+  'buffer',
+  'callback',
+  'desc',
+  'expr',
+  'noremap',
+  'nowait',
+  'remap',
+  'replace_keycodes',
+  'script',
+  'silent',
+  'unique',
+}
 
 ---@param T User.Maps.Opts
 function O:add(T)
@@ -11,14 +23,15 @@ function O:add(T)
   end
 
   for k, v in pairs(T) do
-    if not in_list({ 'add', 'new' }, k) then
+    if vim.list_contains(valid, k) then
       self[k] = v
     end
   end
 end
 
----@param T? User.Maps.Opts
+---@param T User.Maps.Opts
 ---@return User.Maps.Opts new_object
+---@overload fun()
 function O.new(T)
   require('user_api.check.exists').validate({ T = { T, { 'table', 'nil' }, true } })
 

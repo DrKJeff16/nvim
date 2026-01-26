@@ -1,3 +1,5 @@
+---@module 'which-key'
+
 ---Available modes.
 --- ---
 ---@alias MapModes 'n'|'i'|'v'|'t'|'o'|'x'
@@ -24,7 +26,7 @@
 ---@alias KeyMapDict table<string, KeyMapRhsArr>
 ---@alias KeyMapDicts table<string, KeyMapRhsDict>
 
----@alias AllMaps table<string, KeyMapRhsArr|RegKey|RegPfx>
+---@alias AllMaps table<string, KeyMapRhsArr|wk.Spec>
 ---@alias AllModeMaps table<'n'|'i'|'v'|'t'|'o'|'x', AllMaps>
 
 ---@class KeyMapTbl
@@ -32,23 +34,8 @@
 ---@field rhs string|function
 ---@field opts? User.Maps.Opts
 
----@class KeyMapModeDict
----@field n? KeyMapDict
----@field i? KeyMapDict
----@field v? KeyMapDict
----@field t? KeyMapDict
----@field o? KeyMapDict
----@field x? KeyMapDict
-
----@class KeyMapModeDicts
----@field n? KeyMapTbl[]
----@field i? KeyMapTbl[]
----@field v? KeyMapTbl[]
----@field t? KeyMapTbl[]
----@field o? KeyMapTbl[]
----@field x? KeyMapTbl[]
-
-local ERROR = vim.log.levels.ERROR
+---@alias KeyMapModeDict table<'n'|'i'|'v'|'t'|'o'|'x'|'V', KeyMapDict>
+---@alias KeyMapModeDicts table<'n'|'i'|'v'|'t'|'o'|'x'|'V', KeyMapTbl[]>
 
 ---@param mode MapModes
 ---@return fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)
@@ -62,20 +49,19 @@ local function variant(mode)
 end
 
 ---@class User.Maps.Keymap
-local Keymap = {
-  n = variant('n'),
-  i = variant('i'),
-  v = variant('v'),
-  t = variant('t'),
-  o = variant('o'),
-  x = variant('x'),
-}
+local Keymap = {}
 
----@type User.Maps.Keymap|table<MapModes, fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)>
-local M = setmetatable({}, {
+Keymap.n = variant('n')
+Keymap.i = variant('i')
+Keymap.v = variant('v')
+Keymap.t = variant('t')
+Keymap.o = variant('o')
+Keymap.x = variant('x')
+
+local M = setmetatable({}, { ---@type User.Maps.Keymap
   __index = Keymap,
   __newindex = function()
-    vim.notify('User.Maps.Keymap is Read-Only!', ERROR)
+    vim.notify('User.Maps.Keymap is Read-Only!', vim.log.levels.ERROR)
   end,
 })
 
