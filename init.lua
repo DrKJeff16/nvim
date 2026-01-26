@@ -84,6 +84,7 @@ L.setup({
   blink_pairs = false,
   bmessages = false,
   cheaty = false,
+  doxygen_previewer = true,
   ibl = false,
   mason = false,
   rainbow_delimiters = false,

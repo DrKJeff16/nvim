@@ -312,7 +312,7 @@ end
 ---@type User.Config.Keymaps
 ---@overload fun(keys: AllModeMaps)
 ---@overload fun(keys: AllModeMaps, bufnr: integer)
----@overload fun(keys: AllModeMaps, bufnr: integer, defaults: boolean)
+---@overload fun(keys: AllModeMaps, bufnr: integer|nil, defaults: boolean)
 local M = setmetatable({}, {
   __index = Keymaps,
   __newindex = function()

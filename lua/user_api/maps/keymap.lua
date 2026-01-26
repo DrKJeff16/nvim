@@ -26,7 +26,7 @@
 ---@alias KeyMapDict table<string, KeyMapRhsArr>
 ---@alias KeyMapDicts table<string, KeyMapRhsDict>
 
----@alias AllMaps table<string, KeyMapRhsArr|wk.Spec>
+---@alias AllMaps table<string, KeyMapRhsArr|RegKey|RegPfx>
 ---@alias AllModeMaps table<'n'|'i'|'v'|'t'|'o'|'x', AllMaps>
 
 ---@class KeyMapTbl
