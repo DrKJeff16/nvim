@@ -3,14 +3,6 @@ return { ---@type LazySpec
   'BibekBhusal0/nvim-git-utils',
   dev = true,
   version = false,
-  cmd = {
-    'GitAddCommit',
-    'GitCommit',
-    'GitChangeLastCommit',
-    'GitChanges',
-    'DiffviewCompareBranchesTelescope',
-    'DiffviewFileHistoryTelescope',
-  },
   dependencies = {
     'MunifTanjim/nui.nvim',
     'nvim-telescope/telescope.nvim',
