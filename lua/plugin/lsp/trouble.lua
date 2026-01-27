@@ -229,7 +229,7 @@ function Trouble.new()
 
       self.Opts = vim.tbl_deep_extend('force', self.Opts, override or {})
       require('trouble').setup(self.Opts)
-      require('user_api.config').keymaps({ n = self.Keys })
+      require('user_api.config').keymaps.set({ n = self.Keys })
     end,
   })
 end

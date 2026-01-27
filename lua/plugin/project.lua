@@ -30,7 +30,7 @@ return { ---@type LazySpec
     })
 
     local desc = require('user_api.maps').desc
-    require('user_api.config').keymaps({
+    require('user_api.config').keymaps.set({
       n = {
         ['<leader>p'] = { group = '+Project' },
         ['<leader>pC'] = { vim.cmd.ProjectConfig, desc('Toggle Config Window') },
@@ -48,7 +48,7 @@ return { ---@type LazySpec
 
     if require('user_api.check.exists').module('telescope') then
       require('telescope').load_extension('projects')
-      require('user_api.config').keymaps({
+      require('user_api.config').keymaps.set({
         n = { ['<leader>pT'] = { vim.cmd.ProjectTelescope, desc('Open Telescope Picker') } },
       })
     end

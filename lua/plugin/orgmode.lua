@@ -29,7 +29,7 @@ return { ---@type LazySpec
       calendar_week_start_day = 0,
     })
 
-    require('user_api.config').keymaps({ n = { ['<leader>o'] = { group = '+Orgmode' } } })
+    require('user_api.config').keymaps.set({ n = { ['<leader>o'] = { group = '+Orgmode' } } })
   end,
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

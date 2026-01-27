@@ -224,7 +224,7 @@ end
 
 function Opts.setup_maps()
   local desc = require('user_api.maps').desc
-  require('user_api.config').keymaps({
+  require('user_api.config').keymaps.set({
     n = {
       ['<leader>UO'] = { group = '+Options' },
       ['<leader>UOl'] = { Opts.print_set_opts, desc('Print options set by `user.opts`') },

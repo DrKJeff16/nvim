@@ -59,7 +59,7 @@ end
 
 function Update.setup()
   local desc = require('user_api.maps').desc
-  require('user_api.config').keymaps({
+  require('user_api.config').keymaps.set({
     n = {
       ['<leader>U'] = { group = '+User API' },
       ['<leader>Uu'] = { Update.update, desc('Update User Config') },

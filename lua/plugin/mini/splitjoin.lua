@@ -14,7 +14,7 @@ return { ---@type LazySpec
       join = { hooks_pre = {}, hooks_post = {} },
     })
 
-    require('user_api.config').keymaps({ n = { ['<leader>ms'] = { group = '+Splitjoin' } } })
+    require('user_api.config').keymaps.set({ n = { ['<leader>ms'] = { group = '+Splitjoin' } } })
     vim.api.nvim_create_autocmd({ 'BufNew', 'BufAdd', 'BufEnter', 'BufCreate', 'WinEnter' }, {
       group = vim.api.nvim_create_augroup('UserMini', { clear = false }),
       callback = function(ev)

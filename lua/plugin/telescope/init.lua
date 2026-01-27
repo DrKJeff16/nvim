@@ -225,7 +225,7 @@ for mod, ext in pairs(known_exts) do
     end
   end
 end
-require('user_api.config').keymaps({ n = Keys })
+require('user_api.config').keymaps.set({ n = Keys })
 
 vim.api.nvim_create_autocommand('User', {
   group = vim.api.nvim_create_augroup('UserTelescope', { clear = true }),

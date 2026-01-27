@@ -27,7 +27,7 @@ return { ---@type LazySpec
     end
 
     local desc = require('user_api.maps').desc
-    require('user_api.config').keymaps({
+    require('user_api.config').keymaps.set({
       n = {
         ['<leader>G'] = { group = '+Git' },
         ['<leader>Gl'] = { group = '+LazyGit' },

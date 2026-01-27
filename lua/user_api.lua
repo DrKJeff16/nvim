@@ -31,7 +31,7 @@ function User.setup(commands, verbose)
 
   User.config.neovide.setup()
 
-  User.config.keymaps({ n = { ['<leader>U'] = { group = '+User API' } } })
+  User.config.keymaps.set({ n = { ['<leader>U'] = { group = '+User API' } } })
 end
 
 local M = setmetatable(User, { ---@type UserAPI

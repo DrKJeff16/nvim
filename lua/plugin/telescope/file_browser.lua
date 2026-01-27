@@ -66,7 +66,7 @@ FileBrowser.file_browser = {
 
 function FileBrowser.loadkeys()
   local desc = require('user_api.maps').desc
-  require('user_api.config').keymaps({
+  require('user_api.config').keymaps.set({
     n = {
       ['<leader><C-T>eb'] = {
         require('telescope').extensions.file_browser.file_browser,

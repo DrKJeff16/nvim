@@ -85,17 +85,18 @@ L.setup({
   bmessages = false,
   cheaty = false,
   doxygen_previewer = true,
+  git_utils = false,
   ibl = false,
   mason = false,
   rainbow_delimiters = false,
 })
 
 local desc = require('user_api.maps').desc
-Keymaps({
+Keymaps.set({
   n = {
     ['<leader>vM'] = { vim.cmd.messages, desc('Run `:messages`') },
     ['<leader>vN'] = { vim.cmd.Notifications, desc('Run `:Notifications`') },
-    ['<C-/>'] = { '<CMD>norm gcc<CR><Up>', desc('Toggle Comment') },
+    ['<C-/>'] = { ':norm gcc<CR><Up>', desc('Toggle Comment') },
   },
   v = { ['<C-/>'] = { ":'<,'>normal gcc<CR><Up>", desc('Toggle Comment') } },
 }, nil, true)

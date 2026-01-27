@@ -80,7 +80,7 @@ function Commands.setup(cmds)
     vim.api.nvim_create_user_command(cmd, exec, opts)
   end
 
-  require('user_api.config').keymaps({
+  require('user_api.config').keymaps.set({
     n = {
       ['<Leader>UC'] = { group = '+Commands' },
       ['<Leader>UCR'] = { ':Redir ', desc('Prompt to `Redir` command', false) },

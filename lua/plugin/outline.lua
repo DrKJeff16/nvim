@@ -1,7 +1,6 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'hedyhli/outline.nvim',
-  cmd = { 'Outline' },
   version = false,
   config = function()
     require('outline').setup({
@@ -126,7 +125,7 @@ return { ---@type LazySpec
     })
 
     local desc = require('user_api.maps').desc
-    require('user_api.config').keymaps({
+    require('user_api.config').keymaps.set({
       n = {
         ['<leader>o'] = { group = '+Outline' },
         ['<leader>ot'] = { require('outline').toggle_outline, desc('Toggle Outline') },

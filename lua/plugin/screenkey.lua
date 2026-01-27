@@ -94,7 +94,7 @@ return { ---@type LazySpec
     })
 
     local desc = require('user_api.maps').desc
-    require('user_api.config').keymaps({
+    require('user_api.config').keymaps.set({
       n = { ['<leader><C-s>'] = { SK.toggle, desc('Toggle Screenkey') } },
     })
   end,

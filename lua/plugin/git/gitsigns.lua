@@ -15,7 +15,7 @@ return { ---@type LazySpec
     GS.setup({
       on_attach = function(bufnr) ---@param bufnr? integer
         local desc = require('user_api.maps').desc
-        require('user_api.config').keymaps({
+        require('user_api.config').keymaps.set({
           n = {
             ['<leader>G'] = { group = '+Git' },
             ['<leader>Gh'] = { group = '+GitSigns Hunks' },

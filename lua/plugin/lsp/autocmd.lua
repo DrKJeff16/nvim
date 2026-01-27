@@ -56,8 +56,8 @@ Autocmd.autocommands = {
           return
         end
 
-        require('user_api.config').keymaps(Autocmd.AUKeys)
-        require('user_api.config').keymaps(
+        require('user_api.config').keymaps.set(Autocmd.AUKeys)
+        require('user_api.config').keymaps.set(
           vim.tbl_deep_extend('keep', Autocmd.AUKeys, {
             n = {
               ['<leader>lS'] = { group = '+Server', buffer = args.buf },

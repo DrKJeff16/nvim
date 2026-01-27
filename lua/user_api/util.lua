@@ -396,7 +396,7 @@ function Util.setup_autocmd()
               return
             end
             if ft == 'lua' and executable('stylua') then
-              require('user_api.config').keymaps({
+              require('user_api.config').keymaps.set({
                 n = {
                   ['<leader><C-l>'] = {
                     function()
@@ -418,7 +418,7 @@ function Util.setup_autocmd()
               }, ev.buf)
             end
             if ft == 'python' and executable('isort') then
-              require('user_api.config').keymaps({
+              require('user_api.config').keymaps.set({
                 n = {
                   ['<leader><C-l>'] = {
                     function()

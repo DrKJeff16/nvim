@@ -16,7 +16,7 @@ return { ---@type LazySpec
     require('mini.bufremove').setup({ silent = true })
 
     local desc = require('user_api.maps').desc
-    require('user_api.config').keymaps({
+    require('user_api.config').keymaps.set({
       n = {
         ['<leader>bd'] = { gen_bdel(), desc('Close Buffer (Mini)') },
         ['<leader>bD'] = { gen_bdel(true), desc('Close Buffer Forcefully (Mini)') },

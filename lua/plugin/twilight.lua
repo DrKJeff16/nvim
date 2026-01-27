@@ -19,7 +19,7 @@ return { ---@type LazySpec
     })
 
     local desc = require('user_api.maps').desc
-    require('user_api.config').keymaps({
+    require('user_api.config').keymaps.set({
       n = {
         ['<leader>ut'] = { group = '+Twilight' },
         ['<leader>utt'] = { Twilight.toggle, desc('Toggle Twilight') },

@@ -309,61 +309,60 @@ function Keymaps.delete(K, bufnr)
   return ditched_keys
 end
 
----@type User.Config.Keymaps
+---@param keys AllModeMaps
+---@param bufnr integer|nil
+---@param defaults boolean
 ---@overload fun(keys: AllModeMaps)
 ---@overload fun(keys: AllModeMaps, bufnr: integer)
----@overload fun(keys: AllModeMaps, bufnr: integer|nil, defaults: boolean)
-local M = setmetatable({}, {
+function Keymaps.set(keys, bufnr, defaults)
+  require('user_api.check.exists').validate({
+    keys = { keys, { 'table' } },
+    bufnr = { bufnr, { 'number', 'nil' }, true },
+    defaults = { defaults, { 'boolean', 'nil' }, true },
+  })
+  bufnr = bufnr or nil
+  defaults = defaults ~= nil and defaults or false
+  if vim.tbl_isempty(keys) then
+    return
+  end
+
+  if not vim.g.leader_set then
+    vim.notify('`keymaps.set_leader()` not called!', WARN)
+  end
+
+  local modes = require('user_api.maps').modes
+  local parsed_keys = {} ---@type AllModeMaps
+  for k, v in pairs(keys) do
+    if not vim.list_contains(modes, k) then
+      vim.notify(('Ignoring badly formatted table\n`%s`'):format(vim.inspect(keys)), WARN)
+    else
+      parsed_keys[k] = v
+    end
+  end
+
+  Keymaps.no_oped = Keymaps.no_oped ~= nil and Keymaps.no_oped or false
+
+  -- Noop keys after `<leader>` to avoid accidents
+  for _, mode in ipairs(modes) do
+    if Keymaps.no_oped then
+      break
+    end
+    if vim.list_contains({ 'n', 'v' }, mode) then
+      nop(Keymaps.NOP, { noremap = false, silent = true }, mode, '<leader>')
+    end
+  end
+
+  Keymaps.no_oped = true
+  Keymaps.Keys = vim.tbl_deep_extend('keep', parsed_keys, vim.deepcopy(Keymaps.Keys)) ---@type AllModeMaps
+
+  local passed = defaults and Keymaps.Keys or parsed_keys
+  require('user_api.maps').map_dict(passed, 'wk.register', true, nil, bufnr)
+end
+
+local M = setmetatable({}, { ---@type User.Config.Keymaps
   __index = Keymaps,
   __newindex = function()
     vim.notify('User.Config.Keymaps table is Read-Only!', ERROR)
-  end,
-  ---@param keys AllModeMaps
-  ---@param bufnr? integer
-  ---@param defaults? boolean
-  __call = function(_, keys, bufnr, defaults)
-    require('user_api.check.exists').validate({
-      keys = { keys, { 'table' } },
-      bufnr = { bufnr, { 'number', 'nil' }, true },
-      defaults = { defaults, { 'boolean', 'nil' }, true },
-    })
-    bufnr = bufnr or nil
-    defaults = defaults ~= nil and defaults or false
-    if vim.tbl_isempty(keys) then
-      return
-    end
-
-    if not vim.g.leader_set then
-      vim.notify('`keymaps.set_leader()` not called!', WARN)
-    end
-
-    local modes = require('user_api.maps').modes
-    local parsed_keys = {} ---@type AllModeMaps
-    for k, v in pairs(keys) do
-      if not vim.list_contains(modes, k) then
-        vim.notify(('Ignoring badly formatted table\n`%s`'):format(vim.inspect(keys)), WARN)
-      else
-        parsed_keys[k] = v
-      end
-    end
-
-    Keymaps.no_oped = Keymaps.no_oped ~= nil and Keymaps.no_oped or false
-
-    -- Noop keys after `<leader>` to avoid accidents
-    for _, mode in ipairs(modes) do
-      if Keymaps.no_oped then
-        break
-      end
-      if vim.list_contains({ 'n', 'v' }, mode) then
-        nop(Keymaps.NOP, { noremap = false, silent = true }, mode, '<leader>')
-      end
-    end
-
-    Keymaps.no_oped = true
-    Keymaps.Keys = vim.tbl_deep_extend('keep', parsed_keys, vim.deepcopy(Keymaps.Keys)) ---@type AllModeMaps
-
-    local passed = defaults and Keymaps.Keys or parsed_keys
-    require('user_api.maps').map_dict(passed, 'wk.register', true, nil, bufnr)
   end,
 })
 

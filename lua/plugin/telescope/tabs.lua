@@ -29,7 +29,7 @@ end
 
 function TelescopeTabs.loadkeys()
   local desc = require('user_api.maps').desc
-  require('user_api.config').keymaps({
+  require('user_api.config').keymaps.set({
     n = {
       ['<leader><C-T>et'] = { require('telescope-tabs').list_tabs, desc('Tabs') },
       ['<leader>tt'] = { require('telescope-tabs').list_tabs, desc('Telescope Tabs') },

@@ -194,7 +194,7 @@ return { ---@type LazySpec
       require('telescope').load_extension('noice')
 
       local desc = require('user_api.maps').desc
-      require('user_api.config').keymaps({
+      require('user_api.config').keymaps.set({
         n = {
           ['<leader><C-t>ep'] = { ':Telescope projects<CR>', desc('Project Picker') },
           ['<leader>pT'] = { ':Telescope projects<CR>', desc('Project Telescope Picker') },
