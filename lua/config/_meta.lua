@@ -5,6 +5,7 @@
 ---@class LazyPlugins
 ---@field Comment? LazySpecImport
 ---@field _spec LazySpecImport
+---@field alpha? LazySpecImport
 ---@field autopairs? LazySpecImport
 ---@field blink_cmp? LazySpecImport
 ---@field blink_indent? LazySpecImport
@@ -105,6 +106,7 @@
 
 ---@class LazyToggle
 ---@field Comment? boolean
+---@field alpha? boolean
 ---@field autopairs? boolean
 ---@field blink_cmp? boolean
 ---@field blink_indent? boolean

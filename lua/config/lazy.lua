@@ -16,6 +16,7 @@ function M.get_default_specs()
   return { ---@type LazyPlugins
     Comment = { import = 'plugin.Comment' },
     _spec = { import = 'plugin._spec' },
+    alpha = { import = 'plugin.alpha' },
     autopairs = { import = 'plugin.autopairs' },
     blink_cmp = { import = 'plugin.blink.cmp' },
     blink_indent = { import = 'plugin.blink.indent' },
@@ -67,7 +68,7 @@ function M.get_default_specs()
     mini_icons = { import = 'plugin.mini.icons' },
     mini_mini = { import = 'plugin.mini.mini' },
     mini_move = { import = 'plugin.mini.move' },
-    mini_paicn = { import = 'plugin.mini.pairs' },
+    mini_pairs = { import = 'plugin.mini.pairs' },
     mini_splitjoin = { import = 'plugin.mini.splitjoin' },
     mini_starter = { import = 'plugin.mini.starter' },
     mini_test = { import = 'plugin.mini.test' },
@@ -169,9 +170,9 @@ end
 ---@return LazyToggles
 function M.get_default_toggles()
   return { ---@type LazyToggles
-    snacks = true,
-    notify = true,
     Comment = true,
+    alpha = false,
+    autopairs = true,
     blink_cmp = true,
     blink_pairs = true,
     bmessages = true,
@@ -196,7 +197,7 @@ function M.get_default_toggles()
     mini_basics = true,
     mini_bufremove = true,
     mini_cmdline = true,
-    mini_diff = true,
+    mini_diff = false,
     mini_extra = true,
     mini_icons = true,
     mini_mini = true,
@@ -207,6 +208,7 @@ function M.get_default_toggles()
     music_player = true,
     neo_tree = true,
     noice = true,
+    notify = true,
     outline = true,
     paredit = true,
     persistence = true,
@@ -216,6 +218,7 @@ function M.get_default_toggles()
     scope = true,
     screenkey = true,
     smoothcursor = true,
+    snacks = true,
     startuptime = true,
     todo_comments = true,
     toggleterm = true,
@@ -235,7 +238,7 @@ end
 
 ---Sets up `lazy.nvim`. Only runs once!
 --- ---
----@param toggles table<integer, LazySpec>|LazyToggles
+---@param toggles table<integer, LazySpec>|LazyToggles|LazyPluginSpec
 ---@overload fun()
 function M.setup(toggles)
   require('user_api.check.exists').validate({ toggles = { toggles, { 'table', 'nil' }, true } })
