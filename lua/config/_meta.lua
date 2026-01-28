@@ -30,6 +30,7 @@
 ---@field git_utils? LazySpecImport
 ---@field goto_preview? LazySpecImport
 ---@field helpview? LazySpecImport
+---@field hlargs? LazySpecImport
 ---@field hoversplit? LazySpecImport
 ---@field ibl? LazySpecImport
 ---@field lastplace? LazySpecImport
@@ -129,6 +130,7 @@
 ---@field git_utils? boolean
 ---@field goto_preview? boolean
 ---@field helpview? boolean
+---@field hlargs? boolean
 ---@field hoversplit? boolean
 ---@field ibl? boolean
 ---@field lastplace? boolean
