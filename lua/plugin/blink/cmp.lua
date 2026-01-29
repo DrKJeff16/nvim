@@ -261,7 +261,7 @@ return { ---@type LazySpec
         require('luasnip.loaders.from_lua').lazy_load()
         require('luasnip.loaders.from_vscode').lazy_load()
 
-        local extensions = {
+        local extensions = { ---@type table<string, string[]>
           c = { 'cdoc' },
           cpp = { 'cppdoc' },
           cs = { 'csharpdoc' },
