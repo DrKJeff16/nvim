@@ -1,6 +1,5 @@
 ---@module 'lazy'
-
-local ensure_langs = {
+local ensure_langs = { ---@type string[]
   'bash',
   'c',
   'comment',
@@ -51,8 +50,7 @@ local ensure_langs = {
   'zathurarc',
   'zsh',
 }
-
-local patterns = {
+local patterns = { ---@type string[]
   'bash',
   'c',
   'cpp',
@@ -108,9 +106,10 @@ return { ---@type LazySpec
   build = ':TSUpdate',
   version = false,
   config = function()
-    require('nvim-treesitter').setup({ install_dir = vim.fn.stdpath('data') .. '/site' })
+    require('nvim-treesitter').setup({
+      install_dir = vim.fs.joinpath(vim.fn.stdpath('data'), 'site'),
+    })
     require('nvim-treesitter').install(ensure_langs)
-
     vim.api.nvim_create_autocmd('FileType', {
       pattern = patterns,
       callback = function(ev)
