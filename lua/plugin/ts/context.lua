@@ -9,13 +9,11 @@ return { ---@type LazySpec
       multiwindow = true,
       max_lines = 0,
       min_window_height = 0,
-      line_numbers = false,
+      line_numbers = true,
       multiline_threshold = 20,
       trim_scope = 'outer',
       mode = 'cursor',
       zindex = 20,
-      separator = nil,
-      on_attach = nil, ---@type nil|fun(buf: integer): boolean
     })
 
     require('user_api.highlight').hl_from_dict({
