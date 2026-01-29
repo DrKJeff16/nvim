@@ -86,6 +86,7 @@ L.setup({
   cheaty = false,
   doxygen_previewer = true,
   git_utils = false,
+  hlargs = false,
   ibl = false,
   mason = false,
   rainbow_delimiters = false,

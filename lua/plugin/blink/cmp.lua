@@ -254,28 +254,31 @@ return { ---@type LazySpec
       version = false,
       dependencies = { 'rafamadriz/friendly-snippets' },
       build = executable('make') and 'make -j $(nproc) install_jsregexp' or false,
-      config = function(_, opts)
-        if opts then
-          require('luasnip').config.setup(opts)
-        end
-        vim.tbl_map(function(type)
-          require('luasnip.loaders.from_' .. type).lazy_load()
-        end, { 'vscode', 'snipmate', 'lua' })
+      config = function()
+        local luasnip = require('luasnip')
+        luasnip.config.setup()
 
-        local ft_extend = require('luasnip').filetype_extend
-        ft_extend('c', { 'cdoc' })
-        ft_extend('cpp', { 'cppdoc' })
-        ft_extend('cs', { 'csharpdoc' })
-        ft_extend('java', { 'javadoc' })
-        ft_extend('javascript', { 'jsdoc' })
-        ft_extend('kotlin', { 'kdoc' })
-        ft_extend('lua', { 'luadoc' })
-        ft_extend('php', { 'phpdoc' })
-        ft_extend('python', { 'pydoc' })
-        ft_extend('ruby', { 'rdoc' })
-        ft_extend('rust', { 'rustdoc' })
-        ft_extend('sh', { 'shelldoc' })
-        ft_extend('typescript', { 'tsdoc' })
+        require('luasnip.loaders.from_lua').lazy_load()
+        require('luasnip.loaders.from_vscode').lazy_load()
+
+        local extensions = {
+          c = { 'cdoc' },
+          cpp = { 'cppdoc' },
+          cs = { 'csharpdoc' },
+          java = { 'javadoc' },
+          javascript = { 'jsdoc' },
+          kotlin = { 'kdoc' },
+          lua = { 'luadoc' },
+          php = { 'phpdoc' },
+          python = { 'pydoc' },
+          ruby = { 'rdoc' },
+          rust = { 'rustdoc' },
+          sh = { 'shelldoc' },
+          typescript = { 'tsdoc' },
+        }
+        for lang, ext in pairs(extensions) do
+          luasnip.filetype_extend(lang, ext)
+        end
       end,
     },
     'onsails/lspkind.nvim',
