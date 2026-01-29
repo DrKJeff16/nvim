@@ -183,7 +183,7 @@ function M.get_default_toggles()
     git_utils = true,
     goto_preview = true,
     helpview = true,
-    hlargs = true,
+    hlargs = false,
     hoversplit = true,
     ibl = true,
     lastplace = true,
