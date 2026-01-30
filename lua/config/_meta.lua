@@ -72,6 +72,7 @@
 ---@field paredit? LazySpecImport
 ---@field persistence? LazySpecImport
 ---@field picker? LazySpecImport
+---@field pipenv? LazySpecImport
 ---@field pomo? LazySpecImport
 ---@field possession? LazySpecImport
 ---@field project? LazySpecImport
@@ -173,6 +174,7 @@
 ---@field paredit? boolean
 ---@field persistence? boolean
 ---@field picker? boolean
+---@field pipenv? boolean
 ---@field pomo? boolean
 ---@field possession? boolean
 ---@field project? boolean
