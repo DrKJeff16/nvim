@@ -86,6 +86,7 @@ L.setup({
   cheaty = false,
   doxygen_previewer = true,
   git_utils = false,
+  hoversplit = false,
   ibl = false,
   mason = false,
   rainbow_delimiters = false,
@@ -93,11 +94,7 @@ L.setup({
 
 local desc = require('user_api.maps').desc
 Keymaps.set({
-  n = {
-    ['<leader>vM'] = { vim.cmd.messages, desc('Run `:messages`') },
-    ['<leader>vN'] = { vim.cmd.Notifications, desc('Run `:Notifications`') },
-    ['<C-/>'] = { ':norm gcc<CR><Up>', desc('Toggle Comment') },
-  },
+  n = { ['<C-/>'] = { ':norm gcc<CR><Up>', desc('Toggle Comment') } },
   v = { ['<C-/>'] = { ":'<,'>normal gcc<CR><Up>", desc('Toggle Comment') } },
 }, nil, true)
 

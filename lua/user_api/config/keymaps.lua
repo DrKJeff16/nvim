@@ -19,6 +19,34 @@ local function rcfile(cmd)
   end
 end
 
+local function new_file()
+  local ft = ft_get(vim.api.nvim_get_current_buf())
+  vim.cmd.wincmd('n')
+  vim.cmd.wincmd('o')
+
+  vim.schedule(function()
+    local opts = { buf = vim.api.nvim_get_current_buf() }
+    vim.api.nvim_set_option_value('ft', ft, opts)
+    vim.api.nvim_set_option_value('modifiable', true, opts)
+    vim.api.nvim_set_option_value('modified', false, opts)
+  end)
+end
+
+local function indent_file()
+  local bufnr = vim.api.nvim_get_current_buf()
+  if not vim.api.nvim_get_option_value('modifiable', { buf = bufnr }) then
+    vim.notify('Unable to indent. File is not modifiable!', ERROR)
+    return
+  end
+
+  local win = vim.api.nvim_get_current_win()
+  local saved_pos = vim.api.nvim_win_get_cursor(win)
+  vim.api.nvim_feedkeys('gg=G', 'n', false)
+  vim.schedule(function()
+    vim.api.nvim_win_set_cursor(win, saved_pos)
+  end)
+end
+
 ---@param check string
 ---@return function checkhealth_fun
 local function gen_checkhealth(check)
@@ -78,12 +106,19 @@ local Keymaps = {}
 
 Keymaps.NOP = require('user_api.config.keymaps.nop')
 
+function Keymaps.print_keys()
+  vim.notify(vim.inspect(Keymaps.Keys), INFO)
+end
+
 Keymaps.Keys = { ---@type AllModeMaps
   n = {
+    ['<C-w>W'] = { group = '+Move Window' },
     ['<leader>'] = { group = '+Open `which-key`' },
     ['<leader>F'] = { group = '+Folding' },
     ['<leader>H'] = { group = '+Help' },
     ['<leader>Hm'] = { group = '+Man Pages' },
+    ['<leader>U'] = { group = '+User API' },
+    ['<leader>UK'] = { group = '+Keymaps' },
     ['<leader>b'] = { group = '+Buffer' },
     ['<leader>f'] = { group = '+File' },
     ['<leader>fF'] = { group = '+New File' },
@@ -95,64 +130,31 @@ Keymaps.Keys = { ---@type AllModeMaps
     ['<leader>ve'] = { group = '+Edit Nvim Config File' },
     ['<leader>vh'] = { group = '+Checkhealth' },
     ['<leader>w'] = { proxy = '<C-w>', group = 'Window' },
-    ['<leader>U'] = { group = '+User API' },
-    ['<leader>UK'] = { group = '+Keymaps' },
-    ['<Esc><Esc>'] = { vim.cmd.noh, desc('Remove Highlighted Search') },
-    ['<leader>bd'] = { buf_del(), desc('Close Buffer') },
-    ['<leader>bD'] = { buf_del(true), desc('Close Buffer Forcefully') },
-    ['<leader>bf'] = { vim.cmd.bfirst, desc('Goto First Buffer') },
-    ['<leader>bl'] = { vim.cmd.blast, desc('Goto Last Buffer') },
-    ['<leader>bn'] = { vim.cmd.bnext, desc('Next Buffer') },
-    ['<leader>bp'] = { vim.cmd.bprevious, desc('Previous Buffer') },
+
+    ['<C-w><CR>'] = { ':wincmd o<CR>', desc('Make Current Window The Only One') },
+    ['<C-w><Down>'] = { ':wincmd j<CR>', desc('Go To Window Below') },
+    ['<C-w><Left>'] = { ':wincmd h<CR>', desc('Go To Window On The Left') },
+    ['<C-w><Right>'] = { ':wincmd l<CR>', desc('Go To Window On The Right') },
+    ['<C-w><Up>'] = { ':wincmd k<CR>', desc('Go To Window Above') },
+    ['<C-w>N'] = { new_file, desc('New Blank File') },
+    ['<C-w>S'] = { ':wincmd x<CR>', desc('Swap Current With Next') },
+    ['<C-w>V'] = { ':vsplit ', desc('Vertical Split (Prompt)', false) },
+    ['<C-w>W<Down>'] = { ':wincmd J<CR>', desc('Move Window To The Very Bottom') },
+    ['<C-w>W<Left>'] = { ':wincmd H<CR>', desc('Move Window To Far Left') },
+    ['<C-w>W<Right>'] = { ':wincmd L<CR>', desc('Move Window To Far Right') },
+    ['<C-w>W<Up>'] = { ':wincmd K<CR>', desc('Move Window To The Very Top') },
+    ['<C-w>X'] = { ':split ', desc('Horizontal Split (Prompt)', false) },
+    ['<C-w>n'] = { ':wincmd w<CR>', desc('Next Window') },
+    ['<C-w>p'] = { ':wincmd W<CR>', desc('Previous Window') },
+    ['<C-w>|'] = { ':wincmd ^<CR>', desc('Split Current To Edit Alternate File') },
+    ['<Esc><Esc>'] = { ':noh<CR>', desc('Remove Highlighted Search') },
     ['<leader>/'] = { ':%s/', desc('Run Search-Replace Prompt For Whole File', false) },
     ['<leader>Fc'] = { ':%foldclose!<CR>', desc('Close All Folds') },
     ['<leader>Fo'] = { ':%foldopen!<CR>', desc('Open All Folds') },
-    ['<leader>fFx'] = { gen_fun_blank(), desc('New Horizontal Blank File') },
-    ['<leader>fFv'] = { gen_fun_blank(true), desc('New Vertical Blank File') },
-    ['<leader>fs'] = { ':w<CR>', desc('Save File') },
-    ['<leader>fS'] = { ':w ', desc('Prompt Save File', false) },
-    ['<leader>fii'] = {
-      function()
-        local bufnr = vim.api.nvim_get_current_buf()
-        if not vim.api.nvim_get_option_value('modifiable', { buf = bufnr }) then
-          vim.notify('Unable to indent. File is not modifiable!', ERROR)
-          return
-        end
-
-        local win = vim.api.nvim_get_current_win()
-        local saved_pos = vim.api.nvim_win_get_cursor(win)
-        vim.api.nvim_feedkeys('gg=G', 'n', false)
-        vim.schedule(function()
-          vim.api.nvim_win_set_cursor(win, saved_pos)
-        end)
-      end,
-      desc('Indent Whole File'),
-    },
-    ['<leader>fir'] = { ':%retab<CR>', desc('Retab File') },
-    ['<leader>fiR'] = { ':%retab!<CR>', desc('Retab File (Forcefully)') },
-    ['<leader>fvL'] = { ':luafile ', desc('Source Lua File (Prompt)', false) },
-    ['<leader>fvV'] = { ':so ', desc('Source VimScript File (Prompt)', false) },
-    ['<leader>fvl'] = { ':luafile %<CR>', desc('Source Current File As Lua File') },
-    ['<leader>fvv'] = { ':source %<CR>', desc('Source Current File') },
-    ['<leader>vee'] = { rcfile('edit'), desc('Open In Current Window') },
-    ['<leader>vex'] = { rcfile('split'), desc('Open In Horizontal Split') },
-    ['<leader>vet'] = { rcfile('tabnew'), desc('Open In New Tab') },
-    ['<leader>vev'] = { rcfile('vsplit'), desc('Open In Vertical Split') },
-    ['<leader>vhh'] = { vim.cmd.checkhealth, desc('Run') },
-    ['<leader>vhH'] = { ':checkhealth ', desc('Prompt', false) },
-    ['<leader>vhd'] = { gen_checkhealth('vim.health'), desc('`vim.health`') },
-    ['<leader>vhl'] = { gen_checkhealth('vim.lsp'), desc('`vim.lsp`') },
-    ['<leader>vhp'] = { gen_checkhealth('vim.provider'), desc('`vim.provider`') },
-    ['<leader>vs'] = { ':source $MYVIMRC<CR>', desc('Source $MYVIMRC') },
-    ['<leader>vhD'] = { gen_checkhealth('vim.deprecated'), desc('`vim.deprecated`') },
-    ['<leader>vht'] = { gen_checkhealth('vim.treesitter'), desc('`vim.treesitter`') },
     ['<leader>HT'] = { ':tab help<CR>', desc('Open Help On New Tab') },
     ['<leader>HV'] = { ':vert help<CR>', desc('Open Help On Vertical Split') },
     ['<leader>HX'] = { ':hor help<CR>', desc('Open Help On Horizontal Split') },
     ['<leader>Hh'] = { ':h ', desc('Prompt For Help', false) },
-    ['<leader>Ht'] = { ':tab h ', desc('Prompt For Help On New Tab', false) },
-    ['<leader>Hv'] = { ':vertical h ', desc('Prompt For Help On Vertical Split', false) },
-    ['<leader>Hx'] = { ':horizontal h ', desc('Prompt For Help On Horizontal Split', false) },
     ['<leader>HmM'] = { ':Man ', desc('Prompt For Man', false) },
     ['<leader>HmT'] = { ':tab Man ', desc('Prompt For Man Page (Tab)', false) },
     ['<leader>HmV'] = { ':vert Man ', desc('Prompt For Man Page (Vertical)', false) },
@@ -161,52 +163,52 @@ Keymaps.Keys = { ---@type AllModeMaps
     ['<leader>Hmt'] = { ':tab Man<CR>', desc('Open Man Page (Tab)') },
     ['<leader>Hmv'] = { ':vert Man<CR>', desc('Open Man Page (Vertical)') },
     ['<leader>Hmx'] = { ':horizontal Man<CR>', desc('Open Man Page (Horizontal)') },
-    ['<C-w>N'] = {
-      function()
-        local ft = ft_get(vim.api.nvim_get_current_buf())
-        vim.cmd.wincmd('n')
-        vim.cmd.wincmd('o')
-
-        local opts = { buf = vim.api.nvim_get_current_buf() }
-        vim.api.nvim_set_option_value('ft', ft, opts)
-        vim.api.nvim_set_option_value('modifiable', true, opts)
-        vim.api.nvim_set_option_value('modified', false, opts)
-      end,
-      desc('New Blank File'),
-    },
-    ['<C-w><Left>'] = { ':wincmd h<CR>', desc('Go To Window On The Left') },
-    ['<C-w><Right>'] = { ':wincmd l<CR>', desc('Go To Window On The Right') },
-    ['<C-w><Up>'] = { ':wincmd k<CR>', desc('Go To Window Above') },
-    ['<C-w><Down>'] = { ':wincmd j<CR>', desc('Go To Window Below') },
-    ['<C-w>n'] = { ':wincmd w<CR>', desc('Next Window') },
-    ['<C-w>S'] = { ':wincmd x<CR>', desc('Swap Current With Next') },
-    ['<C-w>p'] = { ':wincmd W<CR>', desc('Previous Window') },
-    ['<C-w><CR>'] = { ':wincmd o<CR>', desc('Make Current Only Window') },
-    ['<C-w>X'] = { ':split ', desc('Horizontal Split (Prompt)', false) },
-    ['<C-w>V'] = { ':vsplit ', desc('Vertical Split (Prompt)', false) },
-    ['<C-w>|'] = { ':wincmd ^<CR>', desc('Split Current To Edit Alternate File') },
-    ['<C-w>W'] = { group = '+Move Window' },
-    ['<C-w>W<Up>'] = { ':wincmd K<CR>', desc('Move Window To The Very Top') },
-    ['<C-w>W<Down>'] = { ':wincmd J<CR>', desc('Move Window To The Very Bottom') },
-    ['<C-w>W<Right>'] = { ':wincmd L<CR>', desc('Move Window To Far Right') },
-    ['<C-w>W<Left>'] = { ':wincmd H<CR>', desc('Move Window To Far Left') },
+    ['<leader>Ht'] = { ':tab h ', desc('Prompt For Help On New Tab', false) },
+    ['<leader>Hv'] = { ':vertical h ', desc('Prompt For Help On Vertical Split', false) },
+    ['<leader>Hx'] = { ':horizontal h ', desc('Prompt For Help On Horizontal Split', false) },
+    ['<leader>UKp'] = { Keymaps.print_keys, desc('Print all custom keymaps') },
+    ['<leader>bD'] = { buf_del(true), desc('Close Buffer Forcefully') },
+    ['<leader>bd'] = { buf_del(), desc('Close Buffer') },
+    ['<leader>bf'] = { ':bfirst<CR>', desc('Goto First Buffer') },
+    ['<leader>bl'] = { ':blast<CR>', desc('Goto Last Buffer') },
+    ['<leader>bn'] = { ':bnext<CR>', desc('Next Buffer') },
+    ['<leader>bp'] = { ':bprevious<CR>', desc('Previous Buffer') },
+    ['<leader>fFv'] = { gen_fun_blank(true), desc('New Vertical Blank File') },
+    ['<leader>fFx'] = { gen_fun_blank(), desc('New Horizontal Blank File') },
+    ['<leader>fS'] = { ':w ', desc('Prompt Save File', false) },
+    ['<leader>fiR'] = { ':%retab!<CR>', desc('Retab File (Forcefully)') },
+    ['<leader>fii'] = { indent_file, desc('Indent Whole File') },
+    ['<leader>fir'] = { ':%retab<CR>', desc('Retab File') },
+    ['<leader>fs'] = { ':w<CR>', desc('Save File') },
+    ['<leader>fvL'] = { ':luafile ', desc('Source Lua File (Prompt)', false) },
+    ['<leader>fvV'] = { ':so ', desc('Source VimScript File (Prompt)', false) },
+    ['<leader>fvl'] = { ':luafile %<CR>', desc('Source Current File As Lua File') },
+    ['<leader>fvv'] = { ':source %<CR>', desc('Source Current File') },
     ['<leader>qQ'] = { ':qa!<CR>', desc('Quit Nvim Forcefully') },
-    ['<leader>qq'] = { vim.cmd.quitall, desc('Quit Nvim') },
+    ['<leader>qq'] = { ':qa<CR>', desc('Quit Nvim') },
     ['<leader>qr'] = { ':restart +qall!<CR>', desc('Restart Nvim') },
-    ['<leader>tA'] = { vim.cmd.tabnew, desc('New Tab') },
+    ['<leader>tA'] = { ':tabnew<CR>', desc('New Tab') },
     ['<leader>tD'] = { ':tabclose!<CR>', desc('Close Tab Forcefully') },
     ['<leader>ta'] = { ':tabnew ', desc('New Tab (Prompt)', false) },
-    ['<leader>td'] = { vim.cmd.tabclose, desc('Close Tab') },
-    ['<leader>tf'] = { vim.cmd.tabfirst, desc('Goto First Tab') },
-    ['<leader>tl'] = { vim.cmd.tablast, desc('Goto Last Tab') },
-    ['<leader>tn'] = { vim.cmd.tabnext, desc('Next Tab') },
-    ['<leader>tp'] = { vim.cmd.tabprevious, desc('Previous Tab') },
-    ['<leader>UKp'] = {
-      function()
-        vim.notify(vim.inspect(Keymaps.Keys), INFO)
-      end,
-      desc('Print all custom keymaps in their respective modes'),
-    },
+    ['<leader>td'] = { ':tabclose<CR>', desc('Close Tab') },
+    ['<leader>tf'] = { ':tabfirst<CR>', desc('Goto First Tab') },
+    ['<leader>tl'] = { ':tablast<CR>', desc('Goto Last Tab') },
+    ['<leader>tn'] = { ':tabnext<CR>', desc('Next Tab') },
+    ['<leader>tp'] = { ':tabprevious<CR>', desc('Previous Tab') },
+    ['<leader>vM'] = { ':messages<CR>', desc('Run `:messages`') },
+    ['<leader>vN'] = { ':Notifications<CR>', desc('Run `:Notifications`') },
+    ['<leader>vee'] = { rcfile('edit'), desc('Open In Current Window') },
+    ['<leader>vet'] = { rcfile('tabnew'), desc('Open In New Tab') },
+    ['<leader>vev'] = { rcfile('vsplit'), desc('Open In Vertical Split') },
+    ['<leader>vex'] = { rcfile('split'), desc('Open In Horizontal Split') },
+    ['<leader>vhD'] = { gen_checkhealth('vim.deprecated'), desc('`vim.deprecated`') },
+    ['<leader>vhH'] = { ':checkhealth ', desc('Prompt', false) },
+    ['<leader>vhd'] = { gen_checkhealth('vim.health'), desc('`vim.health`') },
+    ['<leader>vhh'] = { ':checkhealth<CR>', desc('Run') },
+    ['<leader>vhl'] = { gen_checkhealth('vim.lsp'), desc('`vim.lsp`') },
+    ['<leader>vhp'] = { gen_checkhealth('vim.provider'), desc('`vim.provider`') },
+    ['<leader>vht'] = { gen_checkhealth('vim.treesitter'), desc('`vim.treesitter`') },
+    ['<leader>vs'] = { ':source $MYVIMRC<CR>', desc('Source $MYVIMRC') },
   },
   v = {
     ['<leader>'] = { group = '+Open `which-key`' },
@@ -216,15 +218,16 @@ Keymaps.Keys = { ---@type AllModeMaps
     ['<leader>h'] = { group = '+Help' },
     ['<leader>q'] = { group = '+Quit Nvim' },
     ['<leader>v'] = { group = '+Vim' },
+
     ['<leader>S'] = { ':sort!<CR>', desc('Sort Selection (Reverse)') },
-    ['<leader>s'] = { ':sort<CR>', desc('Sort Selection') },
-    ['<leader>fFo'] = { ':foldopen<CR>', desc('Open Fold') },
     ['<leader>fFc'] = { ':foldclose<CR>', desc('Close Fold') },
-    ['<leader>fr'] = { ':s/', desc('Search/Replace Prompt For Selection', false) },
-    ['<leader>fir'] = { ':retab<CR>', desc('Retab Selection') },
+    ['<leader>fFo'] = { ':foldopen<CR>', desc('Open Fold') },
     ['<leader>fiR'] = { ':retab!<CR>', desc('Retab Selection Forcefully') },
+    ['<leader>fir'] = { ':retab<CR>', desc('Retab Selection') },
+    ['<leader>fr'] = { ':s/', desc('Search/Replace Prompt For Selection', false) },
     ['<leader>qQ'] = { ':qa!<CR>', desc('Quit Nvim Forcefully') },
-    ['<leader>qq'] = { vim.cmd.quitall, desc('Quit Nvim') },
+    ['<leader>qq'] = { ':qa<CR>', desc('Quit Nvim') },
+    ['<leader>s'] = { ':sort<CR>', desc('Sort Selection') },
   },
   t = { ['<Esc>'] = { '<C-\\><C-n>', desc('Escape Terminal') } },
 }
