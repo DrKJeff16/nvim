@@ -20,7 +20,11 @@ return { ---@type LazySpec
           'vscode',
         },
       },
-      grouping = { random = true, uppercase_groups = true },
+      grouping = {
+        random = true,
+        uppercase_groups = true,
+        labels = { A = 'Favourites', B = 'Extra' },
+      },
     })
 
     require('user_api.config').keymaps.set({ n = { ['<leader>u'] = { group = '+UI' } } })
