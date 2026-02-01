@@ -2,6 +2,7 @@
 ---@field [1] fun(ctx?: vim.api.keyset.create_user_command.command_args)
 ---@field [2]? vim.api.keyset.user_command
 
+local INFO = vim.log.levels.INFO
 local desc = require('user_api.maps').desc
 
 ---@class User.Commands
@@ -36,6 +37,48 @@ Commands.commands.Redir = {
     nargs = '+',
     complete = 'command',
     desc = 'Redirect command output to scratch buffer',
+  },
+}
+
+Commands.commands.Current = {
+  function(ctx)
+    local curr = { ---@type { buffer: integer, window: integer, tabpage: integer }
+      buffer = vim.api.nvim_get_current_buf(),
+      window = vim.api.nvim_get_current_win(),
+      tabpage = vim.api.nvim_get_current_tabpage(),
+    }
+    if #ctx.fargs == 0 then
+      vim.notify(
+        ('buffer: %s\nwindow: %s\ntabpage %s'):format(curr.buffer, curr.window, curr.tabpage),
+        INFO
+      )
+      return
+    end
+    local arg = ctx.fargs[1] ---@type 'buffer'|'buf'|'window'|'win'|'tab'|'tabpage'
+    if vim.list_contains({ 'buffer', 'buf' }, arg) then
+      vim.notify(('%d'):format(curr.buffer), INFO, { title = 'Current Buffer' })
+      return
+    end
+    if vim.list_contains({ 'window', 'win' }, arg) then
+      vim.notify(('%d'):format(curr.window), INFO, { title = 'Current Window' })
+      return
+    end
+    if vim.list_contains({ 'tabpage', 'tab' }, arg) then
+      vim.notify(('%d'):format(curr.tabpage), INFO, { title = 'Current Tabpage' })
+      return
+    end
+
+    vim.notify(('(:Current) - Invalid argument `%s`!'):format(arg), vim.log.levels.ERROR)
+  end,
+  {
+    nargs = '?',
+    complete = function(_, lead) ---@param lead string
+      local args = vim.split(lead, '%s+', { trimempty = false })
+      if #args >= 3 then
+        return {}
+      end
+      return { 'buf', 'buffer', 'win', 'window', 'tab', 'tabpage' }
+    end,
   },
 }
 
