@@ -4,7 +4,15 @@ return { ---@type LazySpec
   dev = true,
   version = false,
   config = function()
-    require('pipenv').setup({ output = { height = 0.75, width = 0.85 } })
+    require('pipenv').setup({
+      output = {
+        float = true,
+        split = 'above',
+        border = 'rounded',
+        height = 0.75,
+        width = 0.85,
+      },
+    })
 
     local desc = require('user_api.maps').desc
     require('user_api.config.keymaps').set({
