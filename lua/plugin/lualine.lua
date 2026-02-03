@@ -404,24 +404,28 @@ return { ---@type LazySpec
     end
 
     if exists('triforce') then
+      local TL = require('triforce.lualine')
       Presets.components.triforce_lvl = {
         function()
-          return require('triforce.lualine').level()
+          return TL.level({
+            show = { bar = true, level = true, xp = not Termux.validate() },
+            bar = { chars = { filled = '●', empty = '○' }, length = 6 },
+          })
         end,
       }
       Presets.components.triforce_achv = {
         function()
-          return require('triforce.lualine').achievements({ show_count = true })
+          return TL.achievements({ show_count = true })
         end,
       }
       Presets.components.triforce_streak = {
         function()
-          return require('triforce.lualine').streak({ show_days = true })
+          return TL.streak({ show_days = true })
         end,
       }
       Presets.components.triforce_session_time = {
         function()
-          return require('triforce.lualine').session_time({
+          return TL.session_time({
             format = Termux.validate() and 'short' or 'long',
             show_duration = true,
           })
