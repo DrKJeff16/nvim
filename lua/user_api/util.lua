@@ -525,11 +525,13 @@ function Util.setup_autocmd()
         {
           pattern = 'checkhealth',
           group = group,
-          callback = function()
+          callback = function(ev)
             local O = { win = curr_win() } ---@type vim.api.keyset.option
             vim.api.nvim_set_option_value('wrap', true, O)
             vim.api.nvim_set_option_value('number', false, O)
             vim.api.nvim_set_option_value('signcolumn', 'no', O)
+
+            vim.keymap.set('n', 'q', vim.cmd.bdelete, { buffer = ev.buf })
           end,
         },
         {
