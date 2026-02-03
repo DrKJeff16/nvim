@@ -538,7 +538,7 @@ function Util.setup_autocmd()
           pattern = { 'nvim-undotree', 'startuptime', 'qf' },
           group = group,
           callback = function(ev)
-            vim.keymap.set('n', 'q', vim.cmd.bdelete, { buffer = ev.buf, noremap = true })
+            vim.keymap.set('n', 'q', vim.cmd.bdelete, { buffer = ev.buf })
           end,
         },
       },
@@ -563,18 +563,16 @@ function Util.setup_autocmd()
               vim.api.nvim_set_option_value('number', false, win_opts)
               return
             end
-            if bt == 'help' or ft == 'help' then
+            if bt == 'help' and ft == 'help' then
               vim.api.nvim_set_option_value('signcolumn', 'no', win_opts)
               vim.api.nvim_set_option_value('number', false, win_opts)
               vim.api.nvim_set_option_value('wrap', true, win_opts)
               vim.api.nvim_set_option_value('colorcolumn', '', win_opts)
 
-              vim.keymap.set('n', 'q', vim.cmd.helpclose, { buffer = ev.buf })
+              vim.cmd.noh()
+              vim.cmd.wincmd('=')
 
-              vim.schedule(function()
-                vim.cmd.noh()
-                vim.cmd.wincmd('=')
-              end)
+              vim.keymap.set('n', 'q', vim.cmd.helpclose, { buffer = ev.buf })
               return
             end
             if ft == 'ministarter' then
