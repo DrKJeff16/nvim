@@ -7,6 +7,83 @@ local in_list = vim.list_contains
 ---@class User.Util
 local Util = {}
 
+local function run_stylua(bufnr)
+  if vim.api.nvim_get_option_value('modified', { buf = bufnr }) then
+    return
+  end
+
+  local path = vim.api.nvim_buf_get_name(bufnr)
+  path = Util.rstrip('/', vim.fn.fnamemodify(path, ':p'))
+  if vim.fn.filereadable(path) ~= 1 or vim.fn.filewritable(path) ~= 1 then
+    return
+  end
+
+  local sys_obj = vim.system({ 'stylua', path }, { text = true }):wait(10000)
+  if sys_obj.code ~= 0 then
+    vim.notify(
+      (sys_obj.stderr and sys_obj.stderr ~= '') and sys_obj.stderr or 'Failed to format!',
+      ERROR,
+      {
+        title = 'StyLua',
+        animate = true,
+        timeout = 200,
+        hide_from_history = true,
+      }
+    )
+    return
+  end
+  vim.notify('Formatted successfully!', INFO, {
+    title = 'StyLua',
+    animate = true,
+    timeout = 200,
+    hide_from_history = true,
+  })
+
+  local win = curr_win()
+  local pos = vim.api.nvim_win_get_cursor(win)
+
+  vim.cmd.edit()
+  vim.api.nvim_win_set_cursor(win, pos)
+end
+
+local function run_isort(bufnr)
+  if vim.api.nvim_get_option_value('modified', { buf = bufnr }) then
+    return
+  end
+
+  local path = vim.api.nvim_buf_get_name(bufnr)
+  path = Util.rstrip('/', vim.fn.fnamemodify(path, ':p'))
+  if vim.fn.filereadable(path) ~= 1 or vim.fn.filewritable(path) ~= 1 then
+    return
+  end
+
+  local sys_obj = vim.system({ 'isort', path }, { text = true }):wait(10000)
+  if sys_obj.code ~= 0 then
+    vim.notify(
+      (sys_obj.stderr and sys_obj.stderr ~= '') and sys_obj.stderr or 'Failed to format!',
+      ERROR,
+      {
+        title = 'isort',
+        animate = true,
+        timeout = 200,
+        hide_from_history = true,
+      }
+    )
+  end
+  vim.notify('Formatted successfully!', INFO, {
+    title = 'isort',
+    animate = true,
+    timeout = 200,
+    hide_from_history = true,
+  })
+
+  local win = curr_win()
+  local pos = vim.api.nvim_win_get_cursor(win)
+
+  vim.cmd.edit()
+  vim.api.nvim_win_set_cursor(win, pos)
+end
+
 Util.notify = require('user_api.util.notify')
 Util.au = require('user_api.util.autocmd')
 Util.string = require('user_api.util.string')
@@ -16,6 +93,118 @@ function Util.has_words_before()
   local line, col = (unpack or table.unpack)(vim.api.nvim_win_get_cursor(win))
   return col ~= 0
     and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match('%s') == nil
+end
+
+---Left strip given a leading string (or list of strings) within a string, if any.
+--- ---
+---@param char string[]|string
+---@param str string
+---@return string new_str
+---@nodiscard
+function Util.lstrip(char, str)
+  require('user_api.check.exists').validate({
+    char = { char, { 'string', 'table' } },
+    str = { str, { 'string' } },
+  })
+  if str == '' or not vim.startswith(str, char) then
+    return str
+  end
+
+  if require('user_api.check.value').is_tbl(char) then
+    ---@cast char string[]
+    if not vim.tbl_isempty(char) then
+      for _, c in ipairs(char) do
+        if c:len() > str:len() then
+          return str
+        end
+        str = Util.lstrip(c, str)
+      end
+    end
+    return str
+  end
+
+  ---@cast char string
+  local i, len, new_str = 1, str:len(), ''
+  local other = false
+  while i <= len + 1 do
+    if str:sub(i, i) ~= char and not other then
+      other = true
+    end
+    if other then
+      new_str = ('%s%s'):format(new_str, str:sub(i, i))
+    end
+    i = i + 1
+  end
+  return new_str
+end
+
+---Right strip given a leading string (or list of strings) within a string, if any.
+--- ---
+---@param char string[]|string
+---@param str string
+---@return string new_str
+---@nodiscard
+function Util.rstrip(char, str)
+  require('user_api.check.exists').validate({
+    char = { char, { 'string', 'table' } },
+    str = { str, { 'string' } },
+  })
+  if str == '' then
+    return str
+  end
+
+  if require('user_api.check.value').is_tbl(char) then
+    ---@cast char string[]
+    if not vim.tbl_isempty(char) then
+      for _, c in ipairs(char) do
+        if c:len() > str:len() then
+          return str
+        end
+        str = Util.rstrip(c, str)
+      end
+    end
+    return str
+  end
+
+  ---@cast char string
+  str = str:reverse()
+
+  if not vim.startswith(str, char) then
+    return str:reverse()
+  end
+  return Util.lstrip(char, str):reverse()
+end
+
+---Strip given a leading string (or list of strings) within a string, if any, bidirectionally.
+--- ---
+---@param char string[]|string
+---@param str string
+---@return string new_str
+---@nodiscard
+function Util.strip(char, str)
+  require('user_api.check.exists').validate({
+    char = { char, { 'string', 'table' } },
+    str = { str, { 'string' } },
+  })
+  if str == '' then
+    return str
+  end
+
+  if require('user_api.check.value').is_tbl(char) then
+    ---@cast char string[]
+    if not vim.tbl_isempty(char) then
+      for _, c in ipairs(char) do
+        if c:len() > str:len() then
+          return str
+        end
+        str = Util.strip(c, str)
+      end
+    end
+    return str
+  end
+
+  ---@cast char string
+  return Util.rstrip(char, Util.lstrip(char, str))
 end
 
 ---@param s string[]|string
@@ -360,11 +549,13 @@ function Util.setup_autocmd()
           callback = function(ev)
             local executable = require('user_api.check.exists').executable
             local desc = require('user_api.maps').desc
+            local keyset = require('user_api.config.keymaps').set
 
             local bt = Util.bt_get(ev.buf)
             local ft = Util.ft_get(ev.buf)
-            local win_opts = { win = curr_win() } ---@type vim.api.keyset.option
-            local buf_opts = { buf = ev.buf } ---@type vim.api.keyset.option
+
+            ---@type vim.api.keyset.option, vim.api.keyset.option
+            local win_opts, buf_opts = { win = curr_win() }, { buf = ev.buf }
             if ft == 'lazy' then
               vim.api.nvim_set_option_value('signcolumn', 'no', win_opts)
               vim.api.nvim_set_option_value('number', false, win_opts)
@@ -396,21 +587,11 @@ function Util.setup_autocmd()
               return
             end
             if ft == 'lua' and executable('stylua') then
-              require('user_api.config').keymaps.set({
+              keyset({
                 n = {
                   ['<leader><C-l>'] = {
                     function()
-                      ---@diagnostic disable-next-line:param-type-mismatch
-                      local ok = pcall(vim.cmd, 'silent! !stylua %')
-                      if not ok then
-                        return
-                      end
-                      vim.notify('Formatted successfully!', INFO, {
-                        title = 'StyLua',
-                        animate = true,
-                        timeout = 200,
-                        hide_from_history = true,
-                      })
+                      run_stylua(ev.buf)
                     end,
                     desc('Format With `stylua`'),
                   },
@@ -418,21 +599,11 @@ function Util.setup_autocmd()
               }, ev.buf)
             end
             if ft == 'python' and executable('isort') then
-              require('user_api.config').keymaps.set({
+              keyset({
                 n = {
                   ['<leader><C-l>'] = {
                     function()
-                      ---@diagnostic disable-next-line:param-type-mismatch
-                      local ok = pcall(vim.cmd, 'silent! !isort %')
-                      if not ok then
-                        return
-                      end
-                      vim.notify('Formatted successfully!', INFO, {
-                        title = 'isort',
-                        animate = true,
-                        timeout = 200,
-                        hide_from_history = true,
-                      })
+                      run_isort(ev.buf)
                     end,
                     desc('Format With `isort`'),
                   },
