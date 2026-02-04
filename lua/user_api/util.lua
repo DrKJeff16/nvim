@@ -1,5 +1,4 @@
 local ERROR = vim.log.levels.ERROR
-local INFO = vim.log.levels.INFO
 local curr_buf = vim.api.nvim_get_current_buf
 local curr_win = vim.api.nvim_get_current_win
 local in_list = vim.list_contains
@@ -7,86 +6,72 @@ local in_list = vim.list_contains
 ---@class User.Util
 local Util = {}
 
-local function run_stylua(bufnr)
-  if vim.api.nvim_get_option_value('modified', { buf = bufnr }) then
-    return
-  end
-
-  local path = vim.api.nvim_buf_get_name(bufnr)
-  path = Util.rstrip('/', vim.fn.fnamemodify(path, ':p'))
-  if vim.fn.filereadable(path) ~= 1 or vim.fn.filewritable(path) ~= 1 then
-    return
-  end
-
-  local sys_obj = vim.system({ 'stylua', path }, { text = true }):wait(10000)
-  if sys_obj.code ~= 0 then
-    vim.notify(
-      (sys_obj.stderr and sys_obj.stderr ~= '') and sys_obj.stderr or 'Failed to format!',
-      ERROR,
-      {
-        title = 'StyLua',
-        animate = true,
-        timeout = 200,
-        hide_from_history = true,
-      }
-    )
-    return
-  end
-  vim.notify('Formatted successfully!', INFO, {
-    title = 'StyLua',
-    animate = true,
-    timeout = 200,
-    hide_from_history = true,
-  })
-
-  local win = curr_win()
-  local pos = vim.api.nvim_win_get_cursor(win)
-
-  vim.cmd.edit()
-  vim.api.nvim_win_set_cursor(win, pos)
-end
-
-local function run_isort(bufnr)
-  if vim.api.nvim_get_option_value('modified', { buf = bufnr }) then
-    return
-  end
-
-  local path = vim.api.nvim_buf_get_name(bufnr)
-  path = Util.rstrip('/', vim.fn.fnamemodify(path, ':p'))
-  if vim.fn.filereadable(path) ~= 1 or vim.fn.filewritable(path) ~= 1 then
-    return
-  end
-
-  local sys_obj = vim.system({ 'isort', path }, { text = true }):wait(10000)
-  if sys_obj.code ~= 0 then
-    vim.notify(
-      (sys_obj.stderr and sys_obj.stderr ~= '') and sys_obj.stderr or 'Failed to format!',
-      ERROR,
-      {
-        title = 'isort',
-        animate = true,
-        timeout = 200,
-        hide_from_history = true,
-      }
-    )
-  end
-  vim.notify('Formatted successfully!', INFO, {
-    title = 'isort',
-    animate = true,
-    timeout = 200,
-    hide_from_history = true,
-  })
-
-  local win = curr_win()
-  local pos = vim.api.nvim_win_get_cursor(win)
-
-  vim.cmd.edit()
-  vim.api.nvim_win_set_cursor(win, pos)
-end
-
 Util.notify = require('user_api.util.notify')
 Util.au = require('user_api.util.autocmd')
 Util.string = require('user_api.util.string')
+
+---@param names string[]|string
+---@param opts vim.api.keyset.option
+---@return vim.bo|vim.wo values
+function Util.optget(names, opts)
+  require('user_api.check.exists').validate({
+    names = { names, { 'string', 'table' } },
+    opts = { opts, { 'table' } },
+  })
+  if vim.tbl_isempty(opts) or vim.islist(opts) then
+    error('Empty or incorrect opts table!', ERROR)
+  end
+
+  local valid = false
+  for _, key in ipairs({ 'buf', 'filetype', 'scope', 'win' }) do
+    if vim.list_contains(vim.tbl_keys(opts), key) then
+      valid = true
+      break
+    end
+  end
+  if not valid then
+    error('The opts table is not correctly formatted!', ERROR)
+  end
+
+  if require('user_api.check.value').is_tbl(names) then
+    ---@cast names string[]
+    local values = {} ---@type vim.bo|vim.wo
+    for _, name in ipairs(names) do
+      values[name] = vim.api.nvim_get_option_value(name, opts)
+    end
+    return values
+  end
+
+  ---@cast names string
+  return { [names] = vim.api.nvim_get_option_value(names, opts) }
+end
+
+---@param values vim.bo|vim.wo
+---@param opts vim.api.keyset.option
+function Util.optset(values, opts)
+  require('user_api.check.exists').validate({
+    values = { values, { 'table' } },
+    opts = { opts, { 'table' } },
+  })
+  if vim.tbl_isempty(opts) or vim.islist(opts) then
+    error('Empty or incorrect opts table!', ERROR)
+  end
+
+  local valid = false
+  for _, key in ipairs({ 'buf', 'filetype', 'scope', 'win' }) do
+    if vim.list_contains(vim.tbl_keys(opts), key) then
+      valid = true
+      break
+    end
+  end
+  if not valid then
+    error('The opts table is not correctly formatted!', ERROR)
+  end
+
+  for name, value in pairs(values) do
+    vim.api.nvim_set_option_value(name, value, opts)
+  end
+end
 
 function Util.has_words_before()
   local win = curr_win()
@@ -430,203 +415,6 @@ function Util.pop_values(T, V)
     return T
   end
   return T, table.remove(T, idx)
-end
-
-function Util.setup_autocmd()
-  local group = vim.api.nvim_create_augroup('User.AU', { clear = true })
-  local autocmds = { ---@type AuRepeatEvents[]
-    {
-      events = { 'BufCreate', 'BufAdd', 'BufNew', 'BufNewFile', 'BufRead' },
-      opts_tbl = {
-        {
-          group = group,
-          pattern = '*.org',
-          callback = function(ev)
-            Util.ft_set('org', ev.buf)()
-          end,
-        },
-        {
-          group = group,
-          pattern = '.spacemacs',
-          callback = function(ev)
-            Util.ft_set('lisp', ev.buf)()
-          end,
-        },
-        {
-          group = group,
-          pattern = '*.el',
-          callback = function(ev)
-            Util.ft_set('lisp', ev.buf)()
-          end,
-        },
-        {
-          group = group,
-          pattern = '.clangd',
-          callback = function(ev)
-            Util.ft_set('yaml', ev.buf)()
-          end,
-        },
-        {
-          group = group,
-          pattern = '*.norg',
-          callback = function(ev)
-            Util.ft_set('norg', ev.buf)()
-          end,
-        },
-        {
-          group = group,
-          pattern = { '*.c', '*.h' },
-          callback = function(ev)
-            local buf_opts = { buf = ev.buf } ---@type vim.api.keyset.option
-            local opt_dict = {
-              tabstop = 2,
-              shiftwidth = 2,
-              softtabstop = 2,
-              expandtab = true,
-              autoindent = true,
-              filetype = 'c',
-            }
-            for opt, val in pairs(opt_dict) do
-              vim.api.nvim_set_option_value(opt, val, buf_opts)
-            end
-          end,
-        },
-        {
-          group = group,
-          pattern = {
-            '*.C',
-            '*.H',
-            '*.c++',
-            '*.cc',
-            '*.cpp',
-            '*.cxx',
-            '*.h++',
-            '*.hh',
-            '*.hpp',
-            '*.html',
-            '*.hxx',
-            '*.md',
-            '*.mdx',
-            '*.yaml',
-            '*.yml',
-          },
-          callback = function(ev)
-            local buf_opts = { buf = ev.buf } ---@type vim.api.keyset.option
-            local opt_dict = {
-              tabstop = 2,
-              shiftwidth = 2,
-              softtabstop = 2,
-              expandtab = true,
-              autoindent = true,
-            }
-            for opt, val in pairs(opt_dict) do
-              vim.api.nvim_set_option_value(opt, val, buf_opts)
-            end
-          end,
-        },
-      },
-    },
-    {
-      events = { 'FileType' },
-      opts_tbl = {
-        {
-          pattern = 'checkhealth',
-          group = group,
-          callback = function(ev)
-            local O = { win = curr_win() } ---@type vim.api.keyset.option
-            vim.api.nvim_set_option_value('wrap', true, O)
-            vim.api.nvim_set_option_value('number', false, O)
-            vim.api.nvim_set_option_value('signcolumn', 'no', O)
-
-            vim.keymap.set('n', 'q', vim.cmd.bdelete, { buffer = ev.buf })
-          end,
-        },
-        {
-          pattern = { 'nvim-undotree', 'startuptime', 'qf' },
-          group = group,
-          callback = function(ev)
-            vim.keymap.set('n', 'q', vim.cmd.bdelete, { buffer = ev.buf })
-          end,
-        },
-      },
-    },
-    {
-      events = { 'BufEnter', 'WinEnter', 'BufWinEnter' },
-      opts_tbl = {
-        {
-          group = group,
-          callback = function(ev)
-            local executable = require('user_api.check.exists').executable
-            local desc = require('user_api.maps').desc
-            local keyset = require('user_api.config.keymaps').set
-
-            local bt = Util.bt_get(ev.buf)
-            local ft = Util.ft_get(ev.buf)
-
-            ---@type vim.api.keyset.option, vim.api.keyset.option
-            local win_opts, buf_opts = { win = curr_win() }, { buf = ev.buf }
-            if ft == 'lazy' then
-              vim.api.nvim_set_option_value('signcolumn', 'no', win_opts)
-              vim.api.nvim_set_option_value('number', false, win_opts)
-              return
-            end
-            if bt == 'help' and ft == 'help' then
-              vim.api.nvim_set_option_value('signcolumn', 'no', win_opts)
-              vim.api.nvim_set_option_value('number', false, win_opts)
-              vim.api.nvim_set_option_value('wrap', true, win_opts)
-              vim.api.nvim_set_option_value('colorcolumn', '', win_opts)
-
-              vim.cmd.noh()
-              vim.cmd.wincmd('=')
-
-              vim.keymap.set('n', 'q', vim.cmd.helpclose, { buffer = ev.buf })
-              return
-            end
-            if ft == 'ministarter' then
-              vim.keymap.set('n', 'q', vim.cmd.quit, { buffer = ev.buf })
-              return
-            end
-            if not vim.api.nvim_get_option_value('modifiable', buf_opts) then
-              return
-            end
-            if ft == 'man' and bt == 'nofile' then
-              vim.keymap.set('n', 'q', vim.cmd.quitall, { buffer = ev.buf })
-              return
-            end
-            if ft == 'lua' and executable('stylua') then
-              keyset({
-                n = {
-                  ['<leader><C-l>'] = {
-                    function()
-                      run_stylua(ev.buf)
-                    end,
-                    desc('Format With `stylua`'),
-                  },
-                },
-              }, ev.buf)
-            end
-            if ft == 'python' and executable('isort') then
-              keyset({
-                n = {
-                  ['<leader><C-l>'] = {
-                    function()
-                      run_isort(ev.buf)
-                    end,
-                    desc('Format With `isort`'),
-                  },
-                },
-              }, ev.buf)
-            end
-          end,
-        },
-      },
-    },
-  }
-
-  Util.au.created = vim.tbl_deep_extend('keep', Util.au.created or {}, autocmds) ---@type AuRepeatEvents[]
-  for _, t in ipairs(Util.au.created) do
-    Util.au.au_repeated_events(t)
-  end
 end
 
 ---@param c string

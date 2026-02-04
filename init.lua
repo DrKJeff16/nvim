@@ -104,6 +104,8 @@ require('user_api').setup()
 Opts.setup_cmds()
 Opts.setup_maps()
 
+require('autocmds')()
+
 L.colorschemes('tokyonight')
 -- L.colorschemes('catppuccin')
 -- L.colorschemes('everblush')

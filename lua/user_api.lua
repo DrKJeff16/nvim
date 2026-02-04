@@ -27,8 +27,6 @@ function User.setup(commands, verbose)
   User.opts.setup()
   User.distro.setup(verbose)
 
-  require('user_api.util').setup_autocmd()
-
   User.config.neovide.setup()
 
   User.config.keymaps.set({ n = { ['<leader>U'] = { group = '+User API' } } })
