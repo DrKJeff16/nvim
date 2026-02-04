@@ -245,13 +245,16 @@ end
 
 ---Sets up `lazy.nvim`. Only runs once!
 --- ---
----@param toggles table<integer, LazySpec>|LazyToggles|LazyPluginSpec
----@overload fun()
+---@param toggles? table<integer, LazySpec>|LazyToggles|LazyPluginSpec
 function M.setup(toggles)
   require('user_api.check.exists').validate({ toggles = { toggles, { 'table', 'nil' }, true } })
   toggles = vim.tbl_deep_extend('keep', toggles or {}, M.get_default_toggles())
 
   M.bootstrap()
+
+  if vim.g.lazy_did_setup then
+    return
+  end
 
   local dict = M.get_default_specs()
   local dict_keys = vim.tbl_keys(dict) ---@type string[]
@@ -320,14 +323,14 @@ function M.setup(toggles)
     },
     checker = {
       enabled = not require('user_api.distro.termux').validate(),
-      notify = require('user_api.distro.archlinux').validate(),
+      notify = not require('user_api.distro.termux').validate(),
       frequency = 600,
       check_pinned = false,
     },
     ui = {
       backdrop = not require('user_api.check').in_console() and 60 or 100,
       border = 'double',
-      title = 'L           A           Z           Y',
+      title = ('L%sA%sZ%sY'):format((' '):rep(12), (' '):rep(12), (' '):rep(12)),
       title_pos = 'center',
       wrap = true,
       pills = true,
