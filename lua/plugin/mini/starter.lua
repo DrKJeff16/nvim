@@ -4,7 +4,8 @@ return { ---@type LazySpec
   priority = 1000,
   version = false,
   config = function()
-    require('mini.starter').setup({
+    local MS = require('mini.starter')
+    MS.setup({
       autoopen = true,
       header = nil,
       footer = nil,
@@ -12,13 +13,15 @@ return { ---@type LazySpec
       silent = false,
       evaluate_single = true,
       items = {
-        { name = 'Projects', action = 'Project', section = 'Projects' },
-        { name = 'Recent Projects', action = 'ProjectRecents', section = 'Projects' },
-        require('mini.starter').sections.telescope(),
+        {
+          { name = 'Projects', action = 'Project', section = 'Projects' },
+          { name = 'Recent Projects', action = 'ProjectRecents', section = 'Projects' },
+        },
+        MS.sections.telescope(),
       },
       content_hooks = {
-        require('mini.starter').gen_hook.adding_bullet(),
-        require('mini.starter').gen_hook.aligning('center', 'center'),
+        MS.gen_hook.adding_bullet(),
+        MS.gen_hook.aligning('center', 'center'),
       },
     })
   end,
