@@ -89,6 +89,7 @@ L.setup({
   hoversplit = false,
   ibl = false,
   mason = false,
+  picker = true,
   rainbow_delimiters = false,
 })
 
