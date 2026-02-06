@@ -4,7 +4,7 @@ return { ---@type LazySpec
   dev = true,
   event = 'VeryLazy',
   version = false,
-  cmd = { 'Picker' },
+  dependencies = { 'wsdjeg/job.nvim' },
   config = function()
     require('picker').setup({
       filter = { ignorecase = false, matcher = 'fzy' },
