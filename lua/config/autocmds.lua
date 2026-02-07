@@ -55,34 +55,39 @@ local function set_lang(lang, bufnr)
   Util.ft_set(lang, bufnr)()
 end
 
-return function()
-  local group = au.gen_augroups('User_AU', true)['User_AU']
+---@class Config.Autocmds
+local M = {}
+
+M.augroup = -1 ---@type integer
+
+function M.setup()
+  M.augroup = au.gen_augroups('User_AU', true)['User_AU']
   au.au_repeated_events({
     events = { 'BufCreate', 'BufAdd', 'BufNew', 'BufNewFile', 'BufRead' },
     opts_tbl = {
       {
-        group = group,
+        group = M.augroup,
         pattern = { '.spacemacs', '*.el' },
         callback = function(ev)
           set_lang('lisp', ev.buf)
         end,
       },
       {
-        group = group,
+        group = M.augroup,
         pattern = { '.github/CODEOWNERS' },
         callback = function(ev)
           set_lang('codeowners', ev.buf)
         end,
       },
       {
-        group = group,
+        group = M.augroup,
         pattern = { '.clangd' },
         callback = function(ev)
           set_lang('yaml', ev.buf)
         end,
       },
       {
-        group = group,
+        group = M.augroup,
         pattern = { '*.h' },
         callback = function(ev)
           set_lang('c', ev.buf)
@@ -95,7 +100,7 @@ return function()
     opts_tbl = {
       {
         pattern = 'checkhealth',
-        group = group,
+        group = M.augroup,
         callback = function(ev)
           Util.optset(
             { wrap = true, number = false, signcolumn = 'no', list = false },
@@ -112,7 +117,7 @@ return function()
       },
       {
         pattern = { 'c', 'cpp', 'html', 'markdown', 'yaml' },
-        group = group,
+        group = M.augroup,
         callback = function(ev)
           Util.optset(
             { tabstop = 2, shiftwidth = 2, softtabstop = 2, expandtab = true },
@@ -122,7 +127,7 @@ return function()
       },
       {
         pattern = { 'lua' },
-        group = group,
+        group = M.augroup,
         callback = function(ev)
           Util.optset(
             { tabstop = 2, shiftwidth = 2, softtabstop = 2, expandtab = true },
@@ -138,7 +143,7 @@ return function()
       },
       {
         pattern = { 'python' },
-        group = group,
+        group = M.augroup,
         callback = function(ev)
           keyset({
             n = {
@@ -149,7 +154,7 @@ return function()
       },
       {
         pattern = { 'nvim-undotree', 'startuptime', 'qf' },
-        group = group,
+        group = M.augroup,
         callback = function(ev)
           vim.keymap.set('n', 'q', function()
             vim.api.nvim_cmd(
@@ -161,7 +166,7 @@ return function()
       },
       {
         pattern = { 'lazy' },
-        group = group,
+        group = M.augroup,
         callback = function()
           Util.optset(
             { signcolumn = 'no', number = false },
@@ -171,7 +176,7 @@ return function()
       },
       {
         pattern = { 'help' },
-        group = group,
+        group = M.augroup,
         callback = function(ev)
           if Util.bt_get(ev.buf) ~= 'help' then
             return
@@ -189,14 +194,14 @@ return function()
       },
       {
         pattern = { 'ministarter' },
-        group = group,
+        group = M.augroup,
         callback = function(ev)
           vim.keymap.set('n', 'q', vim.cmd.quit, { buffer = ev.buf })
         end,
       },
       {
         pattern = { 'man' },
-        group = group,
+        group = M.augroup,
         callback = function(ev)
           if Util.bt_get(ev.buf) ~= 'nofile' then
             return
@@ -207,3 +212,5 @@ return function()
     },
   })
 end
+
+return M

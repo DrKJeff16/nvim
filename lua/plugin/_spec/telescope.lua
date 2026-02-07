@@ -1,7 +1,5 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec
-
   'nvim-telescope/telescope.nvim',
   version = false,
   dependencies = {
@@ -11,21 +9,8 @@ return { ---@type LazySpec
     'OliverChao/telescope-picker-list.nvim',
     'nvim-telescope/telescope-file-browser.nvim',
     'crispgm/telescope-heading.nvim',
-    { 'tpope/vim-fugitive', verbose = false },
+    'tpope/vim-fugitive',
     { 'polirritmico/telescope-lazy-plugins.nvim', dev = true },
-    {
-      'LukasPietzschmann/telescope-tabs',
-      version = false,
-      config = require('config.util').require('plugin.telescope.tabs'),
-    },
-    {
-      'DrKJeff16/telescope-makefile',
-      ft = 'make',
-      version = false,
-      dependencies = { 'akinsho/toggleterm.nvim' },
-      config = require('config.util').require('plugin.telescope.makefile'),
-    },
-    { 'olacin/telescope-cc.nvim', ft = 'gitcommit', version = false },
   },
   config = require('config.util').require('plugin.telescope'),
 }

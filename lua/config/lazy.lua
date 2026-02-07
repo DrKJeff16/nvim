@@ -350,13 +350,6 @@ function M.setup(toggles)
   M.setup_keys()
 end
 
-M.colorschemes = require('config.colorschemes')
-
----@return Lsp.Server LSP
-function M.lsp()
-  return require('config.lsp')
-end
-
 local Lazy = setmetatable(M, { ---@type Config.Lazy
   __index = M,
   __newindex = function()

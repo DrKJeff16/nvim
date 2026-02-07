@@ -1,8 +1,4 @@
 ---@module 'lazy'
-
-local colorscheme_init = require('config.util').colorscheme_init
-local in_console = require('user_api.check').in_console
-
 return { ---@type LazySpec[]
   {
     'serhez/teide.nvim',
@@ -31,71 +27,11 @@ return { ---@type LazySpec[]
     end,
   },
   {
-    'Everblush/nvim',
-    name = 'everblush',
-    lazy = false,
-    priority = 1000,
-    version = false,
-    init = colorscheme_init('installed_everblush'),
-    cond = not in_console(),
-    config = function()
-      require('everblush').setup({
-        override = {},
-        transparent_background = false,
-        nvim_tree = { contrast = false },
-      })
-    end,
-  },
-  {
-    'niyabits/calvera-dark.nvim',
-    lazy = false,
-    priority = 1000,
-    version = false,
-    init = colorscheme_init('installed_calvera_dark'),
-    cond = not in_console(),
-    config = function()
-      vim.g.calvera_italic_keywords = false
-      vim.g.calvera_borders = true
-      vim.g.calvera_contrast = true
-      vim.g.calvera_hide_eob = true
-      vim.g.calvera_custom_colors = { contrast = '#0f111a' }
-    end,
-  },
-  {
-    url = 'https://codeberg.org/jthvai/lavender.nvim',
-    enabled = false,
-    lazy = false,
-    priority = 1000,
-    version = false,
-    init = colorscheme_init('installed_lavender'),
-    cond = not in_console(),
-    config = function()
-      -- Default config in lua
-      vim.g.lavender = {
-        transparent = {
-          background = false,
-          float = false,
-          popup = false,
-          sidebar = false,
-        },
-        contrast = false,
-        signs = true,
-        italic = {
-          comments = false,
-          functions = false,
-          keywords = false,
-          variables = false,
-        },
-      }
-    end,
-  },
-  {
     '0xstepit/flow.nvim',
     lazy = false,
     priority = 1000,
     version = false,
-    init = colorscheme_init('installed_flow'),
-    cond = not in_console(),
+    cond = not require('user_api.check').in_console(),
     opts = {
       colors = {
         mode = 'default', ---@type 'default'|'dark'|'light'
@@ -114,38 +50,11 @@ return { ---@type LazySpec[]
     },
   },
   {
-    'jpwol/thorn.nvim',
-    lazy = false,
-    priority = 1000,
-    version = false,
-    init = colorscheme_init('installed_thorn'),
-    cond = not in_console(),
-    opts = {
-      theme = 'dark', ---@type nil|'light'|'dark'
-      background = 'cold', ---@type 'warm'|'cold'
-      transparent = false,
-      terminal = true,
-      styles = {
-        keywords = { italic = false, bold = true },
-        comments = { italic = false, bold = false },
-        strings = { italic = false, bold = false },
-        diagnostic = {
-          underline = true,
-          -- true will apply the bg highlight, false applies the fg highlight
-          error = { highlight = true },
-          hint = { highlight = false },
-          info = { highlight = false },
-          warn = { highlight = true },
-        },
-      },
-    },
-  },
-  {
     'folke/tokyonight.nvim',
     lazy = false,
     priority = 1000,
     version = false,
-    init = colorscheme_init('installed_tokyonight'),
+    cond = not require('user_api.check').in_console(),
     config = function()
       require('tokyonight').setup({
         cache = true,
@@ -187,7 +96,6 @@ return { ---@type LazySpec[]
         plugins = { all = package.loaded.lazy ~= nil, auto = true },
       })
     end,
-    cond = not in_console(),
   },
   {
     'embark-theme/vim',
@@ -196,15 +104,14 @@ return { ---@type LazySpec[]
     priority = 1000,
     name = 'embark',
     version = false,
-    init = colorscheme_init('installed_embark'),
-    cond = not in_console(),
+    cond = not require('user_api.check').in_console(),
   },
   {
     'tiagovla/tokyodark.nvim',
     lazy = false,
     priority = 1000,
     version = false,
-    init = colorscheme_init('installed_tokyodark'),
+    cond = not require('user_api.check').in_console(),
     config = function()
       require('tokyodark').setup({
         transparent_background = false,
@@ -221,18 +128,16 @@ return { ---@type LazySpec[]
         custom_palette = {},
       })
     end,
-    cond = not in_console(),
   },
   {
     'darianmorat/gruvdark.nvim',
     lazy = false,
     priority = 1000,
     version = false,
-    init = colorscheme_init('installed_gruvdark'),
+    cond = not require('user_api.check').in_console(),
     config = function()
       require('gruvdark').setup({ transparent = false, colors = {}, highlights = {} })
     end,
-    cond = not in_console(),
   },
   {
     'catppuccin/nvim',
@@ -240,7 +145,7 @@ return { ---@type LazySpec[]
     name = 'catppuccin',
     priority = 1000,
     version = false,
-    init = colorscheme_init('installed_catppuccin'),
+    cond = not require('user_api.check').in_console(),
     config = function()
       require('catppuccin').setup({
         flavour = 'auto',
@@ -326,15 +231,13 @@ return { ---@type LazySpec[]
         },
       })
     end,
-    cond = not in_console(),
   },
   {
     'navarasu/onedark.nvim',
     lazy = false,
     priority = 1000,
     version = false,
-    cond = not in_console(),
-    init = colorscheme_init('installed_onedark'),
+    cond = not require('user_api.check').in_console(),
     config = function()
       require('onedark').setup({
         style = 'deep',
@@ -367,7 +270,7 @@ return { ---@type LazySpec[]
     lazy = false,
     priority = 1000,
     version = false,
-    init = colorscheme_init('installed_nightfox'),
+    cond = not require('user_api.check').in_console(),
     config = function()
       local compile_path = vim.fn.stdpath('state') .. '/nightfox'
       require('nightfox').setup({
@@ -424,25 +327,24 @@ return { ---@type LazySpec[]
         },
       })
     end,
-    cond = not in_console(),
   },
   {
     'rebelot/kanagawa.nvim',
     lazy = false,
     priority = 1000,
     version = false,
-    init = colorscheme_init('installed_kanagawa'),
+    cond = not require('user_api.check').in_console(),
     config = function()
       require('kanagawa').setup({
         compile = true,
-        undercurl = not in_console(),
+        undercurl = not require('user_api.check').in_console(),
         commentStyle = { italic = false },
         functionStyle = { bold = true, italic = false },
         keywordStyle = { bold = true, italic = false },
         statementStyle = { bold = true, italic = false },
         typeStyle = { italic = false, bold = true },
         transparent = false,
-        dimInactive = not in_console(),
+        dimInactive = not require('user_api.check').in_console(),
         terminalColors = true,
         colors = {
           palette = {},
@@ -470,19 +372,18 @@ return { ---@type LazySpec[]
         background = { dark = 'wave', light = 'lotus' },
       })
     end,
-    cond = not in_console(),
   },
   {
     'vague-theme/vague.nvim',
     lazy = false,
     priority = 1000,
     version = false,
-    init = colorscheme_init('installed_vague'),
+    cond = not require('user_api.check').in_console(),
     config = function()
       require('vague').setup({
         transparent = false,
         bold = true,
-        italic = true,
+        italic = false,
         style = {
           boolean = 'bold',
           number = 'none',
@@ -545,36 +446,13 @@ return { ---@type LazySpec[]
         },
       })
     end,
-    cond = not in_console(),
-  },
-  {
-    'Mofiqul/vscode.nvim',
-    lazy = false,
-    priority = 1000,
-    version = false,
-    init = colorscheme_init('installed_vscode'),
-    config = function()
-      local C = require('vscode.colors').get_colors()
-      require('vscode').setup({
-        style = 'dark',
-        transparent = false,
-        italic_comments = false,
-        underline_links = true,
-        disable_nvimtree_bg = false,
-        color_overrides = {},
-        group_overrides = {
-          Cursor = { fg = C.vscDarkBlue, bg = C.vscLightGreen, bold = true },
-        },
-      })
-    end,
-    cond = not in_console(),
   },
   {
     'Mofiqul/dracula.nvim',
     lazy = false,
     priority = 1000,
     version = false,
-    init = colorscheme_init('installed_dracula'),
+    cond = not require('user_api.check').in_console(),
     config = function()
       require('dracula').setup({
         show_end_of_buffer = false,
@@ -584,14 +462,13 @@ return { ---@type LazySpec[]
         overrides = {},
       })
     end,
-    cond = not in_console(),
   },
   {
     'ellisonleao/gruvbox.nvim',
     lazy = false,
     priority = 1000,
     version = false,
-    init = colorscheme_init('installed_gruvbox'),
+    cond = not require('user_api.check').in_console(),
     config = function()
       require('gruvbox').setup({
         transparent_mode = false,
@@ -616,46 +493,13 @@ return { ---@type LazySpec[]
         contrast = 'soft',
       })
     end,
-    cond = not in_console(),
-  },
-  {
-    'kepano/flexoki-neovim',
-    lazy = false,
-    priority = 1000,
-    version = false,
-    init = colorscheme_init('installed_flexoki'),
-    cond = not in_console(),
   },
   {
     'pineapplegiant/spaceduck',
     lazy = false,
     priority = 1000,
     version = false,
-    init = colorscheme_init('installed_spaceduck'),
-    cond = not in_console(),
-  },
-  {
-    'liuchengxu/space-vim-dark',
-    lazy = false,
-    priority = 1000,
-    version = false,
-    init = colorscheme_init('installed_space_vim_dark'),
-    cond = not in_console(),
-  },
-  {
-    'tomasr/molokai',
-    lazy = false,
-    priority = 1000,
-    version = false,
-    init = colorscheme_init('installed_molokai'),
-  },
-  {
-    'Th3Whit3Wolf/space-nvim',
-    lazy = false,
-    priority = 1000,
-    version = false,
-    init = colorscheme_init('installed_space_nvim'),
-    cond = not in_console(),
+    cond = not require('user_api.check').in_console(),
   },
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

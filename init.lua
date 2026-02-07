@@ -1,6 +1,5 @@
 local INFO = vim.log.levels.INFO
 local Opts = require('user_api.opts')
-local Keymaps = require('user_api.config.keymaps')
 
 function _G.notify_inspect(...)
   ---@type integer, integer, string
@@ -19,7 +18,7 @@ end
 
 vim.g.loaded_perl_provider = 0
 
-Keymaps.set_leader('<Space>')
+require('user_api.config.keymaps').set_leader('<Space>')
 
 Opts.setup({
   autoread = true,
@@ -77,25 +76,113 @@ Opts.setup({
 ---Disable `netrw` regardless of whether `nvim_tree/neo_tree` exist or not.
 require('user_api').disable_netrw()
 
-local L = require('config.lazy')
-L.setup({
+require('config.lazy').setup({
   Comment = true,
+  alpha = false,
   autopairs = true,
+  blink_cmp = true,
   blink_indent = true,
   blink_pairs = false,
   bmessages = false,
+  buffer_sticks = false,
+  bufferline = true,
   cheaty = false,
+  checkmate = false,
+  co_author = false,
+  code_runner = false,
+  codeowners = true,
+  diffview = false,
+  dooku = false,
+  doxygen_init = false,
   doxygen_previewer = true,
+  echo = false,
+  focus = true,
+  fzf_lua = true,
+  fzf_nerdfont = false,
+  gh_co = false,
+  git_gitsigns = true,
+  git_lazygit = false,
+  git_rehunk = false,
   git_utils = false,
+  goto_preview = false,
+  helpview = true,
+  hlargs = false,
   hoversplit = false,
   ibl = false,
+  lastplace = true,
+  lazydev = true,
+  local_session = false,
+  log_highlight = false,
+  lsp_better_diagnostic = false,
+  lsp_clangd = true,
+  lsp_toggle = false,
+  lspkind = true,
+  lualine = true,
+  luaref = true,
+  markdoc = false,
+  markdown_outline = false,
+  markdown_render = true,
   mason = false,
+  mini_animate = false,
+  mini_basics = true,
+  mini_bufremove = true,
+  mini_cmdline = false,
+  mini_diff = false,
+  mini_extra = true,
+  mini_icons = true,
+  mini_mini = true,
+  mini_move = true,
+  mini_pairs = false,
+  mini_splitjoin = true,
+  mini_starter = true,
+  mini_test = false,
+  mini_trailspace = true,
+  music_player = true,
+  neo_tree = true,
+  noice = true,
+  notify = true,
+  nvim_test = false,
+  orgmode = true,
+  outline = true,
+  paredit = true,
+  persistence = true,
   picker = true,
+  pipenv = true,
+  pomo = false,
+  possession = false,
+  project = true,
+  python_import = true,
   rainbow_delimiters = false,
+  refactoring = false,
+  referencer = false,
+  replua = false,
+  scope = true,
+  screenkey = true,
+  scrollbar = false,
+  smart_backspace = false,
+  smoothcursor = true,
+  snacks = true,
+  startuptime = true,
+  todo_comments = true,
+  toggleterm = true,
+  toml = false,
+  triforce = true,
+  ts_autotag = true,
+  ts_commentstring = true,
+  ts_context = true,
+  ts_init = true,
+  ts_vimdoc = true,
+  twilight = false,
+  undotree = false,
+  web_devicons = true,
+  which_colorscheme = true,
+  which_key = true,
+  yanky = true,
+  zen_mode = false,
 })
 
 local desc = require('user_api.maps').desc
-Keymaps.set({
+require('user_api.config.keymaps').set({
   n = { ['<C-/>'] = { ':norm gcc<CR><Up>', desc('Toggle Comment') } },
   v = { ['<C-/>'] = { ":'<,'>normal gcc<CR><Up>", desc('Toggle Comment') } },
 }, nil, true)
@@ -106,19 +193,19 @@ require('user_api').setup()
 Opts.setup_cmds()
 Opts.setup_maps()
 
-require('autocmds')()
+require('config.autocmds').setup()
 
-L.colorschemes('tokyonight')
--- L.colorschemes('catppuccin')
--- L.colorschemes('everblush')
--- L.colorschemes('calvera')
--- L.colorschemes('lavender')
--- L.colorschemes('flow')
--- L.colorschemes('thorn')
--- L.colorschemes('nightfox')
--- L.colorschemes('conifer')
--- L.colorschemes('tokyodark')
--- L.colorschemes('spaceduck')
+require('config.colorschemes')('tokyonight')
+-- require('config.colorschemes')('catppuccin')
+-- require('config.colorschemes')('everblush')
+-- require('config.colorschemes')('calvera')
+-- require('config.colorschemes')('lavender')
+-- require('config.colorschemes')('flow')
+-- require('config.colorschemes')('thorn')
+-- require('config.colorschemes')('nightfox')
+-- require('config.colorschemes')('conifer')
+-- require('config.colorschemes')('tokyodark')
+-- require('config.colorschemes')('spaceduck')
 
 vim.cmd.packadd('nohlsearch')
 
@@ -126,5 +213,5 @@ if require('user_api.check.exists').vim_has('nvim-0.12') then
   vim.cmd.packadd('nvim.undotree')
 end
 
-L.lsp().setup()
+require('config.lsp').setup()
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

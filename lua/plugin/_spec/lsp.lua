@@ -1,5 +1,4 @@
 ---@module 'lazy'
-
 return { ---@type LazySpec[]
   'neovim/nvim-lspconfig',
   'folke/trouble.nvim',
