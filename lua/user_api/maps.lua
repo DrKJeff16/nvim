@@ -20,17 +20,9 @@ function Maps.desc(desc, silent, bufnr, noremap, nowait, expr)
     nowait = { nowait, { 'boolean', 'nil' }, true },
     expr = { expr, { 'boolean', 'nil' }, true },
   })
-
-  local Value = require('user_api.check.value')
-  if not Value.type_not_empty('string', desc) then
-    desc = 'Unnamed Key'
-  end
-  if silent == nil then
-    silent = true
-  end
-  if noremap == nil then
-    noremap = true
-  end
+  desc = (desc and desc ~= '') and desc or 'Unnamed Key'
+  silent = silent ~= nil and silent or true
+  noremap = noremap ~= nil and noremap or true
 
   local res = require('user_api.maps.objects').new()
   res:add({ desc = desc, silent = silent, noremap = noremap })

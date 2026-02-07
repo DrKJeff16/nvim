@@ -105,14 +105,6 @@ if require('plugin.telescope.file_browser') then
   Opts.extensions.file_browser = require('plugin.telescope.file_browser').file_browser
   require('plugin.telescope.file_browser').loadkeys()
 end
-if require('plugin.telescope.cc') then
-  Opts.extensions.conventional_commits = require('plugin.telescope.cc').cc
-  require('plugin.telescope.cc').loadkeys()
-end
-if require('plugin.telescope.tabs') then
-  require('plugin.telescope.tabs').create()
-  require('plugin.telescope.tabs').loadkeys()
-end
 
 require('telescope').setup(Opts)
 
@@ -225,9 +217,10 @@ for mod, ext in pairs(known_exts) do
     end
   end
 end
-require('user_api.config').keymaps.set({ n = Keys })
 
-vim.api.nvim_create_autocommand('User', {
+require('user_api.config.keymaps').set({ n = Keys })
+
+vim.api.nvim_create_autocmd('User', {
   group = vim.api.nvim_create_augroup('UserTelescope', { clear = true }),
   pattern = 'TelescopePreviewerLoaded',
   callback = function(ev)
