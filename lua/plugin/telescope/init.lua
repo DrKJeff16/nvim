@@ -1,6 +1,5 @@
 local floor = math.floor
 local exists = require('user_api.check.exists').module
-local desc = require('user_api.maps').desc
 
 local Actions = require('telescope.actions')
 local ActionsLayout = require('telescope.actions.layout')
@@ -73,11 +72,11 @@ local Opts = {
     autocommands = { theme = 'dropdown' },
     buffers = { theme = 'dropdown' },
     colorscheme = { theme = 'dropdown' },
-    commands = { theme = 'ivy' },
+    commands = { theme = 'dropdown' },
     current_buffer_fuzzy_find = { theme = 'dropdown' },
-    fd = { theme = 'ivy' },
+    fd = { theme = 'dropdown' },
     find_files = {
-      theme = 'ivy',
+      theme = 'dropdown',
       find_command = { 'rg', '--files', '--hidden', '--glob', '!**/.git/*' },
     },
     git_branches = { theme = 'dropdown' },
@@ -90,9 +89,9 @@ local Opts = {
     lsp_type_definitions = { theme = 'cursor' },
     lsp_workspace_symbols = { theme = 'cursor' },
     man_pages = { theme = 'dropdown' },
-    pickers = { theme = 'ivy' },
-    planets = { theme = 'ivy' },
-    vim_options = { theme = 'ivy' },
+    pickers = { theme = 'dropdown' },
+    planets = { theme = 'dropdown' },
+    vim_options = { theme = 'dropdown' },
   },
 }
 
@@ -121,6 +120,7 @@ local function load_ext(name) ---@param name string
   end
 end
 
+local desc = require('user_api.maps').desc
 local Keys = { ---@type AllMaps
   ['<leader><C-t>'] = { group = '+Telescope' },
   ['<leader><C-t>b'] = { group = '+Builtins' },
@@ -168,27 +168,6 @@ local known_exts = { ---@type table<string, { [1]: string, keys?: AllMaps }>
     keys = {
       ['<leader><C-t>eu'] = { ':Telescope undo<CR>', desc('Undo Picker') },
       ['<leader>fu'] = { ':Telescope undo<CR>', desc('Undo Telescope Picker') },
-    },
-  },
-  ['plugin.telescope.cc'] = {
-    'conventional_commits',
-    keys = {
-      ['<leader><C-t>eC'] = {
-        ':Telescope conventional_commits<CR>',
-        desc('Conventional Commits'),
-      },
-      ['<leader>GC'] = {
-        ':Telescope conventional_commits<CR>',
-        desc('Conventional Commits (Telescope)'),
-      },
-    },
-  },
-  ['telescope-makefile'] = {
-    'make',
-    keys = {
-      ['<leader>fM'] = { group = '+Make' },
-      ['<leader>fMT'] = { ':Telescope make<CR>', desc('Makefile Telescope Picker') },
-      ['<leader><C-t>eM'] = { ':Telescope make<CR>', desc('Makefile Picker') },
     },
   },
   ['lazygit.utils'] = {
