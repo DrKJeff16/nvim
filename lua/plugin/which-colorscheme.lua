@@ -14,6 +14,7 @@ return { ---@type LazySpec
         'darkblue',
         'dawnfox',
         'dayfox',
+        'gruvdark-light',
         'kanagawa-lotus',
         'teide-light',
         'tokyonight-day',
@@ -21,13 +22,13 @@ return { ---@type LazySpec
       custom_groups = {
         A = {
           'tokyonight',
+          'tokyodark',
           'catppuccin',
           'kanagawa',
           'nightfox',
           'carbonfox',
           'onedark',
           'minicyan',
-          'vscode',
         },
       },
       grouping = {
