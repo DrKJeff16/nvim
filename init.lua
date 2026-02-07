@@ -165,7 +165,7 @@ require('config.lazy').setup({
   startuptime = true,
   todo_comments = true,
   toggleterm = true,
-  toml = false,
+  toml = true,
   triforce = true,
   ts_autotag = true,
   ts_commentstring = true,
