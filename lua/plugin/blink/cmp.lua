@@ -1,10 +1,42 @@
 ---@module 'lazy'
 
-local exists = require('user_api.check.exists').module
-local executable = require('user_api.check.exists').executable
-local copy = vim.deepcopy
-local in_list = vim.list_contains
-local curr_buf = vim.api.nvim_get_current_buf
+---@param idx integer
+---@return fun(cmp: blink.cmp.API): boolean|nil
+local function accept_nth(idx)
+  require('user_api.check.exists').validate({ idx = { idx, { 'number' } } })
+  if not require('user_api.check.value').is_int(idx) then
+    error(('Bad index `%d`'):format(idx), vim.log.levels.ERROR)
+  end
+
+  return function(cmp) ---@param cmp blink.cmp.API
+    return cmp.accept({ index = idx })
+  end
+end
+
+---@param key string
+---@return function
+local function gen_termcode_fun(key)
+  require('user_api.check.exists').validate({ key = { key, { 'string' } } })
+
+  return function()
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, false, true), 'i', false)
+  end
+end
+
+---@param direction 'up'|'down'
+---@return fun(cmp: blink.cmp.API): boolean|nil
+local function up_or_down(direction)
+  require('user_api.check.exists').validate({ direction = { direction, { 'string' } } })
+  direction = vim.list_contains({ 'up', 'down' }, direction) and direction or 'up'
+
+  local key = direction == 'up' and '<Up>' or '<Down>'
+  return function(cmp) ---@param cmp blink.cmp.API
+    if not cmp.is_menu_visible() then
+      return
+    end
+    return cmp.cancel({ callback = gen_termcode_fun(key) })
+  end
+end
 
 ---@class BUtil
 local BUtil = {}
@@ -31,7 +63,7 @@ function BUtil.reset_sources(snipps, buf)
     table.insert(BUtil.Sources, 'buffer')
   end
 
-  local ft = require('user_api.util').ft_get(curr_buf())
+  local ft = require('user_api.util').ft_get(vim.api.nvim_get_current_buf())
   if ft == 'lua' then
     table.insert(BUtil.Sources, 1, 'lazydev')
     return
@@ -46,7 +78,7 @@ function BUtil.reset_sources(snipps, buf)
   end
 
   local git_fts = { 'git', 'gitcommit', 'gitattributes', 'gitrebase' }
-  if in_list(git_fts, ft) then
+  if vim.list_contains(git_fts, ft) then
     table.insert(BUtil.Sources, 1, 'git')
     if ft == 'gitcommit' then
       table.insert(BUtil.Sources, 1, 'conventional_commits')
@@ -86,7 +118,7 @@ function BUtil.reset_providers()
             :totable()
         end,
         get_search_bufnrs = function() ---@return integer[]
-          return { curr_buf() }
+          return { vim.api.nvim_get_current_buf() }
         end,
         max_sync_buffer_size = 20000,
         max_async_buffer_size = 200000,
@@ -101,15 +133,11 @@ function BUtil.reset_providers()
         local keyword = ctx.get_keyword()
         local correct = ''
         local uppercase ---@type boolean
-        if keyword:match('^%l') then
-          correct = '^%u%l+$'
-          uppercase = false
-        elseif keyword:match('^%u') then
-          correct = '^%l+$'
-          uppercase = true
-        else
+        if not (keyword:match('^%l') or keyword:match('^%u')) then
           return items
         end
+        correct = keyword:match('^%l') and '^%u%l+$' or '^%l+$'
+        uppercase = keyword:match('^%u') ~= nil
 
         local seen, out = {}, {}
         for _, item in ipairs(items) do
@@ -165,6 +193,8 @@ function BUtil.reset_providers()
       end,
     },
   }
+
+  local exists = require('user_api.check.exists').module
   if exists('css-vars.blink') then
     BUtil.Providers.css_vars = {
       name = 'css-vars',
@@ -193,7 +223,10 @@ function BUtil.reset_providers()
       module = 'blink-cmp-git',
       enabled = function()
         local git_fts = { 'git', 'gitcommit', 'gitattributes', 'gitrebase' }
-        return in_list(git_fts, require('user_api.util').ft_get(curr_buf()))
+        return vim.list_contains(
+          git_fts,
+          require('user_api.util').ft_get(vim.api.nvim_get_current_buf())
+        )
       end,
       opts = {},
     }
@@ -204,7 +237,7 @@ function BUtil.reset_providers()
       module = 'blink-cmp-conventional-commits',
       score_offset = 100,
       enabled = function()
-        return require('user_api.util').ft_get(curr_buf()) == 'gitcommit'
+        return require('user_api.util').ft_get(vim.api.nvim_get_current_buf()) == 'gitcommit'
       end,
       opts = {},
     }
@@ -227,21 +260,11 @@ function BUtil.gen_providers(P)
   require('user_api.check.exists').validate({ P = { P, { 'table', 'nil' }, true } })
 
   BUtil.reset_providers()
-  BUtil.Providers = vim.tbl_deep_extend('keep', P or {}, copy(BUtil.Providers))
+  BUtil.Providers = vim.tbl_deep_extend('keep', P or {}, vim.deepcopy(BUtil.Providers))
   return BUtil.Providers
 end
 
----@param key string
----@return function
-local function gen_termcode_fun(key)
-  require('user_api.check.exists').validate({ key = { key, { 'string' } } })
-
-  return function()
-    local termcode = vim.api.nvim_replace_termcodes(key, true, false, true)
-    vim.api.nvim_feedkeys(termcode, 'i', false)
-  end
-end
-
+local executable = require('user_api.check.exists').executable
 return { ---@type LazySpec
   'saghen/blink.cmp',
   event = 'InsertEnter',
@@ -340,22 +363,18 @@ return { ---@type LazySpec
           end,
           'fallback',
         },
-        ['<Up>'] = {
-          function(cmp)
-            if cmp.is_menu_visible() then
-              return cmp.cancel({ callback = gen_termcode_fun('<Up>') })
-            end
-          end,
-          'fallback',
-        },
-        ['<Down>'] = {
-          function(cmp)
-            if cmp.is_menu_visible() then
-              return cmp.cancel({ callback = gen_termcode_fun('<Down>') })
-            end
-          end,
-          'fallback',
-        },
+        ['<A-1>'] = { accept_nth(1), 'fallback' },
+        ['<A-2>'] = { accept_nth(2), 'fallback' },
+        ['<A-3>'] = { accept_nth(3), 'fallback' },
+        ['<A-4>'] = { accept_nth(4), 'fallback' },
+        ['<A-5>'] = { accept_nth(5), 'fallback' },
+        ['<A-6>'] = { accept_nth(6), 'fallback' },
+        ['<A-7>'] = { accept_nth(7), 'fallback' },
+        ['<A-8>'] = { accept_nth(8), 'fallback' },
+        ['<A-9>'] = { accept_nth(9), 'fallback' },
+        ['<A-0>'] = { accept_nth(0), 'fallback' },
+        ['<Up>'] = { up_or_down('up'), 'fallback' },
+        ['<Down>'] = { up_or_down('down'), 'fallback' },
         ['<Left>'] = { 'fallback' },
         ['<Right>'] = { 'fallback' },
         ['<C-p>'] = { 'fallback' },
@@ -420,7 +439,7 @@ return { ---@type LazySpec
           cycle = { from_top = true, from_bottom = true },
           selection = {
             auto_insert = true,
-            preselect = function(_)
+            preselect = function()
               return require('blink.cmp').snippet_active({ direction = 1 })
             end,
           },
@@ -441,7 +460,7 @@ return { ---@type LazySpec
         ghost_text = { enabled = false },
       },
       cmdline = {
-        enabled = true,
+        enabled = false,
         keymap = {
           preset = 'cmdline',
           ['<Right>'] = { 'fallback' },
@@ -449,12 +468,16 @@ return { ---@type LazySpec
           ['<C-p>'] = { 'fallback' },
           ['<C-n>'] = { 'fallback' },
         },
+        completion = {
+          ghost_text = { enabled = false },
+          list = { selection = { preselect = false, auto_insert = true } },
+        },
         sources = function()
           local type = vim.fn.getcmdtype()
-          if in_list({ '/', '?' }, type) then
+          if vim.list_contains({ '/', '?' }, type) then
             return { 'buffer' }
           end
-          if in_list({ ':', '@' }, type) then
+          if vim.list_contains({ ':', '@' }, type) then
             return { 'cmdline', 'buffer' }
           end
           return {}
