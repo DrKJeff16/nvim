@@ -1,6 +1,7 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'nvim-focus/focus.nvim',
+  dev = true,
   version = false,
   config = function()
     local Focus = require('focus')
