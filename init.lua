@@ -79,6 +79,7 @@ require('user_api').disable_netrw()
 
 local L = require('config.lazy')
 L.setup({
+  Comment = true,
   autopairs = true,
   blink_indent = true,
   blink_pairs = false,

@@ -14,7 +14,7 @@ local function server_load(name, exe)
   end
 
   ---@type boolean, vim.lsp.Config|nil
-  local ok, mod = pcall(require, 'plugin.lsp.servers.' .. name)
+  local ok, mod = pcall(require, 'config.lsp.servers.' .. name)
   if ok and mod then
     return mod
   end

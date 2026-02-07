@@ -26,18 +26,12 @@ Kinds.icons = {
   Variable = ' ',
 }
 
----@return Lsp.SubMods.Kinds|function
-function Kinds.new()
-  return setmetatable({}, {
-    __index = Kinds,
-    __call = function(self) ---@param self Lsp.SubMods.Kinds
-      for s, kind in pairs(vim.lsp.protocol.CompletionItemKind) do
-        local icon = self.icons[s] or kind ---@type Lsp.SubMods.Kinds.Icons|lsp.CompletionItemKind
-        vim.lsp.protocol.CompletionItemKind[s] = icon ~= '' and icon or kind
-      end
-    end,
-  })
+function Kinds.setup()
+  for s, kind in pairs(vim.lsp.protocol.CompletionItemKind) do
+    local icon = Kinds.icons[s] or kind ---@type Lsp.SubMods.Kinds.Icons|lsp.CompletionItemKind
+    vim.lsp.protocol.CompletionItemKind[s] = icon ~= '' and icon or kind
+  end
 end
 
-return Kinds.new()
+return Kinds
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

@@ -172,67 +172,30 @@ Trouble.Opts = { ---@type trouble.Config
 local desc = require('user_api.maps').desc
 Trouble.Keys = { ---@type AllMaps
   ['<leader>lx'] = { group = '+Trouble' },
-  ['<leader>lxx'] = {
-    function()
-      vim.cmd.Trouble('diagnostics toggle')
-    end,
-    desc('Toggle Global Diagnostics'),
-  },
+  ['<leader>lxx'] = { ':Trouble diagnostics toggle<CR>', desc('Toggle Global Diagnostics') },
+  ['<leader>lxs'] = { ':Trouble symbols toggle focus=false<CR>', desc('Toggle Symbols') },
+  ['<leader>lxS'] = { ':Trouble symbols toggle focus=true<CR>', desc('Toggle Focus Symbols') },
+  ['<leader>lxl'] = { ':Trouble lsp toggle focus=false<CR>', desc('Toggle LSP') },
+  ['<leader>lxL'] = { ':Trouble loclist toggle<CR>', desc('Toggle Loclist') },
+  ['<leader>lxr'] = { ':Trouble lsp_references<CR>', desc('Toggle LSP References') },
   ['<leader>lxX'] = {
     function()
       vim.cmd.Trouble(('diagnostics toggle filter.buf=%s'):format(vim.api.nvim_get_current_buf()))
     end,
     desc('Toggle Buffer-Local Diagnostics'),
   },
-  ['<leader>lxs'] = {
-    function()
-      vim.cmd.Trouble('symbols toggle focus=false')
-    end,
-    desc('Toggle Symbols'),
-  },
-  ['<leader>lxS'] = {
-    function()
-      vim.cmd.Trouble('symbols toggle focus=true')
-    end,
-    desc('Toggle Symbols (Focused)'),
-  },
-  ['<leader>lxl'] = {
-    function()
-      vim.cmd.Trouble('lsp toggle focus=false')
-    end,
-    desc('Toggle LSP'),
-  },
-  ['<leader>lxL'] = {
-    function()
-      vim.cmd.Trouble('loclist toggle')
-    end,
-    desc('Toggle Loclist'),
-  },
-  ['<leader>lxr'] = {
-    function()
-      vim.cmd.Trouble('lsp_references')
-    end,
-    desc('Toggle LSP References'),
-  },
 }
 
----@return Lsp.SubMods.Trouble|fun(override?: trouble.Config|nil)
-function Trouble.new()
-  return setmetatable({}, {
-    __index = Trouble,
-    ---@param self Lsp.SubMods.Trouble
-    ---@param override? trouble.Config
-    __call = function(self, override)
-      require('user_api.check.exists').validate({
-        override = { override, { 'table', 'nil' }, true },
-      })
-
-      self.Opts = vim.tbl_deep_extend('force', self.Opts, override or {})
-      require('trouble').setup(self.Opts)
-      require('user_api.config').keymaps.set({ n = self.Keys })
-    end,
+---@param override? trouble.Config
+function Trouble.setup(override)
+  require('user_api.check.exists').validate({
+    override = { override, { 'table', 'nil' }, true },
   })
+
+  Trouble.Opts = vim.tbl_deep_extend('force', Trouble.Opts, override or {})
+  require('trouble').setup(Trouble.Opts)
+  require('user_api.config').keymaps.set({ n = Trouble.Keys })
 end
 
-return Trouble.new()
+return Trouble
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

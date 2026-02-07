@@ -37,7 +37,7 @@ end
 local Server = {}
 
 Server.client_names = {} ---@type string[]
-Server.Clients = require('plugin.lsp.servers')
+Server.Clients = require('config.lsp.servers')
 
 function Server.make_timer()
   if Server.timer and Server.timer:is_active() then
@@ -195,14 +195,9 @@ function Server.setup()
     v = { ['<leader>l'] = { group = '+LSP' } },
   })
 
-  local Autocmd = require('plugin.lsp.autocmd')
-  Autocmd()
-
-  local Kinds = require('plugin.lsp.kinds')
-  Kinds()
-
-  local Trouble = require('plugin.lsp.trouble')
-  Trouble()
+  require('config.lsp.autocmd').setup()
+  require('config.lsp.kinds').setup()
+  require('config.lsp.trouble').setup()
 end
 
 ---@param config vim.lsp.Config

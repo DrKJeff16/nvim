@@ -52,7 +52,7 @@ Autocmd.autocommands = {
       group = vim.api.nvim_create_augroup('UserLsp', { clear = false }),
       callback = function(args)
         local client = vim.lsp.get_client_by_id(args.data.client_id)
-        if client == nil then
+        if not client then
           return
         end
 
@@ -103,22 +103,15 @@ Autocmd.autocommands = {
   },
 }
 
----@return Lsp.SubMods.Autocmd|fun(override?: AuRepeat|nil)
-function Autocmd.new()
-  return setmetatable({}, {
-    __index = Autocmd,
-    ---@param self Lsp.SubMods.Autocmd
-    ---@param override? AuRepeat
-    __call = function(self, override)
-      require('user_api.check.exists').validate({
-        override = { override, { 'table', 'nil' }, true },
-      })
-
-      self.autocommands = vim.tbl_deep_extend('keep', override or {}, self.autocommands)
-      require('user_api.util.autocmd').au_repeated(self.autocommands)
-    end,
+---@param override? AuRepeat
+function Autocmd.setup(override)
+  require('user_api.check.exists').validate({
+    override = { override, { 'table', 'nil' }, true },
   })
+
+  Autocmd.autocommands = vim.tbl_deep_extend('keep', override or {}, Autocmd.autocommands)
+  require('user_api.util.autocmd').au_repeated(Autocmd.autocommands)
 end
 
-return Autocmd.new()
+return Autocmd
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:
