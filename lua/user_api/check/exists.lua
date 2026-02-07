@@ -33,14 +33,14 @@ function Exists.validate(T)
     T[name] = spec
   end
 
-  for name, spec in pairs(T) do
-    if vim.fn.has('nvim-0.11') == 1 then
+  if vim.fn.has('nvim-0.11') == 1 then
+    for name, spec in pairs(T) do
       table.insert(spec, 1, name)
       vim.validate(unpack(spec))
-    else
-      vim.validate(spec)
     end
+    return
   end
+  vim.validate(T)
 end
 
 ---@param mod string
