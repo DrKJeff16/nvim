@@ -165,8 +165,8 @@ function BUtil.reset_providers()
         label_trailing_slash = true,
         ignore_root_slash = false,
         show_hidden_files_by_default = true,
-        get_cwd = function(ctx)
-          return vim.fn.expand(('#%d:p:h'):format(ctx.bufnr))
+        get_cwd = function()
+          return vim.fn.getcwd()
         end,
       },
     },
@@ -344,6 +344,9 @@ return { ---@type LazySpec
             if not visible() and has_words_before() then
               return cmp.show({ providers = gen_sources(true, true) })
             end
+            if #cmp.get_items() == 1 then
+              return cmp.show_and_insert_or_accept_single({ force = true })
+            end
             return cmp.select_next(select_opts)
           end,
           'fallback',
@@ -453,36 +456,52 @@ return { ---@type LazySpec
             columns = {
               { 'label', 'label_description', gap = 1 },
               { 'kind_icon', 'kind' },
-              { 'source_name', gap = 1 },
+              { 'source_name', 'item_idx', gap = 1 },
+            },
+            components = {
+              kind_icon = {
+                text = function(ctx)
+                  if ctx.source_name ~= 'Path' then
+                    return (require('lspkind').symbol_map[ctx.kind] or '') .. ctx.icon_gap
+                  end
+
+                  local get_icons = require('mini.icons').get
+                  local unknown = vim.list_contains(
+                    { 'link', 'socket', 'fifo', 'char', 'block', 'unknown' },
+                    ctx.item.data.type
+                  )
+                  local category = unknown and 'os' or ctx.item.data.type
+                  local name = unknown and '' or ctx.label
+                  local mini_icon = get_icons(category, name)
+                  return (mini_icon or ctx.kind_icon) .. ctx.icon_gap
+                end,
+                highlight = function(ctx)
+                  if ctx.source_name ~= 'Path' then
+                    return ctx.kind_hl
+                  end
+                  local get_icons = require('mini.icons').get
+                  local unknown = vim.list_contains(
+                    { 'link', 'socket', 'fifo', 'char', 'block', 'unknown' },
+                    ctx.item.data.type
+                  )
+                  local category = unknown and 'os' or ctx.item.data.type
+                  local name = unknown and '' or ctx.label
+                  local mini_icon, mini_hl = get_icons(category, name)
+                  return mini_icon and mini_hl or ctx.kind_hl
+                end,
+              },
+              item_idx = {
+                text = function(ctx)
+                  return ctx.idx == 10 and '0' or (ctx.idx >= 10 and ' ' or tostring(ctx.idx))
+                end,
+                highlight = 'Special',
+              },
             },
           },
         },
         ghost_text = { enabled = false },
       },
-      cmdline = {
-        enabled = false,
-        keymap = {
-          preset = 'cmdline',
-          ['<Right>'] = { 'fallback' },
-          ['<Left>'] = { 'fallback' },
-          ['<C-p>'] = { 'fallback' },
-          ['<C-n>'] = { 'fallback' },
-        },
-        completion = {
-          ghost_text = { enabled = false },
-          list = { selection = { preselect = false, auto_insert = true } },
-        },
-        sources = function()
-          local type = vim.fn.getcmdtype()
-          if vim.list_contains({ '/', '?' }, type) then
-            return { 'buffer' }
-          end
-          if vim.list_contains({ ':', '@' }, type) then
-            return { 'cmdline', 'buffer' }
-          end
-          return {}
-        end,
-      },
+      cmdline = { enabled = false },
       sources = {
         providers = gen_providers(),
         default = function()
@@ -493,7 +512,7 @@ return { ---@type LazySpec
         end,
       },
       fuzzy = {
-        max_typos = function(keyword) ---@param keyword string
+        max_typos = function(keyword)
           return math.floor(keyword:len() / 3)
         end,
         sorts = { 'exact', 'score', 'sort_text' },
