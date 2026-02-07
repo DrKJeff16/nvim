@@ -8,6 +8,16 @@ return { ---@type LazySpec
     require('which-colorscheme').setup({
       prefix = '<leader>uc',
       group_name = 'Colorschemes',
+      excluded = {
+        'blue',
+        'catppuccin-latte',
+        'darkblue',
+        'dawnfox',
+        'dayfox',
+        'kanagawa-lotus',
+        'teide-light',
+        'tokyonight-day',
+      },
       custom_groups = {
         A = {
           'tokyonight',
