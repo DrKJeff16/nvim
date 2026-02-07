@@ -45,7 +45,11 @@ function Opts.gen_toggleable()
   local long, short = vim.tbl_keys(T), vim.tbl_values(T) ---@type string[], string[]
   for _, opt_type in ipairs({ long, short }) do
     for _, opt in ipairs(opt_type) do
-      if opt ~= '' and in_list({ 'no', 'yes', true, false }, vim.o[opt]) then
+      if
+        opt ~= ''
+        and vim.list_contains(vim.tbl_keys(vim.o), opt)
+        and in_list({ 'no', 'yes', true, false }, vim.o[opt])
+      then
         table.insert(valid, opt)
       end
     end

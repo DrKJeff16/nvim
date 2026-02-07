@@ -207,7 +207,9 @@ require('config.colorschemes')('tokyonight')
 -- require('config.colorschemes')('tokyodark')
 -- require('config.colorschemes')('spaceduck')
 
-vim.cmd.packadd('nohlsearch')
+if vim.fn.has('nvim-0.11') == 1 then
+  vim.cmd.packadd('nohlsearch')
+end
 
 if require('user_api.check.exists').vim_has('nvim-0.12') then
   vim.cmd.packadd('nvim.undotree')
