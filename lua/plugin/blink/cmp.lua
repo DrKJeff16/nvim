@@ -301,6 +301,10 @@ return { ---@type LazySpec
 
     local select_opts = { auto_insert = true, preselect = false }
     require('blink.cmp').setup({
+      enabled = function()
+        local disable_in = { 'picker-prompt' }
+        return not vim.list_contains(disable_in, vim.bo.filetype)
+      end,
       keymap = {
         preset = 'super-tab',
         ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
@@ -470,7 +474,7 @@ return { ---@type LazySpec
           return math.floor(keyword:len() / 3)
         end,
         sorts = { 'exact', 'score', 'sort_text' },
-        implementation = executable({ 'cargo', 'rustc' }) and 'prefer_rust_with_warning' or 'lua',
+        implementation = executable('cargo') and 'prefer_rust_with_warning' or 'lua',
       },
       snippets = {
         preset = 'luasnip',

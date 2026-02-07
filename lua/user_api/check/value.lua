@@ -66,23 +66,23 @@ end
 ---@class User.Check.Value
 local Value = {}
 
----Checks whether a value is a string.
+---Checks whether a value is a string
 --- ---
 Value.is_str = type_fun('string')
 
----Checks whether a value is a boolean.
+---Checks whether a value is a boolean
 --- ---
 Value.is_bool = type_fun('boolean')
 
----Checks whether a value is a function.
+---Checks whether a value is a function
 --- ---
 Value.is_fun = type_fun('function')
 
----Checks whether a value is a number.
+---Checks whether a value is a number
 --- ---
 Value.is_num = type_fun('number')
 
----Checks whether a value is a table.
+---Checks whether a value is a table
 --- ---
 Value.is_tbl = type_fun('table')
 
