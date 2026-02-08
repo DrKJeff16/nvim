@@ -344,9 +344,6 @@ return { ---@type LazySpec
             if not visible() and has_words_before() then
               return cmp.show({ providers = gen_sources(true, true) })
             end
-            if #cmp.get_items() == 1 then
-              return cmp.show_and_insert_or_accept_single({ force = true })
-            end
             return cmp.select_next(select_opts)
           end,
           'fallback',
