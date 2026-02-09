@@ -87,6 +87,7 @@
 ---@field screenkey? LazySpecImport
 ---@field scrollbar? LazySpecImport
 ---@field smart_backspace? LazySpecImport
+---@field smart_paste? LazySpecImport
 ---@field smoothcursor? LazySpecImport
 ---@field snacks? LazySpecImport
 ---@field startuptime? LazySpecImport
@@ -191,6 +192,7 @@
 ---@field screenkey? boolean
 ---@field scrollbar? boolean
 ---@field smart_backspace? boolean
+---@field smart_paste? boolean
 ---@field smoothcursor? boolean
 ---@field snacks? boolean
 ---@field startuptime? boolean
