@@ -17,8 +17,9 @@ local function on_init(client, _)
   end
 
   local library = {
-    -- vim.env.VIMRUNTIME,
-    vim.api.nvim_get_runtime_file('', true),
+    vim.env.VIMRUNTIME,
+    -- vim.api.nvim_get_runtime_file('', true),
+    luarocks_path,
     '${3rd}/luv/library',
     '${3rd}/busted/library',
   }
@@ -86,8 +87,6 @@ return { ---@type vim.lsp.ClientConfig
           '?.lua',
           'lua/?.lua',
           'lua/?/init.lua',
-          luarocks_path .. '/?.lua',
-          luarocks_path .. '/?/init.lua',
         },
       },
       semantic = { annotation = true, enable = true, keyword = true, variable = true },
