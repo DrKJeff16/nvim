@@ -23,9 +23,7 @@ return { ---@type LazySpec
       local desc = require('user_api.maps').desc
       require('user_api.config').keymaps.set({
         n = {
-          ['<leader>S'] = { group = '+Scope' },
-          ['<leader>Sb'] = { '<CMD>Telescope scope buffers<CR>', desc('Scope Buffers (Telescope)') },
-          ['<leader><C-t>eS'] = { '<CMD>Telescope scope buffers<CR>', desc('Scope Buffers Picker') },
+          ['<leader><C-t>eS'] = { ':Telescope scope buffers<CR>', desc('Scope Buffers Picker') },
         },
       })
     end

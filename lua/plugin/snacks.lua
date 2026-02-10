@@ -5,9 +5,12 @@ return { ---@type LazySpec
   version = false,
   priority = 1000,
   config = function()
-    require('snacks').setup({
+    local Snacks = require('snacks')
+    Snacks.setup({
       picker = {
         prompt = ' ',
+        show_delay = 5000,
+        limit_live = 10000,
         sources = {
           gh_actions = {},
           gh_diff = {},
@@ -19,7 +22,7 @@ return { ---@type LazySpec
         layout = {
           cycle = true,
           preset = function()
-            return vim.o.columns >= 120 and 'default' or 'vertical'
+            return vim.o.columns >= 100 and 'default' or 'vertical'
           end,
         },
         matcher = {
@@ -252,13 +255,45 @@ return { ---@type LazySpec
       notify = { enabled = true },
     })
 
+    local Picker = Snacks.picker
     local desc = require('user_api.maps').desc
     require('user_api.config').keymaps.set({
       n = {
-        ['<leader><leader>'] = {
-          require('snacks').picker.commands,
-          desc('Snacks Picker'),
-        },
+        ['<leader><leader>'] = { Picker.smart, desc('Snacks Picker') },
+        ['<leader>S'] = { group = 'Snacks' },
+        ['<leader>Ss'] = { group = 'Search' },
+        ['<leader>S.'] = { Picker.command_history, desc('Command History') },
+        ['<leader>SH'] = { Picker.highlights, desc('Highlights') },
+        ['<leader>SM'] = { Picker.man, desc('Man') },
+        ['<leader>Sb'] = { Picker.buffers, desc('Buffers') },
+        ['<leader>Sf'] = { Picker.explorer, desc('File Explorer') },
+        ['<leader>Sh'] = { Picker.help, desc('Help') },
+        ['<leader>Si'] = { Picker.icons, desc('Icons') },
+        ['<leader>Sl'] = { Picker.lazy, desc('Lazy') },
+        ['<leader>Sn'] = { Picker.notifications, desc('Notifications') },
+        ['<leader>SsC'] = { Picker.colorschemes, desc('Colorschemes') },
+        ['<leader>SsD'] = { Picker.diagnostics, desc('Buffer Diagnostics') },
+        ['<leader>Ssa'] = { Picker.autocmds, desc('Autocmds') },
+        ['<leader>Ssc'] = { Picker.commands, desc('Commands') },
+        ['<leader>Ssd'] = { Picker.diagnostics, desc('Diagnostics') },
+        ['<leader>Ssh'] = { Picker.search_history, desc('Search History') },
+        ['<leader>Ssk'] = { Picker.keymaps, desc('Keymaps') },
+        ['<leader>Ssl'] = { Picker.lines, desc('Lines') },
+        ['<leader>lD'] = { Picker.lsp_declarations, desc('Goto Declaration (Snacks)') },
+        ['<leader>lI'] = { Picker.lsp_implementations, desc('Goto Implementation (Snacks)') },
+        ['<leader>ld'] = { Picker.lsp_definitions, desc('Goto Definition (Snacks)') },
+        ['<leader>lr'] = { Picker.lsp_references, nowait = true, desc('References (Snacks)') },
+        ['<leader>lwS'] = { Picker.lsp_workspace_symbols, desc = 'LSP Workspace Symbols (Snacks)' },
+        ['<leader>lws'] = { Picker.lsp_symbols, desc('LSP Symbols (Snacks)') },
+        ['<leader>ly'] = { Picker.lsp_type_definitions, desc('Goto Type Definition (Snacks)') },
+        ['<leader>us'] = { Picker.colorschemes, desc('Colorschemes (Snacks)') },
+        gD = { Picker.lsp_declarations, desc('Goto Declaration') },
+        gI = { Picker.lsp_implementations, desc('Goto Implementation') },
+        gai = { Picker.lsp_incoming_calls, desc('Calls Incoming') },
+        gao = { Picker.lsp_outgoing_calls, desc('Calls Outgoing') },
+        gd = { Picker.lsp_definitions, desc('Goto Definition') },
+        gr = { Picker.lsp_references, nowait = true, desc('References') },
+        gy = { Picker.lsp_type_definitions, desc('Goto Type Definition') },
       },
     })
   end,

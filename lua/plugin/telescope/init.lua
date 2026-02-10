@@ -133,18 +133,6 @@ local Keys = { ---@type AllMaps
   ['<leader>bB'] = { ':Telescope buffers<CR>', desc('Telescope Buffers') },
   ['<leader>fD'] = { ':Telescope diagnostics<CR>', desc('Telescope Diagnostics') },
   ['<leader>ff'] = { ':Telescope find_files<CR>', desc('Telescope File Picker') },
-  ['<leader>lD'] = { ':Telescope lsp_document_symbols<CR>', desc('Telescope Document Symbols') },
-  ['<leader>lT'] = { ':Telescope lsp_type_definitions<CR>', desc('Telescope Definitions') },
-  ['<leader>ld'] = { ':Telescope lsp_definitions<CR>', desc('Telescope Definitions') },
-  ['<leader>li'] = { ':Telescope lsp_implementations<CR>', desc('Telelcope Lsp Implementations') },
-  ['<leader>lwD'] = {
-    ':Telescope lsp_dynamic_workspace_symbols<CR>',
-    desc('Telescope Dynamic Symbols'),
-  },
-  ['<leader>lwd'] = {
-    ':Telescope lsp_workspace_symbols<CR>',
-    desc('Telescope Workspace Symbols'),
-  },
   ['<leader>vK'] = { ':Telescope keymaps<CR>', desc('Telescope Keymaps') },
   ['<leader>vO'] = { ':Telescope vim_options<CR>', desc('Telescope Vim Options') },
   ['<leader>uC'] = { ':Telescope colorscheme<CR>', desc('Telescope Colorschemes') },
