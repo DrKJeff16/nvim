@@ -16,22 +16,6 @@ return { ---@type LazySpec
       end,
     },
     { 'mrbjarksen/neo-tree-diagnostics.nvim', main = 'neo-tree.sources.diagnostics' },
-    {
-      's1n7ax/nvim-window-picker',
-      version = false,
-      config = function()
-        require('window-picker').setup({
-          filter_rules = {
-            include_current_win = false,
-            autoselect_one = true,
-            bo = {
-              filetype = { 'neo-tree', 'neo-tree-popup', 'notify' },
-              buftype = { 'terminal', 'quickfix', 'help' },
-            },
-          },
-        })
-      end,
-    },
   },
   config = function()
     require('neo-tree').setup({
@@ -40,6 +24,7 @@ return { ---@type LazySpec
       retain_hidden_root_indent = true,
       close_if_last_window = false,
       popup_border_style = '',
+      clipboard = { sync = 'global' },
       enable_git_status = true,
       enable_diagnostics = true,
       open_files_do_not_replace_types = { 'terminal', 'trouble', 'qf' },
@@ -107,7 +92,6 @@ return { ---@type LazySpec
       default_component_configs = {
         container = { enable_character_fade = true },
         indent = {
-          with_expanders = true,
           expander_collapsed = '',
           expander_expanded = '',
           indent_size = 2,
@@ -118,7 +102,8 @@ return { ---@type LazySpec
           highlight = 'NeoTreeIndentMarker',
           expander_highlight = 'NeoTreeExpander',
         },
-        icon = { ---@diagnostic disable-line:missing-fields
+        icon = {
+          use_filtered_colors = true,
           folder_closed = '',
           folder_open = '',
           folder_empty = '󰜌',
@@ -127,7 +112,7 @@ return { ---@type LazySpec
           highlight = 'NeoTreeFileIcon',
           ---@param icon table
           ---@param node table
-          provider = function(icon, node, _)
+          provider = function(icon, node)
             if node.type == 'file' or node.type == 'terminal' then
               local web_devicons = require('nvim-web-devicons')
               local name = node.type == 'terminal' and 'terminal' or node.name
@@ -150,6 +135,7 @@ return { ---@type LazySpec
         name = {
           trailing_slash = true,
           use_git_status_colors = true,
+          use_filtered_colors = true,
           highlight = 'NeoTreeFileName',
         },
         git_status = {
