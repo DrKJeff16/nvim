@@ -19,7 +19,7 @@ local function on_init(client, _)
   local library = {
     vim.env.VIMRUNTIME,
     -- vim.api.nvim_get_runtime_file('', true),
-    luarocks_path,
+    -- luarocks_path,
     '${3rd}/luv/library',
     '${3rd}/busted/library',
   }
