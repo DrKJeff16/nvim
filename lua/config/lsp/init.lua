@@ -197,7 +197,6 @@ function Server.setup()
 
   require('config.lsp.autocmd').setup()
   require('config.lsp.kinds').setup()
-  require('config.lsp.trouble').setup()
 end
 
 ---@param config vim.lsp.Config
