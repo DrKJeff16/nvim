@@ -254,7 +254,7 @@ end
 --- ---
 ---@param toggles? table<integer, LazySpec>|LazyToggles|LazyPluginSpec
 function M.setup(toggles)
-  require('user_api.check.exists').validate({ toggles = { toggles, { 'table', 'nil' }, true } })
+  require('user_api.check').validate({ toggles = { toggles, { 'table', 'nil' }, true } })
   toggles = vim.tbl_deep_extend('keep', toggles or {}, M.get_default_toggles())
 
   M.bootstrap()

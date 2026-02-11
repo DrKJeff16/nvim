@@ -5,11 +5,12 @@ local au = require('user_api.util.autocmd')
 local executable = require('user_api.check.exists').executable
 local desc = require('user_api.maps').desc
 local keyset = require('user_api.config.keymaps').set
+local validate = require('user_api.check').validate
 
 ---@param bufnr integer
 ---@return function cb
 local function run_formatter(formatter, bufnr)
-  require('user_api.check.exists').validate({
+  validate({
     formatter = { formatter, { 'string' } },
     bufnr = { bufnr, { 'number' } },
   })
@@ -47,7 +48,7 @@ end
 ---@param lang string
 ---@param bufnr integer
 local function set_lang(lang, bufnr)
-  require('user_api.check.exists').validate({
+  validate({
     lang = { lang, { 'string' } },
     bufnr = { bufnr, { 'number' } },
   })

@@ -1,5 +1,6 @@
 local INFO = vim.log.levels.INFO
 local ERROR = vim.log.levels.ERROR
+local validate = require('user_api.check').validate
 
 ---Helper function for transparency formatting.
 --- ---
@@ -82,7 +83,7 @@ end
 ---@overload fun(opacity: number)
 ---@overload fun(opacity: number, transparency: number)
 function Neovide.set_transparency(opacity, transparency, bg)
-  require('user_api.check.exists').validate({
+  validate({
     opacity = { opacity, { 'number', 'nil' } },
     transparency = { transparency, { 'number', 'nil' } },
     bg = { bg, { 'string', 'nil' } },
@@ -113,7 +114,7 @@ end
 ---@param O any[]
 ---@param pfx string
 function Neovide.parse_g_opts(O, pfx)
-  require('user_api.check.exists').validate({
+  validate({
     O = { O, { 'table' } },
     pfx = { pfx, { 'string' } },
   })
@@ -160,7 +161,7 @@ end
 ---@overload fun(T: table)
 ---@overload fun(T: table, transparent: boolean)
 function Neovide.setup(T, transparent, verbose)
-  require('user_api.check.exists').validate({
+  validate({
     T = { T, { 'table', 'nil' }, true },
     transparent = { transparent, { 'boolean', 'nil' }, true },
     verbose = { verbose, { 'boolean', 'nil' }, true },

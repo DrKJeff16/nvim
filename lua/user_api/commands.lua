@@ -4,6 +4,7 @@
 
 local INFO = vim.log.levels.INFO
 local desc = require('user_api.maps').desc
+local validate = require('user_api.check').validate
 
 ---@class User.Commands
 local Commands = {}
@@ -102,7 +103,7 @@ Commands.commands.DeleteInactiveBuffers = {
 ---@param cmd fun(ctx?: vim.api.keyset.create_user_command.command_args)
 ---@param opts? vim.api.keyset.user_command
 function Commands.add_command(name, cmd, opts)
-  require('user_api.check.exists').validate({
+  validate({
     name = { name, { 'string' } },
     cmd = { cmd, { 'function' } },
     opts = { opts, { 'table', 'nil' }, true },
@@ -115,7 +116,7 @@ end
 ---@param cmds table<string, User.Commands.CmdSpec>
 ---@overload fun()
 function Commands.setup(cmds)
-  require('user_api.check.exists').validate({ cmds = { cmds, { 'table', 'nil' }, true } })
+  validate({ cmds = { cmds, { 'table', 'nil' }, true } })
 
   Commands.commands = vim.tbl_deep_extend('keep', cmds or {}, Commands.commands)
   for cmd, T in pairs(Commands.commands) do

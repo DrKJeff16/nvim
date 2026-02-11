@@ -3,7 +3,7 @@
 ---@return vim.lsp.Config|nil config
 ---@overload fun(name: string): server: vim.lsp.Config|nil
 local function server_load(name, exe)
-  require('user_api.check.exists').validate({
+  require('user_api.check').validate({
     name = { name, 'string' },
     exe = { exe, { 'string', 'nil' }, true },
   })

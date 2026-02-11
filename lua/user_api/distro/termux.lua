@@ -31,18 +31,12 @@ function Termux.validate()
     return false
   end
 
-  local new_rtpaths = {} ---@type string[]
-  for _, path in ipairs(Termux.rtpaths) do
-    if is_dir(path) then
-      table.insert(new_rtpaths, path)
+  for i, path in ipairs(Termux.rtpaths) do
+    if not is_dir(path) then
+      table.remove(Termux.rtpaths, i)
     end
   end
-  if require('user_api.check.value').empty(new_rtpaths) then
-    return false
-  end
-
-  Termux.rtpaths = vim.deepcopy(new_rtpaths)
-  return true
+  return not require('user_api.check.value').empty(Termux.rtpaths)
 end
 
 function Termux.setup()

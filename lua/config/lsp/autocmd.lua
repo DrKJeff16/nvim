@@ -104,7 +104,7 @@ Autocmd.autocommands = {
 
 ---@param override? AuRepeat
 function Autocmd.setup(override)
-  require('user_api.check.exists').validate({
+  require('user_api.check').validate({
     override = { override, { 'table', 'nil' }, true },
   })
 

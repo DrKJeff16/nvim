@@ -1,5 +1,6 @@
 local MODSTR = 'config.util'
 local ERROR = vim.log.levels.ERROR
+local validate = require('user_api.check').validate
 
 ---@class Config.Util
 local M = {}
@@ -18,7 +19,7 @@ end
 ---@return function command
 ---@overload fun()
 function M.key_variant(cmd)
-  require('user_api.check.exists').validate({ cmd = { cmd, { 'string', 'nil' }, true } })
+  validate({ cmd = { cmd, { 'string', 'nil' }, true } })
   cmd = cmd or 'edit'
   cmd = vim.list_contains({ 'ed', 'edit', 'tabnew', 'split', 'vsplit' }, cmd) and cmd or 'edit'
 
@@ -36,7 +37,7 @@ end
 ---@param force boolean
 ---@overload fun()
 function M.set_tgc(force)
-  require('user_api.check.exists').validate({ force = { force, { 'boolean', 'nil' }, true } })
+  validate({ force = { force, { 'boolean', 'nil' }, true } })
   force = force ~= nil and force or false
 
   vim.o.termguicolors = not force
@@ -51,7 +52,7 @@ end
 ---@return function install_flag
 ---@overload fun(name: string): install_flag: function
 function M.flag_installed(name, callback)
-  require('user_api.check.exists').validate({
+  validate({
     name = { name, { 'string' } },
     callback = { callback, { 'function', 'nil' }, true },
   })
@@ -73,7 +74,7 @@ end
 ---@param mod_str string
 ---@return function
 function M.require(mod_str)
-  require('user_api.check.exists').validate({ mod_str = { mod_str, { 'string' } } })
+  validate({ mod_str = { mod_str, { 'string' } } })
 
   return function()
     if require('user_api.check.exists').module(mod_str) then
@@ -89,7 +90,7 @@ end
 ---@return function init
 ---@overload fun(fields: string|table<string, any>): init: function
 function M.colorscheme_init(fields, force_tgc)
-  require('user_api.check.exists').validate({
+  validate({
     fields = { fields, { 'string', 'table' } },
     force_tgc = { force_tgc, { 'boolean', 'nil' }, true },
   })

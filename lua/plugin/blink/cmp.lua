@@ -1,9 +1,11 @@
 ---@module 'lazy'
 
+local validate = require('user_api.check').validate
+
 ---@param idx integer
 ---@return fun(cmp: blink.cmp.API): boolean|nil
 local function accept_nth(idx)
-  require('user_api.check.exists').validate({ idx = { idx, { 'number' } } })
+  validate({ idx = { idx, { 'number' } } })
   if not require('user_api.check.value').is_int(idx) then
     error(('Bad index `%d`'):format(idx), vim.log.levels.ERROR)
   end
@@ -16,7 +18,7 @@ end
 ---@param key string
 ---@return function
 local function gen_termcode_fun(key)
-  require('user_api.check.exists').validate({ key = { key, { 'string' } } })
+  validate({ key = { key, { 'string' } } })
 
   return function()
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, false, true), 'i', false)
@@ -26,7 +28,7 @@ end
 ---@param direction 'up'|'down'
 ---@return fun(cmp: blink.cmp.API): boolean|nil
 local function up_or_down(direction)
-  require('user_api.check.exists').validate({ direction = { direction, { 'string' } } })
+  validate({ direction = { direction, { 'string' } } })
   direction = vim.list_contains({ 'up', 'down' }, direction) and direction or 'up'
 
   local key = direction == 'up' and '<Up>' or '<Down>'
@@ -48,7 +50,7 @@ BUtil.curr_ft = ''
 ---@param snipps? boolean
 ---@param buf? boolean
 function BUtil.reset_sources(snipps, buf)
-  require('user_api.check.exists').validate({
+  validate({
     snipps = { snipps, { 'boolean', 'nil' }, true },
     buf = { buf, { 'boolean', 'nil' }, true },
   })
@@ -90,7 +92,7 @@ end
 ---@param buf? boolean
 ---@return string[] sources
 function BUtil.gen_sources(snipps, buf)
-  require('user_api.check.exists').validate({
+  validate({
     snipps = { snipps, { 'boolean', 'nil' }, true },
     buf = { buf, { 'boolean', 'nil' }, true },
   })
@@ -257,7 +259,7 @@ end
 ---@param P table<string, blink.cmp.SourceProviderConfigPartial>|nil
 ---@return table<string, blink.cmp.SourceProviderConfigPartial>
 function BUtil.gen_providers(P)
-  require('user_api.check.exists').validate({ P = { P, { 'table', 'nil' }, true } })
+  validate({ P = { P, { 'table', 'nil' }, true } })
 
   BUtil.reset_providers()
   BUtil.Providers = vim.tbl_deep_extend('keep', P or {}, vim.deepcopy(BUtil.Providers))

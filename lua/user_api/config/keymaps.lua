@@ -9,11 +9,12 @@ local desc = require('user_api.maps').desc
 local ft_get = require('user_api.util').ft_get
 local bt_get = require('user_api.util').bt_get
 local optget = require('user_api.util').optget
+local validate = require('user_api.check').validate
 
 ---@param force? boolean
 ---@return function op
 local function delete_file(force)
-  require('user_api.check.exists').validate({ force = { force, { 'boolean', 'nil' }, true } })
+  validate({ force = { force, { 'boolean', 'nil' }, true } })
   force = force ~= nil and force or false
 
   return function()
@@ -47,7 +48,7 @@ end
 ---@param cmd 'edit'|'ed'|'split'|'sp'|'vsplit'|'vs'|'tabnew'
 ---@return function|nil op
 local function rcfile(cmd)
-  require('user_api.check.exists').validate({ cmd = { cmd, { 'string' } } })
+  validate({ cmd = { cmd, { 'string' } } })
   if not vim.list_contains({ 'edit', 'ed', 'split', 'sp', 'vsplit', 'vs', 'tabnew' }, cmd) then
     return
   end
@@ -95,7 +96,7 @@ end
 ---@param vertical boolean
 ---@overload fun()
 local function gen_fun_blank(vertical)
-  require('user_api.check.exists').validate({ vertical = { vertical, { 'boolean', 'nil' }, true } })
+  validate({ vertical = { vertical, { 'boolean', 'nil' }, true } })
   vertical = vertical ~= nil and vertical or false
 
   return function()
@@ -114,7 +115,7 @@ end
 ---@param force boolean|nil
 ---@overload fun()
 local function buf_del(force)
-  require('user_api.check.exists').validate({ force = { force, { 'boolean', 'nil' }, true } })
+  validate({ force = { force, { 'boolean', 'nil' }, true } })
   force = force ~= nil and force or false
 
   local ft_triggers = { 'NvimTree', 'noice', 'trouble' }
@@ -279,7 +280,7 @@ Keymaps.Keys = { ---@type AllModeMaps
 ---@overload fun(leader: string)
 ---@overload fun(leader: string, local_leader: string)
 function Keymaps.set_leader(leader, local_leader, force)
-  require('user_api.check.exists').validate({
+  validate({
     leader = { leader, { 'string' } },
     local_leader = { local_leader, { 'string', 'nil' }, true },
     force = { force, { 'boolean', 'nil' }, true },
@@ -332,7 +333,7 @@ end
 ---@return User.Keymaps.Delete|nil deleted_keys
 ---@overload fun(K: User.Keymaps.Delete): deleted_keys: User.Keymaps.Delete|nil
 function Keymaps.delete(K, bufnr)
-  require('user_api.check.exists').validate({
+  validate({
     K = { K, { 'table' } },
     bufnr = { bufnr, { 'number', 'nil' }, true },
   })
@@ -357,7 +358,7 @@ end
 ---@overload fun(keys: AllModeMaps)
 ---@overload fun(keys: AllModeMaps, bufnr: integer)
 function Keymaps.set(keys, bufnr, defaults)
-  require('user_api.check.exists').validate({
+  validate({
     keys = { keys, { 'table' } },
     bufnr = { bufnr, { 'number', 'nil' }, true },
     defaults = { defaults, { 'boolean', 'nil' }, true },

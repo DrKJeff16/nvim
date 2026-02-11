@@ -17,7 +17,7 @@ local valid = {
 
 ---@param T User.Maps.Opts
 function O:add(T)
-  require('user_api.check.exists').validate({ T = { T, { 'table' } } })
+  require('user_api.check').validate({ T = { T, { 'table' } } })
   if vim.tbl_isempty(T) then
     return
   end
@@ -33,7 +33,7 @@ end
 ---@return User.Maps.Opts new_object
 ---@overload fun(): new_object: User.Maps.Opts
 function O.new(T)
-  require('user_api.check.exists').validate({ T = { T, { 'table', 'nil' }, true } })
+  require('user_api.check').validate({ T = { T, { 'table', 'nil' }, true } })
 
   return setmetatable(T or {}, { __index = O })
 end

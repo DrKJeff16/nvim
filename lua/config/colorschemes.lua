@@ -1,7 +1,6 @@
----@param color string
----@overload fun()
+---@param color? string
 return function(color)
-  require('user_api.check.exists').validate({ color = { color, { 'string', 'nil' }, true } })
+  require('user_api.check').validate({ color = { color, { 'string', 'nil' }, true } })
   color = color and color:lower() or 'tokyonight'
 
   local colors = vim.fn.getcompletion('', 'color') ---@type string[]

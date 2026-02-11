@@ -204,7 +204,7 @@ end
 ---@param exe string
 ---@overload fun(config: vim.lsp.Config, name: string)
 function Server.add(config, name, exe)
-  require('user_api.check.exists').validate({
+  require('user_api.check').validate({
     config = { config, { 'table' } },
     name = { name, { 'string' } },
     exe = { exe, { 'string', 'nil' }, true },

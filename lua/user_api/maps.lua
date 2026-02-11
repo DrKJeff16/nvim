@@ -4,6 +4,7 @@ local MODES = { 'n', 'i', 'v', 't', 'o', 'x' }
 local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
 local in_list = vim.list_contains
+local validate = require('user_api.check').validate
 
 local Maps = {} ---@type User.Maps
 
@@ -12,7 +13,7 @@ Maps.keymap = require('user_api.maps.keymap')
 Maps.wk = require('user_api.maps.wk')
 
 function Maps.desc(desc, silent, bufnr, noremap, nowait, expr)
-  require('user_api.check.exists').validate({
+  validate({
     desc = { desc, { 'string', 'nil' }, true },
     silent = { silent, { 'boolean', 'nil' }, true },
     bufnr = { bufnr, { 'number', 'nil' }, true },
@@ -44,7 +45,7 @@ function Maps.desc(desc, silent, bufnr, noremap, nowait, expr)
 end
 
 function Maps.nop(T, opts, mode, prefix)
-  require('user_api.check.exists').validate({
+  validate({
     T = { T, { 'string', 'table' } },
     opts = { opts, { 'table', 'nil' }, true },
     mode = { mode, { 'string', 'nil' }, true },
@@ -83,7 +84,7 @@ function Maps.nop(T, opts, mode, prefix)
 end
 
 function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
-  require('user_api.check.exists').validate({
+  validate({
     T = { T, { 'table' } },
     map_func = { map_func, { 'string' } },
     has_modes = { has_modes, { 'boolean', 'nil' }, true },
