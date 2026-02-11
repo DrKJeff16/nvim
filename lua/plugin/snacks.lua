@@ -7,17 +7,51 @@ return { ---@type LazySpec
   config = function()
     local Snacks = require('snacks')
     Snacks.setup({
+      statuscolumn = {
+        left = { 'mark', 'sign' },
+        enabled = true,
+        right = { 'fold', 'git' },
+        folds = { open = true, git_hl = true },
+        git = { patterns = { 'GitSign', 'MiniDiffSign' } },
+        refresh = 50,
+      },
+      scratch = {
+        name = 'Scratch',
+        ft = function()
+          if vim.bo.buftype == '' and vim.bo.filetype ~= '' then
+            return vim.bo.filetype
+          end
+          return 'markdown'
+        end,
+        root = vim.fs.joinpath(vim.fn.stdpath('data'), 'scratch'),
+        autowrite = true,
+        filekey = { cwd = true, branch = true, count = true },
+        win = { style = 'scratch' },
+        ---@type table<string, snacks.win.Config>
+        win_by_ft = {
+          lua = {
+            keys = {
+              ['source'] = {
+                '<CR>',
+                function(self)
+                  local buf = self.buf --[[@as integer]]
+                  local name = 'scratch.'
+                    .. vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ':e')
+                  Snacks.debug.run({ buf = self.buf, name = name })
+                end,
+                desc = 'Source buffer',
+                mode = { 'n', 'x' },
+              },
+            },
+          },
+        },
+      },
       picker = {
         prompt = ' ',
+        auto_close = false,
+        auto_confirm = false,
         show_delay = 5000,
         limit_live = 10000,
-        sources = {
-          gh_actions = {},
-          gh_diff = {},
-          gh_issue = {},
-          gh_labels = {},
-          gh_pr = {},
-        },
         focus = 'input',
         layout = {
           cycle = true,
@@ -248,38 +282,97 @@ return { ---@type LazySpec
           extmarks = false,
         },
       },
+      scroll = {
+        animate = { duration = { step = 10, total = 200 }, easing = 'linear' },
+        animate_repeat = { delay = 100, duration = { step = 5, total = 50 }, easing = 'linear' },
+        filter = function(bufnr)
+          return vim.g.snacks_scroll ~= false
+            and vim.b[bufnr].snacks_scroll ~= false
+            and vim.bo[bufnr].buftype ~= 'terminal'
+        end,
+      },
+      notifier = {
+        timeout = 3000,
+        width = { min = 40, max = 0.45 },
+        height = { min = 1, max = 0.6 },
+        margin = { top = 0, right = 0, bottom = 0 },
+        padding = true,
+        gap = 1,
+        sort = { 'level', 'added' },
+        level = vim.log.levels.DEBUG,
+        icons = {
+          error = ' ',
+          warn = ' ',
+          info = ' ',
+          debug = ' ',
+          trace = ' ',
+        },
+        keep = function()
+          return vim.fn.getcmdpos() > 0
+        end,
+        style = 'fancy', ---@type snacks.notifier.style
+        top_down = true,
+        date_format = '%R',
+        more_format = ' ↓ %d lines ',
+        refresh = 50,
+      },
+      styles = {
+        scratch = {
+          width = 100,
+          height = 30,
+          bo = { buftype = '', buflisted = false, bufhidden = 'hide', swapfile = false },
+          minimal = true,
+          noautocmd = false,
+          zindex = 20,
+          wo = { winhighlight = 'NormalFloat:Normal' },
+          footer_keys = true,
+          border = true,
+        },
+        notification = {
+          border = true,
+          zindex = 100,
+          ft = 'markdown',
+          wo = { winblend = 5, wrap = false, conceallevel = 2, colorcolumn = '' },
+          bo = { filetype = 'snacks_notif' },
+        },
+      },
       gh = {},
-      dim = { enabled = false },
       input = { enabled = true },
       layout = { enabled = true },
       notify = { enabled = true },
     })
 
+    Snacks.scroll.enable()
+
     local Picker = Snacks.picker
     local desc = require('user_api.maps').desc
     require('user_api.config').keymaps.set({
       n = {
-        ['<leader><leader>'] = { Picker.smart, desc('Snacks Picker') },
+        ['<leader>.'] = { group = 'Scratch' },
         ['<leader>S'] = { group = 'Snacks' },
         ['<leader>Ss'] = { group = 'Search' },
+        ['<leader>.,'] = { Snacks.scratch.select, desc('Select Scratch Buffer') },
+        ['<leader>..'] = { Snacks.scratch.open, desc('Toggle Scratch Buffer') },
+        ['<leader><CR>'] = { Picker.command_history, desc('Command History') },
+        ['<leader><leader>'] = { Picker.smart, desc('Snacks Picker') },
         ['<leader>S.'] = { Picker.command_history, desc('Command History') },
-        ['<leader>SH'] = { Picker.highlights, desc('Highlights') },
-        ['<leader>SM'] = { Picker.man, desc('Man') },
+        ['<leader>SM'] = { Picker.man, desc('Man Pages') },
         ['<leader>Sb'] = { Picker.buffers, desc('Buffers') },
+        ['<leader>Sd'] = { Picker.diagnostics, desc('Diagnostics') },
         ['<leader>Sf'] = { Picker.explorer, desc('File Explorer') },
-        ['<leader>Sh'] = { Picker.help, desc('Help') },
-        ['<leader>Si'] = { Picker.icons, desc('Icons') },
+        ['<leader>Sh'] = { Picker.help, desc('Help Pages') },
         ['<leader>Sl'] = { Picker.lazy, desc('Lazy') },
         ['<leader>Sn'] = { Picker.notifications, desc('Notifications') },
         ['<leader>SsC'] = { Picker.colorschemes, desc('Colorschemes') },
-        ['<leader>SsD'] = { Picker.diagnostics, desc('Buffer Diagnostics') },
+        ['<leader>SsH'] = { Picker.highlights, desc('Highlights') },
         ['<leader>Ssa'] = { Picker.autocmds, desc('Autocmds') },
         ['<leader>Ssc'] = { Picker.commands, desc('Commands') },
-        ['<leader>Ssd'] = { Picker.diagnostics, desc('Diagnostics') },
         ['<leader>Ssh'] = { Picker.search_history, desc('Search History') },
+        ['<leader>Ssi'] = { Picker.icons, desc('Icons') },
         ['<leader>Ssk'] = { Picker.keymaps, desc('Keymaps') },
         ['<leader>Ssl'] = { Picker.lines, desc('Lines') },
-        ['<leader>lD'] = { Picker.lsp_declarations, desc('Goto Declaration (Snacks)') },
+        ['<leader>lD'] = { Picker.diagnostics, desc('Diagnostics') },
+        ['<leader>lG'] = { Picker.lsp_declarations, desc('Goto Declaration (Snacks)') },
         ['<leader>lI'] = { Picker.lsp_implementations, desc('Goto Implementation (Snacks)') },
         ['<leader>ld'] = { Picker.lsp_definitions, desc('Goto Definition (Snacks)') },
         ['<leader>lr'] = { Picker.lsp_references, nowait = true, desc('References (Snacks)') },
