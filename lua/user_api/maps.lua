@@ -21,12 +21,16 @@ function Maps.desc(desc, silent, bufnr, noremap, nowait, expr)
     expr = { expr, { 'boolean', 'nil' }, true },
   })
   desc = (desc and desc ~= '') and desc or 'Unnamed Key'
-  silent = silent ~= nil and silent or true
-  noremap = noremap ~= nil and noremap or true
 
   local res = require('user_api.maps.objects').new()
-  res:add({ desc = desc, silent = silent, noremap = noremap })
+  res:add({ desc = desc, silent = true, noremap = true })
 
+  if noremap ~= nil then
+    res:add({ noremap = noremap })
+  end
+  if silent ~= nil then
+    res:add({ silent = silent })
+  end
   if nowait ~= nil then
     res:add({ nowait = nowait })
   end

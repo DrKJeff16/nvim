@@ -31,7 +31,7 @@ end
 
 ---@param T User.Maps.Opts
 ---@return User.Maps.Opts new_object
----@overload fun()
+---@overload fun(): new_object: User.Maps.Opts
 function O.new(T)
   require('user_api.check.exists').validate({ T = { T, { 'table', 'nil' }, true } })
 
