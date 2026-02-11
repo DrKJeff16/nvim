@@ -1,6 +1,6 @@
 ---@alias User.Keymaps.Delete table<'n'|'i'|'v'|'t'|'o'|'x', string[]>
 
-local VIMRC = vim.fn.stdpath('config') .. '/init.lua'
+local VIMRC = vim.fs.joinpath(vim.fn.stdpath('config'), 'init.lua')
 local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
 local INFO = vim.log.levels.INFO
@@ -8,11 +8,49 @@ local nop = require('user_api.maps').nop
 local desc = require('user_api.maps').desc
 local ft_get = require('user_api.util').ft_get
 local bt_get = require('user_api.util').bt_get
+local optget = require('user_api.util').optget
 
----@param cmd 'edit'|'split'|'vsplit'|'tabnew'
----@return function
+---@param force? boolean
+---@return function op
+local function delete_file(force)
+  require('user_api.check.exists').validate({ force = { force, { 'boolean', 'nil' }, true } })
+  force = force ~= nil and force or false
+
+  return function()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local opts = optget({ 'modifiable', 'buftype' }, { buf = bufnr })
+    if not opts.modifiable or opts.buftype == 'nowrite' then
+      vim.notify('Buffer is not modifiable!', ERROR)
+      return
+    end
+
+    local fname = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+    if vim.fn.filewritable(fname) ~= 1 then
+      vim.notify(('Unable to remove `%s`!'):format(fname), ERROR)
+      return
+    end
+
+    if not force then
+      if vim.fn.confirm('Delete the current file?', '&Yes\n&No', 2) ~= 1 then
+        return
+      end
+    end
+
+    local obj = vim.system({ 'rm', '-f', fname }, { text = false }):wait(5000)
+    if obj.code ~= 0 then
+      vim.notify(('Unable to remove `%s`!'):format(fname), ERROR)
+      return
+    end
+  end
+end
+
+---@param cmd 'edit'|'ed'|'split'|'sp'|'vsplit'|'vs'|'tabnew'
+---@return function|nil op
 local function rcfile(cmd)
   require('user_api.check.exists').validate({ cmd = { cmd, { 'string' } } })
+  if not vim.list_contains({ 'edit', 'ed', 'split', 'sp', 'vsplit', 'vs', 'tabnew' }, cmd) then
+    return
+  end
 
   return function()
     vim.cmd[cmd](VIMRC)
@@ -33,8 +71,7 @@ local function new_file()
 end
 
 local function indent_file()
-  local bufnr = vim.api.nvim_get_current_buf()
-  if not vim.api.nvim_get_option_value('modifiable', { buf = bufnr }) then
+  if not optget('modifiable', { buf = vim.api.nvim_get_current_buf() }).modifiable then
     vim.notify('Unable to indent. File is not modifiable!', ERROR)
     return
   end
@@ -173,9 +210,11 @@ Keymaps.Keys = { ---@type AllModeMaps
     ['<leader>bl'] = { ':blast<CR>', desc('Goto Last Buffer') },
     ['<leader>bn'] = { ':bnext<CR>', desc('Next Buffer') },
     ['<leader>bp'] = { ':bprevious<CR>', desc('Previous Buffer') },
+    ['<leader>fD'] = { delete_file(true), desc('Delete Current File (Forcefully)') },
     ['<leader>fFv'] = { gen_fun_blank(true), desc('New Vertical Blank File') },
     ['<leader>fFx'] = { gen_fun_blank(), desc('New Horizontal Blank File') },
     ['<leader>fS'] = { ':w ', desc('Prompt Save File', false) },
+    ['<leader>fd'] = { delete_file(), desc('Delete Current File') },
     ['<leader>fiR'] = { ':%retab!<CR>', desc('Retab File (Forcefully)') },
     ['<leader>fii'] = { indent_file, desc('Indent Whole File') },
     ['<leader>fir'] = { ':%retab<CR>', desc('Retab File') },
