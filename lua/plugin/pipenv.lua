@@ -13,6 +13,7 @@ return { ---@type LazySpec
         height = 0.75,
         width = 0.85,
       },
+      spinner = { enabled = true },
     })
 
     local desc = require('user_api.maps').desc
