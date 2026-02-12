@@ -6,20 +6,6 @@ return { ---@type LazySpec
   cond = require('user_api.check.exists').executable('fzf'),
   config = function()
     local actions = require('fzf-lua').actions
-    actions = {
-      files = {
-        true,
-        enter = actions.file_edit_or_qf,
-        ['ctrl-s'] = actions.file_split,
-        ['ctrl-v'] = actions.file_vsplit,
-        ['ctrl-t'] = actions.file_tabedit,
-        ['alt-q'] = actions.file_sel_to_qf,
-        ['alt-Q'] = actions.file_sel_to_ll,
-        ['alt-i'] = actions.toggle_ignore,
-        ['alt-h'] = actions.toggle_hidden,
-        ['alt-f'] = actions.toggle_follow,
-      },
-    }
     require('fzf-lua').setup({
       globals = { file_icon_padding = '', help_open_win = vim.api.nvim_open_win },
       defaults = { file_icons = 'mini', copen = 'topleft copen' },
@@ -476,8 +462,10 @@ return { ---@type LazySpec
           scrolloff = -1,
           delay = 20,
           winopts = {
-            number = vim.o.number,
-            relativenumber = vim.o.relativenumber,
+            winblend = 40,
+            scrolloff = vim.o.scrolloff,
+            number = false,
+            relativenumber = false,
             cursorline = vim.o.cursorline,
             cursorlineopt = vim.o.cursorlineopt,
             cursorcolumn = vim.o.cursorcolumn,
@@ -487,8 +475,6 @@ return { ---@type LazySpec
             foldmethod = 'manual',
           },
         },
-        on_create = function() end,
-        on_close = function() end,
       },
       keymap = {
         builtin = {
@@ -536,23 +522,6 @@ return { ---@type LazySpec
         ['--highlight-line'] = true,
       },
       fzf_tmux_opts = { ['-p'] = '80%,80%', ['--margin'] = '0,0' },
-      fzf_colors = {
-        true,
-        ['bg+'] = { 'bg', { 'CursorLine', 'Normal' } },
-        ['fg+'] = { 'fg', 'Normal', 'underline' },
-        ['hl+'] = { 'fg', 'Statement' },
-        bg = { 'bg', 'Normal' },
-        fg = { 'fg', 'CursorLine' },
-        gutter = '-1',
-        header = { 'fg', 'Comment' },
-        hl = { 'fg', 'Comment' },
-        info = { 'fg', 'PreProc' },
-        marker = { 'fg', 'Keyword' },
-        pointer = { 'fg', 'Exception' },
-        prompt = { 'fg', 'Conditional' },
-        spinner = { 'fg', 'Label' },
-      },
-      hls = { normal = 'Normal', preview_normal = 'Normal' },
       previewers = {
         cat = { cmd = 'cat', args = '-n' },
         bat = { cmd = 'bat', args = '--color=always --style=numbers,changes' },
@@ -590,7 +559,6 @@ return { ---@type LazySpec
       },
     })
 
-    require('fzf-lua').register_ui_select()
     vim.api.nvim_set_hl(0, 'FzfLuaBorder', { link = 'FloatBorder' })
   end,
 }
