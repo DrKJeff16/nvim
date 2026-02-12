@@ -1,13 +1,14 @@
+local validate = require('user_api.check').validate
+
 ---@class User.Distro
 local Distro = {}
 
 Distro.archlinux = require('user_api.distro.archlinux')
 Distro.termux = require('user_api.distro.termux')
 
----@param verbose boolean
----@overload fun()
+---@param verbose? boolean
 function Distro.setup(verbose)
-  require('user_api.check').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
+  validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
   verbose = verbose ~= nil and verbose or false
 
   if Distro.termux.is_distro() then
@@ -24,6 +25,20 @@ function Distro.setup(verbose)
     end
     return
   end
+end
+
+---@param distro 'termux'|'archlinux'
+---@return boolean is_distro
+---@overload fun(distro: string): is_distro: false
+function Distro.is_distro(distro)
+  validate({ distro = { distro, { 'string' } } })
+  if not vim.list_contains({ 'termux', 'archlinux' }, distro) then
+    return false
+  end
+  if distro == 'termux' then
+    return Distro.termux.is_distro()
+  end
+  return Distro.archlinux.is_distro()
 end
 
 local M = setmetatable(Distro, { ---@type User.Distro

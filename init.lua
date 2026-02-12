@@ -21,27 +21,32 @@ vim.g.loaded_perl_provider = 0
 require('user_api.config.keymaps').set_leader('<Space>')
 
 Opts.setup({
+  -- clipboard = 'unnamedplus', -- Uncomment to use system clipboard
+  autoindent = true,
   autoread = true,
   background = 'dark',
   backspace = 'indent,eol,start',
   backup = false,
-  -- clipboard = 'unnamedplus', -- Uncomment to use system clipboard
+  belloff = 'all',
   cmdwinheight = require('user_api.distro.termux').is_distro() and 15 or 25,
   colorcolumn = '101',
+  completeopt = 'menuone,noselect,preview',
   confirm = true,
   copyindent = true,
+  encoding = 'utf-8',
   equalalways = true,
   errorbells = false,
   expandtab = true,
   fileformat = 'unix',
   fileignorecase = not require('user_api.check').is_windows(),
+  foldenable = false,
   foldmethod = 'manual',
   formatoptions = 'bjlnopqw',
   helplang = 'en',
   hidden = true,
   hlsearch = true,
-  inccommand = 'nosplit',
   ignorecase = false,
+  inccommand = 'nosplit',
   incsearch = true,
   list = true,
   matchpairs = '(:),[:],{:},<:>',
@@ -61,6 +66,8 @@ Opts.setup({
   showmode = false,
   showtabline = 2,
   signcolumn = 'yes',
+  smartindent = true,
+  smarttab = true,
   softtabstop = 4,
   spell = false,
   splitbelow = true,
@@ -70,7 +77,7 @@ Opts.setup({
   tabstop = 4,
   textwidth = 100,
   title = true,
-  wrap = require('user_api.distro.termux').is_distro(),
+  wrap = require('user_api.distro').is_distro('termux'),
 }, false, true)
 
 ---Disable `netrw` regardless of whether `nvim_tree/neo_tree` exist or not.
