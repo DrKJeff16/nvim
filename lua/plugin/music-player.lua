@@ -6,6 +6,6 @@ return { ---@type LazySpec
   dev = true,
   version = false,
   build = ':UpdateRemotePlugins',
-  cond = not (Check.in_console() or Check.is_root()),
+  enabled = not (Check.in_console() or Check.is_root()),
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:
