@@ -51,16 +51,11 @@ if vim.fn.has('win32') == 1 then
     Defaults.makeprg = 'mingw32-make'
   end
 
-  if executable('bash') then
-    Defaults.shell = 'bash'
-    Defaults.shellcmdflag = '-c'
-  elseif executable('sh') then
-    Defaults.shell = 'sh'
+  if executable({ 'bash', 'sh' }) then
+    Defaults.shell = executable('bash') and 'bash' or 'sh'
     Defaults.shellcmdflag = '-c'
   elseif executable('pwsh') then
     Defaults.shell = 'pwsh'
-  else
-    Defaults.shell = 'cmd'
   end
 
   Defaults.fileignorecase = true
