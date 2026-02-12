@@ -36,22 +36,23 @@ return { ---@type LazySpec
   dependencies = { 'nvim-lua/plenary.nvim' },
   cond = not require('user_api.check').in_console(),
   config = function()
-    require('notify').setup({
+    local Notify = require('notify')
+    Notify.setup({
       background_colour = 'NotifyBackground',
       merge_duplicates = true,
-      fps = 60,
+      fps = 144,
       icons = { DEBUG = '', ERROR = '', INFO = '', TRACE = '✎', WARN = '' },
       level = vim.log.levels.INFO,
-      minimum_width = 15,
+      minimum_width = 20,
       render = 'default',
       stages = 'fade_in_slide_out',
       time_formats = { notification = '%T', notification_history = '%FT%T' },
-      timeout = 2500,
+      timeout = 2250,
       top_down = true,
     })
-    vim.notify = require('notify')
+    vim.notify = Notify
 
-    if require('user_api.check.exists').module('telescope') then
+    if require('user_api.check').module('telescope') then
       require('telescope').load_extension('notify')
 
       local desc = require('user_api.maps').desc

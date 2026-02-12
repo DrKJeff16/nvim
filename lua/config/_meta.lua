@@ -40,6 +40,7 @@
 ---@field lazydev? LazySpecImport
 ---@field local_session? LazySpecImport
 ---@field log_highlight? LazySpecImport
+---@field lsp? LazySpecImport
 ---@field lsp_better_diagnostic? LazySpecImport
 ---@field lsp_clangd? LazySpecImport
 ---@field lsp_toggle? LazySpecImport
@@ -91,6 +92,7 @@
 ---@field smoothcursor? LazySpecImport
 ---@field snacks? LazySpecImport
 ---@field startuptime? LazySpecImport
+---@field telescope? LazySpecImport
 ---@field todo_comments? LazySpecImport
 ---@field toggleterm? LazySpecImport
 ---@field toml? LazySpecImport
@@ -145,6 +147,7 @@
 ---@field lazydev? boolean
 ---@field local_session? boolean
 ---@field log_highlight? boolean
+---@field lsp? boolean
 ---@field lsp_better_diagnostic? boolean
 ---@field lsp_clangd? boolean
 ---@field lsp_toggle? boolean
@@ -196,6 +199,7 @@
 ---@field smoothcursor? boolean
 ---@field snacks? boolean
 ---@field startuptime? boolean
+---@field telescope? boolean
 ---@field todo_comments? boolean
 ---@field toggleterm? boolean
 ---@field toml? boolean

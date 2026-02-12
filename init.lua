@@ -142,7 +142,6 @@ require('config.lazy').setup({
   noice = true,
   notify = true,
   nvim_test = false,
-  orgmode = true,
   outline = true,
   paredit = true,
   persistence = true,
