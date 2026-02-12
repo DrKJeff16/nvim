@@ -2,6 +2,7 @@ local ERROR = vim.log.levels.ERROR
 local curr_buf = vim.api.nvim_get_current_buf
 local curr_win = vim.api.nvim_get_current_win
 local in_list = vim.list_contains
+local validate = require('user_api.check').validate
 
 ---@class User.Util
 local Util = {}
@@ -14,7 +15,7 @@ Util.string = require('user_api.util.string')
 ---@param opts vim.api.keyset.option
 ---@return vim.bo|vim.wo values
 function Util.optget(names, opts)
-  require('user_api.check.exists').validate({
+  validate({
     names = { names, { 'string', 'table' } },
     opts = { opts, { 'table' } },
   })
@@ -49,7 +50,7 @@ end
 ---@param values vim.bo|vim.wo
 ---@param opts vim.api.keyset.option
 function Util.optset(values, opts)
-  require('user_api.check.exists').validate({
+  validate({
     values = { values, { 'table' } },
     opts = { opts, { 'table' } },
   })
@@ -87,7 +88,7 @@ end
 ---@return string new_str
 ---@nodiscard
 function Util.lstrip(char, str)
-  require('user_api.check.exists').validate({
+  validate({
     char = { char, { 'string', 'table' } },
     str = { str, { 'string' } },
   })
@@ -134,7 +135,7 @@ end
 ---@return string new_str
 ---@nodiscard
 function Util.rstrip(char, str)
-  require('user_api.check.exists').validate({
+  validate({
     char = { char, { 'string', 'table' } },
     str = { str, { 'string' } },
   })
@@ -170,7 +171,7 @@ end
 ---@return string new_str
 ---@nodiscard
 function Util.strip(char, str)
-  require('user_api.check.exists').validate({
+  validate({
     char = { char, { 'string', 'table' } },
     str = { str, { 'string' } },
   })
@@ -207,7 +208,7 @@ end
 ---@overload fun(s: string[]): res: table<string, any>
 ---@overload fun(s: string[], bufnr: integer): res: table<string, any>
 function Util.get_opts_tbl(s, bufnr)
-  require('user_api.check.exists').validate({
+  validate({
     s = { s, { 'string', 'table' } },
     bufnr = { bufnr, { 'number', 'nil' }, true },
   })
@@ -234,7 +235,7 @@ end
 ---@overload fun(T: table<string, any>, steps: integer): res: table<string, any>
 ---@overload fun(T: table<string, any>, steps?: integer, direction: 'l'|'r'): res: table<string, any>
 function Util.mv_tbl_values(T, steps, direction)
-  require('user_api.check.exists').validate({
+  validate({
     T = { T, { 'table' } },
     steps = { steps, { 'number', 'nil' }, true },
     direction = { direction, { 'string', 'nil' }, true },
@@ -279,10 +280,7 @@ end
 ---@param y boolean
 ---@return boolean
 function Util.xor(x, y)
-  require('user_api.check.exists').validate({
-    x = { x, { 'boolean' } },
-    y = { y, { 'boolean' } },
-  })
+  validate({ x = { x, { 'boolean' } }, y = { y, { 'boolean' } } })
 
   return (x and not y) or (not x and y)
 end
@@ -296,7 +294,7 @@ end
 ---@overload fun(T: table<string, any>, fields: integer[])
 ---@overload fun(T: table<string, any>, fields: (string|integer)[])
 function Util.strip_fields(T, fields)
-  require('user_api.check.exists').validate({
+  validate({
     T = { T, { 'table' } },
     fields = { fields, { 'string', 'number', 'table' } },
   })
@@ -328,7 +326,7 @@ end
 ---@return table<string, any> res
 ---@overload fun(T: table<string, any>, values: any[]): res: table<string, any>
 function Util.strip_values(T, values, max_instances)
-  require('user_api.check.exists').validate({
+  validate({
     T = { T, { 'table' } },
     values = { values, { 'table' } },
     max_instances = { max_instances, { 'table', 'nil' }, true },
@@ -367,7 +365,7 @@ end
 ---@overload fun(s: string): function
 ---@overload fun(s: string, bufnr: integer): function
 function Util.ft_set(s, bufnr)
-  require('user_api.check.exists').validate({
+  validate({
     s = { s, { 'string', 'nil' }, true },
     bufnr = { bufnr, { 'number', 'nil' }, true },
   })
@@ -382,7 +380,7 @@ end
 ---@overload fun(): bt: string|''|'acwrite'|'help'|'nofile'|'nowrite'|'prompt'|'quickfix'|'terminal'
 ---@overload fun(bufnr: integer): bt: string|''|'acwrite'|'help'|'nofile'|'nowrite'|'prompt'|'quickfix'|'terminal'
 function Util.bt_get(bufnr)
-  require('user_api.check.exists').validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
+  validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
 
   return vim.api.nvim_get_option_value('buftype', { buf = bufnr or curr_buf() })
 end
@@ -392,7 +390,7 @@ end
 ---@overload fun(): ft: string
 ---@overload fun(bufnr: integer): ft: string
 function Util.ft_get(bufnr)
-  require('user_api.check.exists').validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
+  validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
 
   return vim.api.nvim_get_option_value('filetype', { buf = bufnr or curr_buf() })
 end
@@ -402,7 +400,7 @@ end
 ---@return table T
 ---@return any val
 function Util.pop_values(T, V)
-  require('user_api.check.exists').validate({ T = { T, { 'table' } } })
+  validate({ T = { T, { 'table' } } })
 
   local idx = 0
   for i, v in ipairs(T) do
@@ -423,7 +421,7 @@ end
 ---@overload fun(c: string): displaced: string
 ---@overload fun(c: string, direction: 'next'|'prev'): displaced: string
 function Util.displace_letter(c, direction)
-  require('user_api.check.exists').validate({
+  validate({
     c = { c, { 'string' } },
     direction = { direction, { 'string', 'nil' }, true },
   })
@@ -492,7 +490,7 @@ end
 ---@param T any[]
 ---@return any[] reversed
 function Util.reverse_tbl(T)
-  require('user_api.check.exists').validate({ T = { T, { 'table' } } })
+  validate({ T = { T, { 'table' } } })
   if vim.tbl_isempty(T) then
     error('(user_api.util.reverse_tbl): Empty table!', ERROR)
   end

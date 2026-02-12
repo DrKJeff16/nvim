@@ -1,4 +1,5 @@
 local in_list = vim.list_contains
+local validate = require('user_api.check').validate
 
 ---@class User.Util.String
 local String = {}
@@ -164,7 +165,7 @@ String.digits = {
 ---@param triggers? string[]
 ---@return string new_str
 function String.capitalize(str, use_dot, triggers)
-  require('user_api.check.exists').validate({
+  validate({
     str = { str, { 'string' } },
     use_dot = { use_dot, { 'boolean', 'nil' }, true },
     triggers = { triggers, { 'table', 'nil' }, true },
@@ -207,7 +208,7 @@ end
 ---@param target string
 ---@param new string
 function String.replace(str, target, new)
-  require('user_api.check.exists').validate({
+  validate({
     str = { str, { 'string' } },
     target = { target, { 'string' } },
     new = { new, { 'string' } },

@@ -113,6 +113,7 @@ local WARN = vim.log.levels.WARN
 local O = require('user_api.maps.objects')
 local MODES = { 'n', 'i', 'v', 't', 'o', 'x' }
 local in_list = vim.list_contains
+local validate = require('user_api.check').validate
 
 ---`which_key` API entrypoints.
 ---@class User.Maps.WK
@@ -129,7 +130,7 @@ end
 ---@return wk.Spec converted
 ---@overload fun(lhs: string, rhs: string|function): converted: wk.Spec
 function WK.convert(lhs, rhs, opts)
-  require('user_api.check.exists').validate({
+  validate({
     lhs = { lhs, { 'string' } },
     rhs = { rhs, { 'string', 'function' } },
     opts = { opts, { 'table', 'nil' }, true },
@@ -167,7 +168,7 @@ end
 ---@param T AllMaps
 ---@return AllMaps res
 function WK.convert_dict(T)
-  require('user_api.check.exists').validate({ T = { T, { 'table' } } })
+  validate({ T = { T, { 'table' } } })
 
   local Value = require('user_api.check.value')
   local res = {} ---@type AllMaps
@@ -184,7 +185,7 @@ end
 ---@return false|nil
 ---@overload fun(T: AllMaps): false|nil
 function WK.register(T, opts)
-  require('user_api.check.exists').validate({
+  validate({
     T = { T, { 'table' } },
     opts = { opts, { 'table', 'nil' }, true },
   })

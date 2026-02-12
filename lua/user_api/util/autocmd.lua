@@ -16,6 +16,7 @@
 local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
 local MODSTR = 'user_api.util.au'
+local validate = require('user_api.check').validate
 
 ---@class User.Util.Autocmd
 local M = {}
@@ -24,7 +25,7 @@ local M = {}
 ---@param clear? boolean
 ---@return table<string, integer> augroups
 function M.gen_augroups(names, clear)
-  require('user_api.check.exists').validate({
+  validate({
     names = { names, { 'string', 'table' } },
     clear = { clear, { 'boolean', 'nil' }, true },
   })
@@ -127,7 +128,7 @@ end
 
 ---@param T AuRepeatEvents[]|AuRepeatEvents
 function M.au_repeated_events(T)
-  require('user_api.check.exists').validate({ T = { T, { 'table' } } })
+  validate({ T = { T, { 'table' } } })
   if vim.tbl_isempty(T) then
     vim.notify(('(%s.au_repeated_events): Not a valid table'):format(MODSTR), ERROR)
     return

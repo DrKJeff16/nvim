@@ -9,7 +9,7 @@ local Update = {}
 ---@param verbose boolean
 ---@overload fun()
 function Update.update(verbose)
-  require('user_api.check.exists').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
+  require('user_api.check').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
   verbose = verbose ~= nil and verbose or false
 
   local command = { 'git', 'pull', '--rebase' }

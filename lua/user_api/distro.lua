@@ -7,7 +7,7 @@ Distro.termux = require('user_api.distro.termux')
 ---@param verbose boolean
 ---@overload fun()
 function Distro.setup(verbose)
-  require('user_api.check.exists').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
+  require('user_api.check').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
   verbose = verbose ~= nil and verbose or false
 
   if Distro.termux.validate() then

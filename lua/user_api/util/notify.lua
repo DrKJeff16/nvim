@@ -21,6 +21,7 @@ local INFO = vim.log.levels.INFO -- `2`
 local WARN = vim.log.levels.WARN -- `3`
 local ERROR = vim.log.levels.ERROR -- `4`
 local OFF = vim.log.levels.OFF -- `5`
+local validate = require('user_api.check').validate
 
 --- Can't use `user_api.check.exists.module()` here as said module might
 --- end up requiring this module, so let's avoid an import loop,
@@ -70,7 +71,7 @@ Notify.Levels = {
 ---@param lvl? NotifyLvl|VimNotifyLvl
 ---@param opts? notify.Options
 function Notify.notify(msg, lvl, opts)
-  require('user_api.check.exists').validate({
+  validate({
     msg = { msg, { 'string' } },
     lvl = { lvl, { 'string', 'number', 'nil' }, true },
     opts = { opts, { 'table', 'nil' }, true },
@@ -107,7 +108,7 @@ end
 ---@param lvl VimNotifyLvl
 ---@return fun(args: vim.api.keyset.create_user_command.command_args)
 local function gen_cmd_lvl(lvl)
-  require('user_api.check.exists').validate({ lvl = { lvl, { 'number' } } })
+  validate({ lvl = { lvl, { 'number' } } })
 
   return function(args) ---@param args vim.api.keyset.create_user_command.command_args
     local data = args.args
