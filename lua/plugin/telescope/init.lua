@@ -1,16 +1,22 @@
 ---@module 'lazy'
 
+---@param picker string
+---@return function map_cmd
+local function run_map(picker)
+  require('user_api.check').validate({ picker = { picker, { 'string' } } })
+
+  return function()
+    vim.cmd.Telescope(picker)
+  end
+end
+
 return { ---@type LazySpec
   'nvim-telescope/telescope.nvim',
   version = false,
   dependencies = {
-    'nvim-treesitter/nvim-treesitter',
     'nvim-lua/plenary.nvim',
-    'debugloop/telescope-undo.nvim',
     'OliverChao/telescope-picker-list.nvim',
     'nvim-telescope/telescope-file-browser.nvim',
-    'crispgm/telescope-heading.nvim',
-    'tpope/vim-fugitive',
     { 'polirritmico/telescope-lazy-plugins.nvim', dev = true },
   },
   config = function()
@@ -62,35 +68,7 @@ return { ---@type LazySpec
         vimgrep_arguments = vimgrep_arguments,
         preview = { filesize_limit = 0.75 },
       },
-      extensions = {
-        persisted = { layout_config = { width = 0.75, height = 0.75 } },
-        projects = { prompt_prefix = '󱎸  ' },
-        undo = {
-          use_delta = true,
-          use_custom_command = nil,
-          side_by_side = true,
-          layout_strategy = 'vertical',
-          layout_config = { preview_height = 0.8 },
-          vim_diff_opts = { ctxlen = vim.o.scrolloff },
-          entry_format = 'state #$ID, $STAT, $TIME',
-          time_format = '',
-          saved_only = false,
-          mappings = {
-            i = {
-              ['<CR>'] = require('telescope-undo.actions').yank_additions,
-              ['<S-CR>'] = require('telescope-undo.actions').yank_deletions,
-              ['<C-CR>'] = require('telescope-undo.actions').restore,
-              ['<C-y>'] = require('telescope-undo.actions').yank_deletions,
-              ['<C-r>'] = require('telescope-undo.actions').restore,
-            },
-            n = {
-              y = require('telescope-undo.actions').yank_additions,
-              Y = require('telescope-undo.actions').yank_deletions,
-              u = require('telescope-undo.actions').restore,
-            },
-          },
-        },
-      },
+      extensions = { projects = { prompt_prefix = '󱎸  ' } },
       pickers = {
         autocommands = { theme = 'dropdown' },
         buffers = { theme = 'dropdown' },
@@ -148,48 +126,37 @@ return { ---@type LazySpec
       ['<leader><C-t>'] = { group = '+Telescope' },
       ['<leader><C-t>b'] = { group = '+Builtins' },
       ['<leader><C-t>e'] = { group = '+Extensions' },
-      ['<leader>HH'] = { ':Telescope help_tags<CR>', desc('Telescope Help Tags') },
-      ['<leader>HM'] = { ':Telescope man_pages<CR>', desc('Telescope Man Pages') },
-      ['<leader>GB'] = { ':Telescope git_branches<CR>', desc('Telescope Git Branches') },
-      ['<leader>GS'] = { ':Telescope git_stash<CR>', desc('Telescope Git Stash') },
-      ['<leader>Gs'] = { ':Telescope git_status<CR>', desc('Telescope Git Status') },
-      ['<leader>bB'] = { ':Telescope buffers<CR>', desc('Telescope Buffers') },
-      ['<leader>fD'] = { ':Telescope diagnostics<CR>', desc('Telescope Diagnostics') },
-      ['<leader>ff'] = { ':Telescope find_files<CR>', desc('Telescope File Picker') },
-      ['<leader>vK'] = { ':Telescope keymaps<CR>', desc('Telescope Keymaps') },
-      ['<leader>vO'] = { ':Telescope vim_options<CR>', desc('Telescope Vim Options') },
-      ['<leader>uC'] = { ':Telescope colorscheme<CR>', desc('Telescope Colorschemes') },
-      ['<leader><C-t>bA'] = { ':Telescope autocommands<CR>', desc('Autocommands') },
-      ['<leader><C-t>bC'] = { ':Telescope commands<CR>', desc('Commands') },
-      ['<leader><C-t>bg'] = { ':Telescope live_grep<CR>', desc('Live Grep') },
-      ['<leader><C-t>bh'] = { ':Telescope highlights<CR>', desc('Highlights') },
-      ['<leader><C-t>bp'] = { ':Telescope pickers<CR>', desc('Pickers') },
+      ['<leader>HH'] = { run_map('help_tags'), desc('Telescope Help Tags') },
+      ['<leader>HM'] = { run_map('man_pages'), desc('Telescope Man Pages') },
+      ['<leader>GB'] = { run_map('git_branches'), desc('Telescope Git Branches') },
+      ['<leader>GS'] = { run_map('git_stash'), desc('Telescope Git Stash') },
+      ['<leader>Gs'] = { run_map('git_status'), desc('Telescope Git Status') },
+      ['<leader>bB'] = { run_map('buffers'), desc('Telescope Buffers') },
+      ['<leader>fD'] = { run_map('diagnostics'), desc('Telescope Diagnostics') },
+      ['<leader>ff'] = { run_map('find_files'), desc('Telescope File Picker') },
+      ['<leader>vK'] = { run_map('keymaps'), desc('Telescope Keymaps') },
+      ['<leader>vO'] = { run_map('vim_options'), desc('Telescope Vim Options') },
+      ['<leader>uC'] = { run_map('colorscheme'), desc('Telescope Colorschemes') },
+      ['<leader><C-t>bA'] = { run_map('autocommands'), desc('Autocommands') },
+      ['<leader><C-t>bC'] = { run_map('commands'), desc('Commands') },
+      ['<leader><C-t>bg'] = { run_map('live_grep'), desc('Live Grep') },
+      ['<leader><C-t>bh'] = { run_map('highlights'), desc('Highlights') },
+      ['<leader><C-t>bp'] = { run_map('pickers'), desc('Pickers') },
     }
 
     local known_exts = { ---@type table<string, { [1]: string, keys?: AllMaps }>
       ['telescope._extensions.file_browser'] = { 'file_browser' },
-      ['telescope._extensions.heading'] = {
-        'heading',
-        keys = { ['<leader><C-t>eh'] = { ':Telescope heading<CR>', desc('Heading Picker') } },
-      },
       ['telescope._extensions.lazy_plugins'] = { 'lazy_plugins' },
-      ['telescope._extensions.undo'] = {
-        'undo',
-        keys = {
-          ['<leader><C-t>eu'] = { ':Telescope undo<CR>', desc('Undo Picker') },
-          ['<leader>fu'] = { ':Telescope undo<CR>', desc('Undo Telescope Picker') },
-        },
-      },
       ['lazygit.utils'] = {
         'lazygit',
         keys = {
-          ['<leader><C-t>eG'] = { ':Telescope lazygit<CR>', desc('LazyGit Picker') },
-          ['<leader>GlT'] = { ':Telescope lazygit<CR>', desc('LazyGit Telescope Picker') },
+          ['<leader><C-t>eG'] = { run_map('lazygit'), desc('LazyGit Picker') },
+          ['<leader>GlT'] = { run_map('lazygit'), desc('LazyGit Telescope Picker') },
         },
       },
       ['telescope._extensions.picker_list'] = {
         'picker_list',
-        keys = { ['<leader><C-t>eP'] = { ':Telescope picker_list<CR>', desc('Picker List') } },
+        keys = { ['<leader><C-t>eP'] = { run_map('picker_list'), desc('Picker List') } },
       },
     }
     for mod, ext in pairs(known_exts) do
