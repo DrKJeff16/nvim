@@ -408,7 +408,7 @@ return { ---@type LazySpec
       Presets.components.triforce_lvl = {
         function()
           return TL.level({
-            show = { bar = true, level = true, xp = not Termux.validate() },
+            show = { bar = true, level = true, xp = not Termux.is_distro() },
             bar = { chars = { filled = '●', empty = '○' }, length = 6 },
           })
         end,
@@ -426,7 +426,7 @@ return { ---@type LazySpec
       Presets.components.triforce_session_time = {
         function()
           return TL.session_time({
-            format = Termux.validate() and 'short' or 'long',
+            format = Termux.is_distro() and 'short' or 'long',
             show_duration = true,
           })
         end,
@@ -485,9 +485,9 @@ return { ---@type LazySpec
 
     Presets.default = {
       lualine_a = { Presets.components.mode },
-      lualine_b = Termux.validate() and { Presets.components.filename }
+      lualine_b = Termux.is_distro() and { Presets.components.filename }
         or { Presets.components.branch, Presets.components.filename },
-      lualine_c = Termux.validate() and { Presets.components.diagnostics }
+      lualine_c = Termux.is_distro() and { Presets.components.diagnostics }
         or { Presets.components.diagnostics, Presets.components.diff },
       lualine_x = {
         Presets.components.lsp_progress,
@@ -517,7 +517,7 @@ return { ---@type LazySpec
         component_separators = { left = '', right = '' },
         section_separators = { left = '', right = '' },
         ignore_focus = {},
-        always_divide_middle = Termux.validate(),
+        always_divide_middle = Termux.is_distro(),
         globalstatus = true,
         refresh = { statusline = 1000, tabline = 1000, winbar = 1000 },
       },

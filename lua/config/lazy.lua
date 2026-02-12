@@ -299,7 +299,7 @@ function M.setup(toggles)
     dev = { path = '~/Projects/nvim', patterns = {}, fallback = true },
     change_detection = {
       enabled = true,
-      notify = require('user_api.distro.archlinux').validate(),
+      notify = require('user_api.distro.archlinux').is_distro(),
     },
     performance = {
       reset_packpath = true,
@@ -329,8 +329,8 @@ function M.setup(toggles)
         or { 'lazy', 'packspec', 'rockspec' },
     },
     checker = {
-      enabled = not require('user_api.distro.termux').validate(),
-      notify = not require('user_api.distro.termux').validate(),
+      enabled = not require('user_api.distro.termux').is_distro(),
+      notify = not require('user_api.distro.termux').is_distro(),
       frequency = 600,
       check_pinned = false,
     },

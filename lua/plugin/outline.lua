@@ -14,7 +14,7 @@ return { ---@type LazySpec
         center_on_jump = true,
         show_numbers = false,
         show_relative_numbers = false,
-        wrap = require('user_api.distro.termux').validate(),
+        wrap = require('user_api.distro.termux').is_distro(),
         show_cursorline = true,
         hide_cursor = false,
         focus_on_open = true,

@@ -10,14 +10,14 @@ function Distro.setup(verbose)
   require('user_api.check').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
   verbose = verbose ~= nil and verbose or false
 
-  if Distro.termux.validate() then
+  if Distro.termux.is_distro() then
     Distro.termux.setup()
     if verbose then
       vim.notify('Termux distribution detected...', vim.log.levels.INFO)
     end
     return
   end
-  if Distro.archlinux.validate() then
+  if Distro.archlinux.is_distro() then
     Distro.archlinux.setup()
     if verbose then
       vim.notify('Arch Linux distribution detected...', vim.log.levels.INFO)

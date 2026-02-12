@@ -26,7 +26,7 @@ Opts.setup({
   backspace = 'indent,eol,start',
   backup = false,
   -- clipboard = 'unnamedplus', -- Uncomment to use system clipboard
-  cmdwinheight = require('user_api.distro.termux').validate() and 15 or 25,
+  cmdwinheight = require('user_api.distro.termux').is_distro() and 15 or 25,
   colorcolumn = '101',
   confirm = true,
   copyindent = true,
@@ -70,7 +70,7 @@ Opts.setup({
   tabstop = 4,
   textwidth = 100,
   title = true,
-  wrap = require('user_api.distro.termux').validate(),
+  wrap = require('user_api.distro.termux').is_distro(),
 }, false, true)
 
 ---Disable `netrw` regardless of whether `nvim_tree/neo_tree` exist or not.

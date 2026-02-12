@@ -26,7 +26,7 @@ Archlinux.rtpaths = setmetatable(RTPATHS, { ---@type string[]
   end,
 })
 
-function Archlinux.validate()
+function Archlinux.is_distro()
   -- First check for each dir's existance
   local new_rtpaths = {} ---@type string[]
   for _, p in ipairs(Archlinux.rtpaths) do
@@ -43,7 +43,7 @@ function Archlinux.validate()
 end
 
 function Archlinux.setup()
-  if not Archlinux.validate() then
+  if not Archlinux.is_distro() then
     return
   end
   for _, path in ipairs(Archlinux.rtpaths) do

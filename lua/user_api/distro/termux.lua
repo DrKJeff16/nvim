@@ -26,7 +26,7 @@ Termux.rtpaths = setmetatable(RTPATHS, { ---@type string[]
   end,
 })
 
-function Termux.validate()
+function Termux.is_distro()
   if Termux.PREFIX == '' or not is_dir(Termux.PREFIX) then
     return false
   end
@@ -40,7 +40,7 @@ function Termux.validate()
 end
 
 function Termux.setup()
-  if not (Termux.validate() and is_dir(Termux.PREFIX)) then
+  if not (Termux.is_distro() and is_dir(Termux.PREFIX)) then
     return
   end
   for _, path in ipairs(Termux.rtpaths) do

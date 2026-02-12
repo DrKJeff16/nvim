@@ -21,7 +21,7 @@ end
 ---@class User.Check.Existance
 local Exists = {}
 
----Dynamic `vim.validate()` wrapper. Covers both legacy and newer implementations
+---Dynamic `vim.is_distro()` wrapper. Covers both legacy and newer implementations
 ---@param T table<string, vim.validate.Spec|ValidateSpec>
 function Exists.validate(T)
   local max = vim.fn.has('nvim-0.11') == 1 and 3 or 4
