@@ -3,6 +3,7 @@ return { ---@type LazySpec
   'DrKJeff16/pipenv.nvim',
   dev = true,
   version = false,
+  dependencies = { 'wsdjeg/job.nvim', 'wsdjeg/picker.nvim', 'xieyonn/spinner.nvim' },
   config = function()
     require('pipenv').setup({
       output = {
@@ -23,6 +24,7 @@ return { ---@type LazySpec
         ['<leader>PC'] = { ':Pipenv! clean<CR>', desc('Clean (Verbose)') },
         ['<leader>PI'] = { ':Pipenv! install ', desc('Prompt To Install (Verbose)', false) },
         ['<leader>PL'] = { ':Pipenv! lock<CR>', desc('Lock (Verbose)') },
+        ['<leader>PP'] = { ':Picker pipenv<CR>', desc('Pipenv Picker') },
         ['<leader>PR'] = { ':Pipenv requirements<CR>', desc('Requirements') },
         ['<leader>PS'] = { ':Pipenv! sync ', desc('Prompt To Sync (Verbose)', false) },
         ['<leader>PU'] = { ':Pipenv! uninstall ', desc('Prompt To Uninstall (Verbose)', false) },
