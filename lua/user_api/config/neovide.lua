@@ -16,40 +16,40 @@ end
 
 ---@class Config.Neovide.Opts.G
 local g_opts = {
-  theme = 'auto',
-  refresh_rate = 60,
-  refresh_rate_idle = 30,
-  no_idle = true,
   confirm_quit = vim.o.confirm,
-  fullscreen = false,
-  profiler = false,
   cursor = {
-    hack = false,
+    animate = { in_insert_mode = true, command_line = false },
     animation_length = 0.05,
-    short_animation_length = 0.03,
-    trail_size = 1.0,
     antialiasing = false,
+    hack = true,
+    short_animation_length = 0.03,
     smooth = { blink = true },
-    animate = { in_insert_mode = false, command_line = false },
+    trail_size = 1.0,
   },
-  underline = { stroke_scale = 1.0 },
   experimental = { layer_grouping = false },
-  text = { contrast = 0.5, gamma = 0.0 },
-  scale_factor = 1.0,
-  show_border = true,
-  hide_mouse_when_typing = false,
-  position = { animation = { length = 0.1 } },
-  scroll = { animation = { length = 0.07, far_lines = 0 } },
-  remember = { window_size = true },
-  padding = { top = 0, bottom = 0, left = 0, right = 0 },
   floating = {
-    blur_amount_x = 2.0,
-    blur_amount_y = 2.0,
+    blur_amount_x = 3.0,
+    blur_amount_y = 3.0,
+    corner_radius = 0.5,
     shadow = true,
     z_height = 50,
-    corner_radius = 0.5,
   },
+  fullscreen = false,
+  hide_mouse_when_typing = false,
   light = { angle_degrees = 45, radius = 5 },
+  no_idle = true,
+  padding = { top = 0, bottom = 0, left = 0, right = 0 },
+  position = { animation = { length = 0.1 } },
+  profiler = false,
+  refresh_rate = 60,
+  refresh_rate_idle = 30,
+  remember = { window_size = true },
+  scale_factor = 1.0,
+  scroll = { animation = { length = 0.07, far_lines = 0 } },
+  show_border = true,
+  text = { contrast = 0.5, gamma = 0.0 },
+  theme = 'auto',
+  underline = { stroke_scale = 1.0 },
 }
 
 ---@class Config.Neovide.Opts.O
@@ -88,19 +88,15 @@ function Neovide.set_transparency(opacity, transparency, bg)
     transparency = { transparency, { 'number', 'nil' } },
     bg = { bg, { 'string', 'nil' } },
   })
+  opacity = opacity or 0.85
+  transparency = transparency or 1.0
 
   local num_range = require('user_api.check.value').num_range
   local eq = { high = true, low = true }
-  if opacity and not num_range(opacity, 0.0, 1.0, eq) then
-    opacity = 0.85
-  end
-  if transparency and not num_range(transparency, 0.0, 1.0, eq) then
-    transparency = 1.0
-  end
-
-  if not bg or bg:len() ~= 7 then
-    bg = '#0f1117'
-  end
+  opacity = (opacity and not num_range(opacity, 0.0, 1.0, eq)) and 0.85 or opacity
+  bg = bg and bg:len() == 7 and bg or '#0f1117'
+  transparency = (transparency and not num_range(transparency, 0.0, 1.0, eq)) and 1.0
+    or transparency
 
   if bg:sub(1, 1) == '#' then
     bg = ((bg:len() ~= 7 and bg:len() ~= 9) and '#0f1117' or bg) .. alpha()
@@ -138,15 +134,10 @@ function Neovide.setup_maps()
   local desc = require('user_api.maps').desc
   require('user_api.config').keymaps.set({
     n = {
-      ['<leader><CR>'] = { group = '+Neovide' },
-      ['<leader><CR>V'] = {
+      ['<leader>n'] = { group = '+Neovide' },
+      ['<leader>nV'] = {
         function()
-          vim.notify(('Neovide v%s'):format(vim.g.neovide_version), INFO, {
-            title = 'Neovide',
-            animate = true,
-            timeout = 1500,
-            hide_from_history = false,
-          })
+          vim.notify(('Neovide v%s'):format(vim.g.neovide_version), INFO)
         end,
         desc('Show Neovide Version'),
       },
