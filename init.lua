@@ -180,6 +180,7 @@ require('config.lazy').setup({
   ts_vimdoc = true,
   twilight = false,
   undotree = false,
+  wezterm_config = true,
   web_devicons = true,
   which_colorscheme = true,
   which_key = true,

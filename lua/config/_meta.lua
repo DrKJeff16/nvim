@@ -106,6 +106,7 @@
 ---@field twilight? LazySpecImport
 ---@field undotree? LazySpecImport
 ---@field web_devicons? LazySpecImport
+---@field wezterm_config? LazySpecImport
 ---@field which_colorscheme? LazySpecImport
 ---@field which_key? LazySpecImport
 ---@field yanky? LazySpecImport
@@ -213,6 +214,7 @@
 ---@field ts_vimdoc? boolean
 ---@field twilight? boolean
 ---@field undotree? boolean
+---@field wezterm_config? boolean
 ---@field web_devicons? boolean
 ---@field which_colorscheme? boolean
 ---@field which_key? boolean
