@@ -18,11 +18,11 @@ local function on_init(client, _)
 
   local library = {
     vim.env.VIMRUNTIME,
-    -- vim.api.nvim_get_runtime_file('', true),
     -- luarocks_path,
     '${3rd}/luv/library',
     '${3rd}/busted/library',
   }
+
   client.config.settings.Lua = d_extend('force', client.config.settings.Lua or {}, {
     diagnostics = { enable = true, globals = { 'vim' } },
     runtime = { version = 'LuaJIT', path = { 'lua/?.lua', 'lua/?/init.lua' } },

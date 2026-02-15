@@ -7,7 +7,18 @@ local HINT = vim.diagnostic.severity.HINT
 local mk_caps = vim.lsp.protocol.make_client_capabilities
 local uv = vim.uv or vim.loop
 
-local function timer_cb()
+---@param original ClientCaps
+---@param inserts ClientCaps
+---@return ClientCaps client_caps
+---@overload fun(original: ClientCaps): client_caps: ClientCaps
+local function insert_client(original, inserts)
+  return vim.tbl_deep_extend('keep', inserts or {}, original)
+end
+
+---@class Lsp.Server
+local Server = {}
+
+function Server.timer_cb()
   local logfile = vim.lsp.log.get_filename()
   local stat = uv.fs_stat(logfile)
   if not stat or stat.size < 2097152 then
@@ -24,17 +35,6 @@ local function timer_cb()
 
   vim.notify('LSP Log has been cleared!', vim.log.levels.INFO)
 end
-
----@param original ClientCaps
----@param inserts ClientCaps
----@return ClientCaps client_caps
----@overload fun(original: ClientCaps): client_caps: ClientCaps
-local function insert_client(original, inserts)
-  return vim.tbl_deep_extend('keep', inserts or {}, original)
-end
-
----@class Lsp.Server
-local Server = {}
 
 Server.client_names = {} ---@type string[]
 Server.Clients = require('config.lsp.servers')
@@ -61,19 +61,17 @@ function Server.make_timer()
       end
 
       Server.timer:stop()
+      Server.timer = nil
     end,
   })
   vim.api.nvim_create_autocmd('LspAttach', {
     group = group,
     callback = function()
-      if Server.timer and Server.timer:is_active() then
-        return
-      end
-      if not Server.timer then
+      if not Server.timer or Server.timer:is_active() then
         return
       end
 
-      Server.timer:start(10000, 900000, vim.schedule_wrap(timer_cb))
+      Server.timer:start(10000, 900000, vim.schedule_wrap(Server.timer_cb))
     end,
   })
 end
