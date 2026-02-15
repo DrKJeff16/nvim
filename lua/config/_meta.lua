@@ -110,6 +110,7 @@
 ---@field wezterm_config? LazySpecImport
 ---@field which_colorscheme? LazySpecImport
 ---@field which_key? LazySpecImport
+---@field wrapped? LazySpecImport
 ---@field yanky? LazySpecImport
 ---@field zen_mode? LazySpecImport
 
@@ -220,6 +221,7 @@
 ---@field web_devicons? boolean
 ---@field which_colorscheme? boolean
 ---@field which_key? boolean
+---@field wrapped? boolean
 ---@field yanky? boolean
 ---@field zen_mode? boolean
 

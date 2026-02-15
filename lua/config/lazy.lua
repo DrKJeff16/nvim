@@ -123,6 +123,7 @@ function M.get_default_specs()
     web_devicons = { import = 'plugin.web-devicons' },
     which_colorscheme = { import = 'plugin.which-colorscheme' },
     which_key = { import = 'plugin.which-key' },
+    wrapped = { import = 'plugin.wrapped' },
     yanky = { import = 'plugin.yanky' },
     zen_mode = { import = 'plugin.zen-mode' },
   }
@@ -258,6 +259,7 @@ function M.get_default_toggles()
     web_devicons = true,
     which_colorscheme = true,
     which_key = true,
+    wrapped = true,
     yanky = true,
   }
 end
