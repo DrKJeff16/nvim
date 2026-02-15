@@ -1,9 +1,11 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'aikhe/wrapped.nvim',
+  lazy = true,
   dev = true,
   version = false,
   dependencies = { { 'nvzone/volt', dev = true }, 'nvim-lua/plenary.nvim' },
+  cmd = { 'NvimWrapped' },
   config = function()
     require('wrapped').setup({
       path = vim.fn.stdpath('config'),

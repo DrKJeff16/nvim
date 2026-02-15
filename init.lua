@@ -154,12 +154,9 @@ require('config.lazy').setup({
   persistence = true,
   picker = true,
   pipenv = true,
-  pomo = false,
-  possession = false,
   project = true,
   python_import = true,
   rainbow_delimiters = false,
-  refactoring = false,
   refer = true,
   referencer = false,
   replua = false,
@@ -185,7 +182,6 @@ require('config.lazy').setup({
   web_devicons = true,
   which_colorscheme = true,
   which_key = true,
-  yanky = true,
   zen_mode = false,
 })
 
@@ -219,7 +215,7 @@ if vim.fn.has('nvim-0.11') == 1 then
   vim.cmd.packadd('nohlsearch')
 end
 
-if require('user_api.check.exists').vim_has('nvim-0.12') then
+if vim.fn.has('nvim-0.12') == 1 then
   vim.cmd.packadd('nvim.undotree')
 end
 

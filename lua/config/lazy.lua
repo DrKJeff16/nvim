@@ -1,7 +1,6 @@
 ---@module 'config._meta'
 
 local MODSTR = 'config.lazy'
-local WARN = vim.log.levels.WARN
 local LAZY_DATA = vim.fs.joinpath(vim.fn.stdpath('data'), 'lazy')
 local LAZY_STATE = vim.fs.joinpath(vim.fn.stdpath('state'), 'lazy')
 local LAZYPATH = vim.fs.joinpath(LAZY_DATA, 'lazy.nvim')
@@ -29,6 +28,7 @@ function M.get_default_specs()
     co_author = { import = 'plugin.co-author' },
     code_runner = { import = 'plugin.code-runner' },
     codeowners = { import = 'plugin.codeowners' },
+    color_skinner = { import = 'plugin.color-skinner' },
     diffview = { import = 'plugin.diffview' },
     dooku = { import = 'plugin.dooku' },
     doxygen_init = { import = 'plugin.doxygen.init' },
@@ -190,6 +190,7 @@ function M.get_default_toggles()
     bmessages = true,
     bufferline = true,
     codeowners = true,
+    color_skinner = true,
     focus = true,
     fzf_lua = true,
     git_gitsigns = true,
@@ -260,13 +261,13 @@ function M.get_default_toggles()
     which_colorscheme = true,
     which_key = true,
     wrapped = true,
-    yanky = true,
+    yanky = false,
   }
 end
 
 ---Sets up `lazy.nvim`. Only runs once!
 --- ---
----@param toggles? table<integer, LazySpec>|LazyToggles|LazyPluginSpec
+---@param toggles? table<integer|string, LazySpec|string>|LazyToggles|LazyPluginSpec
 function M.setup(toggles)
   require('user_api.check').validate({ toggles = { toggles, { 'table', 'nil' }, true } })
   toggles = vim.tbl_deep_extend('keep', toggles or {}, M.get_default_toggles())
@@ -284,7 +285,7 @@ function M.setup(toggles)
   for name, val in pairs(toggles) do
     if type(val) == 'boolean' then
       ---@cast val boolean
-      if vim.tbl_contains(dict_keys, name) then
+      if vim.list_contains(dict_keys, name) then
         if val then
           table.insert(specs, dict[name])
         end
@@ -301,7 +302,7 @@ function M.setup(toggles)
 
   if err ~= '' then
     vim.schedule(function()
-      vim.notify(err, WARN)
+      vim.notify(err, vim.log.levels.WARN)
     end)
   end
 

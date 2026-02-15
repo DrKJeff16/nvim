@@ -18,6 +18,7 @@
 ---@field co_author? LazySpecImport
 ---@field code_runner? LazySpecImport
 ---@field codeowners? LazySpecImport
+---@field color_skinner? LazySpecImport
 ---@field diffview? LazySpecImport
 ---@field dooku? LazySpecImport
 ---@field doxygen_init? LazySpecImport
@@ -129,6 +130,7 @@
 ---@field co_author? boolean
 ---@field code_runner? boolean
 ---@field codeowners? boolean
+---@field color_skinner? boolean
 ---@field diffview? boolean
 ---@field dooku? boolean
 ---@field doxygen_init? boolean
