@@ -82,7 +82,7 @@
 ---**_EXAMPLE:_**
 ---
 ---```lua
----arbitrory_keys = {
+---arbitrary_keys = {
 ---    ['<leader><leader>']= { group = '+Group1', buffer = 4, hidden = true },
 ---}
 ---```

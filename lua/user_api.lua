@@ -22,8 +22,15 @@ function User.setup(commands, verbose)
   require('user_api.distro').setup(verbose)
 
   require('user_api.config.neovide').setup()
+  require('user_api.pickers').setup()
 
-  require('user_api.config.keymaps').set({ n = { ['<leader>U'] = { group = '+User API' } } })
+  local desc = require('user_api.maps').desc
+  require('user_api.config.keymaps').set({
+    n = {
+      ['<leader>U'] = { group = '+User API' },
+      ['<leader><leader>'] = { require('user_api.pickers').run, desc('Select Picker') },
+    },
+  })
 end
 
 local M = setmetatable(User, { ---@type UserAPI

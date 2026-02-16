@@ -354,7 +354,6 @@ return { ---@type LazySpec
         ['<leader>.,'] = { Snacks.scratch.select, desc('Select Scratch Buffer') },
         ['<leader>..'] = { Snacks.scratch.open, desc('Toggle Scratch Buffer') },
         ['<leader><CR>'] = { Picker.command_history, desc('Command History') },
-        ['<leader><leader>'] = { Picker.smart, desc('Snacks Picker') },
         ['<leader>S.'] = { Picker.command_history, desc('Command History') },
         ['<leader>SM'] = { Picker.man, desc('Man Pages') },
         ['<leader>Sb'] = { Picker.buffers, desc('Buffers') },
