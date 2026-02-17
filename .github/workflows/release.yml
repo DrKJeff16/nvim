@@ -21,12 +21,12 @@ jobs:
         run: |
           mkdir -pv Jnvim
           cp -rv init.lua assets lua queries README.md LICENSE Jnvim
-          zip -r -9 Jnvim.zip Jnvim
           tar cvJf Jnvim.tar.xz Jnvim
           tar cvzf Jnvim.tar.gz Jnvim
-          sha512sum Jnvim.zip Jnvim.tar.xz Jnvim.tar.gz >| sha512sums.txt
-          md5sum Jnvim.zip Jnvim.tar.xz Jnvim.tar.gz >| md5sums.txt
-          rm -rfv Jnvim
+          zip -r -9 Jnvim.zip Jnvim
+          7z a -mx9 -mmt -sdel Jnvim.7z Jnvim
+          sha512sum Jnvim.7z Jnvim.zip Jnvim.tar.xz Jnvim.tar.gz >| sha512sums.txt
+          md5sum Jnvim.7z Jnvim.zip Jnvim.tar.xz Jnvim.tar.gz >| md5sums.txt
       - name: Get Release
         id: get_current_release
         uses: joutvhu/get-release@v1.0.3
@@ -47,11 +47,12 @@ jobs:
         if: github.ref_type == 'tag'
         with:
           files: |
+            Release.txt
+            md5sums.txt
+            sha512sums.txt
+            Jnvim.7z
             Jnvim.tar.gz
             Jnvim.tar.xz
             Jnvim.zip
-            Release.txt
-            sha512sums.txt
-            md5sums.txt
           token: ${{ secrets.GITHUB_TOKEN }}
 # vim: set ts=2 sts=2 sw=2 et ai si sta:
