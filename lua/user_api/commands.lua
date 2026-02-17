@@ -13,29 +13,52 @@ Commands.commands = {} ---@type table<string, User.Commands.CmdSpec>
 
 Commands.commands.Redir = {
   function(ctx)
-    local l =
-      vim.split(vim.api.nvim_exec2(ctx.args, { output = true }).output, '\n', { plain = true })
+    local l = vim.split(
+      vim.api.nvim_exec2(ctx.args, { output = true }).output,
+      '\n',
+      { plain = true, trimempty = false }
+    )
     local bufnr = vim.api.nvim_create_buf(true, true)
-    local win = vim.api.nvim_open_win(bufnr, true, { vertical = false })
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, l)
+
+    local win
+    if ctx.bang then
+      win = vim.api.nvim_open_win(bufnr, true, { vertical = false })
+    else
+      local width = math.floor(vim.o.columns * 0.75)
+      local height = math.floor(vim.o.lines * 0.85)
+      win = vim.api.nvim_open_win(bufnr, true, {
+        border = 'single',
+        height = height,
+        width = width,
+        col = math.floor((vim.o.columns - width) / 2),
+        row = math.floor((vim.o.lines - height) / 2) - 1,
+        focusable = true,
+        relative = 'editor',
+        style = 'minimal',
+        title = ctx.args,
+        title_pos = 'center',
+        zindex = 100,
+      })
+    end
 
     local buf_opts, win_opts = { buf = bufnr }, { win = win } ---@type vim.api.keyset.option, vim.api.keyset.option
     vim.api.nvim_set_option_value('filetype', 'Redir', buf_opts)
     vim.api.nvim_set_option_value('modified', false, buf_opts)
     vim.api.nvim_set_option_value('number', false, win_opts)
     vim.api.nvim_set_option_value('signcolumn', 'no', win_opts)
+    vim.api.nvim_set_option_value('list', false, win_opts)
 
     vim.keymap.set('n', 'q', function()
-      vim.api.nvim_buf_delete(bufnr, { force = true })
+      pcall(vim.api.nvim_buf_delete, bufnr, { force = true })
       pcall(vim.api.nvim_win_close, win, true)
     end, { buffer = bufnr })
 
-    vim.schedule(function()
-      vim.cmd.wincmd('=')
-    end)
+    vim.cmd.wincmd('=')
   end,
   {
     nargs = '+',
+    bang = true,
     complete = 'command',
     desc = 'Redirect command output to scratch buffer',
   },
@@ -48,37 +71,51 @@ Commands.commands.Current = {
       window = vim.api.nvim_get_current_win(),
       tabpage = vim.api.nvim_get_current_tabpage(),
     }
-    if #ctx.fargs == 0 then
+    if vim.tbl_isempty(ctx.fargs) then
       vim.notify(
         ('buffer: %s\nwindow: %s\ntabpage %s'):format(curr.buffer, curr.window, curr.tabpage),
         INFO
       )
       return
     end
+
     local arg = ctx.fargs[1] ---@type 'buffer'|'buf'|'window'|'win'|'tab'|'tabpage'
-    if vim.list_contains({ 'buffer', 'buf' }, arg) then
-      vim.notify(('%d'):format(curr.buffer), INFO, { title = 'Current Buffer' })
-      return
-    end
-    if vim.list_contains({ 'window', 'win' }, arg) then
-      vim.notify(('%d'):format(curr.window), INFO, { title = 'Current Window' })
-      return
-    end
-    if vim.list_contains({ 'tabpage', 'tab' }, arg) then
-      vim.notify(('%d'):format(curr.tabpage), INFO, { title = 'Current Tabpage' })
+    if not vim.list_contains({ 'buffer', 'buf', 'window', 'win', 'tabpage', 'tab' }, arg) then
+      vim.notify(('(:Current) - Invalid argument `%s`!'):format(arg), vim.log.levels.ERROR)
       return
     end
 
-    vim.notify(('(:Current) - Invalid argument `%s`!'):format(arg), vim.log.levels.ERROR)
+    local msg, title = '', ''
+    if vim.list_contains({ 'buffer', 'buf' }, arg) then
+      msg = ('%d'):format(curr.buffer)
+      title = 'Current Buffer'
+    elseif vim.list_contains({ 'window', 'win' }, arg) then
+      msg = ('%d'):format(curr.window)
+      title = 'Current Window'
+    elseif vim.list_contains({ 'tabpage', 'tab' }, arg) then
+      msg = ('%d'):format(curr.tabpage)
+      title = 'Current Tabpage'
+    end
+
+    vim.notify(msg, INFO, { title = title })
   end,
   {
     nargs = '?',
     complete = function(_, lead) ---@param lead string
       local args = vim.split(lead, '%s+', { trimempty = false })
-      if #args >= 3 then
+      table.remove(args, 1)
+
+      if #args ~= 1 then
         return {}
       end
-      return { 'buf', 'buffer', 'win', 'window', 'tab', 'tabpage' }
+
+      local comp = {} ---@type string[]
+      for _, choice in ipairs({ 'buf', 'buffer', 'win', 'window', 'tab', 'tabpage' }) do
+        if vim.startswith(choice, args[1]) then
+          table.insert(comp, choice)
+        end
+      end
+      return comp
     end,
   },
 }
