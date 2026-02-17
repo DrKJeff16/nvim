@@ -1,56 +1,48 @@
 local MODSTR = 'config.util'
 local ERROR = vim.log.levels.ERROR
 local validate = require('user_api.check').validate
+local in_console = require('user_api.check').in_console
+local executable = require('user_api.check').executable
 
 ---@class Config.Util
 local M = {}
+
 ---@return boolean termguicolors
 function M.has_tgc()
-  if
-    require('user_api.check').in_console()
-    or not require('user_api.check.exists').vim_exists('+termguicolors')
-  then
+  if in_console() or not require('user_api.check.exists').vim_exists('+termguicolors') then
     return false
   end
   return vim.o.termguicolors
 end
 
----@param cmd 'edit'|'tabnew'|'split'|'vsplit'
+---@param cmd? 'edit'|'tabnew'|'split'|'vsplit'
 ---@return function command
----@overload fun()
 function M.key_variant(cmd)
   validate({ cmd = { cmd, { 'string', 'nil' }, true } })
-  cmd = cmd or 'edit'
-  cmd = vim.list_contains({ 'ed', 'edit', 'tabnew', 'split', 'vsplit' }, cmd) and cmd or 'edit'
+  cmd = (cmd and vim.list_contains({ 'edit', 'tabnew', 'split', 'vsplit' }, cmd)) and cmd or 'edit'
 
   return function()
-    vim.cmd[cmd](vim.fn.stdpath('config') .. '/lua/config/lazy.lua')
+    vim.cmd[cmd](vim.fs.joinpath(vim.fn.stdpath('config'), 'lua/config/lazy.lua'))
   end
 end
 
 ---@return boolean has_luarocks
 function M.luarocks_check()
-  return require('user_api.check.exists').executable('luarocks')
-    and require('user_api.check.exists').env_vars({ 'LUA_PATH', 'LUA_CPATH' })
+  return executable('luarocks') and require('user_api.check').env_vars({ 'LUA_PATH', 'LUA_CPATH' })
 end
 
----@param force boolean
----@overload fun()
+---@param force? boolean
 function M.set_tgc(force)
   validate({ force = { force, { 'boolean', 'nil' }, true } })
   force = force ~= nil and force or false
 
-  vim.o.termguicolors = not force
-      and (require('user_api.check.exists').vim_exists('+termguicolors') and not require(
-        'user_api.check'
-      ).in_console())
+  vim.o.termguicolors = not force and (vim.fn.exists('+termguicolors') == 1 and not in_console())
     or true
 end
 
 ---@param name string
----@param callback function
+---@param callback? function
 ---@return function install_flag
----@overload fun(name: string): install_flag: function
 function M.flag_installed(name, callback)
   validate({
     name = { name, { 'string' } },
@@ -60,12 +52,12 @@ function M.flag_installed(name, callback)
     error(('(%s.flag_installed): Unable to set `vim.g` var'):format(MODSTR), ERROR)
   end
 
-  local flag = (name:sub(1, 10) == 'installed_') and name or ('installed_' .. name)
   return function()
-    vim.g[flag] = 1
-    if callback and vim.is_callable(callback) then
-      callback()
+    vim.g[(name:sub(1, 10) == 'installed_') and name or ('installed_' .. name)] = 1
+    if not (callback and vim.is_callable(callback)) then
+      return
     end
+    callback()
   end
 end
 
@@ -79,31 +71,6 @@ function M.require(mod_str)
   return function()
     if require('user_api.check.exists').module(mod_str) then
       require(mod_str)
-    end
-  end
-end
-
----Set the global condition for a later submodule call.
---- ---
----@param fields string|table<string, any>
----@param force_tgc boolean
----@return function init
----@overload fun(fields: string|table<string, any>): init: function
-function M.colorscheme_init(fields, force_tgc)
-  validate({
-    fields = { fields, { 'string', 'table' } },
-    force_tgc = { force_tgc, { 'boolean', 'nil' }, true },
-  })
-  force_tgc = force_tgc ~= nil and force_tgc or false
-
-  return function()
-    M.set_tgc(force_tgc)
-    if require('user_api.check.value').is_str(fields) then
-      M.flag_installed(fields)()
-      return
-    end
-    for field, val in pairs(fields) do
-      vim.g[field] = val
     end
   end
 end
