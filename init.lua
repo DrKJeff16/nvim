@@ -116,6 +116,7 @@ require('config.lazy').setup({
   hlargs = false,
   hoversplit = false,
   ibl = false,
+  image = false,
   lastplace = true,
   lazydev = true,
   local_session = false,
