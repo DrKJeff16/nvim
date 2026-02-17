@@ -38,6 +38,7 @@
 ---@field hlargs? LazySpecImport
 ---@field hoversplit? LazySpecImport
 ---@field ibl? LazySpecImport
+---@field image? LazySpecImport
 ---@field lastplace? LazySpecImport
 ---@field lazydev? LazySpecImport
 ---@field local_session? LazySpecImport
@@ -150,6 +151,7 @@
 ---@field hlargs? boolean
 ---@field hoversplit? boolean
 ---@field ibl? boolean
+---@field image? boolean
 ---@field lastplace? boolean
 ---@field lazydev? boolean
 ---@field local_session? boolean
