@@ -141,7 +141,7 @@ require('config.lazy').setup({
   mini_move = true,
   mini_pairs = false,
   mini_splitjoin = true,
-  mini_starter = true,
+  mini_starter = false,
   mini_test = false,
   mini_trailspace = true,
   music_player = true,
