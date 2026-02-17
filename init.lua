@@ -1,5 +1,6 @@
 local INFO = vim.log.levels.INFO
 local Opts = require('user_api.opts')
+local is_distro = require('user_api.distro').is_distro
 
 function _G.notify_inspect(...)
   ---@type integer, integer, string
@@ -28,7 +29,7 @@ Opts.setup({
   backspace = 'indent,eol,start',
   backup = false,
   belloff = 'all',
-  cmdwinheight = require('user_api.distro.termux').is_distro() and 15 or 25,
+  cmdwinheight = is_distro('termux') and 15 or 25,
   colorcolumn = '101',
   completeopt = 'menuone,noselect,preview',
   confirm = true,
@@ -77,7 +78,7 @@ Opts.setup({
   tabstop = 4,
   textwidth = 100,
   title = true,
-  wrap = require('user_api.distro').is_distro('termux'),
+  wrap = is_distro('termux'),
 }, false, true)
 
 ---Disable `netrw` regardless of whether `nvim_tree/neo_tree` exist or not.
@@ -93,7 +94,7 @@ require('config.lazy').setup({
   bmessages = false,
   buffer_sticks = false,
   bufferline = true,
-  cheaty = false,
+  cheaty = true,
   checkmate = false,
   co_author = false,
   code_runner = false,
