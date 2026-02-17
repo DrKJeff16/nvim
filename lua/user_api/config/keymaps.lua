@@ -4,10 +4,8 @@ local VIMRC = vim.fs.joinpath(vim.fn.stdpath('config'), 'init.lua')
 local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
 local INFO = vim.log.levels.INFO
-local nop = require('user_api.maps').nop
 local desc = require('user_api.maps').desc
 local ft_get = require('user_api.util').ft_get
-local bt_get = require('user_api.util').bt_get
 local optget = require('user_api.util').optget
 local validate = require('user_api.check').validate
 
@@ -37,11 +35,13 @@ local function delete_file(force)
       end
     end
 
-    local obj = vim.system({ 'rm', '-f', fname }, { text = false }):wait(5000)
-    if obj.code ~= 0 then
+    vim.system({ 'rm', '-f', fname }, { text = false }, function(obj)
+      if obj.code == 0 then
+        return
+      end
+
       vim.notify(('Unable to remove `%s`!'):format(fname), ERROR)
-      return
-    end
+    end)
   end
 end
 
@@ -49,7 +49,13 @@ end
 ---@return function|nil op
 local function rcfile(cmd)
   validate({ cmd = { cmd, { 'string' } } })
-  if not vim.list_contains({ 'edit', 'ed', 'split', 'sp', 'vsplit', 'vs', 'tabnew' }, cmd) then
+  if
+    not (
+      vim.list_contains({ 'edit', 'ed', 'split', 'sp', 'vsplit', 'vs', 'tabnew' }, cmd)
+      and vim.cmd[cmd]
+      and vim.is_callable(vim.cmd[cmd])
+    )
+  then
     return
   end
 
@@ -63,12 +69,10 @@ local function new_file()
   vim.cmd.wincmd('n')
   vim.cmd.wincmd('o')
 
-  vim.schedule(function()
-    local opts = { buf = vim.api.nvim_get_current_buf() }
-    vim.api.nvim_set_option_value('ft', ft, opts)
-    vim.api.nvim_set_option_value('modifiable', true, opts)
-    vim.api.nvim_set_option_value('modified', false, opts)
-  end)
+  local opts = { buf = vim.api.nvim_get_current_buf() }
+  vim.api.nvim_set_option_value('ft', ft, opts)
+  vim.api.nvim_set_option_value('modifiable', true, opts)
+  vim.api.nvim_set_option_value('modified', false, opts)
 end
 
 local function indent_file()
@@ -79,10 +83,13 @@ local function indent_file()
 
   local win = vim.api.nvim_get_current_win()
   local saved_pos = vim.api.nvim_win_get_cursor(win)
-  vim.api.nvim_feedkeys('gg=G', 'n', false)
-  vim.schedule(function()
+  local reset = vim.schedule_wrap(function()
     vim.api.nvim_win_set_cursor(win, saved_pos)
   end)
+
+  vim.api.nvim_feedkeys('gg=G', 'n', false)
+
+  reset()
 end
 
 ---@param check string
@@ -93,8 +100,7 @@ local function gen_checkhealth(check)
   end
 end
 
----@param vertical boolean
----@overload fun()
+---@param vertical? boolean
 local function gen_fun_blank(vertical)
   validate({ vertical = { vertical, { 'boolean', 'nil' }, true } })
   vertical = vertical ~= nil and vertical or false
@@ -122,7 +128,7 @@ local function buf_del(force)
   local pre_exc = { ft = { 'help', 'lazy', 'man', 'noice' }, bt = { 'help' } }
   return function()
     local buf = vim.api.nvim_get_current_buf()
-    local prev_ft, prev_bt = ft_get(buf), bt_get(buf)
+    local prev_ft, prev_bt = ft_get(buf), require('user_api.util').bt_get(buf)
     if not force then
       force = prev_bt == 'terminal'
     end
@@ -151,6 +157,7 @@ end
 Keymaps.Keys = { ---@type AllModeMaps
   n = {
     ['<C-w>W'] = { group = '+Move Window' },
+    ['<C-w>s'] = { group = '+Split' },
     ['<leader>'] = { group = '+Open `which-key`' },
     ['<leader>F'] = { group = '+Folding' },
     ['<leader>H'] = { group = '+Help' },
@@ -176,14 +183,16 @@ Keymaps.Keys = { ---@type AllModeMaps
     ['<C-w><Up>'] = { ':wincmd k<CR>', desc('Go To Window Above') },
     ['<C-w>N'] = { new_file, desc('New Blank File') },
     ['<C-w>S'] = { ':wincmd x<CR>', desc('Swap Current With Next') },
-    ['<C-w>V'] = { ':vsplit ', desc('Vertical Split (Prompt)', false) },
     ['<C-w>W<Down>'] = { ':wincmd J<CR>', desc('Move Window To The Very Bottom') },
     ['<C-w>W<Left>'] = { ':wincmd H<CR>', desc('Move Window To Far Left') },
     ['<C-w>W<Right>'] = { ':wincmd L<CR>', desc('Move Window To Far Right') },
     ['<C-w>W<Up>'] = { ':wincmd K<CR>', desc('Move Window To The Very Top') },
-    ['<C-w>X'] = { ':split ', desc('Horizontal Split (Prompt)', false) },
     ['<C-w>n'] = { ':wincmd w<CR>', desc('Next Window') },
     ['<C-w>p'] = { ':wincmd W<CR>', desc('Previous Window') },
+    ['<C-w>sV'] = { ':vsplit ', desc('Vertical Split (Prompt)', false) },
+    ['<C-w>sX'] = { ':split ', desc('Horizontal Split (Prompt)', false) },
+    ['<C-w>sv'] = { ':vsplit<CR>', desc('Vertical Split') },
+    ['<C-w>sx'] = { ':split<CR>', desc('Horizontal Split') },
     ['<C-w>|'] = { ':wincmd ^<CR>', desc('Split Current To Edit Alternate File') },
     ['<Esc><Esc>'] = { ':noh<CR>', desc('Remove Highlighted Search') },
     ['<leader>/'] = { ':%s/', desc('Run Search-Replace Prompt For Whole File', false) },
@@ -292,6 +301,7 @@ function Keymaps.set_leader(leader, local_leader, force)
     return
   end
 
+  local nop = require('user_api.maps').nop
   local vim_vars = { leader = '', localleader = '' }
   if leader:lower() == '<space>' then
     vim_vars.leader = ' '
@@ -353,10 +363,8 @@ function Keymaps.delete(K, bufnr)
 end
 
 ---@param keys AllModeMaps
----@param bufnr integer|nil
----@param defaults boolean
----@overload fun(keys: AllModeMaps)
----@overload fun(keys: AllModeMaps, bufnr: integer)
+---@param bufnr? integer
+---@param defaults? boolean
 function Keymaps.set(keys, bufnr, defaults)
   validate({
     keys = { keys, { 'table' } },
@@ -391,12 +399,12 @@ function Keymaps.set(keys, bufnr, defaults)
       break
     end
     if vim.list_contains({ 'n', 'v' }, mode) then
-      nop(Keymaps.NOP, { noremap = false, silent = true }, mode, '<leader>')
+      require('user_api.maps').nop(Keymaps.NOP, { noremap = false }, mode, '<leader>')
     end
   end
 
   Keymaps.no_oped = true
-  Keymaps.Keys = vim.tbl_deep_extend('keep', parsed_keys, vim.deepcopy(Keymaps.Keys)) ---@type AllModeMaps
+  Keymaps.Keys = vim.tbl_deep_extend('keep', parsed_keys, Keymaps.Keys) ---@type AllModeMaps
 
   local passed = defaults and Keymaps.Keys or parsed_keys
   require('user_api.maps').map_dict(passed, 'wk.register', true, nil, bufnr)

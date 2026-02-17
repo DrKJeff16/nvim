@@ -12,46 +12,13 @@ local Maps = {
   keymap = {}, ---@type User.Maps.Keymap|table<MapModes, fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)>
 }
 
----@return User.Maps.Opts res
-function Maps.desc() end
-
----@param desc string|nil
----@return User.Maps.Opts res
-function Maps.desc(desc) end
-
----@param desc string|nil
----@param silent boolean|nil
----@return User.Maps.Opts res
-function Maps.desc(desc, silent) end
-
----@param desc string|nil
----@param silent boolean|nil
----@param bufnr integer|nil
----@return User.Maps.Opts res
-function Maps.desc(desc, silent, bufnr) end
-
----@param desc string|nil
----@param silent boolean|nil
----@param bufnr integer|nil
----@param noremap boolean|nil
----@return User.Maps.Opts res
-function Maps.desc(desc, silent, bufnr, noremap) end
-
----@param desc string|nil
----@param silent boolean|nil
----@param bufnr integer|nil
----@param noremap boolean|nil
----@param nowait boolean|nil
----@return User.Maps.Opts res
-function Maps.desc(desc, silent, bufnr, noremap, nowait) end
-
----@param desc string|nil
----@param silent boolean|nil
----@param bufnr integer|nil
----@param noremap boolean|nil
----@param nowait boolean|nil
----@param expr boolean|nil
----@return User.Maps.Opts res
+---@param desc string
+---@param silent? boolean
+---@param bufnr? integer|nil
+---@param noremap? boolean
+---@param nowait? boolean
+---@param expr? boolean
+---@return User.Maps.Opts opts
 function Maps.desc(desc, silent, bufnr, noremap, nowait, expr) end
 
 ---@param T AllMaps

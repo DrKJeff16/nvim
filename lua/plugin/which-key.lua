@@ -14,9 +14,9 @@ return { ---@type LazySpec
     delay = function(ctx)
       return ctx.plugin and 0 or 50
     end,
-    preset = 'helix', ---@type false|'classic'|'modern'|'helix'
+    preset = 'modern', ---@type false|'classic'|'modern'|'helix'
     notify = true,
-    keys = { scroll_down = '<A-d>', scroll_up = '<A-u>' },
+    keys = { scroll_down = '<A-Down>', scroll_up = '<A-Up>' },
     show_help = true,
     show_keys = true,
     debug = false,

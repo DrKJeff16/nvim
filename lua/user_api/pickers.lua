@@ -62,12 +62,7 @@ function M.run()
   local keys = vim.tbl_keys(M.pickers) ---@type string[]
   table.sort(keys)
 
-  vim.ui.select(keys, {
-    prompt = 'Select The Desired Picker',
-    format_item = function(item) ---@param item string
-      return ('Run %s'):format(item)
-    end,
-  }, function(item)
+  vim.ui.select(keys, { prompt = 'Select The Desired Picker' }, function(item)
     if not item then
       return
     end
