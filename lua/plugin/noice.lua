@@ -83,7 +83,7 @@ return { ---@type LazySpec
       messages = {
         enabled = true,
         view = 'notify',
-        view_error = 'messages',
+        view_error = 'notify',
         view_warn = 'notify',
         view_history = 'messages',
         view_search = 'virtualtext',
