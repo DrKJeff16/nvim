@@ -9,9 +9,10 @@ set -o pipefail
 
 TARGET_DIR="lua/plugin"
 TEMPLATE="._template.lua"
-TARGET="$1"
 F_EXT="$(echo "${TARGET}" | rev | cut -d '.' -f1 | rev)"
+TARGET="$1"
 
 [[ "$F_EXT" != "lua" ]] && TARGET+=".lua"
 
 cp -v "${TARGET_DIR}/${TEMPLATE}" "${TARGET_DIR}/${TARGET}"
+exit $?
