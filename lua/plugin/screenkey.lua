@@ -2,8 +2,8 @@
 return { ---@type LazySpec
   'NStefan002/screenkey.nvim',
   dev = true,
-  lazy = false,
   version = false,
+  cmd = 'Screenkey',
   cond = not require('user_api.check').in_console(),
   config = function()
     local SK = require('screenkey')
@@ -25,8 +25,8 @@ return { ---@type LazySpec
         title_pos = 'center',
         style = 'minimal',
         focusable = false,
-        noautocmd = true,
-        zindex = 50,
+        noautocmd = false,
+        zindex = 250,
       },
       hl_groups = {
         ['screenkey.hl.key'] = { link = 'DiagnosticOk' },
@@ -39,16 +39,17 @@ return { ---@type LazySpec
       disable = {
         filetypes = {},
         buftypes = { 'terminal' },
-        modes = { 'i', 'v', 't', 'V' },
+        modes = { 'i', 't' },
       },
       show_leader = true,
       group_mappings = true,
       display_infront = {},
       display_behind = {},
       filter = function(keys)
-        local active = SK.statusline_component_is_active
         return vim.tbl_map(function(value) ---@param value screenkey.queued_key
-          value.key = (active() and value.key == '%') and '%%' or value.key
+          value.key = (SK.statusline_component_is_active() and value.key == '%') and '%%'
+            or value.key
+
           return value
         end, keys)
       end,
@@ -89,7 +90,7 @@ return { ---@type LazySpec
       notify_method = 'notify',
       log = {
         min_level = vim.log.levels.OFF,
-        filepath = vim.fn.stdpath('state') .. '/screenkey.log',
+        filepath = vim.fs.joinpath(vim.fn.stdpath('state'), 'screenkey.log'),
       },
     })
 

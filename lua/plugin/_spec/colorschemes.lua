@@ -27,29 +27,6 @@ return { ---@type LazySpec[]
     end,
   },
   {
-    '0xstepit/flow.nvim',
-    lazy = false,
-    priority = 1000,
-    version = false,
-    cond = not require('user_api.check').in_console(),
-    opts = {
-      colors = {
-        mode = 'default', ---@type 'default'|'dark'|'light'
-        fluo = 'cyan', ---@type 'cyan'|'pink'|'yellow'|'orange'|'green'
-        custom = { saturation = '', light = '' },
-      },
-      theme = {
-        style = 'dark', ---@type 'dark'|'light'
-        contrast = 'default', ---@type 'default'|'high'
-        transparent = false,
-      },
-      ui = {
-        borders = 'fluo', ---@type 'theme'|'inverse'|'fluo'|'none'
-        aggressive_spell = false,
-      },
-    },
-  },
-  {
     'folke/tokyonight.nvim',
     lazy = false,
     priority = 1000,
@@ -96,15 +73,6 @@ return { ---@type LazySpec[]
         plugins = { all = package.loaded.lazy ~= nil, auto = true },
       })
     end,
-  },
-  {
-    'embark-theme/vim',
-    dev = true,
-    lazy = false,
-    priority = 1000,
-    name = 'embark',
-    version = false,
-    cond = not require('user_api.check').in_console(),
   },
   {
     'tiagovla/tokyodark.nvim',

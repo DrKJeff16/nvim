@@ -273,7 +273,6 @@ return { ---@type LazySpec
   version = false,
   dependencies = {
     'saghen/blink.compat',
-    'erooke/blink-cmp-latex',
     {
       'L3MON4D3/LuaSnip',
       version = false,
