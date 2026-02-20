@@ -26,7 +26,7 @@ return { ---@type LazySpec
         style = 'minimal',
         focusable = false,
         noautocmd = false,
-        zindex = 250,
+        zindex = 70,
       },
       hl_groups = {
         ['screenkey.hl.key'] = { link = 'DiagnosticOk' },

@@ -166,6 +166,7 @@ require('config.lazy').setup({
   screenkey = true,
   scrollbar = false,
   smart_backspace = false,
+  smart_paste = true,
   smoothcursor = true,
   snacks = true,
   startuptime = true,

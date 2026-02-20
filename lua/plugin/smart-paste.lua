@@ -1,6 +1,7 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'nemanjamalesija/smart-paste.nvim',
+  dev = true,
   event = 'VeryLazy',
   version = false,
   config = function()
