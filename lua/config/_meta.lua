@@ -64,6 +64,7 @@
 ---@field mini_mini? LazySpecImport
 ---@field mini_move? LazySpecImport
 ---@field mini_pairs? LazySpecImport
+---@field mini_pick? LazySpecImport
 ---@field mini_splitjoin? LazySpecImport
 ---@field mini_starter? LazySpecImport
 ---@field mini_test? LazySpecImport
@@ -177,6 +178,7 @@
 ---@field mini_mini? boolean
 ---@field mini_move? boolean
 ---@field mini_pairs? boolean
+---@field mini_pick? boolean
 ---@field mini_splitjoin? boolean
 ---@field mini_starter? boolean
 ---@field mini_test? boolean
