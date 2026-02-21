@@ -18,7 +18,7 @@
 ---@field co_author? LazySpecImport
 ---@field code_runner? LazySpecImport
 ---@field codeowners? LazySpecImport
----@field color_skinner? LazySpecImport
+---@field color_skimer? LazySpecImport
 ---@field diffview? LazySpecImport
 ---@field dooku? LazySpecImport
 ---@field doxygen_init? LazySpecImport
@@ -58,6 +58,7 @@
 ---@field mini_basics? LazySpecImport
 ---@field mini_bufremove? LazySpecImport
 ---@field mini_cmdline? LazySpecImport
+---@field mini_cursorword? LazySpecImport
 ---@field mini_diff? LazySpecImport
 ---@field mini_extra? LazySpecImport
 ---@field mini_icons? LazySpecImport
@@ -131,7 +132,7 @@
 ---@field co_author? boolean
 ---@field code_runner? boolean
 ---@field codeowners? boolean
----@field color_skinner? boolean
+---@field color_skimer? boolean
 ---@field diffview? boolean
 ---@field dooku? boolean
 ---@field doxygen_init? boolean
@@ -171,6 +172,7 @@
 ---@field mini_basics? boolean
 ---@field mini_bufremove? boolean
 ---@field mini_cmdline? boolean
+---@field mini_cursorword? boolean
 ---@field mini_diff? boolean
 ---@field mini_extra? boolean
 ---@field mini_icons? boolean

@@ -136,6 +136,7 @@ require('config.lazy').setup({
   mini_basics = true,
   mini_bufremove = true,
   mini_cmdline = false,
+  mini_cursorword = false,
   mini_diff = false,
   mini_extra = true,
   mini_icons = true,
