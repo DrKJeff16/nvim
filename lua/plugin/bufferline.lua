@@ -3,14 +3,15 @@ return { ---@type LazySpec
   'akinsho/bufferline.nvim',
   event = 'VeryLazy',
   version = false,
-  dependencies = { 'nvim-tree/nvim-web-devicons', 'tiagovla/scope.nvim' },
+  dependencies = { 'nvim-tree/nvim-web-devicons' },
   cond = not require('user_api.check').in_console(),
   config = function()
     _G.__cached_neo_tree_selector = nil
     _G.__get_selector = function()
       return _G.__cached_neo_tree_selector
     end
-    require('bufferline').setup({
+    local BFL = require('bufferline')
+    BFL.setup({
       highlights = {
         fill = {
           fg = { attribute = 'fg', highlight = 'Normal' },
@@ -89,14 +90,9 @@ return { ---@type LazySpec
         diagnostics = 'nvim_lsp',
         diagnostics_update_in_insert = false,
         diagnostics_update_on_event = false,
-        style_preset = {
-          require('bufferline').style_preset.no_italic,
-          require('bufferline').style_preset.default,
-        },
+        style_preset = { BFL.style_preset.no_italic, BFL.style_preset.default },
         indicator = { icon = '▎', style = 'none' },
-        ---@param diags table<string, string>
-        ---@param context? table
-        diagnostics_indicator = function(_, _, diags, context)
+        diagnostics_indicator = function(_, _, diags, context) ---@param diags table<string, string>
           if not (context and context.buffer:current()) then
             return ''
           end
@@ -109,9 +105,7 @@ return { ---@type LazySpec
           return s
         end,
         get_element_icon = function(element) ---@param element { filetype: string, path: string, extension: string, directory: string }
-          return require('nvim-web-devicons').get_icon_by_filetype(element.filetype, {
-            default = false,
-          })
+          return require('mini.icons').get('extension', element.filetype)
         end,
         groups = {
           options = { toggle_hidden_on_enter = true },

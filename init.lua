@@ -163,7 +163,7 @@ require('config.lazy').setup({
   refer = true,
   referencer = false,
   replua = false,
-  scope = true,
+  scope = false,
   screenkey = true,
   scrollbar = false,
   smart_backspace = false,
