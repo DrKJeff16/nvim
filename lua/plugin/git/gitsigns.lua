@@ -22,21 +22,21 @@ return { ---@type LazySpec
             ['<leader>Gt'] = { group = '+GitSigns Toggles' },
             ['<leader>Gh]'] = {
               function()
-                if vim.wo.diff then
+                if vim.wo[vim.api.nvim_get_current_win()].diff then
                   vim.cmd.normal({ ']c', bang = true })
-                else
-                  GS.nav_hunk('next') ---@diagnostic disable-line
+                  return
                 end
+                GS.nav_hunk('next')
               end,
               desc('Next Hunk'),
             },
             ['<leader>Gh['] = {
               function()
-                if vim.wo.diff then
+                if vim.wo[vim.api.nvim_get_current_win()].diff then
                   vim.cmd.normal({ '[c', bang = true })
-                else
-                  GS.nav_hunk('prev') ---@diagnostic disable-line
+                  return
                 end
+                GS.nav_hunk('prev')
               end,
               desc('Previous Hunk'),
             },
@@ -53,10 +53,7 @@ return { ---@type LazySpec
               desc('Blame Current Line'),
             },
             ['<leader>Ghd'] = { GS.diffthis, desc('Diff Against Index') },
-            ['<leader>Gtb'] = {
-              GS.toggle_current_line_blame,
-              desc('Toggle Line Blame'),
-            },
+            ['<leader>Gtb'] = { GS.toggle_current_line_blame, desc('Toggle Line Blame') },
             ['<leader>Gtd'] = { GS.preview_hunk_inline, desc('Toggle Deleted') },
           },
           v = {
@@ -75,11 +72,11 @@ return { ---@type LazySpec
               desc('Reset Selected Hunks'),
             },
           },
-          o = { ['ih'] = { ':<C-U>Gitsigns select_hunk<CR>' } },
-          x = { ['ih'] = { ':<C-U>Gitsigns select_hunk<CR>' } },
+          o = { ih = { ':<C-U>Gitsigns select_hunk<CR>' } },
+          x = { ih = { ':<C-U>Gitsigns select_hunk<CR>' } },
         }, bufnr)
       end,
-      signs = { ---@type GitSigns
+      signs = {
         add = { text = '+' },
         change = { text = '┃' },
         delete = { text = '-' },
@@ -87,7 +84,7 @@ return { ---@type LazySpec
         changedelete = { text = '~' },
         untracked = { text = '┆' },
       },
-      signs_staged = { ---@type GitSigns
+      signs_staged = {
         add = { text = '+' },
         change = { text = '┃' },
         delete = { text = '-' },
@@ -115,14 +112,7 @@ return { ---@type LazySpec
       sign_priority = 4,
       update_debounce = 100,
       max_file_length = 40000,
-      status_formatter = nil,
-      preview_config = {
-        border = 'rounded',
-        style = 'minimal',
-        relative = 'cursor',
-        row = 0,
-        col = 1,
-      },
+      preview_config = { border = 'rounded', style = 'minimal', relative = 'cursor' },
     })
   end,
 }
