@@ -98,6 +98,7 @@
 ---@field smoothcursor? LazySpecImport
 ---@field snacks? LazySpecImport
 ---@field startuptime? LazySpecImport
+---@field stylua? LazySpecImport
 ---@field telescope? LazySpecImport
 ---@field todo_comments? LazySpecImport
 ---@field toggleterm? LazySpecImport
@@ -213,6 +214,7 @@
 ---@field smoothcursor? boolean
 ---@field snacks? boolean
 ---@field startuptime? boolean
+---@field stylua? boolean
 ---@field telescope? boolean
 ---@field todo_comments? boolean
 ---@field toggleterm? boolean
