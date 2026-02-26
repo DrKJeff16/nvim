@@ -7,7 +7,6 @@ local ensure_langs = { ---@type string[]
   'cpp',
   'css',
   'csv',
-  'desktop',
   'diff',
   'editorconfig',
   'git_config',
@@ -55,7 +54,6 @@ local patterns = { ---@type string[]
   'c',
   'cpp',
   'css',
-  'desktop',
   'diff',
   'dosini',
   'editorconfig',
@@ -93,9 +91,11 @@ local patterns = { ---@type string[]
 }
 
 if not require('user_api.distro.termux').is_distro() then
+  table.insert(ensure_langs, 'desktop')
   table.insert(ensure_langs, 'gitcommit')
   table.insert(ensure_langs, 'latex')
 
+  table.insert(patterns, 'desktop')
   table.insert(patterns, 'gitcommit')
   table.insert(patterns, 'tex')
 end

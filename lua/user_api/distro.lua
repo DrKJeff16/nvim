@@ -29,7 +29,6 @@ end
 
 ---@param distro 'termux'|'archlinux'
 ---@return boolean is_distro
----@overload fun(distro: string): is_distro: false
 function Distro.is_distro(distro)
   validate({ distro = { distro, { 'string' } } })
   if not vim.list_contains({ 'termux', 'archlinux' }, distro) then
