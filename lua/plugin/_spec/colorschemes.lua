@@ -1,6 +1,20 @@
 ---@module 'lazy'
 return { ---@type LazySpec[]
   {
+    'taigrr/cyberpunk.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require('cyberpunk').setup({
+        transparent = false,
+        italic_comments = false,
+        italic_keywords = false,
+        bold_functions = true,
+        bold_keywords = true,
+      })
+    end,
+  },
+  {
     'serhez/teide.nvim',
     lazy = false,
     priority = 1000,
