@@ -86,6 +86,7 @@
 ---@field project? LazySpecImport
 ---@field python_import? LazySpecImport
 ---@field rainbow_delimiters? LazySpecImport
+---@field record_key? LazySpecImport
 ---@field refactoring? LazySpecImport
 ---@field refer? LazySpecImport
 ---@field referencer? LazySpecImport
@@ -202,6 +203,7 @@
 ---@field project? boolean
 ---@field python_import? boolean
 ---@field rainbow_delimiters? boolean
+---@field record_key? boolean
 ---@field refactoring? boolean
 ---@field refer? boolean
 ---@field referencer? boolean
