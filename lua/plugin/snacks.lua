@@ -291,31 +291,6 @@ return { ---@type LazySpec
             and vim.bo[bufnr].buftype ~= 'terminal'
         end,
       },
-      notifier = {
-        timeout = 3000,
-        width = { min = 40, max = 0.45 },
-        height = { min = 1, max = 0.6 },
-        margin = { top = 0, right = 0, bottom = 0 },
-        padding = true,
-        gap = 1,
-        sort = { 'level', 'added' },
-        level = vim.log.levels.DEBUG,
-        icons = {
-          error = ' ',
-          warn = ' ',
-          info = ' ',
-          debug = ' ',
-          trace = ' ',
-        },
-        keep = function()
-          return vim.fn.getcmdpos() > 0
-        end,
-        style = 'fancy', ---@type snacks.notifier.style
-        top_down = true,
-        date_format = '%R',
-        more_format = ' ↓ %d lines ',
-        refresh = 50,
-      },
       styles = {
         scratch = {
           width = 100,
