@@ -7,6 +7,7 @@ return { ---@type LazySpec
   config = function()
     require('which-colorscheme').setup({
       prefix = '<leader>uc',
+      custom_only = false,
       group_name = 'Colorschemes',
       excluded = {
         'blue',
