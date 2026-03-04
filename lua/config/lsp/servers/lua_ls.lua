@@ -18,6 +18,7 @@ local function on_init(client, _)
 
   local library = {
     vim.env.VIMRUNTIME,
+    '/usr/share/nvim/runtime',
     -- luarocks_path,
     '${3rd}/luv/library',
     '${3rd}/busted/library',
@@ -101,7 +102,7 @@ return { ---@type vim.lsp.ClientConfig
       workspace = {
         checkThirdParty = false,
         useGitIgnore = true,
-        library = { luarocks_path },
+        library = { luarocks_path, '${3rd}/luv/library', '${3rd}/busted/library' },
       },
     },
   },
