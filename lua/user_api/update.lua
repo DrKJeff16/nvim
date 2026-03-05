@@ -1,19 +1,88 @@
+---@module 'spinner'
+
 local MODSTR = 'user_api.update'
 local WARN = vim.log.levels.WARN
 local ERROR = vim.log.levels.ERROR
 local INFO = vim.log.levels.INFO
 
+---@class UserSpinner
+---@field id string
+local Spinner = {}
+
+---@return boolean available
+function Spinner.available()
+  return require('user_api.check').module('spinner')
+end
+
+---@param id string
+---@return UserSpinner|nil spinner
+function Spinner.new(id)
+  require('user_api.check').validate({ id = { id, { 'string' } } })
+
+  if not Spinner.available() then
+    return
+  end
+  if id == '' then
+    error('Empty ID!', ERROR)
+  end
+
+  require('spinner').config(id, { kind = 'cursor' })
+
+  local spinner = setmetatable({ id = id }, { __index = Spinner }) ---@type UserSpinner
+  return spinner
+end
+
+function Spinner:start()
+  if not (Spinner.available() and self.id) or self.id == '' then
+    return
+  end
+
+  require('spinner').start(self.id)
+end
+
+function Spinner:stop()
+  if not (Spinner.available() and self.id) or self.id == '' then
+    return
+  end
+
+  require('spinner').stop(self.id, true)
+end
+
+function Spinner:pause()
+  if not (Spinner.available() and self.id) or self.id == '' then
+    return
+  end
+
+  require('spinner').pause(self.id)
+end
+
+function Spinner:reset()
+  if not (Spinner.available() and self.id) or self.id == '' then
+    return
+  end
+
+  require('spinner').reset(self.id)
+end
+
 ---@class User.Update
 local Update = {}
 
----@param verbose boolean
----@overload fun()
+---@param verbose? boolean
 function Update.update(verbose)
   require('user_api.check').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
   verbose = verbose ~= nil and verbose or false
 
+  local spinner = Spinner.new('user')
+  if spinner then
+    spinner:start()
+  end
+
   local command = { 'git', 'pull', '--rebase' }
   vim.system(command, { text = true, cwd = vim.fn.stdpath('config') }, function(obj)
+    if spinner then
+      spinner:stop()
+    end
+
     if verbose and obj.stdout and obj.stdout ~= '' then
       vim.notify(obj.stdout, INFO, {
         animate = true,
@@ -22,6 +91,7 @@ function Update.update(verbose)
         title = 'User API - Update',
       })
     end
+
     if obj.code ~= 0 then
       vim.notify(('Failed to update Jnvim, try to do it manually'):format(MODSTR), ERROR, {
         animate = true,
