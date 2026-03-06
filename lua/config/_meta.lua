@@ -76,6 +76,8 @@
 ---@field noice? LazySpecImport
 ---@field notify? LazySpecImport
 ---@field nvim_test? LazySpecImport
+---@field oil? LazySpecImport
+---@field oil_git? LazySpecImport
 ---@field orgmode? LazySpecImport
 ---@field outline? LazySpecImport
 ---@field paredit? LazySpecImport
@@ -194,6 +196,8 @@
 ---@field noice? boolean
 ---@field notify? boolean
 ---@field nvim_test? boolean
+---@field oil? boolean
+---@field oil_git? boolean
 ---@field orgmode? boolean
 ---@field outline? boolean
 ---@field paredit? boolean
