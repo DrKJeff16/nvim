@@ -161,7 +161,7 @@ require('config.lazy').setup({
   project = true,
   python_import = true,
   rainbow_delimiters = false,
-  refer = true,
+  refer = false,
   referencer = false,
   replua = false,
   scope = false,
