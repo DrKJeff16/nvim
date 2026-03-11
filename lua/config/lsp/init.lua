@@ -1,4 +1,4 @@
----@alias ClientCaps lsp.ClientCapabilities|table<string, boolean|string|number|unknown[]|vim.NIL>
+---@module 'vim.lsp._meta'
 
 local ERROR = vim.diagnostic.severity.ERROR
 local WARN = vim.diagnostic.severity.WARN
@@ -7,10 +7,9 @@ local HINT = vim.diagnostic.severity.HINT
 local mk_caps = vim.lsp.protocol.make_client_capabilities
 local uv = vim.uv or vim.loop
 
----@param original ClientCaps
----@param inserts ClientCaps
----@return ClientCaps client_caps
----@overload fun(original: ClientCaps): client_caps: ClientCaps
+---@param original lsp.ClientCapabilities
+---@param inserts? lsp.ClientCapabilities
+---@return lsp.ClientCapabilities client_caps
 local function insert_client(original, inserts)
   return vim.tbl_deep_extend('keep', inserts or {}, original)
 end
@@ -76,9 +75,8 @@ function Server.make_timer()
   })
 end
 
----@param old_caps lsp.ClientCapabilities
+---@param old_caps? lsp.ClientCapabilities
 ---@return lsp.ClientCapabilities caps
----@overload fun(): caps: lsp.ClientCapabilities
 function Server.make_capabilities(old_caps)
   return vim.tbl_deep_extend(
     'keep',
@@ -199,8 +197,7 @@ end
 
 ---@param config vim.lsp.Config
 ---@param name string
----@param exe string
----@overload fun(config: vim.lsp.Config, name: string)
+---@param exe? string
 function Server.add(config, name, exe)
   require('user_api.check').validate({
     config = { config, { 'table' } },

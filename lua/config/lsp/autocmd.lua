@@ -1,5 +1,6 @@
 local INFO = vim.log.levels.INFO
 local desc = require('user_api.maps').desc
+local validate = require('user_api.check').validate
 
 local function print_workspace_folders()
   local msg = ''
@@ -21,6 +22,10 @@ local function get_client()
     return
   end
   return client
+end
+
+local function async_fmt()
+  vim.lsp.buf.format({ async = true })
 end
 
 local function server_stop()
@@ -78,6 +83,7 @@ Autocmd.AUKeys = { ---@type AllModeMaps
     K = { vim.lsp.buf.hover, desc('Hover') },
     ['<leader>lS'] = { group = '+Server' },
     ['<leader>lf'] = { group = '+File Operations' },
+    ['<leader>lw'] = { group = '+Workspace' },
     ['<leader>lSS'] = { server_start, desc('Server Stop') },
     ['<leader>lSi'] = { server_info, desc('Show LSP Info') },
     ['<leader>lSr'] = { server_restart, desc('Server Restart') },
@@ -89,16 +95,10 @@ Autocmd.AUKeys = { ---@type AllModeMaps
     ['<leader>lfS'] = { vim.lsp.buf.signature_help, desc('Signature Help') },
     ['<leader>lfT'] = { vim.lsp.buf.type_definition, desc('Type Definition') },
     ['<leader>lfd'] = { vim.lsp.buf.definition, desc('Definition') },
-    ['<leader>lff'] = {
-      function()
-        vim.lsp.buf.format({ async = true })
-      end,
-      desc('Format File'),
-    },
+    ['<leader>lff'] = { async_fmt, desc('Format File') },
     ['<leader>lfi'] = { vim.lsp.buf.implementation, desc('Implementation') },
     ['<leader>lfr'] = { vim.lsp.buf.references, desc('References') },
     ['<leader>lq'] = { vim.diagnostic.setloclist, desc('Set Loclist') },
-    ['<leader>lw'] = { group = '+Workspace' },
     ['<leader>lwa'] = { vim.lsp.buf.add_workspace_folder, desc('Add Workspace Folder') },
     ['<leader>lwl'] = { print_workspace_folders, desc('List Workspace Folders') },
     ['<leader>lwr'] = { vim.lsp.buf.remove_workspace_folder, desc('Remove Workspace Folder') },
@@ -121,9 +121,7 @@ Autocmd.autocommands = {
 
 ---@param override? AuRepeat
 function Autocmd.setup(override)
-  require('user_api.check').validate({
-    override = { override, { 'table', 'nil' }, true },
-  })
+  validate({ override = { override, { 'table', 'nil' }, true } })
 
   Autocmd.autocommands = vim.tbl_deep_extend('keep', override or {}, Autocmd.autocommands)
   require('user_api.util.autocmd').au_repeated(Autocmd.autocommands)

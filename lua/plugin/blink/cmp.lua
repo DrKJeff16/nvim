@@ -26,7 +26,7 @@ local function gen_termcode_fun(key)
 end
 
 ---@param direction 'up'|'down'
----@return fun(cmp: blink.cmp.API): boolean|nil
+---@return (fun(cmp: blink.cmp.API): boolean|nil) callback
 local function up_or_down(direction)
   validate({ direction = { direction, { 'string' } } })
   direction = vim.list_contains({ 'up', 'down' }, direction) and direction or 'up'
@@ -68,6 +68,7 @@ function BUtil.reset_sources(snipps, buf)
   local ft = require('user_api.util').ft_get(vim.api.nvim_get_current_buf())
   if ft == 'lua' then
     table.insert(BUtil.Sources, 1, 'lazydev')
+    table.insert(BUtil.Sources, 1, 'nvim_lua')
     return
   end
   if ft == 'sshconfig' then
@@ -194,6 +195,10 @@ function BUtil.reset_providers()
         end, items)
       end,
     },
+    nvim_lua = {
+      name = 'nvim_lua',
+      module = 'blink.compat.source',
+    },
   }
 
   local exists = require('user_api.check.exists').module
@@ -257,7 +262,7 @@ function BUtil.reset_providers()
 end
 
 ---@param P table<string, blink.cmp.SourceProviderConfigPartial>|nil
----@return table<string, blink.cmp.SourceProviderConfigPartial>
+---@return table<string, blink.cmp.SourceProviderConfigPartial> providers
 function BUtil.gen_providers(P)
   validate({ P = { P, { 'table', 'nil' }, true } })
 
@@ -273,6 +278,7 @@ return { ---@type LazySpec
   version = false,
   dependencies = {
     'saghen/blink.compat',
+    'hrsh7th/cmp-nvim-lsp',
     {
       'L3MON4D3/LuaSnip',
       version = false,
@@ -319,10 +325,9 @@ return { ---@type LazySpec
   },
   build = executable('cargo') and 'cargo build --release' or false,
   config = function()
-    local gen_sources = BUtil.gen_sources
-    local gen_providers = BUtil.gen_providers
     pcall(require('luasnip.loaders.from_vscode').lazy_load)
 
+    local has_words_before = require('user_api.util').has_words_before
     local select_opts = { auto_insert = true, preselect = false }
     require('blink.cmp').setup({
       enabled = function()
@@ -336,14 +341,12 @@ return { ---@type LazySpec
         ['<CR>'] = { 'accept', 'fallback' },
         ['<Tab>'] = {
           function(cmp)
-            local visible = cmp.is_menu_visible
             if cmp.snippet_active({ direction = 1 }) then
               return cmp.snippet_forward()
             end
 
-            local has_words_before = require('user_api.util').has_words_before
-            if not visible() and has_words_before() then
-              return cmp.show({ providers = gen_sources(true, true) })
+            if not cmp.is_menu_visible() and has_words_before() then
+              return cmp.show({ providers = BUtil.gen_sources(false, true) })
             end
             return cmp.select_next(select_opts)
           end,
@@ -351,14 +354,12 @@ return { ---@type LazySpec
         },
         ['<S-Tab>'] = {
           function(cmp)
-            local visible = cmp.is_menu_visible
             if cmp.snippet_active({ direction = -1 }) then
               return cmp.snippet_backward()
             end
 
-            local has_words_before = require('user_api.util').has_words_before
-            if not visible() and has_words_before() then
-              return cmp.show({ providers = gen_sources(true, true) })
+            if not cmp.is_menu_visible() and has_words_before() then
+              return cmp.show({ providers = BUtil.gen_sources(false, true) })
             end
             return cmp.select_prev(select_opts)
           end,
@@ -382,26 +383,19 @@ return { ---@type LazySpec
         ['<C-n>'] = { 'fallback' },
         ['<C-b>'] = {
           function(cmp)
-            if cmp.is_documentation_visible() then
-              return cmp.scroll_documentation_up(4)
-            end
+            return cmp.is_documentation_visible() and cmp.scroll_documentation_up(4) or nil
           end,
           'fallback',
         },
         ['<C-f>'] = {
           function(cmp)
-            if cmp.is_documentation_visible() then
-              return cmp.scroll_documentation_down(4)
-            end
+            return cmp.is_documentation_visible() and cmp.scroll_documentation_down(4) or nil
           end,
           'fallback',
         },
         ['<C-k>'] = {
           function(cmp)
-            if cmp.is_signature_visible() then
-              return cmp.hide_signature()
-            end
-            return cmp.show_signature()
+            return cmp.is_signature_visible() and cmp.hide_signature() or cmp.show_signature()
           end,
           'fallback',
         },
@@ -423,7 +417,7 @@ return { ---@type LazySpec
             border = 'rounded',
             winblend = 0,
             winhighlight = 'Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,EndOfBuffer:BlinkCmpDoc',
-            scrollbar = false,
+            scrollbar = true,
             direction_priority = {
               menu_north = { 'e', 'w', 'n', 's' },
               menu_south = { 'e', 'w', 's', 'n' },
@@ -468,9 +462,9 @@ return { ---@type LazySpec
                     { 'link', 'socket', 'fifo', 'char', 'block', 'unknown' },
                     ctx.item.data.type
                   )
-                  local category = unknown and 'os' or ctx.item.data.type
-                  local name = unknown and '' or ctx.label
-                  local mini_icon = get_icons(category, name)
+                  local mini_icon =
+                    get_icons(unknown and 'os' or ctx.item.data.type, unknown and '' or ctx.label)
+
                   return (mini_icon or ctx.kind_icon) .. ctx.icon_gap
                 end,
                 highlight = function(ctx)
@@ -482,9 +476,9 @@ return { ---@type LazySpec
                     { 'link', 'socket', 'fifo', 'char', 'block', 'unknown' },
                     ctx.item.data.type
                   )
-                  local category = unknown and 'os' or ctx.item.data.type
-                  local name = unknown and '' or ctx.label
-                  local mini_icon, mini_hl = get_icons(category, name)
+                  local mini_icon, mini_hl =
+                    get_icons(unknown and 'os' or ctx.item.data.type, unknown and '' or ctx.label)
+
                   return mini_icon and mini_hl or ctx.kind_hl
                 end,
               },
@@ -499,11 +493,10 @@ return { ---@type LazySpec
         },
         ghost_text = { enabled = false },
       },
-      cmdline = { enabled = false },
       sources = {
-        providers = gen_providers(),
+        providers = BUtil.gen_providers(),
         default = function()
-          return gen_sources(true, true)
+          return BUtil.gen_sources(true, true)
         end,
         transform_items = function(_, items)
           return items
@@ -542,11 +535,12 @@ return { ---@type LazySpec
         window = {
           treesitter_highlighting = true,
           show_documentation = true,
-          border = 'single',
-          scrollbar = false,
+          border = 'rounded',
+          scrollbar = true,
           direction_priority = { 'n', 's' },
         },
       },
+      cmdline = { enabled = false },
       term = { enabled = false },
     })
   end,

@@ -1,5 +1,4 @@
 ---@meta
-
 ---@module 'lazy'
 
 ---@class LazyPlugins
