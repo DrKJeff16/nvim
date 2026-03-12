@@ -57,6 +57,7 @@
 ---@field mason? LazySpecImport
 ---@field mini_animate? LazySpecImport
 ---@field mini_basics? LazySpecImport
+---@field mini_base16? LazySpecImport
 ---@field mini_bufremove? LazySpecImport
 ---@field mini_cmdline? LazySpecImport
 ---@field mini_cursorword? LazySpecImport
@@ -177,6 +178,7 @@
 ---@field mason? boolean
 ---@field mini_animate? boolean
 ---@field mini_basics? boolean
+---@field mini_base16? boolean
 ---@field mini_bufremove? boolean
 ---@field mini_cmdline? boolean
 ---@field mini_cursorword? boolean

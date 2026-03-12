@@ -108,12 +108,19 @@ function M.setup()
             { win = vim.api.nvim_get_current_win() }
           )
 
-          vim.keymap.set('n', 'q', function()
-            vim.api.nvim_cmd(
-              { cmd = 'bdelete', range = { ev.buf }, bang = true },
-              { output = false }
-            )
-          end, { buffer = ev.buf })
+          keyset({
+            n = {
+              q = {
+                function()
+                  vim.api.nvim_cmd(
+                    { cmd = 'bdelete', range = { ev.buf }, bang = true },
+                    { output = false }
+                  )
+                end,
+                desc('Quit Health', true, ev.buf),
+              },
+            },
+          })
         end,
       },
       {
@@ -137,7 +144,10 @@ function M.setup()
 
           keyset({
             n = {
-              ['<leader><C-l>'] = { run_formatter('stylua', ev.buf), desc('Format With `stylua`') },
+              ['<leader><C-l>'] = {
+                run_formatter('stylua', ev.buf),
+                desc('Format With `stylua`', true, ev.buf),
+              },
             },
           }, ev.buf)
         end,
@@ -148,21 +158,31 @@ function M.setup()
         callback = function(ev)
           keyset({
             n = {
-              ['<leader><C-l>'] = { run_formatter('isort', ev.buf), desc('Format With `isort`') },
+              ['<leader><C-l>'] = {
+                run_formatter('isort', ev.buf),
+                desc('Format With `isort`', true, ev.buf),
+              },
             },
           }, ev.buf)
         end,
       },
       {
-        pattern = { 'nvim-undotree', 'startuptime', 'qf' },
+        pattern = { 'nvim-undotree', 'startuptime', 'qf', 'oil' },
         group = M.augroup,
         callback = function(ev)
-          vim.keymap.set('n', 'q', function()
-            vim.api.nvim_cmd(
-              { cmd = 'bdelete', range = { ev.buf }, bang = true },
-              { output = false }
-            )
-          end, { buffer = ev.buf })
+          keyset({
+            n = {
+              q = {
+                function()
+                  vim.api.nvim_cmd(
+                    { cmd = 'bdelete', range = { ev.buf }, bang = true },
+                    { output = false }
+                  )
+                end,
+                desc('Quit Buffer', true, ev.buf),
+              },
+            },
+          })
         end,
       },
       {
@@ -198,16 +218,6 @@ function M.setup()
         group = M.augroup,
         callback = function(ev)
           vim.keymap.set('n', 'q', vim.cmd.quit, { buffer = ev.buf })
-        end,
-      },
-      {
-        pattern = { 'man' },
-        group = M.augroup,
-        callback = function(ev)
-          if Util.bt_get(ev.buf) ~= 'nofile' then
-            return
-          end
-          vim.keymap.set('n', 'q', vim.cmd.quitall, { buffer = ev.buf })
         end,
       },
     },
