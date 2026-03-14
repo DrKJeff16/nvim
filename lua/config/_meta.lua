@@ -86,6 +86,7 @@
 ---@field pipenv? LazySpecImport
 ---@field pomo? LazySpecImport
 ---@field possession? LazySpecImport
+---@field precognition? LazySpecImport
 ---@field project? LazySpecImport
 ---@field python_import? LazySpecImport
 ---@field rainbow_delimiters? LazySpecImport
@@ -207,6 +208,7 @@
 ---@field pipenv? boolean
 ---@field pomo? boolean
 ---@field possession? boolean
+---@field precognition? boolean
 ---@field project? boolean
 ---@field python_import? boolean
 ---@field rainbow_delimiters? boolean

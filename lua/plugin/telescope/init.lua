@@ -6,7 +6,7 @@ local function run_map(picker)
   require('user_api.check').validate({ picker = { picker, { 'string' } } })
 
   return function()
-    vim.cmd.Telescope(picker)
+    vim.cmd.Telescope({ args = vim.split(picker, ' ', { trimempty = true }) })
   end
 end
 
@@ -16,6 +16,11 @@ return { ---@type LazySpec
   dependencies = {
     'nvim-lua/plenary.nvim',
     'OliverChao/telescope-picker-list.nvim',
+    {
+      'cljoly/telescope-repo.nvim',
+      dev = true,
+      cond = require('user_api.check').executable('fd'),
+    },
     'nvim-telescope/telescope-file-browser.nvim',
     { 'polirritmico/telescope-lazy-plugins.nvim', dev = true },
   },
@@ -157,6 +162,13 @@ return { ---@type LazySpec
       ['telescope._extensions.picker_list'] = {
         'picker_list',
         keys = { ['<leader><C-t>eP'] = { run_map('picker_list'), desc('Picker List') } },
+      },
+      ['telescope._extensions.repo'] = {
+        'repo',
+        keys = {
+          ['<leader><C-t>er'] = { run_map('repo list'), desc('Repo') },
+          ['<leader>GT'] = { run_map('repo list'), desc('Telescope Repo') },
+        },
       },
     }
     for mod, ext in pairs(known_exts) do
