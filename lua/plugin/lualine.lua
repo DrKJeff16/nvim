@@ -433,6 +433,9 @@ return { ---@type LazySpec
       }
     end
 
+    if exists('lualine.components.project') then
+      Presets.components.project = { 'project', format = 'short', enclose_pair = { '(', ')' } }
+    end
     if exists('lualine.components.lsp_progress') then
       local colors = {
         red = '#ec5f67',
@@ -485,8 +488,7 @@ return { ---@type LazySpec
 
     Presets.default = {
       lualine_a = { Presets.components.mode },
-      lualine_b = Termux.is_distro() and { Presets.components.filename }
-        or { Presets.components.branch, Presets.components.filename },
+      lualine_b = { Presets.components.project, Presets.components.filename },
       lualine_c = Termux.is_distro() and { Presets.components.diagnostics }
         or { Presets.components.diagnostics, Presets.components.diff },
       lualine_x = {
