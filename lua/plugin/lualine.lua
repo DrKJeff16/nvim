@@ -502,7 +502,7 @@ return { ---@type LazySpec
         or { Presets.components.diagnostics, Presets.components.diff },
       lualine_x = {
         -- Presets.components.lsp_progress,
-        Presets.components.pomo,
+        -- Presets.components.pomo,
         Presets.components.triforce,
         Presets.components.fileformat,
         Presets.components.filetype,

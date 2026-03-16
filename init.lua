@@ -157,7 +157,7 @@ require('config.lazy').setup({
   persistence = true,
   picker = true,
   pipenv = true,
-  pomo = true,
+  pomo = false,
   precognition = false,
   project = true,
   python_import = true,
