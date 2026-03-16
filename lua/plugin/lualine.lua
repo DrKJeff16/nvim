@@ -404,31 +404,40 @@ return { ---@type LazySpec
     end
 
     if exists('triforce') then
-      local TL = require('triforce.lualine')
-      Presets.components.triforce_lvl = {
-        function()
-          return TL.level({
-            show = { bar = true, level = true, xp = not Termux.is_distro() },
-            bar = { chars = { filled = '●', empty = '○' }, length = 6 },
-          })
-        end,
+      Presets.components.triforce = {
+        'triforce',
+        level = {
+          enabled = true,
+          show = { bar = true, level = true, xp = not Termux.is_distro() },
+          bar = { chars = { filled = '●', empty = '○' }, length = 6 },
+        },
+        achievements = { enabled = true, index = 4, show_count = true },
+        streak = { show_days = true },
+        session_time = {
+          enabled = true,
+          index = 1,
+          format = Termux.is_distro() and 'short' or 'long',
+          show_duration = true,
+        },
       }
-      Presets.components.triforce_achv = {
+    end
+
+    if exists('pomo') then
+      Presets.components.pomo = {
         function()
-          return TL.achievements({ show_count = true })
-        end,
-      }
-      Presets.components.triforce_streak = {
-        function()
-          return TL.streak({ show_days = true })
-        end,
-      }
-      Presets.components.triforce_session_time = {
-        function()
-          return TL.session_time({
-            format = Termux.is_distro() and 'short' or 'long',
-            show_duration = true,
-          })
+          local ok, pomo = pcall(require, 'pomo')
+          if not ok then
+            return ''
+          end
+
+          local timer = pomo.get_first_to_finish()
+          if not timer then
+            return ''
+          end
+          local hours = math.floor(timer:time_remaining() / 3600)
+          local mins = math.floor((timer:time_remaining() % 3600) / 60)
+          local secs = timer:time_remaining() % 60
+          return ('󰄉 %02d:%02d:%02d'):format(hours, mins, secs)
         end,
       }
     end
@@ -492,11 +501,9 @@ return { ---@type LazySpec
       lualine_c = Termux.is_distro() and { Presets.components.diagnostics }
         or { Presets.components.diagnostics, Presets.components.diff },
       lualine_x = {
-        Presets.components.lsp_progress,
-        Presets.components.triforce_lvl,
-        Presets.components.triforce_session_time,
-        -- Presets.components.triforce_achv,
-        -- Presets.components.triforce_streak,
+        -- Presets.components.lsp_progress,
+        Presets.components.pomo,
+        Presets.components.triforce,
         Presets.components.fileformat,
         Presets.components.filetype,
       },
