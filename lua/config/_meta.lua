@@ -73,6 +73,7 @@
 ---@field mini_trailspace? LazySpecImport
 ---@field music_player? LazySpecImport
 ---@field neo_tree? LazySpecImport
+---@field neorg? LazySpecImport
 ---@field noice? LazySpecImport
 ---@field notify? LazySpecImport
 ---@field nvim_test? LazySpecImport
@@ -195,6 +196,7 @@
 ---@field mini_trailspace? boolean
 ---@field music_player? boolean
 ---@field neo_tree? boolean
+---@field neorg? boolean
 ---@field noice? boolean
 ---@field notify? boolean
 ---@field nvim_test? boolean
