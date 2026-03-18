@@ -1,7 +1,7 @@
 ---@param color? string
 return function(color)
   require('user_api.check').validate({ color = { color, { 'string', 'nil' }, true } })
-  color = color and color:lower() or 'tokyonight'
+  color = color or 'tokyonight'
 
   local colors = vim.fn.getcompletion('', 'color', true) ---@type string[]
   if not vim.list_contains(colors, color) then
