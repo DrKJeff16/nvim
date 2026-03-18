@@ -1,3 +1,5 @@
+---@module 'lazy'
+
 local INFO = vim.log.levels.INFO
 local Opts = require('user_api.opts')
 local is_distro = require('user_api.distro').is_distro
@@ -95,7 +97,7 @@ require('config.lazy').setup({
   buffer_sticks = false,
   bufferline = false,
   cheaty = true,
-  checkmate = false,
+  checkmate = true,
   co_author = false,
   code_runner = false,
   codeowners = true,
@@ -134,6 +136,16 @@ require('config.lazy').setup({
   markdoc = false,
   markdown_outline = false,
   markdown_render = true,
+  markdown_toc = {
+    'ChuufMaster/markdown-toc',
+    version = false,
+    ft = 'markdown',
+    opts = {
+      heading_level_to_match = -1,
+      ask_for_heading_level = true,
+      toc_format = '%s- [%s](<%s#%s>)',
+    },
+  },
   mason = false,
   mini_animate = false,
   mini_basics = true,

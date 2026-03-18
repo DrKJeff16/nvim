@@ -50,6 +50,7 @@ local Clients = {
   yamlls = server_load('yamlls', 'yaml-language-server'),
   hyprls = server_load('hyprls'),
   julials = server_load('julials', 'julia'),
+  ruby_lsp = server_load('ruby_lsp', 'ruby-lsp'),
 }
 
 return Clients
