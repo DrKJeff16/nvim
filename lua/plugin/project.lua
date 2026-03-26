@@ -7,6 +7,7 @@ return { ---@type LazySpec
     require('project').setup({
       log = { enabled = true, logpath = vim.fn.stdpath('state') },
       snacks = { enabled = true },
+      checkmate = { enabled = true },
       telescope = { prefer_file_browser = true, sort = 'newest' },
       fzf_lua = { enabled = true },
       picker = { enabled = true },

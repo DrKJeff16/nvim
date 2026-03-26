@@ -77,7 +77,6 @@ Opts.setup({
   splitright = true,
   switchbuf = 'usetab',
   tabstop = 4,
-  textwidth = 100,
   title = true,
   wrap = is_distro('termux'),
 }, false, true)
