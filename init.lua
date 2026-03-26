@@ -44,7 +44,7 @@ Opts.setup({
   fileignorecase = not require('user_api.check').is_windows(),
   foldenable = false,
   foldmethod = 'manual',
-  formatoptions = 'bjlnopqw',
+  formatoptions = 'jlnopw/',
   helplang = 'en',
   hidden = true,
   hlsearch = true,
