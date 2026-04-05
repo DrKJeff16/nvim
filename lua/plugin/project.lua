@@ -33,7 +33,7 @@ return { ---@type LazySpec
     })
 
     local desc = require('user_api.maps').desc
-    require('user_api.config').keymaps.set({
+    require('user_api.config.keymaps').set({
       n = {
         ['<leader>p'] = { group = '+Project' },
         ['<leader>pC'] = { vim.cmd.ProjectConfig, desc('Toggle Config Window') },
@@ -53,7 +53,7 @@ return { ---@type LazySpec
       and vim.cmd.ProjectFzf
       and vim.is_callable(vim.cmd.ProjectFzf)
     then
-      require('user_api.config').keymaps.set({
+      require('user_api.config.keymaps').set({
         n = { ['<leader>pf'] = { vim.cmd.ProjectFzf, desc('Fzf-Lua Picker') } },
       })
     end
@@ -63,7 +63,7 @@ return { ---@type LazySpec
       and vim.is_callable(vim.cmd.ProjectTelescope)
     then
       require('telescope').load_extension('projects')
-      require('user_api.config').keymaps.set({
+      require('user_api.config.keymaps').set({
         n = { ['<leader>pT'] = { vim.cmd.ProjectTelescope, desc('Telescope Picker') } },
       })
     end
@@ -72,7 +72,7 @@ return { ---@type LazySpec
       and vim.cmd.ProjectSnacks
       and vim.is_callable(vim.cmd.ProjectSnacks)
     then
-      require('user_api.config').keymaps.set({
+      require('user_api.config.keymaps').set({
         n = { ['<leader>pS'] = { vim.cmd.ProjectSnacks, desc('Snacks Picker') } },
       })
     end

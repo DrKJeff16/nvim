@@ -321,7 +321,7 @@ return { ---@type LazySpec
 
     local Picker = Snacks.picker
     local desc = require('user_api.maps').desc
-    require('user_api.config').keymaps.set({
+    require('user_api.config.keymaps').set({
       n = {
         ['<leader>.'] = { group = 'Scratch' },
         ['<leader>S'] = { group = 'Snacks' },

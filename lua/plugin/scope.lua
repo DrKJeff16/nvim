@@ -21,7 +21,7 @@ return { ---@type LazySpec
       require('telescope').load_extension('scope')
 
       local desc = require('user_api.maps').desc
-      require('user_api.config').keymaps.set({
+      require('user_api.config.keymaps').set({
         n = {
           ['<leader><C-t>eS'] = { ':Telescope scope buffers<CR>', desc('Scope Buffers Picker') },
         },

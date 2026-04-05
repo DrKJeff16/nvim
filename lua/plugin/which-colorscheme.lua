@@ -39,7 +39,7 @@ return { ---@type LazySpec
       },
     })
 
-    require('user_api.config').keymaps.set({ n = { ['<leader>u'] = { group = '+UI' } } })
+    require('user_api.config.keymaps').set({ n = { ['<leader>u'] = { group = '+UI' } } })
   end,
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

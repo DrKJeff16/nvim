@@ -25,7 +25,7 @@ return { ---@type LazySpec
     })
 
     local desc = require('user_api.maps').desc
-    require('user_api.config').keymaps.set({
+    require('user_api.config.keymaps').set({
       n = {
         ['<leader>C'] = { group = '+Context' },
         ['<leader>Cn'] = {

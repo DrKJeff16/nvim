@@ -16,7 +16,7 @@ local function set_terminal_keys(ev) ---@param ev vim.api.keyset.create_autocmd.
   end
   local bufnr = ev.buf
   local desc = require('user_api.maps').desc
-  require('user_api.config').keymaps.set({
+  require('user_api.config.keymaps').set({
     t = {
       ['<Esc>'] = { '<C-\\><C-n>', desc('Escape Terminal', true, bufnr) },
       ['<C-e>'] = { '<C-\\><C-n>', desc('Escape Terminal', true, bufnr) },
@@ -81,7 +81,7 @@ return { ---@type LazySpec
     local desc = require('user_api.maps').desc
     local map = { ['<A-t>'] = { ':exe v:count1 . "ToggleTerm"<CR>', desc('Toggleterm') } }
     local i_map = { ['<A-t>'] = { '<Esc>:exe v:count1 . "ToggleTerm"<CR>', desc('Toggleterm') } }
-    require('user_api.config').keymaps.set({ n = map, i = i_map, t = map })
+    require('user_api.config.keymaps').set({ n = map, i = i_map, t = map })
   end,
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

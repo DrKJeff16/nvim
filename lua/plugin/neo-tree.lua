@@ -330,7 +330,7 @@ return { ---@type LazySpec
     })
 
     local desc = require('user_api.maps').desc
-    require('user_api.config').keymaps.set({
+    require('user_api.config.keymaps').set({
       n = {
         ['<leader>ft'] = { group = '+NeoTree' },
         ['<leader>ftd'] = { ':Neotree close<CR>', desc('Close Neo Tree') },

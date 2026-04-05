@@ -26,7 +26,7 @@ return { ---@type LazySpec
       require('telescope').load_extension('notify')
 
       local desc = require('user_api.maps').desc
-      require('user_api.config').keymaps.set({
+      require('user_api.config.keymaps').set({
         n = {
           ['<leader>N'] = { group = '+Notify' },
           ['<leader>NT'] = { ':Telescope notify<CR>', desc('Notify Telescope Picker') },

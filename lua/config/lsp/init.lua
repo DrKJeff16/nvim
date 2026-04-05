@@ -178,7 +178,7 @@ function Server.setup()
   vim.lsp.enable(Server.client_names)
 
   local desc = require('user_api.maps').desc
-  require('user_api.config').keymaps.set({
+  require('user_api.config.keymaps').set({
     n = {
       ['<leader>l'] = { group = '+LSP' },
       ['<leader>lC'] = {
