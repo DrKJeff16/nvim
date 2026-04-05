@@ -3,11 +3,48 @@
 ---@field [2]? vim.api.keyset.user_command
 
 local INFO = vim.log.levels.INFO
+local ERROR = vim.log.levels.ERROR
 local desc = require('user_api.maps').desc
 local validate = require('user_api.check').validate
 
 ---@class User.Commands
 local Commands = {}
+
+---@param txt? string
+---@param bang? boolean
+---@param nargs? integer|'+'|'?'|'*'
+---@param complete? string|fun(a: string, b: string, c: integer): items: string[]
+---@return vim.api.keyset.user_command opts
+function Commands.desc(txt, bang, nargs, complete)
+  validate({
+    txt = { txt, { 'string', 'nil' }, true },
+    bang = { bang, { 'boolean', 'nil' }, true },
+    nargs = { nargs, { 'number', 'string', 'nil' }, true },
+    complete = { complete, { 'string', 'function', 'nil' }, true },
+  })
+  txt = (txt and txt ~= '') and txt or nil
+  if bang == nil then
+    bang = false
+  end
+
+  local opts = { bang = bang, force = true } ---@type vim.api.keyset.user_command
+  if txt and txt ~= '' then
+    opts.desc = txt
+  end
+  if nargs then
+    if type(nargs) == 'number' and require('user_api.check').is_int(nargs) and nargs < 0 then
+      error(('`nargs` is not a valid integer: `%s`'):format(nargs), ERROR)
+    end
+    if type(nargs) == 'string' and not vim.list_contains({ '+', '*', '?' }, nargs) then
+      error(("`nargs` is not a valid string (`'*'`, `'?'`, `'+'`): `%s`"):format(nargs), ERROR)
+    end
+    opts.nargs = nargs
+  end
+  if complete then
+    opts.complete = complete
+  end
+  return opts
+end
 
 Commands.commands = {} ---@type table<string, User.Commands.CmdSpec>
 
@@ -56,12 +93,7 @@ Commands.commands.Redir = {
 
     vim.cmd.wincmd('=')
   end,
-  {
-    nargs = '+',
-    bang = true,
-    complete = 'command',
-    desc = 'Redirect command output to scratch buffer',
-  },
+  Commands.desc('Redirect command output to scratch buffer', true, '+', 'command'),
 }
 
 Commands.commands.Current = {
@@ -81,7 +113,7 @@ Commands.commands.Current = {
 
     local arg = ctx.fargs[1] ---@type 'buffer'|'buf'|'window'|'win'|'tab'|'tabpage'
     if not vim.list_contains({ 'buffer', 'buf', 'window', 'win', 'tabpage', 'tab' }, arg) then
-      vim.notify(('(:Current) - Invalid argument `%s`!'):format(arg), vim.log.levels.ERROR)
+      vim.notify(('(:Current) - Invalid argument `%s`!'):format(arg), ERROR)
       return
     end
 
@@ -99,25 +131,22 @@ Commands.commands.Current = {
 
     vim.notify(msg, INFO, { title = title })
   end,
-  {
-    nargs = '?',
-    complete = function(_, lead) ---@param lead string
-      local args = vim.split(lead, '%s+', { trimempty = false })
-      table.remove(args, 1)
+  Commands.desc('', false, '?', function(_, lead)
+    local args = vim.split(lead, '%s+', { trimempty = false })
+    table.remove(args, 1)
 
-      if #args ~= 1 then
-        return {}
-      end
+    if #args ~= 1 then
+      return {}
+    end
 
-      local comp = {} ---@type string[]
-      for _, choice in ipairs({ 'buf', 'buffer', 'win', 'window', 'tab', 'tabpage' }) do
-        if vim.startswith(choice, args[1]) then
-          table.insert(comp, choice)
-        end
+    local comp = {} ---@type string[]
+    for _, choice in ipairs({ 'buf', 'buffer', 'win', 'window', 'tab', 'tabpage' }) do
+      if vim.startswith(choice, args[1]) then
+        table.insert(comp, choice)
       end
-      return comp
-    end,
-  },
+    end
+    return comp
+  end),
 }
 
 Commands.commands.DeleteInactiveBuffers = {
@@ -133,7 +162,7 @@ Commands.commands.DeleteInactiveBuffers = {
       vim.notify('Deleted inactive buffers.', vim.log.levels.INFO)
     end
   end,
-  { desc = 'Delete listed unmodified buffers out of window', bang = true },
+  Commands.desc('Delete listed unmodified buffers out of window', true),
 }
 
 ---@param name string
@@ -150,8 +179,7 @@ function Commands.add_command(name, cmd, opts)
   Commands.setup({ [name] = cmnd })
 end
 
----@param cmds table<string, User.Commands.CmdSpec>
----@overload fun()
+---@param cmds? table<string, User.Commands.CmdSpec>
 function Commands.setup(cmds)
   validate({ cmds = { cmds, { 'table', 'nil' }, true } })
 
@@ -161,7 +189,7 @@ function Commands.setup(cmds)
     vim.api.nvim_create_user_command(cmd, exec, opts)
   end
 
-  require('user_api.config').keymaps.set({
+  require('user_api.config.keymaps').set({
     n = {
       ['<Leader>UC'] = { group = '+Commands' },
       ['<Leader>UCR'] = { ':Redir ', desc('Prompt to `Redir` command', false) },
@@ -173,7 +201,7 @@ end
 local M = setmetatable(Commands, { ---@type User.Commands
   __index = Commands,
   __newindex = function()
-    vim.notify('User.Commands is Read-Only!', vim.log.levels.ERROR)
+    vim.notify('User.Commands is Read-Only!', ERROR)
   end,
 })
 

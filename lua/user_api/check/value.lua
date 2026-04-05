@@ -90,15 +90,14 @@ Value.is_tbl = type_fun('table')
 ---i.e. _greater than or equal to `0` and a **whole number**_.
 --- ---
 ---@param var any Any data type to be checked if it's an integer
----@param multiple boolean|nil Tell the integer you're checking for multiple values. (Default: `false`)
+---@param multiple? boolean Tell the integer you're checking for multiple values. (Default: `false`)
 ---@return boolean is_int
----@overload fun(var: any): is_int: boolean
 function Value.is_int(var, multiple)
   require('user_api.check.exists').validate({ multiple = { multiple, { 'boolean', 'nil' }, true } })
   multiple = multiple ~= nil and multiple or false
 
   if not multiple then
-    return Value.is_num(var) and var >= 0 and (var == math.floor(var) or var == math.ceil(var))
+    return Value.is_num(var) and var == math.floor(var) and var == math.ceil(var)
   end
   if not Value.is_tbl(var) then
     vim.notify(('(%s.is_int): Input is not a table (`multiple` is true)'):format(MODSTR), WARN)
@@ -106,7 +105,7 @@ function Value.is_int(var, multiple)
   end
 
   for _, v in ipairs(var) do
-    if not (Value.is_num(v) and v >= 0 and (v == math.floor(v) or v == math.ceil(v))) then
+    if not (Value.is_num(v) and v == math.floor(v) and v == math.ceil(v)) then
       return false
     end
   end

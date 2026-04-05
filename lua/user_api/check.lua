@@ -8,10 +8,11 @@ local Check = {}
 Check.value = require('user_api.check.value')
 Check.exists = require('user_api.check.exists')
 
-Check.validate = Check.exists.validate
-Check.module = Check.exists.module
-Check.executable = Check.exists.executable
 Check.env_vars = Check.exists.env_vars
+Check.executable = Check.exists.executable
+Check.is_int = Check.value.is_int
+Check.module = Check.exists.module
+Check.validate = Check.exists.validate
 
 ---Check whether Neovim is running as root (`PID == 0`).
 --- ---

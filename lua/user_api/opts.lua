@@ -39,18 +39,25 @@ local function toggle_completer(ArgLead, _, CursorPos)
   return valid
 end
 
+---@param short? boolean
 ---@return string[] valid
-function Opts.gen_toggleable()
+function Opts.gen_toggleable(short)
+  validate({ short = { short, { 'boolean', 'nil' }, true } })
+  if short == nil then
+    short = false
+  end
+
   local valid = {} ---@type string[]
   local T = Opts.get_all_opts()
-  local long, short = vim.tbl_keys(T), vim.tbl_values(T) ---@type string[], string[]
-  for _, opt_type in ipairs({ long, short }) do
-    for _, opt in ipairs(opt_type) do
-      if
-        opt ~= ''
-        and vim.list_contains(vim.tbl_keys(vim.o), opt)
-        and in_list({ 'no', 'yes', true, false }, vim.o[opt])
-      then
+  local o_long, o_short = vim.tbl_keys(T), vim.tbl_values(T) ---@type string[], string[]
+  for _, opt in ipairs(o_long) do
+    if opt ~= '' and in_list({ 'no', 'yes', true, false }, vim.o[opt]) then
+      table.insert(valid, opt)
+    end
+  end
+  if short then
+    for _, opt in ipairs(o_short) do
+      if opt ~= '' and in_list({ 'no', 'yes', true, false }, vim.o[opt]) then
         table.insert(valid, opt)
       end
     end
@@ -60,7 +67,7 @@ function Opts.gen_toggleable()
   return valid
 end
 
-Opts.toggleable = Opts.gen_toggleable()
+Opts.toggleable = Opts.gen_toggleable(true)
 
 ---@param T User.Opts.Spec
 ---@param verbose boolean
@@ -205,6 +212,7 @@ end
 
 function Opts.setup_cmds()
   local Commands = require('user_api.commands')
+  local desc = require('user_api.commands').desc
   Commands.add_command('OptsToggle', function(ctx)
     local cmds = {}
     for _, v in ipairs(ctx.fargs) do
@@ -217,19 +225,20 @@ function Opts.setup_cmds()
       end
     end
     Opts.toggle(cmds, ctx.bang)
-  end, { nargs = '+', complete = toggle_completer, bang = true, desc = 'Toggle Vim Options' })
-  Commands.add_command('OptsToggleable', function()
+  end, desc('Toggle Vim Options', true, '+', toggle_completer))
+  Commands.add_command('OptsToggleable', function(ctx)
+    local toggleable = Opts.gen_toggleable(ctx.bang)
     local msg = ''
-    for i, v in ipairs(Opts.toggleable) do
+    for i, v in ipairs(toggleable) do
       msg = ('%s%s%s'):format(msg, i == 1 and '' or '\n', v)
     end
-    vim.print(msg)
-  end, { desc = 'Print all toggleable options' })
+    vim.notify(msg)
+  end, desc('Print all toggleable options', true))
 end
 
 function Opts.setup_maps()
   local desc = require('user_api.maps').desc
-  require('user_api.config').keymaps.set({
+  require('user_api.config.keymaps').set({
     n = {
       ['<leader>UO'] = { group = '+Options' },
       ['<leader>UOl'] = { Opts.print_set_opts, desc('Print options set by `user.opts`') },
