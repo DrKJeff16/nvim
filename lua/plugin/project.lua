@@ -6,11 +6,10 @@ return { ---@type LazySpec
   config = function()
     require('project').setup({
       log = { enabled = true, logpath = vim.fn.stdpath('state') },
-      snacks = { enabled = true },
-      checkmate = { enabled = true },
+      snacks = { enabled = true, opts = { sort = 'newest' } },
       telescope = { prefer_file_browser = true, sort = 'newest' },
-      fzf_lua = { enabled = true },
-      picker = { enabled = true },
+      fzf_lua = { enabled = true, sort = 'newest' },
+      picker = { enabled = true, sort = 'newest' },
       scope_chdir = 'tab',
       lsp = { enabled = true },
       exclude_dirs = {
