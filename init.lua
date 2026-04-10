@@ -136,16 +136,6 @@ require('config.lazy').setup({
   markdoc = false,
   markdown_outline = false,
   markdown_render = true,
-  markdown_toc = {
-    'ChuufMaster/markdown-toc',
-    version = false,
-    ft = 'markdown',
-    opts = {
-      heading_level_to_match = -1,
-      ask_for_heading_level = true,
-      toc_format = '%s- [%s](<%s#%s>)',
-    },
-  },
   mason = false,
   mini_animate = false,
   mini_basics = true,
