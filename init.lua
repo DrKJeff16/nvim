@@ -102,6 +102,7 @@ require('config.lazy').setup({
   codeowners = true,
   color_skimer = false,
   colorizer = true,
+  conform = true,
   diffview = false,
   dooku = false,
   doxygen_init = false,

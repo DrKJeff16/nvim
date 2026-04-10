@@ -21,6 +21,7 @@
 ---@field codeowners? LazySpecImport
 ---@field color_skimer? LazySpecImport
 ---@field colorizer? LazySpecImport
+---@field conform? LazySpecImport
 ---@field diffview? LazySpecImport
 ---@field dooku? LazySpecImport
 ---@field doxygen_init? LazySpecImport
@@ -146,6 +147,7 @@
 ---@field codeowners? boolean
 ---@field color_skimer? boolean
 ---@field colorizer? boolean
+---@field conform? boolean
 ---@field diffview? boolean
 ---@field dooku? boolean
 ---@field doxygen_init? boolean
