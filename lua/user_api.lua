@@ -30,7 +30,7 @@ local function make_timer()
 
   _G.USER_TIMER:start(10000, 900000, vim.schedule_wrap(timer_cb))
 
-  local group = vim.api.nvim_create_augroup('lsp_autoclear', { clear = true })
+  local group = vim.api.nvim_create_augroup('log_autoclear', { clear = true })
   vim.api.nvim_create_autocmd({ 'VimLeavePre' }, {
     group = group,
     callback = function()
