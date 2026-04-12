@@ -6,7 +6,7 @@ local WARN = vim.log.levels.WARN
 local INFO = vim.log.levels.INFO
 local desc = require('user_api.maps').desc
 local ft_get = require('user_api.util').ft_get
-local optget = require('user_api.util').optget
+local optget = require('user_api.util').optget_old
 local validate = require('user_api.check').validate
 
 ---@param force? boolean

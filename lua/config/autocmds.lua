@@ -6,6 +6,8 @@ local executable = require('user_api.check.exists').executable
 local desc = require('user_api.maps').desc
 local keyset = require('user_api.config.keymaps').set
 local validate = require('user_api.check').validate
+local optget = Util.optget_old
+local optset = Util.optset_old
 
 ---@param bufnr integer
 ---@return function cb
@@ -16,7 +18,7 @@ local function run_formatter(formatter, bufnr)
   })
 
   return function()
-    if Util.optget('modified', { buf = bufnr }).modified or not executable(formatter) then
+    if optget('modified', { buf = bufnr }).modified or not executable(formatter) then
       return
     end
 
@@ -103,7 +105,7 @@ function M.setup()
         pattern = 'checkhealth',
         group = M.augroup,
         callback = function(ev)
-          Util.optset(
+          optset(
             { wrap = true, number = false, signcolumn = 'no', list = false },
             { win = vim.api.nvim_get_current_win() }
           )
@@ -127,7 +129,7 @@ function M.setup()
         pattern = { 'c', 'cpp', 'html', 'markdown', 'yaml' },
         group = M.augroup,
         callback = function(ev)
-          Util.optset(
+          optset(
             { tabstop = 2, shiftwidth = 2, softtabstop = 2, expandtab = true },
             { buf = ev.buf }
           )
@@ -137,7 +139,7 @@ function M.setup()
         pattern = { 'lua' },
         group = M.augroup,
         callback = function(ev)
-          Util.optset(
+          optset(
             { tabstop = 2, shiftwidth = 2, softtabstop = 2, expandtab = true },
             { buf = ev.buf }
           )
@@ -189,10 +191,7 @@ function M.setup()
         pattern = { 'lazy' },
         group = M.augroup,
         callback = function()
-          Util.optset(
-            { signcolumn = 'no', number = false },
-            { win = vim.api.nvim_get_current_win() }
-          )
+          optset({ signcolumn = 'no', number = false }, { win = vim.api.nvim_get_current_win() })
         end,
       },
       {
@@ -202,7 +201,7 @@ function M.setup()
           if Util.bt_get(ev.buf) ~= 'help' then
             return
           end
-          Util.optset(
+          optset(
             { signcolumn = 'no', number = false, wrap = true, colorcolumn = '' },
             { win = vim.api.nvim_get_current_win() }
           )

@@ -52,10 +52,7 @@ function Server.make_timer()
   vim.api.nvim_create_autocmd({ 'VimLeavePre' }, {
     group = group,
     callback = function()
-      if not Server.timer then
-        return
-      end
-      if not Server.timer:is_active() then
+      if not (Server.timer and Server.timer:is_active()) then
         return
       end
 
