@@ -1,40 +1,44 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'hat0uma/doxygen-previewer.nvim',
+  dev = true,
   version = false,
   dependencies = {
     {
       'hat0uma/prelive.nvim',
+      dev = true,
       lazy = true,
       version = false,
-      opts = {
-        server = {
-          host = '127.0.0.1',
-          port = (function()
-            local port = 22
-            while port == 22 do
-              port = math.random(0, 65535)
-            end
-            return port
-          end)(),
-        },
-        http = {
-          tcp_max_backlog = 16,
-          tcp_recv_buffer_size = 1024,
-          keep_alive_timeout = 60 * 1000,
-          max_body_size = 1024 * 1024 * 1,
-          max_request_line_size = 1024 * 4,
-          max_header_field_size = 1024 * 4,
-          max_header_num = 100,
-          max_chunk_ext_size = 1024 * 1,
-        },
-        log = {
-          print_level = vim.log.levels.WARN,
-          file_level = vim.log.levels.DEBUG,
-          max_file_size = 1 * 1024 * 1024,
-          max_backups = 3,
-        },
-      },
+      config = function()
+        require('prelive').setup({
+          server = {
+            host = '127.0.0.1',
+            port = (function()
+              local port = 22
+              while vim.list_contains({ 0, 22, 80, 443 }, port) do
+                port = math.random(0, 65535)
+              end
+              return port
+            end)(),
+          },
+          http = {
+            tcp_max_backlog = 16,
+            tcp_recv_buffer_size = 1024,
+            keep_alive_timeout = 60 * 1000,
+            max_body_size = 1024 * 1024 * 1,
+            max_request_line_size = 1024 * 4,
+            max_header_field_size = 1024 * 4,
+            max_header_num = 100,
+            max_chunk_ext_size = 1024 * 1,
+          },
+          log = {
+            print_level = vim.log.levels.WARN,
+            file_level = vim.log.levels.DEBUG,
+            max_file_size = 1 * 1024 * 1024,
+            max_backups = 3,
+          },
+        })
+      end,
     },
   },
   config = function()

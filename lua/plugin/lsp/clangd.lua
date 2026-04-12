@@ -1,8 +1,8 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'p00f/clangd_extensions.nvim',
-  ft = { 'c', 'cpp' },
   dev = true,
+  ft = { 'c', 'cpp' },
   version = false,
   cond = require('user_api.check.exists').executable('clangd'),
   opts = {

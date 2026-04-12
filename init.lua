@@ -93,6 +93,7 @@ require('config.lazy').setup({
   blink_indent = true,
   blink_pairs = false,
   bmessages = false,
+  bookmarks = false,
   buffer_sticks = false,
   bufferline = false,
   cheaty = true,
