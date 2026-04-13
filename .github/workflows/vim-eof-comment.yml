@@ -16,13 +16,13 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.2
         with:
           ref: ${{ github.head_ref }}
           persist-credentials: true
           token: ${{ secrets.PAT }}
       - name: Set up Python
-        uses: actions/setup-python@v6.1.0
+        uses: actions/setup-python@v6.2.0
         with:
           python-version: '3.14'
       - name: Install vim-eof-comment

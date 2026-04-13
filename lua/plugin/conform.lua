@@ -8,11 +8,9 @@ return { ---@type LazySpec
         lua = { 'stylua', lsp_format = 'fallback' },
         python = { 'isort', 'autopep8', lsp_format = 'fallback' },
         sh = { 'shellcheck' },
+        yaml = { 'yamlfmt' },
       },
-      format_on_save = {
-        timeout_ms = 500,
-        lsp_format = 'fallback',
-      },
+      format_on_save = { timeout_ms = 500, lsp_format = 'fallback' },
     })
   end,
 }
