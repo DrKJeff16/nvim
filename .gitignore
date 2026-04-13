@@ -1,7 +1,8 @@
 # Lazy Lock File
 /lazy-lock.json
 
-# Tree-sitter parsers
+# Tree-sitter
+/.tree-sitter.d/
 /parser/
 
 # Fallback Init (for bug reporting)
