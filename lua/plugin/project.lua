@@ -5,13 +5,13 @@ return { ---@type LazySpec
   version = false,
   config = function()
     require('project').setup({
-      log = { enabled = true, logpath = vim.fn.stdpath('state') },
-      snacks = { enabled = true, opts = { sort = 'newest' } },
+      log = { enabled = true, logpath = vim.fn.stdpath('state'), max_size = 0.5 },
+      snacks = { enabled = true, opts = { sort = 'newest', show = 'names' } },
       telescope = { prefer_file_browser = true, sort = 'newest' },
-      fzf_lua = { enabled = true, sort = 'newest' },
-      picker = { enabled = true, sort = 'newest' },
-      scope_chdir = 'tab',
+      fzf_lua = { enabled = true, sort = 'newest', show = 'names' },
+      picker = { enabled = true, sort = 'newest', show = 'names' },
       lsp = { enabled = true },
+      scope_chdir = 'tab',
       exclude_dirs = {
         '/usr/*',
         '~/.build/*',
