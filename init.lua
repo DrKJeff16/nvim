@@ -189,7 +189,7 @@ require('config.lazy').setup({
   toggleterm = true,
   toml = true,
   triforce = true,
-  ts_autotag = true,
+  ts_autotag = false,
   ts_commentstring = true,
   ts_context = true,
   ts_init = true,
