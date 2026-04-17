@@ -12,7 +12,11 @@ return { ---@type LazySpec
       picker = { enabled = true, sort = 'newest', show = 'names' },
       lsp = { enabled = true },
       scope_chdir = 'tab',
+      show_by_name = true,
       exclude_dirs = {
+        '/tmp',
+        '/tmp/*',
+        '/usr',
         '/usr/*',
         '~/.build/*',
         '~/.cache/*',
