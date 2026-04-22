@@ -4,10 +4,8 @@ return { ---@type LazySpec
   config = function()
     require('conform').setup({
       formatters_by_ft = {
-        bash = { 'shellcheck' },
         lua = { 'stylua', lsp_format = 'fallback' },
         python = { 'isort', 'autopep8', lsp_format = 'fallback' },
-        sh = { 'shellcheck' },
         yaml = { 'yamlfmt' },
       },
       format_on_save = { timeout_ms = 500, lsp_format = 'fallback' },

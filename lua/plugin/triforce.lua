@@ -7,10 +7,12 @@ return { ---@type LazySpec
   config = function()
     require('triforce').setup({
       enabled = true,
+      backdrop = { enabled = false, backdrop = 20 },
       gamification_enabled = true,
       notifications = { enabled = true, level_up = true, achievements = true },
       keymap = { show_profile = '<leader>Tp' },
       auto_save_interval = 300,
+      override_levels = false,
       achievements = {
         {
           id = 'first_session',
@@ -46,15 +48,11 @@ return { ---@type LazySpec
         gleam = { icon = '✨', name = 'Gleam' },
         odin = { icon = '🔷', name = 'Odin' },
       },
-      level_progression = {
-        tier_1 = { min_level = 1, max_level = 15, xp_per_level = 600 },
-        tier_2 = { min_level = 16, max_level = 30, xp_per_level = 1200 },
-        tier_3 = { min_level = 31, max_level = math.huge, xp_per_level = 3000 },
-      },
       levels = {
         { level = 2, title = 'Newbie' },
         { level = 40, title = 'Sargeant' },
         { level = 80, title = 'Lieutenant' },
+        { level = 100, title = 'Foo' },
       },
       xp_rewards = { char = 1, line = 2, save = 10 },
     })

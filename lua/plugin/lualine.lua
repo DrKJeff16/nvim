@@ -404,7 +404,8 @@ return { ---@type LazySpec
     end
 
     if exists('triforce') then
-      Presets.components.triforce = {
+      ---@module 'triforce'
+      Presets.components.triforce = { ---@type Triforce.LualineConfig
         'triforce',
         level = {
           enabled = true,

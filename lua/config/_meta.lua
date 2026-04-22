@@ -16,6 +16,7 @@
 ---@field bufferline? LazySpecImport
 ---@field cheaty? LazySpecImport
 ---@field checkmate? LazySpecImport
+---@field classlayout? LazySpecImport
 ---@field co_author? LazySpecImport
 ---@field code_runner? LazySpecImport
 ---@field codeowners? LazySpecImport
@@ -142,6 +143,7 @@
 ---@field bufferline? boolean
 ---@field cheaty? boolean
 ---@field checkmate? boolean
+---@field classlayout? boolean
 ---@field co_author? boolean
 ---@field code_runner? boolean
 ---@field codeowners? boolean
