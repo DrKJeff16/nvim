@@ -1,6 +1,8 @@
 ---@module 'lazy'
+---@module 'blink.lib'
 
 local validate = require('user_api.check').validate
+local has_words_before = require('user_api.util').has_words_before
 
 ---@param idx integer
 ---@return fun(cmp: blink.cmp.API): boolean|nil
@@ -57,7 +59,7 @@ function BUtil.reset_sources(snipps, buf)
   snipps = snipps ~= nil and snipps or false
   buf = buf ~= nil and buf or true
 
-  BUtil.Sources = { 'lsp', 'path', 'env' } ---@type string[]
+  BUtil.Sources = { 'lsp', 'path' } --[[@as string[]\]]
   if snipps then
     table.insert(BUtil.Sources, 'snippets')
   end
@@ -134,15 +136,13 @@ function BUtil.reset_providers()
       ---@param items blink.cmp.CompletionItem[]
       transform_items = function(ctx, items)
         local keyword = ctx.get_keyword()
-        local correct = ''
-        local uppercase ---@type boolean
         if not (keyword:match('^%l') or keyword:match('^%u')) then
           return items
         end
-        correct = keyword:match('^%l') and '^%u%l+$' or '^%l+$'
-        uppercase = keyword:match('^%u') ~= nil
+        local correct = keyword:match('^%l') and '^%u%l+$' or '^%l+$'
+        local uppercase = keyword:match('^%u') ~= nil
 
-        local seen, out = {}, {}
+        local seen, out = {}, {} ---@type table<string, boolean>, blink.cmp.CompletionItem[]
         for _, item in ipairs(items) do
           local raw = item.insertText
           if raw and raw:match(correct) then
@@ -212,18 +212,6 @@ function BUtil.reset_providers()
   if exists('blink-cmp-sshconfig') then
     BUtil.Providers.sshconfig = { name = 'SshConfig', module = 'blink-cmp-sshconfig' }
   end
-  if exists('blink-cmp-env') then
-    BUtil.Providers.env = {
-      name = 'Env',
-      module = 'blink-cmp-env',
-      score_offset = 40,
-      opts = {
-        item_kind = require('blink.cmp.types').CompletionItemKind.Variable,
-        show_braces = false,
-        show_documentation_window = true,
-      },
-    }
-  end
   if exists('blink-cmp-git') then
     BUtil.Providers.git = {
       name = 'Git',
@@ -277,40 +265,10 @@ return { ---@type LazySpec
   event = 'InsertEnter',
   version = false,
   dependencies = {
+    'saghen/blink.lib',
     'saghen/blink.compat',
     'hrsh7th/cmp-nvim-lsp',
-    {
-      'L3MON4D3/LuaSnip',
-      version = false,
-      dependencies = { 'rafamadriz/friendly-snippets' },
-      build = executable('make') and 'make -j $(nproc) install_jsregexp' or false,
-      config = function()
-        local luasnip = require('luasnip')
-        luasnip.config.setup()
-
-        require('luasnip.loaders.from_lua').lazy_load()
-        require('luasnip.loaders.from_vscode').lazy_load()
-
-        local extensions = { ---@type table<string, string[]>
-          c = { 'cdoc' },
-          cpp = { 'cppdoc' },
-          cs = { 'csharpdoc' },
-          java = { 'javadoc' },
-          javascript = { 'jsdoc' },
-          kotlin = { 'kdoc' },
-          lua = { 'luadoc' },
-          php = { 'phpdoc' },
-          python = { 'pydoc' },
-          ruby = { 'rdoc' },
-          rust = { 'rustdoc' },
-          sh = { 'shelldoc' },
-          typescript = { 'tsdoc' },
-        }
-        for lang, ext in pairs(extensions) do
-          luasnip.filetype_extend(lang, ext)
-        end
-      end,
-    },
+    'rafamadriz/friendly-snippets',
     'onsails/lspkind.nvim',
     'folke/lazydev.nvim',
     'jdrupal-dev/css-vars.nvim',
@@ -323,16 +281,14 @@ return { ---@type LazySpec
       version = false,
     },
   },
-  build = executable('cargo') and 'cargo build --release' or false,
+  build = function()
+    require('blink.cmp').build():wait(60000)
+  end,
   config = function()
-    pcall(require('luasnip.loaders.from_vscode').lazy_load)
-
-    local has_words_before = require('user_api.util').has_words_before
     local select_opts = { auto_insert = true, preselect = false }
     require('blink.cmp').setup({
       enabled = function()
-        local disable_in = { 'picker-prompt' }
-        return not vim.list_contains(disable_in, vim.bo.filetype)
+        return not vim.list_contains({ 'picker-prompt' }, vim.bo.filetype)
       end,
       keymap = {
         preset = 'super-tab',
@@ -414,7 +370,6 @@ return { ---@type LazySpec
           update_delay_ms = 100,
           treesitter_highlighting = true,
           window = {
-            border = 'rounded',
             winblend = 0,
             winhighlight = 'Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,EndOfBuffer:BlinkCmpDoc',
             scrollbar = true,
@@ -431,6 +386,7 @@ return { ---@type LazySpec
           dot_repeat = true,
         },
         list = {
+          max_items = 300,
           cycle = { from_top = true, from_bottom = true },
           selection = {
             auto_insert = true,
@@ -440,11 +396,22 @@ return { ---@type LazySpec
           },
         },
         menu = {
+          enabled = true,
+          min_width = 15,
+          max_height = 15,
           auto_show = true,
-          border = 'single',
+          auto_show_delay_ms = 0,
+          cmdline_position = function()
+            if vim.g.ui_cmdline_pos ~= nil then
+              local pos = vim.g.ui_cmdline_pos -- (1, 0)-indexed
+              return { pos[1] - 1, pos[2] }
+            end
+            local height = (vim.o.cmdheight == 0) and 1 or vim.o.cmdheight
+            return { vim.o.lines - height, 0 }
+          end,
           draw = {
-            padding = { 0, 1 },
-            treesitter = { 'lsp' },
+            align_to = 'cursor',
+            treesitter = { 'lua', 'markdown' },
             columns = {
               { 'label', 'label_description', gap = 1 },
               { 'kind_icon', 'kind' },
@@ -495,9 +462,7 @@ return { ---@type LazySpec
       },
       sources = {
         providers = BUtil.gen_providers(),
-        default = function()
-          return BUtil.gen_sources(true, true)
-        end,
+        default = BUtil.gen_sources(false, true),
         transform_items = function(_, items)
           return items
         end,
@@ -507,10 +472,10 @@ return { ---@type LazySpec
           return math.floor(keyword:len() / 3)
         end,
         sorts = { 'exact', 'score', 'sort_text' },
-        implementation = executable('cargo') and 'prefer_rust_with_warning' or 'lua',
+        implementation = 'rust',
       },
       snippets = {
-        preset = 'luasnip',
+        preset = 'default',
         expand = function(snippet)
           vim.snippet.expand(snippet)
         end,
@@ -525,17 +490,15 @@ return { ---@type LazySpec
         enabled = true,
         trigger = {
           enabled = false,
-          show_on_keyword = false,
-          blocked_trigger_characters = {},
           blocked_retrigger_characters = {},
+          blocked_trigger_characters = {},
+          show_on_accept_on_trigger_character = true,
+          show_on_keyword = true,
           show_on_trigger_character = true,
-          show_on_insert = false,
-          show_on_insert_on_trigger_character = true,
         },
         window = {
           treesitter_highlighting = true,
           show_documentation = true,
-          border = 'rounded',
           scrollbar = true,
           direction_priority = { 'n', 's' },
         },
