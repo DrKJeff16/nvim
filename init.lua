@@ -85,11 +85,6 @@ Opts.setup({
 require('user_api').disable_netrw()
 
 require('config.lazy').setup({
-  {
-    'DrKJeff16/shebang.nvim',
-    dev = true,
-    opts = {},
-  },
   Comment = true,
   alpha = false,
   autopairs = true,

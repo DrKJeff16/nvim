@@ -103,6 +103,7 @@
 ---@field scope? LazySpecImport
 ---@field screenkey? LazySpecImport
 ---@field scrollbar? LazySpecImport
+---@field shebang? LazySpecImport
 ---@field smart_backspace? LazySpecImport
 ---@field smart_paste? LazySpecImport
 ---@field smoothcursor? LazySpecImport
@@ -230,6 +231,7 @@
 ---@field scope? boolean
 ---@field screenkey? boolean
 ---@field scrollbar? boolean
+---@field shebang? boolean
 ---@field smart_backspace? boolean
 ---@field smart_paste? boolean
 ---@field smoothcursor? boolean
