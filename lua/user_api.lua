@@ -1,10 +1,8 @@
 local uv = vim.uv or vim.loop
 
----@class UserAPI
----@field private timer uv.uv_timer_t|nil
-local M = {}
+local timer = nil ---@type uv.uv_timer_t|nil
 
-function M.timer_cb()
+local function timer_cb()
   local logfile = vim.fs.joinpath(vim.fn.stdpath('state'), 'nvim.log')
   local stat = uv.fs_stat(logfile)
   if not stat or stat.size < 1048576 then -- 1GiB
@@ -16,37 +14,41 @@ function M.timer_cb()
     return
   end
 
-  uv.fs_ftruncate(fd, 0)
+  local ok = uv.fs_ftruncate(fd, 0)
   uv.fs_close(fd)
 
-  vim.notify(('`%s` has been cleared!'):format(logfile), vim.log.levels.INFO)
+  if ok then
+    vim.notify(('`%s` has been cleared!'):format(logfile), vim.log.levels.INFO)
+  end
 end
 
-function M.make_timer()
-  if M.timer and M.timer:is_active() then
+local function make_timer()
+  if timer and timer:is_active() then
     return
   end
 
-  M.timer = uv.new_timer()
-  if not M.timer then
+  timer = uv.new_timer()
+  if not timer then
     return
   end
 
-  M.timer:start(10000, 900000, vim.schedule_wrap(M.timer_cb))
+  timer:start(1000, 900000, vim.schedule_wrap(timer_cb))
 
-  local group = vim.api.nvim_create_augroup('log_autoclear', { clear = true })
   vim.api.nvim_create_autocmd({ 'VimLeavePre' }, {
-    group = group,
+    group = vim.api.nvim_create_augroup('log_autoclear', { clear = true }),
     callback = function()
-      if not (M.timer and M.timer:is_active()) then
+      if not (timer and timer:is_active()) then
         return
       end
 
-      M.timer:stop()
-      M.timer = nil
+      timer:stop()
+      timer = nil
     end,
   })
 end
+
+---@class UserAPI
+local M = {}
 
 function M.disable_netrw()
   vim.g.loaded_netrw = 1
@@ -81,7 +83,7 @@ function M.setup(commands, verbose)
     },
   })
 
-  M.make_timer()
+  make_timer()
 end
 
 return M
