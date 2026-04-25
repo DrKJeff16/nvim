@@ -7,17 +7,22 @@ local validate = require('user_api.check').validate
 ---@class User.Util
 local Util = {}
 
-Util.notify = require('user_api.util.notify')
 Util.au = require('user_api.util.autocmd')
+Util.notify = require('user_api.util.notify')
 Util.string = require('user_api.util.string')
 
----@overload fun(option: string|vim.wo|vim.bo): value: any
----@overload fun(option: string|vim.wo|vim.bo, param: 'scope', param_value: 'local'|'global'): value: any
----@overload fun(option: string|vim.wo|vim.bo, param: 'ft', param_value: string): value: any
----@overload fun(option: string|vim.wo|vim.bo, param: 'buf'|'win', param_value: integer): value: any
+---@overload fun(option: string): value: any
+---@overload fun(option: string[]): value: vim.bo|vim.wo
+---@overload fun(option: string, param: 'scope', param_value: 'local'|'global'): value: any
+---@overload fun(option: string[], param: 'scope', param_value: 'local'|'global'): value: vim.bo|vim.wo
+---@overload fun(option: string, param: 'ft', param_value: string): value: any
+---@overload fun(option: string[], param: 'ft', param_value: string): value: vim.bo|vim.wo
+---@overload fun(option: string, param: 'buf'|'win', param_value: integer): value: any
+---@overload fun(option: string[], param: 'buf', param_value: integer): value: vim.bo
+---@overload fun(option: string[], param: 'win', param_value: integer): value: vim.wo
 function Util.optget(option, param, param_value)
   validate({
-    option = { option, { 'string' } },
+    option = { option, { 'string', 'table' } },
     param = { param, { 'string', 'nil' }, true },
     param_value = { param_value, { 'string', 'number', 'nil' }, true },
   })
@@ -44,70 +49,50 @@ function Util.optget(option, param, param_value)
   if param == 'ft' and (not param_value or type(param_value) ~= 'string') then
     error('Missing/bad value for `ft` parameter!', ERROR)
   end
-  if vim.list_contains({ 'win', 'buf' }, param) then
-    if
-      not (
-        param_value
-        and type(param_value) == 'number'
-        and require('user_api.check').is_int(param_value)
-      )
-    then
-      error('Missing/bad value for `win`/`buf` parameter!', ERROR)
-    end
+  if
+    vim.list_contains({ 'win', 'buf' }, param)
+    and not (
+      param_value
+      and type(param_value) == 'number'
+      and require('user_api.check').is_int(param_value)
+    )
+  then
+    error('Missing/bad value for `win`/`buf` parameter!', ERROR)
   end
 
-  return vim.api.nvim_get_option_value(option, { [param] = param_value })
+  if type(option) == 'string' then
+    return vim.api.nvim_get_option_value(option, { [param] = param_value })
+  end
+
+  local values = {} ---@type vim.bo|vim.wo
+  for _, opt in ipairs(option) do
+    local ok, res = pcall(vim.api.nvim_get_option_value, opt, { [param] = param_value })
+    if not (ok and res) then
+      error(('Invalid option: `%s`'):format(opt), ERROR)
+    end
+
+    values[opt] = res
+  end
+
+  return values
 end
 
----@deprecated
----@param names string[]|string
----@param opts vim.api.keyset.option
----@return vim.bo|vim.wo values
-function Util.optget_old(names, opts)
-  validate({
-    names = { names, { 'string', 'table' } },
-    opts = { opts, { 'table' } },
-  })
-  if vim.tbl_isempty(opts) or vim.islist(opts) then
-    error('Empty or incorrect opts table!', ERROR)
-  end
-
-  local valid = false
-  for _, key in ipairs({ 'buf', 'filetype', 'scope', 'win' }) do
-    if vim.list_contains(vim.tbl_keys(opts), key) then
-      valid = true
-      break
-    end
-  end
-  if not valid then
-    error('The opts table is not correctly formatted!', ERROR)
-  end
-
-  if require('user_api.check.value').is_tbl(names) then
-    ---@cast names string[]
-    local values = {} ---@type vim.bo|vim.wo
-    for _, name in ipairs(names) do
-      values[name] = vim.api.nvim_get_option_value(name, opts)
-    end
-    return values
-  end
-
-  ---@cast names string
-  return { [names] = vim.api.nvim_get_option_value(names, opts) }
-end
-
----@overload fun(option: string|vim.wo|vim.bo, value: any)
----@overload fun(option: string|vim.wo|vim.bo, value: any, param: 'scope', param_value: 'local'|'global')
----@overload fun(option: string|vim.wo|vim.bo, value: any, param: 'ft', param_value: string)
----@overload fun(option: string|vim.wo|vim.bo, value: any, param: 'buf'|'win', param_value: integer)
+---@overload fun(option: string, value: any)
+---@overload fun(option: vim.wo|vim.bo, value: nil)
+---@overload fun(option: string, value: any, param: 'scope', param_value: 'local'|'global')
+---@overload fun(option: vim.wo|vim.bo, value: nil, param: 'scope', param_value: 'local'|'global')
+---@overload fun(option: string, value: any, param: 'ft', param_value: string)
+---@overload fun(option: vim.wo|vim.bo, value: nil, param: 'ft', param_value: string)
+---@overload fun(option: string, value: any, param: 'buf'|'win', param_value: integer)
+---@overload fun(option: vim.wo|vim.bo, value: nil, param: 'buf'|'win', param_value: integer)
 function Util.optset(option, value, param, param_value)
   validate({
-    option = { option, { 'string' } },
+    option = { option, { 'string', 'table' } },
     param = { param, { 'string', 'nil' }, true },
     param_value = { param_value, { 'string', 'number', 'nil' }, true },
   })
-  if value == nil then
-    error('Empty option value is unacceptable!', ERROR)
+  if type(option) == 'table' and value ~= nil then
+    error('Bad option value spec!', ERROR)
   end
   param = param or 'buf'
   if not vim.list_contains({ 'scope', 'ft', 'buf', 'win' }, param) then
@@ -119,6 +104,7 @@ function Util.optset(option, value, param, param_value)
     )
   end
   if param == 'scope' then
+    ---@cast param_value 'global'|'local'
     param_value = param_value or 'local'
     if not vim.list_contains({ 'global', 'local' }, param_value) then
       error(
@@ -132,46 +118,26 @@ function Util.optset(option, value, param, param_value)
   if param == 'ft' and (not param_value or type(param_value) ~= 'string') then
     error('Missing/bad value for `ft` parameter!', ERROR)
   end
-  if vim.list_contains({ 'win', 'buf' }, param) then
-    if
-      not (
-        param_value
-        and type(param_value) == 'number'
-        and require('user_api.check').is_int(param_value)
-      )
-    then
-      error('Missing/bad value for `win`/`buf` parameter!', ERROR)
-    end
+  if
+    vim.list_contains({ 'win', 'buf' }, param)
+    and not (
+      param_value
+      and type(param_value) == 'number'
+      and require('user_api.check').is_int(param_value)
+    )
+  then
+    error('Missing/bad value for `win`/`buf` parameter!', ERROR)
   end
 
-  vim.api.nvim_set_option_value(option, value, { [param] = param_value })
-end
-
----@deprecated
----@param values vim.bo|vim.wo
----@param opts vim.api.keyset.option
-function Util.optset_old(values, opts)
-  validate({
-    values = { values, { 'table' } },
-    opts = { opts, { 'table' } },
-  })
-  if vim.tbl_isempty(opts) or vim.islist(opts) then
-    error('Empty or incorrect opts table!', ERROR)
+  if type(option) == 'string' then
+    ---@cast option string
+    vim.api.nvim_set_option_value(option, value, { [param] = param_value })
+    return
   end
 
-  local valid = false
-  for _, key in ipairs({ 'buf', 'filetype', 'scope', 'win' }) do
-    if vim.list_contains(vim.tbl_keys(opts), key) then
-      valid = true
-      break
-    end
-  end
-  if not valid then
-    error('The opts table is not correctly formatted!', ERROR)
-  end
-
-  for name, value in pairs(values) do
-    vim.api.nvim_set_option_value(name, value, opts)
+  ---@cast option vim.wo|vim.bo
+  for opt, val in pairs(option) do
+    vim.api.nvim_set_option_value(opt, val, { [param] = param_value })
   end
 end
 

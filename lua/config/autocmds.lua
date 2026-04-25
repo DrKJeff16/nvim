@@ -6,8 +6,6 @@ local executable = require('user_api.check.exists').executable
 local desc = require('user_api.maps').desc
 local keyset = require('user_api.config.keymaps').set
 local validate = require('user_api.check').validate
-local optget = Util.optget_old
-local optset = Util.optset_old
 
 ---@param bufnr integer
 ---@return function cb
@@ -18,7 +16,7 @@ local function run_formatter(formatter, bufnr)
   })
 
   return function()
-    if optget('modified', { buf = bufnr }).modified or not executable(formatter) then
+    if Util.optget('modified', 'buf', bufnr) or not executable(formatter) then
       return
     end
 
@@ -102,76 +100,54 @@ function M.setup()
     events = { 'FileType' },
     opts_tbl = {
       {
-        pattern = 'checkhealth',
-        group = M.augroup,
-        callback = function(ev)
-          optset(
-            { wrap = true, number = false, signcolumn = 'no', list = false },
-            { win = vim.api.nvim_get_current_win() }
-          )
-
-          keyset({
-            n = {
-              q = {
-                function()
-                  vim.api.nvim_cmd(
-                    { cmd = 'bdelete', range = { ev.buf }, bang = true },
-                    { output = false }
-                  )
-                end,
-                desc('Quit Health', true, ev.buf),
-              },
-            },
-          })
-        end,
-      },
-      {
         pattern = { 'c', 'cpp', 'html', 'markdown', 'yaml' },
         group = M.augroup,
         callback = function(ev)
-          optset(
+          Util.optset(
             { tabstop = 2, shiftwidth = 2, softtabstop = 2, expandtab = true },
-            { buf = ev.buf }
+            nil,
+            'buf',
+            ev.buf
           )
         end,
       },
       {
-        pattern = { 'lua' },
+        pattern = { 'lua', 'python' },
         group = M.augroup,
         callback = function(ev)
-          optset(
-            { tabstop = 2, shiftwidth = 2, softtabstop = 2, expandtab = true },
-            { buf = ev.buf }
-          )
+          local is_lua = Util.optget('filetype', 'buf', ev.buf) == 'lua'
+          if is_lua then
+            Util.optset(
+              { tabstop = 2, shiftwidth = 2, softtabstop = 2, expandtab = true },
+              nil,
+              'buf',
+              ev.buf
+            )
+          end
 
           keyset({
             n = {
               ['<leader><C-l>'] = {
-                run_formatter('stylua', ev.buf),
-                desc('Format With `stylua`', true, ev.buf),
+                run_formatter(is_lua and 'stylua' or 'isort', ev.buf),
+                desc(('Format With `%s`'):format(is_lua and 'stylua' or 'isort'), true, ev.buf),
               },
             },
           }, ev.buf)
         end,
       },
       {
-        pattern = { 'python' },
+        pattern = { 'nvim-undotree', 'startuptime', 'qf', 'oil', 'notify', 'checkhealth' },
         group = M.augroup,
         callback = function(ev)
-          keyset({
-            n = {
-              ['<leader><C-l>'] = {
-                run_formatter('isort', ev.buf),
-                desc('Format With `isort`', true, ev.buf),
-              },
-            },
-          }, ev.buf)
-        end,
-      },
-      {
-        pattern = { 'nvim-undotree', 'startuptime', 'qf', 'oil' },
-        group = M.augroup,
-        callback = function(ev)
+          if Util.optget('filetype', 'buf', ev.buf) == 'checkhealth' then
+            Util.optset(
+              { wrap = true, number = false, signcolumn = 'no', list = false },
+              nil,
+              'win',
+              vim.api.nvim_get_current_win()
+            )
+          end
+
           keyset({
             n = {
               q = {
@@ -191,7 +167,12 @@ function M.setup()
         pattern = { 'lazy' },
         group = M.augroup,
         callback = function()
-          optset({ signcolumn = 'no', number = false }, { win = vim.api.nvim_get_current_win() })
+          Util.optset(
+            { signcolumn = 'no', number = false },
+            nil,
+            'win',
+            vim.api.nvim_get_current_win()
+          )
         end,
       },
       {
@@ -201,22 +182,17 @@ function M.setup()
           if Util.bt_get(ev.buf) ~= 'help' then
             return
           end
-          optset(
+          Util.optset(
             { signcolumn = 'no', number = false, wrap = true, colorcolumn = '' },
-            { win = vim.api.nvim_get_current_win() }
+            nil,
+            'win',
+            vim.api.nvim_get_current_win()
           )
 
           vim.cmd.noh()
           vim.cmd.wincmd('=')
 
-          vim.keymap.set('n', 'q', vim.cmd.helpclose, { buffer = ev.buf })
-        end,
-      },
-      {
-        pattern = { 'ministarter' },
-        group = M.augroup,
-        callback = function(ev)
-          vim.keymap.set('n', 'q', vim.cmd.quit, { buffer = ev.buf })
+          keyset({ n = { q = { vim.cmd.helpclose, desc('Close Help', true, ev.buf) } } })
         end,
       },
     },
