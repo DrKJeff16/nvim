@@ -13,6 +13,12 @@ return { ---@type LazySpec
       lsp = { enabled = true },
       scope_chdir = 'tab',
       show_by_name = true,
+      enable_autochdir = false,
+      history = { size = 70 },
+      manual_mode = false,
+      remove_missing_dirs = true,
+      show_hidden = false,
+      silent_chdir = true,
       exclude_dirs = {
         '/tmp',
         '/tmp/*',
