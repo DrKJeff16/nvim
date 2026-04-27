@@ -1,6 +1,7 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'romgrk/barbar.nvim',
+  dev = true,
   event = 'VeryLazy',
   init = function()
     vim.g.barbar_auto_setup = false

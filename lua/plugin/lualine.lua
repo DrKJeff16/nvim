@@ -412,8 +412,8 @@ return { ---@type LazySpec
           show = { bar = true, level = true, xp = not Termux.is_distro() },
           bar = { chars = { filled = '●', empty = '○' }, length = 6 },
         },
-        achievements = { enabled = true, index = 4, show_count = true },
-        streak = { show_days = true },
+        achievements = { enabled = false, index = 4, show_count = true },
+        streak = { show_days = false },
         session_time = {
           enabled = true,
           index = 1,
