@@ -1,7 +1,14 @@
 ---@module 'notify'
 
----@alias VimNotifyLvl vim.log.levels
----@alias NotifyLvl 'debug'|'error'|'info'|'off'|'trace'|'warn'
+---@enum (key) NotifyLvl
+local lvls = {
+  debug = vim.log.levels.DEBUG,
+  error = vim.log.levels.ERROR,
+  info = vim.log.levels.INFO,
+  off = vim.log.levels.OFF,
+  trace = vim.log.levels.TRACE,
+  warn = vim.log.levels.WARN,
+}
 
 ---@class NotifyOpts
 ---@field title? string Defaults to `'Message'`
@@ -15,30 +22,31 @@
 ---@field hide_from_history? boolean Defaults to `false`
 ---@field animate? boolean Defaults to `true`
 
-local TRACE = vim.log.levels.TRACE -- `0`
-local DEBUG = vim.log.levels.DEBUG -- `1`
-local INFO = vim.log.levels.INFO -- `2`
-local WARN = vim.log.levels.WARN -- `3`
-local ERROR = vim.log.levels.ERROR -- `4`
-local OFF = vim.log.levels.OFF -- `5`
+local TRACE = lvls.trace
+local DEBUG = lvls.debug
+local INFO = lvls.info
+local WARN = lvls.warn
+local ERROR = lvls.error
+local OFF = lvls.off
 local validate = require('user_api.check').validate
 
---- Can't use `user_api.check.exists.module()` here as said module might
---- end up requiring this module, so let's avoid an import loop,
---- shall we?
----@param mod string The module `require()` string
----@return boolean ok Whether the module exists
+---Can't use `user_api.check.exists.module()` here as said module might
+---end up requiring this module, so let's avoid an import loop,
+---shall we?
+--- ---
+---@param mod string The module `require()` string.
+---@return boolean ok Whether the module exists.
 local function exists(mod)
-  local ok, _ = pcall(require, mod)
+  local ok = pcall(require, mod)
   return ok
 end
 
 ---@class User.Util.Notify
-local Notify = {}
+---@field opts notify.Options
+local M = {}
 
----@type notify.Options
 ---@diagnostic disable-next-line:missing-fields
-Notify.Opts = {
+M.opts = {
   animate = false,
   hide_from_history = false,
   title = 'Message',
@@ -51,8 +59,8 @@ Notify.Opts = {
   -- keep = function() end,
 }
 
----@class User.Util.Notify.Levels
-Notify.Levels = {
+---@enum (key) User.Util.Notify.Levels
+M.Levels = {
   [TRACE] = 'trace',
   [DEBUG] = 'debug',
   [INFO] = 'info',
@@ -68,9 +76,9 @@ Notify.Levels = {
 }
 
 ---@param msg string
----@param lvl? NotifyLvl|VimNotifyLvl
+---@param lvl? NotifyLvl|vim.log.levels
 ---@param opts? notify.Options
-function Notify.notify(msg, lvl, opts)
+function M.notify(msg, lvl, opts)
   validate({
     msg = { msg, { 'string' } },
     lvl = { lvl, { 'string', 'number', 'nil' }, true },
@@ -78,21 +86,21 @@ function Notify.notify(msg, lvl, opts)
   })
   lvl = lvl or 'info'
   lvl = (not vim.tbl_contains({ 'string', 'number' }, type(lvl))) and 'info' or lvl
-  opts = opts or Notify.Opts
+  opts = opts or M.opts
 
   if exists('notify') then
     if type(lvl) == 'number' then
       lvl = math.floor(lvl)
-      lvl = (lvl <= OFF and lvl >= TRACE) and Notify.Levels[lvl] or Notify.Levels[INFO]
-    elseif not vim.tbl_contains(Notify.Levels, lvl:lower()) then
-      lvl = Notify.Levels[INFO]
+      lvl = (lvl <= OFF and lvl >= TRACE) and M.Levels[lvl] or M.Levels[INFO]
+    elseif not vim.tbl_contains(M.Levels, lvl:lower()) then
+      lvl = M.Levels[INFO]
     end
 
-    opts = vim.tbl_deep_extend('keep', opts, Notify.Opts)
+    opts = vim.tbl_deep_extend('keep', opts, M.opts)
   else
     if type(lvl) == 'string' then
-      if vim.tbl_contains(Notify.Levels, lvl:lower()) then
-        lvl = Notify.Levels[lvl:upper()]
+      if vim.tbl_contains(M.Levels, lvl:lower()) then
+        lvl = M.Levels[lvl:upper()]
       end
     elseif type(lvl) == 'number' then
       if lvl < TRACE or lvl > OFF then
@@ -105,7 +113,7 @@ function Notify.notify(msg, lvl, opts)
   vim.notify(msg, lvl, opts)
 end
 
----@param lvl VimNotifyLvl
+---@param lvl vim.log.levels
 ---@return fun(args: vim.api.keyset.create_user_command.command_args)
 local function gen_cmd_lvl(lvl)
   validate({ lvl = { lvl, { 'number' } } })
@@ -121,36 +129,29 @@ local function gen_cmd_lvl(lvl)
       timeout = 1750,
       hide_from_history = args.bang,
     }
-    Notify.notify(data, lvl, opts)
+    M.notify(data, lvl, opts)
   end
 end
 
-vim.api.nvim_create_user_command('Notify', gen_cmd_lvl(vim.log.levels.INFO), {
+vim.api.nvim_create_user_command('Notify', gen_cmd_lvl(INFO), {
   bang = true,
   nargs = '+',
   force = true,
 })
-vim.api.nvim_create_user_command('NotifyInfo', gen_cmd_lvl(vim.log.levels.INFO), {
+vim.api.nvim_create_user_command('NotifyInfo', gen_cmd_lvl(INFO), {
   bang = true,
   nargs = '+',
   force = true,
 })
-vim.api.nvim_create_user_command('NotifyWarn', gen_cmd_lvl(vim.log.levels.WARN), {
+vim.api.nvim_create_user_command('NotifyWarn', gen_cmd_lvl(WARN), {
   bang = true,
   nargs = '+',
   force = true,
 })
-vim.api.nvim_create_user_command('NotifyError', gen_cmd_lvl(vim.log.levels.ERROR), {
+vim.api.nvim_create_user_command('NotifyError', gen_cmd_lvl(ERROR), {
   bang = true,
   nargs = '+',
   force = true,
-})
-
-local M = setmetatable(Notify, { ---@type User.Util.Notify
-  __index = Notify,
-  __newindex = function()
-    vim.notify('User.Util.Notify is Read-Only!', ERROR)
-  end,
 })
 
 return M

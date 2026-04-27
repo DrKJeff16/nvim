@@ -9,6 +9,7 @@ local Util = {}
 
 Util.au = require('user_api.util.autocmd')
 Util.notify = require('user_api.util.notify')
+Util.spinner = require('user_api.util.spinner')
 Util.string = require('user_api.util.string')
 
 ---@overload fun(option: string): value: any
