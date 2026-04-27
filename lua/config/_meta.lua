@@ -7,6 +7,7 @@
 ---@field alpha? LazySpecImport
 ---@field autopairs? LazySpecImport
 ---@field barbar? LazySpecImport
+---@field blink? LazySpecImport
 ---@field blink_cmp? LazySpecImport
 ---@field blink_indent? LazySpecImport
 ---@field blink_pairs? LazySpecImport
@@ -137,6 +138,7 @@
 ---@field alpha? boolean
 ---@field autopairs? boolean
 ---@field barbar? boolean
+---@field blink? boolean
 ---@field blink_cmp? boolean
 ---@field blink_indent? boolean
 ---@field blink_pairs? boolean
