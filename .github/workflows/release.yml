@@ -3,13 +3,15 @@ on:
   push:
     tags:
       - "v*.*.*"
-      - "v*.*.*-*"
   merge_group:
     branches:
       - main
   release:
     types:
       - created
+permissions:
+  contents: write
+  discussions: write
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -54,5 +56,4 @@ jobs:
             Jnvim.tar.gz
             Jnvim.tar.xz
             Jnvim.zip
-          token: ${{ secrets.GITHUB_TOKEN }}
 # vim: set ts=2 sts=2 sw=2 et ai si sta:
