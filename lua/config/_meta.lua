@@ -113,6 +113,7 @@
 ---@field startuptime? LazySpecImport
 ---@field stylua? LazySpecImport
 ---@field telescope? LazySpecImport
+---@field tmux? LazySpecImport
 ---@field todo_comments? LazySpecImport
 ---@field toggleterm? LazySpecImport
 ---@field toml? LazySpecImport
@@ -244,6 +245,7 @@
 ---@field startuptime? boolean
 ---@field stylua? boolean
 ---@field telescope? boolean
+---@field tmux? boolean
 ---@field todo_comments? boolean
 ---@field toggleterm? boolean
 ---@field toml? boolean
