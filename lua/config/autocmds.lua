@@ -160,7 +160,7 @@ function M.setup()
                 desc('Quit Buffer', true, ev.buf),
               },
             },
-          })
+          }, ev.buf)
         end,
       },
       {
