@@ -266,7 +266,7 @@ return { ---@type LazySpec
   version = false,
   dependencies = {
     'saghen/blink.lib',
-    'L3MON4D3/LuaSnip',
+    { 'L3MON4D3/LuaSnip', build = 'make install_jsregexp' },
     'saghen/blink.compat',
     'hrsh7th/cmp-nvim-lsp',
     'rafamadriz/friendly-snippets',
