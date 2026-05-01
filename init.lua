@@ -193,7 +193,7 @@ require('config.lazy').setup({
   smoothcursor = true,
   snacks = true,
   startuptime = true,
-  stylua = true,
+  stylua = false,
   telescope = true,
   todo_comments = true,
   toggleterm = true,

@@ -60,7 +60,7 @@ function Server.make_timer()
       Server.timer = nil
     end,
   })
-  vim.api.nvim_create_autocmd('LspAttach', {
+  vim.api.nvim_create_autocmd('VimEnter', {
     group = group,
     callback = function()
       if not Server.timer or Server.timer:is_active() then

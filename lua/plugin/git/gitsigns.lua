@@ -1,11 +1,4 @@
 ---@module 'lazy'
-
----@class GitSignOpts
----@field text string
-
----@alias GitSigns table<'add'|'change'|'delete'|'topdelete'|'changedelete'|'untracked', GitSignOpts>
----@alias GitSignsArr GitSigns[]
-
 return { ---@type LazySpec
   'lewis6991/gitsigns.nvim',
   version = false,

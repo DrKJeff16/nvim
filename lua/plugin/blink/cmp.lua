@@ -286,6 +286,7 @@ return { ---@type LazySpec
     require('blink.cmp').build():wait(60000)
   end,
   config = function()
+    require('luasnip.loaders.from_vscode').lazy_load()
     require('blink.cmp').setup({
       enabled = function()
         return not vim.list_contains({ 'picker-prompt' }, vim.bo.filetype)
@@ -401,7 +402,7 @@ return { ---@type LazySpec
           min_width = 15,
           max_height = 15,
           auto_show = true,
-          direction_priority = { 'n', 's' },
+          direction_priority = { 's', 'n' },
           auto_show_delay_ms = 0,
           cmdline_position = function()
             if vim.g.ui_cmdline_pos ~= nil then
