@@ -56,7 +56,7 @@ function BUtil.reset_sources(snipps, buf)
     snipps = { snipps, { 'boolean', 'nil' }, true },
     buf = { buf, { 'boolean', 'nil' }, true },
   })
-  snipps = snipps ~= nil and snipps or false
+  snipps = snipps ~= nil and snipps or true
   buf = buf ~= nil and buf or true
 
   BUtil.Sources = { 'lsp', 'path' } --[[@as string[]\]]
@@ -266,6 +266,7 @@ return { ---@type LazySpec
   version = false,
   dependencies = {
     'saghen/blink.lib',
+    'L3MON4D3/LuaSnip',
     'saghen/blink.compat',
     'hrsh7th/cmp-nvim-lsp',
     'rafamadriz/friendly-snippets',
@@ -285,7 +286,6 @@ return { ---@type LazySpec
     require('blink.cmp').build():wait(60000)
   end,
   config = function()
-    local select_opts = { auto_insert = true, preselect = false }
     require('blink.cmp').setup({
       enabled = function()
         return not vim.list_contains({ 'picker-prompt' }, vim.bo.filetype)
@@ -302,9 +302,9 @@ return { ---@type LazySpec
             end
 
             if not cmp.is_menu_visible() and has_words_before() then
-              return cmp.show({ providers = BUtil.gen_sources(false, true) })
+              return cmp.show({ providers = BUtil.gen_sources(true, true) })
             end
-            return cmp.select_next(select_opts)
+            return cmp.insert_next()
           end,
           'fallback',
         },
@@ -315,9 +315,9 @@ return { ---@type LazySpec
             end
 
             if not cmp.is_menu_visible() and has_words_before() then
-              return cmp.show({ providers = BUtil.gen_sources(false, true) })
+              return cmp.show({ providers = BUtil.gen_sources(true, true) })
             end
-            return cmp.select_prev(select_opts)
+            return cmp.insert_prev()
           end,
           'fallback',
         },
@@ -397,9 +397,11 @@ return { ---@type LazySpec
         },
         menu = {
           enabled = true,
+          border = 'rounded',
           min_width = 15,
           max_height = 15,
           auto_show = true,
+          direction_priority = { 'n', 's' },
           auto_show_delay_ms = 0,
           cmdline_position = function()
             if vim.g.ui_cmdline_pos ~= nil then
@@ -415,45 +417,24 @@ return { ---@type LazySpec
             columns = {
               { 'label', 'label_description', gap = 1 },
               { 'kind_icon', 'kind' },
-              { 'source_name', 'item_idx', gap = 1 },
+              { 'source_name', gap = 1 },
             },
             components = {
               kind_icon = {
                 text = function(ctx)
-                  if ctx.source_name ~= 'Path' then
-                    return (require('lspkind').symbol_map[ctx.kind] or '') .. ctx.icon_gap
-                  end
-
-                  local get_icons = require('mini.icons').get
-                  local unknown = vim.list_contains(
-                    { 'link', 'socket', 'fifo', 'char', 'block', 'unknown' },
-                    ctx.item.data.type
-                  )
-                  local mini_icon =
-                    get_icons(unknown and 'os' or ctx.item.data.type, unknown and '' or ctx.label)
-
-                  return (mini_icon or ctx.kind_icon) .. ctx.icon_gap
+                  local kind_icon = require('mini.icons').get('lsp', ctx.kind)
+                  return kind_icon
                 end,
                 highlight = function(ctx)
-                  if ctx.source_name ~= 'Path' then
-                    return ctx.kind_hl
-                  end
-                  local get_icons = require('mini.icons').get
-                  local unknown = vim.list_contains(
-                    { 'link', 'socket', 'fifo', 'char', 'block', 'unknown' },
-                    ctx.item.data.type
-                  )
-                  local mini_icon, mini_hl =
-                    get_icons(unknown and 'os' or ctx.item.data.type, unknown and '' or ctx.label)
-
-                  return mini_icon and mini_hl or ctx.kind_hl
+                  local _, hl = require('mini.icons').get('lsp', ctx.kind)
+                  return hl
                 end,
               },
-              item_idx = {
-                text = function(ctx)
-                  return ctx.idx == 10 and '0' or (ctx.idx >= 10 and ' ' or tostring(ctx.idx))
+              kind = {
+                highlight = function(ctx)
+                  local _, hl = require('mini.icons').get('lsp', ctx.kind)
+                  return hl
                 end,
-                highlight = 'Special',
               },
             },
           },
@@ -462,7 +443,7 @@ return { ---@type LazySpec
       },
       sources = {
         providers = BUtil.gen_providers(),
-        default = BUtil.gen_sources(false, true),
+        default = BUtil.gen_sources(true, true),
         transform_items = function(_, items)
           return items
         end,
@@ -471,25 +452,14 @@ return { ---@type LazySpec
         max_typos = function(keyword)
           return math.floor(keyword:len() / 3)
         end,
-        sorts = { 'exact', 'score', 'sort_text' },
-        implementation = 'rust',
+        sorts = { 'exact', 'score', 'sort_text', 'label' },
+        implementation = 'prefer_rust',
       },
-      snippets = {
-        preset = 'default',
-        expand = function(snippet)
-          vim.snippet.expand(snippet)
-        end,
-        active = function(filter)
-          return vim.snippet.active(filter)
-        end,
-        jump = function(direction) ---@param direction integer
-          vim.snippet.jump(direction)
-        end,
-      },
+      snippets = { preset = 'luasnip' },
       signature = {
         enabled = true,
         trigger = {
-          enabled = false,
+          enabled = true,
           blocked_retrigger_characters = {},
           blocked_trigger_characters = {},
           show_on_accept_on_trigger_character = true,
@@ -497,6 +467,7 @@ return { ---@type LazySpec
           show_on_trigger_character = true,
         },
         window = {
+          border = 'rounded',
           treesitter_highlighting = true,
           show_documentation = true,
           scrollbar = true,
