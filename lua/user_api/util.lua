@@ -1,6 +1,5 @@
 local ERROR = vim.log.levels.ERROR
 local curr_buf = vim.api.nvim_get_current_buf
-local curr_win = vim.api.nvim_get_current_win
 local in_list = vim.list_contains
 local validate = require('user_api.check').validate
 
@@ -143,10 +142,11 @@ function Util.optset(option, value, param, param_value)
 end
 
 function Util.has_words_before()
-  local win = curr_win()
-  local line, col = (unpack or table.unpack)(vim.api.nvim_win_get_cursor(win))
-  return col ~= 0
-    and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match('%s') == nil
+  local col = vim.api.nvim_win_get_cursor(vim.api.nvim_get_current_win())[2]
+  if col == 0 then
+    return false
+  end
+  return vim.api.nvim_get_current_line():sub(col, col):match('%s') == nil
 end
 
 ---Left strip given a leading string (or list of strings) within a string, if any.
@@ -182,8 +182,7 @@ function Util.lstrip(char, str)
     return str
   end
 
-  local i, len, new_str = 1, str:len(), ''
-  local other = false
+  local i, len, new_str, other = 1, str:len(), '', false
   while i <= len and i + char:len() - 1 <= len do
     if str:sub(i, i + char:len() - 1) ~= char and not other then
       other = true
