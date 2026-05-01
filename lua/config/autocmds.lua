@@ -117,12 +117,7 @@ function M.setup()
         callback = function(ev)
           local is_lua = Util.optget('filetype', 'buf', ev.buf) == 'lua'
           if is_lua then
-            Util.optset(
-              { tabstop = 2, shiftwidth = 2, softtabstop = 2, expandtab = true },
-              nil,
-              'buf',
-              ev.buf
-            )
+            Util.optset({ ts = 2, sw = 2, sts = 2, et = true }, nil, 'buf', ev.buf)
           end
 
           keyset({
@@ -146,6 +141,16 @@ function M.setup()
               'win',
               vim.api.nvim_get_current_win()
             )
+          elseif Util.bt_get(ev.buf) == 'help' then
+            Util.optset(
+              { signcolumn = 'no', number = false, wrap = true, colorcolumn = '' },
+              nil,
+              'win',
+              vim.api.nvim_get_current_win()
+            )
+
+            vim.cmd.noh()
+            vim.cmd.wincmd('=')
           end
 
           keyset({
@@ -161,38 +166,6 @@ function M.setup()
               },
             },
           }, ev.buf)
-        end,
-      },
-      {
-        pattern = { 'lazy' },
-        group = M.augroup,
-        callback = function()
-          Util.optset(
-            { signcolumn = 'no', number = false },
-            nil,
-            'win',
-            vim.api.nvim_get_current_win()
-          )
-        end,
-      },
-      {
-        pattern = { 'help' },
-        group = M.augroup,
-        callback = function(ev)
-          if Util.bt_get(ev.buf) ~= 'help' then
-            return
-          end
-          Util.optset(
-            { signcolumn = 'no', number = false, wrap = true, colorcolumn = '' },
-            nil,
-            'win',
-            vim.api.nvim_get_current_win()
-          )
-
-          vim.cmd.noh()
-          vim.cmd.wincmd('=')
-
-          keyset({ n = { q = { vim.cmd.helpclose, desc('Close Help', true, ev.buf) } } })
         end,
       },
     },
