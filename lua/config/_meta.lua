@@ -60,6 +60,7 @@
 ---@field markdown_outline? LazySpecImport
 ---@field markdown_render? LazySpecImport
 ---@field mason? LazySpecImport
+---@field match? LazySpecImport
 ---@field mini_animate? LazySpecImport
 ---@field mini_basics? LazySpecImport
 ---@field mini_base16? LazySpecImport
@@ -192,6 +193,7 @@
 ---@field markdown_outline? boolean
 ---@field markdown_render? boolean
 ---@field mason? boolean
+---@field match? boolean
 ---@field mini_animate? boolean
 ---@field mini_basics? boolean
 ---@field mini_base16? boolean
