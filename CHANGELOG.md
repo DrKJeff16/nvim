@@ -1,5 +1,17 @@
 # Changelog
 
+## [v0.5.1](https://github.com/DrKJeff16/nvim/tree/v0.5.1) (2026-05-01)
+
+[Full Changelog](https://github.com/DrKJeff16/nvim/compare/v0.5.0...v0.5.1)
+
+## [v0.5.0](https://github.com/DrKJeff16/nvim/tree/v0.5.0) (2026-04-30)
+
+[Full Changelog](https://github.com/DrKJeff16/nvim/compare/v0.4.0...v0.5.0)
+
+## [v0.4.0](https://github.com/DrKJeff16/nvim/tree/v0.4.0) (2026-04-25)
+
+[Full Changelog](https://github.com/DrKJeff16/nvim/compare/v0.3.1...v0.4.0)
+
 ## [v0.3.1](https://github.com/DrKJeff16/nvim/tree/v0.3.1) (2026-02-21)
 
 [Full Changelog](https://github.com/DrKJeff16/nvim/compare/v0.3.0...v0.3.1)
