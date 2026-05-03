@@ -95,8 +95,7 @@ function Neovide.set_transparency(opacity, transparency, bg)
   local eq = { high = true, low = true }
   opacity = (opacity and not num_range(opacity, 0.0, 1.0, eq)) and 0.85 or opacity
   bg = bg and bg:len() == 7 and bg or '#0f1117'
-  transparency = (transparency and not num_range(transparency, 0.0, 1.0, eq)) and 1.0
-    or transparency
+  transparency = (transparency and not num_range(transparency, 0.0, 1.0, eq)) and 1.0 or transparency
 
   if bg:sub(1, 1) == '#' then
     bg = ((bg:len() ~= 7 and bg:len() ~= 9) and '#0f1117' or bg) .. alpha()
@@ -131,7 +130,7 @@ function Neovide.setup_maps()
     return
   end
 
-  local desc = require('user_api.maps').desc
+  local desc = require('user_api.maps').new_desc
   require('user_api.config.keymaps').set({
     n = {
       ['<leader>n'] = { group = '+Neovide' },

@@ -47,8 +47,7 @@ return { ---@type LazySpec
       display_behind = {},
       filter = function(keys)
         return vim.tbl_map(function(value) ---@param value screenkey.queued_key
-          value.key = (SK.statusline_component_is_active() and value.key == '%') and '%%'
-            or value.key
+          value.key = (SK.statusline_component_is_active() and value.key == '%') and '%%' or value.key
 
           return value
         end, keys)
@@ -94,7 +93,7 @@ return { ---@type LazySpec
       },
     })
 
-    local desc = require('user_api.maps').desc
+    local desc = require('user_api.maps').new_desc
     require('user_api.config.keymaps').set({
       n = { ['<leader><C-s>'] = { SK.toggle, desc('Toggle Screenkey') } },
     })

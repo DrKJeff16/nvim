@@ -33,8 +33,7 @@ return { ---@type LazySpec
     'nvim-lua/plenary.nvim',
     'nvim-telescope/telescope.nvim',
   },
-  cond = require('user_api.check.exists').executable('rg')
-    and not require('user_api.check').in_console(),
+  cond = require('user_api.check.exists').executable('rg') and not require('user_api.check').in_console(),
   config = function()
     require('todo-comments').setup({
       signs = true,
@@ -146,7 +145,7 @@ return { ---@type LazySpec
       PERF = { 'PERF', 'OPTIM', 'OPTIMIZED', 'PERFORMANCE' },
     }
 
-    local desc = require('user_api.maps').desc
+    local desc = require('user_api.maps').new_desc
     require('user_api.config.keymaps').set({
       n = {
         ['<leader>c'] = { group = '+Comments' },

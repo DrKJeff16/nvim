@@ -75,7 +75,7 @@ function M.setup(commands, verbose)
   require('user_api.config.neovide').setup()
   require('user_api.pickers').setup()
 
-  local desc = require('user_api.maps').desc
+  local desc = require('user_api.maps').new_desc
   require('user_api.config.keymaps').set({
     n = {
       ['<leader>U'] = { group = '+User API' },

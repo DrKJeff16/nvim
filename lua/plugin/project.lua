@@ -41,7 +41,7 @@ return { ---@type LazySpec
       },
     })
 
-    local desc = require('user_api.maps').desc
+    local desc = require('user_api.maps').new_desc
     local keyset = require('user_api.config.keymaps').set
     keyset({
       n = {
@@ -64,11 +64,7 @@ return { ---@type LazySpec
       },
     })
 
-    if
-      require('user_api.check').module('fzf-lua')
-      and vim.cmd.ProjectFzf
-      and vim.is_callable(vim.cmd.ProjectFzf)
-    then
+    if require('user_api.check').module('fzf-lua') and vim.cmd.ProjectFzf and vim.is_callable(vim.cmd.ProjectFzf) then
       keyset({ n = { ['<leader>pf'] = { vim.cmd.ProjectFzf, desc('Fzf-Lua Picker') } } })
     end
     if

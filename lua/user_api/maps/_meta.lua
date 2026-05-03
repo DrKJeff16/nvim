@@ -12,6 +12,25 @@ local Maps = {
   keymap = {}, ---@type User.Maps.Keymap|table<MapModes, fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)>
 }
 
+---@class User.Maps.DescOpts
+---@field buf? integer
+---@field callback? function
+---@field desc? string
+---@field expr? boolean
+---@field noremap? boolean
+---@field nowait? boolean
+---@field remap? boolean
+---@field replace_keycodes? boolean
+---@field script? boolean
+---@field silent? boolean
+---@field unique? boolean
+
+---@param desc? string
+---@param opts? User.Maps.DescOpts
+---@return User.Maps.Opts opts
+function Maps.new_desc(desc, opts) end
+
+---@deprecated Use `new_desc()` instead
 ---@param desc string
 ---@param silent? boolean
 ---@param bufnr? integer|nil

@@ -22,7 +22,7 @@ return { ---@type LazySpec
       vim_ui_input = true,
     })
 
-    local desc = require('user_api.maps').desc
+    local desc = require('user_api.maps').new_desc
     require('user_api.config.keymaps').set({
       n = {
         ['<leader>g'] = { group = '+Go To' },

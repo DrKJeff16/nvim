@@ -146,8 +146,7 @@ function BUtil.reset_providers()
         for _, item in ipairs(items) do
           local raw = item.insertText
           if raw and raw:match(correct) then
-            local text = (uppercase and raw:sub(1, 1):upper() or raw:sub(1, 1):lower())
-              .. raw:sub(2)
+            local text = (uppercase and raw:sub(1, 1):upper() or raw:sub(1, 1):lower()) .. raw:sub(2)
             item.insertText = text
             item.label = text
           end
@@ -218,10 +217,7 @@ function BUtil.reset_providers()
       module = 'blink-cmp-git',
       enabled = function()
         local git_fts = { 'git', 'gitcommit', 'gitattributes', 'gitrebase' }
-        return vim.list_contains(
-          git_fts,
-          require('user_api.util').ft_get(vim.api.nvim_get_current_buf())
-        )
+        return vim.list_contains(git_fts, require('user_api.util').ft_get(vim.api.nvim_get_current_buf()))
       end,
       opts = {},
     }

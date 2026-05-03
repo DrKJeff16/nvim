@@ -3,7 +3,7 @@ local INFO = vim.log.levels.INFO
 local Util = require('user_api.util')
 local au = require('user_api.util.autocmd')
 local executable = require('user_api.check.exists').executable
-local desc = require('user_api.maps').desc
+local desc = require('user_api.maps').new_desc
 local keyset = require('user_api.config.keymaps').set
 local validate = require('user_api.check').validate
 
@@ -29,10 +29,7 @@ local function run_formatter(formatter, bufnr)
     local cmd = { formatter, path }
     local sys_obj = vim.system(cmd, { text = true }):wait(10000)
     if sys_obj.code ~= 0 then
-      vim.notify(
-        (sys_obj.stderr and sys_obj.stderr ~= '') and sys_obj.stderr or 'Failed to format!',
-        ERROR
-      )
+      vim.notify((sys_obj.stderr and sys_obj.stderr ~= '') and sys_obj.stderr or 'Failed to format!', ERROR)
       return
     end
     vim.notify('Formatted successfully!', INFO)
@@ -59,36 +56,36 @@ end
 ---@class Config.Autocmds
 local M = {}
 
-M.augroup = -1 ---@type integer
+local augroup = -1 ---@type integer
 
 function M.setup()
-  M.augroup = au.gen_augroups('User_AU', true)['User_AU']
+  augroup = au.gen_augroups('User_AU', true)['User_AU']
   au.au_repeated_events({
     events = { 'BufCreate', 'BufAdd', 'BufNew', 'BufNewFile', 'BufRead' },
     opts_tbl = {
       {
-        group = M.augroup,
+        group = augroup,
         pattern = { '.spacemacs', '*.el' },
         callback = function(ev)
           set_lang('lisp', ev.buf)
         end,
       },
       {
-        group = M.augroup,
+        group = augroup,
         pattern = { '.github/CODEOWNERS' },
         callback = function(ev)
           set_lang('codeowners', ev.buf)
         end,
       },
       {
-        group = M.augroup,
+        group = augroup,
         pattern = { '.clangd' },
         callback = function(ev)
           set_lang('yaml', ev.buf)
         end,
       },
       {
-        group = M.augroup,
+        group = augroup,
         pattern = { '*.h' },
         callback = function(ev)
           set_lang('c', ev.buf)
@@ -101,19 +98,14 @@ function M.setup()
     opts_tbl = {
       {
         pattern = { 'c', 'cpp', 'html', 'markdown', 'yaml' },
-        group = M.augroup,
+        group = augroup,
         callback = function(ev)
-          Util.optset(
-            { tabstop = 2, shiftwidth = 2, softtabstop = 2, expandtab = true },
-            nil,
-            'buf',
-            ev.buf
-          )
+          Util.optset({ tabstop = 2, shiftwidth = 2, softtabstop = 2, expandtab = true }, nil, 'buf', ev.buf)
         end,
       },
       {
         pattern = { 'lua', 'python' },
-        group = M.augroup,
+        group = augroup,
         callback = function(ev)
           local is_lua = Util.optget('filetype', 'buf', ev.buf) == 'lua'
           if is_lua then
@@ -124,45 +116,53 @@ function M.setup()
             n = {
               ['<leader><C-l>'] = {
                 run_formatter(is_lua and 'stylua' or 'isort', ev.buf),
-                desc(('Format With `%s`'):format(is_lua and 'stylua' or 'isort'), true, ev.buf),
+                desc(('Format With `%s`'):format(is_lua and 'stylua' or 'isort'), { buf = ev.buf }),
               },
             },
           }, ev.buf)
         end,
       },
       {
+        pattern = { 'help' },
+        group = augroup,
+        callback = function(ev)
+          if Util.optget('ft', 'buf', ev.buf) == 'help' and Util.optget('bt', 'buf', ev.buf) ~= 'help' then
+            return
+          end
+
+          Util.optset(
+            { signcolumn = 'no', number = false, colorcolumn = '', list = false },
+            nil,
+            'win',
+            vim.api.nvim_get_current_win()
+          )
+
+          vim.cmd.noh()
+          vim.cmd.wincmd('=')
+
+          keyset({ n = { q = { vim.cmd.helpclose, desc('Quit Help', { buf = ev.buf }) } } }, ev.buf)
+        end,
+      },
+      {
         pattern = { 'nvim-undotree', 'startuptime', 'qf', 'oil', 'notify', 'checkhealth' },
-        group = M.augroup,
+        group = augroup,
         callback = function(ev)
           if Util.optget('filetype', 'buf', ev.buf) == 'checkhealth' then
             Util.optset(
-              { wrap = true, number = false, signcolumn = 'no', list = false },
+              { wrap = true, number = false, signcolumn = 'no', list = false, colorcolumn = '' },
               nil,
               'win',
               vim.api.nvim_get_current_win()
             )
-          elseif Util.bt_get(ev.buf) == 'help' then
-            Util.optset(
-              { signcolumn = 'no', number = false, wrap = true, colorcolumn = '' },
-              nil,
-              'win',
-              vim.api.nvim_get_current_win()
-            )
-
-            vim.cmd.noh()
-            vim.cmd.wincmd('=')
           end
 
           keyset({
             n = {
               q = {
                 function()
-                  vim.api.nvim_cmd(
-                    { cmd = 'bdelete', range = { ev.buf }, bang = true },
-                    { output = false }
-                  )
+                  vim.api.nvim_cmd({ cmd = 'bdelete', range = { ev.buf }, bang = true }, { output = false })
                 end,
-                desc('Quit Buffer', true, ev.buf),
+                desc('Quit Buffer', { buf = ev.buf }),
               },
             },
           }, ev.buf)

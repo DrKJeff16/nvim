@@ -7,7 +7,7 @@ return { ---@type LazySpec
     local GS = require('gitsigns')
     GS.setup({
       on_attach = function(bufnr) ---@param bufnr? integer
-        local desc = require('user_api.maps').desc
+        local desc = require('user_api.maps').new_desc
         require('user_api.config.keymaps').set({
           n = {
             ['<leader>G'] = { group = '+Git' },

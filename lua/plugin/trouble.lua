@@ -169,7 +169,7 @@ return { ---@type LazySpec
       },
     })
 
-    local desc = require('user_api.maps').desc
+    local desc = require('user_api.maps').new_desc
     require('user_api.config.keymaps').set({
       n = { ---@type AllMaps
         ['<leader>lx'] = { group = '+Trouble' },
@@ -181,9 +181,7 @@ return { ---@type LazySpec
         ['<leader>lxr'] = { ':Trouble lsp_references<CR>', desc('Toggle LSP References') },
         ['<leader>lxX'] = {
           function()
-            vim.cmd.Trouble(
-              ('diagnostics toggle filter.buf=%s'):format(vim.api.nvim_get_current_buf())
-            )
+            vim.cmd.Trouble(('diagnostics toggle filter.buf=%s'):format(vim.api.nvim_get_current_buf()))
           end,
           desc('Toggle Buffer-Local Diagnostics'),
         },

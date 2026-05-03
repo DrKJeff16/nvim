@@ -35,10 +35,7 @@ local Clients = {
   css_variables = server_load('css_variables', 'css-variables-language-server'),
   cssls = server_load('cssls', 'vscode-css-language-server'),
   cssmodules_ls = server_load('cssmodules_ls', 'cssmodules-language-server'),
-  docker_compose_language_service = server_load(
-    'docker_compose_language_service',
-    'docker-compose-langserver'
-  ),
+  docker_compose_language_service = server_load('docker_compose_language_service', 'docker-compose-langserver'),
   docker_language_server = server_load('docker_language_server', 'docker-language-server'),
   dockerls = server_load('dockerls', 'docker-langserver'),
   gh_actions_ls = server_load('gh_actions_ls', 'gh-action-language-server'),

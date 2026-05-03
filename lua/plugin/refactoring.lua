@@ -28,7 +28,7 @@ return { ---@type LazySpec
       print_var_statements = {},
       show_success_message = false,
     })
-    local desc = require('user_api.maps').desc
+    local desc = require('user_api.maps').new_desc
     require('user_api.config.keymaps').set({
       n = {
         ['<leader>r'] = { group = '+Refactoring' },
@@ -42,10 +42,13 @@ return { ---@type LazySpec
       },
       x = {
         ['<leader>r'] = { group = '+Refactoring' },
-        ['<leader>re'] = { ':Refactor extract ', desc('Extract', false) },
-        ['<leader>rf'] = { ':Refactor extract_to_file ', desc('Extract To File', false) },
+        ['<leader>re'] = { ':Refactor extract ', desc('Extract', { silent = false }) },
+        ['<leader>rf'] = {
+          ':Refactor extract_to_file ',
+          desc('Extract To File', { silent = false }),
+        },
         ['<leader>ri'] = { ':Refactor inline_var<CR>', desc('Inline Var') },
-        ['<leader>rv'] = { ':Refactor extract_var ', desc('Extract Var', false) },
+        ['<leader>rv'] = { ':Refactor extract_var ', desc('Extract Var', { silent = false }) },
       },
     })
 

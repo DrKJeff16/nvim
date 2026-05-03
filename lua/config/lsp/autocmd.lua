@@ -1,5 +1,5 @@
 local INFO = vim.log.levels.INFO
-local desc = require('user_api.maps').desc
+local desc = require('user_api.maps').new_desc
 local validate = require('user_api.check').validate
 
 local function print_workspace_folders()

@@ -176,7 +176,7 @@ function M.bootstrap()
 end
 
 function M.setup_keys()
-  local desc = require('user_api.maps').desc
+  local desc = require('user_api.maps').new_desc
   local lazy = require('lazy')
   require('user_api.config.keymaps').set({
     n = {
@@ -193,9 +193,12 @@ function M.setup_keys()
       ['<leader>Li'] = { lazy.install, desc('Install Lazy Plugins') },
       ['<leader>Lh'] = { lazy.health, desc('Run Lazy checkhealth') },
       ['<leader>vhL'] = { lazy.health, desc('Run Lazy checkhealth') },
-      ['<leader>L<CR>'] = { ':Lazy ', desc('Select `Lazy` Operation (Interactively)', false) },
-      ['<leader>Lb'] = { ':Lazy build ', desc('Prompt To Build', false) },
-      ['<leader>Lr'] = { ':Lazy reload ', desc('Prompt To Build', false) },
+      ['<leader>L<CR>'] = {
+        ':Lazy ',
+        desc('Select `Lazy` Operation (Interactively)', { silent = false }),
+      },
+      ['<leader>Lb'] = { ':Lazy build ', desc('Prompt To Build', { silent = false }) },
+      ['<leader>Lr'] = { ':Lazy reload ', desc('Prompt To Build', { silent = false }) },
     },
   })
 end

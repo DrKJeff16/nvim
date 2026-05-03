@@ -120,9 +120,7 @@ return { ---@type LazySpec
         if not vim.api.nvim_buf_is_loaded(ev.buf) then
           return
         end
-        local lang = vim.treesitter.language.get_lang(
-          vim.api.nvim_get_option_value('filetype', { buf = ev.buf })
-        )
+        local lang = vim.treesitter.language.get_lang(vim.api.nvim_get_option_value('filetype', { buf = ev.buf }))
         if not (lang and vim.treesitter.language.add(lang)) then
           return
         end

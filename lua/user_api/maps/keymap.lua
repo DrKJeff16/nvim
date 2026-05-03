@@ -27,7 +27,14 @@
 ---@alias KeyMapDicts table<string, KeyMapRhsDict>
 
 ---@alias AllMaps table<string, KeyMapRhsArr|RegKey|RegPfx>
----@alias AllModeMaps table<'n'|'i'|'v'|'t'|'o'|'x', AllMaps>
+
+---@class AllModeMaps
+---@field n? AllModeMaps
+---@field i? AllModeMaps
+---@field v? AllModeMaps
+---@field t? AllModeMaps
+---@field o? AllModeMaps
+---@field x? AllModeMaps
 
 ---@class KeyMapTbl
 ---@field lhs string

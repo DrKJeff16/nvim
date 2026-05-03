@@ -78,6 +78,7 @@ Opts.setup({
   switchbuf = 'usetab',
   tabstop = 4,
   title = true,
+  whichwrap = 'b,s,<,>,[,]',
   wrap = is_distro('termux'),
 }, false, true)
 
@@ -216,7 +217,7 @@ require('config.lazy').setup({
   zen_mode = false,
 })
 
-local desc = require('user_api.maps').desc
+local desc = require('user_api.maps').new_desc
 require('user_api.config.keymaps').set({
   n = { ['<C-/>'] = { ':norm gcc<CR><Up>', desc('Toggle Comment') } },
   v = { ['<C-/>'] = { ":'<,'>normal gcc<CR><Up>", desc('Toggle Comment') } },
@@ -229,6 +230,11 @@ Opts.setup_cmds()
 Opts.setup_maps()
 
 require('config.autocmds').setup()
+
+vim.cmd([[
+set t_8f=[38;2;%lu;%lu;%lum
+set t_8b=[48;2;%lu;%lu;%lum
+]])
 
 require('config.colorschemes')('tokyonight')
 -- require('config.colorschemes')('catppuccin')

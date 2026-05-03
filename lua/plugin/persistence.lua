@@ -11,7 +11,7 @@ return { ---@type LazySpec
       branch = true,
     })
 
-    local desc = require('user_api.maps').desc
+    local desc = require('user_api.maps').new_desc
     require('user_api.config.keymaps').set({
       n = {
         ['<leader>s'] = { group = '+Session' },

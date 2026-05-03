@@ -47,10 +47,7 @@ local function type_fun(t)
 
     for _, v in ipairs(var) do
       if t == nil or type(v) ~= t then
-        vim.notify(
-          ('(%s.%s): Input is not a table (`multiple` is true)'):format(MODSTR, name),
-          WARN
-        )
+        vim.notify(('(%s.%s): Input is not a table (`multiple` is true)'):format(MODSTR, name), WARN)
         return false
       end
     end

@@ -20,7 +20,7 @@ return { ---@type LazySpec
     if require('user_api.check.exists').module('telescope') then
       require('telescope').load_extension('scope')
 
-      local desc = require('user_api.maps').desc
+      local desc = require('user_api.maps').new_desc
       require('user_api.config.keymaps').set({
         n = {
           ['<leader><C-t>eS'] = { ':Telescope scope buffers<CR>', desc('Scope Buffers Picker') },

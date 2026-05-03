@@ -4,7 +4,7 @@
 
 local INFO = vim.log.levels.INFO
 local ERROR = vim.log.levels.ERROR
-local desc = require('user_api.maps').desc
+local desc = require('user_api.maps').new_desc
 local validate = require('user_api.check').validate
 
 ---@class User.Commands
@@ -50,11 +50,8 @@ Commands.commands = {} ---@type table<string, User.Commands.CmdSpec>
 
 Commands.commands.Redir = {
   function(ctx)
-    local l = vim.split(
-      vim.api.nvim_exec2(ctx.args, { output = true }).output,
-      '\n',
-      { plain = true, trimempty = false }
-    )
+    local l =
+      vim.split(vim.api.nvim_exec2(ctx.args, { output = true }).output, '\n', { plain = true, trimempty = false })
     local bufnr = vim.api.nvim_create_buf(true, true)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, l)
 
@@ -104,10 +101,7 @@ Commands.commands.Current = {
       tabpage = vim.api.nvim_get_current_tabpage(),
     }
     if vim.tbl_isempty(ctx.fargs) then
-      vim.notify(
-        ('buffer: %s\nwindow: %s\ntabpage %s'):format(curr.buffer, curr.window, curr.tabpage),
-        INFO
-      )
+      vim.notify(('buffer: %s\nwindow: %s\ntabpage %s'):format(curr.buffer, curr.window, curr.tabpage), INFO)
       return
     end
 
@@ -192,8 +186,8 @@ function Commands.setup(cmds)
   require('user_api.config.keymaps').set({
     n = {
       ['<Leader>UC'] = { group = '+Commands' },
-      ['<Leader>UCR'] = { ':Redir ', desc('Prompt to `Redir` command', false) },
-      ['<M-r>'] = { ':Redir ', desc('Prompt `Redir`', false) },
+      ['<Leader>UCR'] = { ':Redir ', desc('Prompt to `Redir` command', { silent = false }) },
+      ['<M-r>'] = { ':Redir ', desc('Prompt `Redir`', { silent = false }) },
     },
   })
 end

@@ -6,13 +6,26 @@ local WARN = vim.log.levels.WARN
 local in_list = vim.list_contains
 local validate = require('user_api.check').validate
 
-local Maps = {} ---@type User.Maps
+local M = {} ---@type User.Maps
 
-Maps.modes = MODES
-Maps.keymap = require('user_api.maps.keymap')
-Maps.wk = require('user_api.maps.wk')
+M.modes = MODES
+M.keymap = require('user_api.maps.keymap')
+M.wk = require('user_api.maps.wk')
 
-function Maps.desc(desc, silent, bufnr, noremap, nowait, expr)
+function M.new_desc(desc, opts)
+  validate({
+    desc = { desc, { 'string', 'nil' }, true },
+    opts = { opts, { 'table', 'nil' }, true },
+  })
+  desc = (desc and desc ~= '') and desc or 'Unnamed Key'
+  opts = opts or {}
+  opts.desc = desc
+
+  return require('user_api.maps.objects').new(opts)
+end
+
+---@deprecated Use `new_desc()` instead
+function M.desc(desc, silent, bufnr, noremap, nowait, expr)
   validate({
     desc = { desc, { 'string', 'nil' }, true },
     silent = { silent, { 'boolean', 'nil' }, true },
@@ -44,7 +57,7 @@ function Maps.desc(desc, silent, bufnr, noremap, nowait, expr)
   return res
 end
 
-function Maps.nop(T, opts, mode, prefix)
+function M.nop(T, opts, mode, prefix)
   validate({
     T = { T, { 'string', 'table' } },
     opts = { opts, { 'table', 'nil' }, true },
@@ -56,10 +69,7 @@ function Maps.nop(T, opts, mode, prefix)
   mode = (Value.is_str(mode) and in_list(MODES, mode)) and mode or 'n'
 
   if mode == 'i' then
-    vim.notify(
-      '(user_api.maps.nop): Refusing to NO-OP these keys in Insert mode: ' .. vim.inspect(T),
-      WARN
-    )
+    vim.notify('(user_api.maps.nop): Refusing to NO-OP these keys in Insert mode: ' .. vim.inspect(T), WARN)
     return
   end
 
@@ -70,7 +80,7 @@ function Maps.nop(T, opts, mode, prefix)
   end
   prefix = prefix or ''
 
-  local func = Maps.keymap[mode]
+  local func = M.keymap[mode]
   if Value.is_str(T) then
     ---@cast T string
     func(prefix .. T, '<Nop>', opts)
@@ -83,7 +93,7 @@ function Maps.nop(T, opts, mode, prefix)
   end
 end
 
-function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
+function M.map_dict(T, map_func, has_modes, mode, bufnr)
   validate({
     T = { T, { 'table' } },
     map_func = { map_func, { 'string' } },
@@ -99,7 +109,7 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
 
   local map_choices = { 'keymap', 'wk.register' }
   map_func = in_list(map_choices, map_func) and map_func or 'wk.register'
-  if not Maps.wk.available() then
+  if not M.wk.available() then
     map_func = 'keymap'
   end
   mode = (Value.is_str(mode) and in_list(MODES, mode)) and mode or 'n'
@@ -113,7 +123,7 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
     for mode_choice, t in pairs(T) do
       if in_list(MODES, mode_choice) then
         if map_func == 'keymap' then
-          func = Maps.keymap[mode_choice]
+          func = M.keymap[mode_choice]
           for lhs, v in pairs(t) do
             if v[2] and v[3] then
               func(lhs, v[2], v[3] or {})
@@ -177,7 +187,7 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
   end
 
   if map_func == 'keymap' then
-    func = Maps.keymap[mode]
+    func = M.keymap[mode]
     ---@cast T AllMaps
     for lhs, v in pairs(T) do
       if v[2] and v[3] then
@@ -235,13 +245,6 @@ function Maps.map_dict(T, map_func, has_modes, mode, bufnr)
     end
   end
 end
-
-local M = setmetatable(Maps, { ---@type User.Maps
-  __index = Maps,
-  __newindex = function()
-    vim.notify('User.Maps is Read-Only!', ERROR)
-  end,
-})
 
 return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

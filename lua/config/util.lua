@@ -36,8 +36,7 @@ function M.set_tgc(force)
   validate({ force = { force, { 'boolean', 'nil' }, true } })
   force = force ~= nil and force or false
 
-  vim.o.termguicolors = not force and (vim.fn.exists('+termguicolors') == 1 and not in_console())
-    or true
+  vim.o.termguicolors = not force and (vim.fn.exists('+termguicolors') == 1 and not in_console()) or true
 end
 
 ---@param name string

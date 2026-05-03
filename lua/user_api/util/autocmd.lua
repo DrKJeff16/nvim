@@ -67,15 +67,9 @@ function M.au_from_arr(T)
 
   for _, v in ipairs(T) do
     if
-      not (
-        type_not_empty('string', v.event)
-        or type_not_empty('table', v.event) and type_not_empty('table', v.opts)
-      )
+      not (type_not_empty('string', v.event) or type_not_empty('table', v.event) and type_not_empty('table', v.opts))
     then
-      error(
-        ('(%s.au_from_arr): Event is neither a string nor a table, skipping'):format(MODSTR),
-        ERROR
-      )
+      error(('(%s.au_from_arr): Event is neither a string nor a table, skipping'):format(MODSTR), ERROR)
     end
 
     vim.api.nvim_create_autocmd(v.event, v.opts)

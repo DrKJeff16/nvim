@@ -35,8 +35,7 @@ return { ---@type LazySpec
                 '<CR>',
                 function(self)
                   local buf = self.buf --[[@as integer]]
-                  local name = 'scratch.'
-                    .. vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ':e')
+                  local name = 'scratch.' .. vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ':e')
                   Snacks.debug.run({ buf = self.buf, name = name })
                 end,
                 desc = 'Source buffer',
@@ -320,7 +319,7 @@ return { ---@type LazySpec
     Snacks.scroll.enable()
 
     local Picker = Snacks.picker
-    local desc = require('user_api.maps').desc
+    local desc = require('user_api.maps').new_desc
     require('user_api.config.keymaps').set({
       n = {
         ['<leader>.'] = { group = 'Scratch' },

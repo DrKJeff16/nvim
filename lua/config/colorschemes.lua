@@ -5,8 +5,7 @@ return function(color)
 
   local colors = vim.fn.getcompletion('', 'color', true) ---@type string[]
   if not vim.list_contains(colors, color) then
-    color = require('user_api.check').module('tokyonight') and 'tokyonight'
-      or colors[math.random(1, #colors)]
+    color = require('user_api.check').module('tokyonight') and 'tokyonight' or colors[math.random(1, #colors)]
   end
 
   vim.cmd.colorscheme(color)

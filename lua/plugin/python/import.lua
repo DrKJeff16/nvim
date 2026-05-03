@@ -12,34 +12,37 @@ return { ---@type LazySpec
       pattern = { 'python' },
       callback = function(ev)
         local Api = require('python_import.api')
-        local desc = require('user_api.maps').desc
+        local desc = require('user_api.maps').new_desc
         require('user_api.config.keymaps').set({
           n = {
             ['<M-\\>'] = {
               Api.add_import_current_word_and_notify,
-              desc('Add Python Import', true, ev.buf),
+              desc('Add Python Import', { buf = ev.buf }),
             },
             ['<leader>i'] = { group = 'Python Import', buffer = ev.buf },
-            ['<leader>it'] = { Api.add_rich_traceback, desc('Add Rich Traceback', true, ev.buf) },
+            ['<leader>it'] = {
+              Api.add_rich_traceback,
+              desc('Add Rich Traceback', { buf = ev.buf }),
+            },
             ['<leader>ii'] = {
               Api.add_import_current_word_and_move_cursor,
-              desc('Add python import and move cursor', true, ev.buf),
+              desc('Add python import and move cursor', { buf = ev.buf }),
             },
           },
           i = {
             ['<M-\\>'] = {
               Api.add_import_current_word_and_notify,
-              desc('Add Python Import', true, ev.buf),
+              desc('Add Python Import', { buf = ev.buf }),
             },
           },
           x = {
             ['<leader>i'] = {
               Api.add_import_current_selection_and_move_cursor,
-              desc('Add Python Import and Move Cursor', true, ev.buf),
+              desc('Add Python Import and Move Cursor', { buf = ev.buf }),
             },
             ['<M-\\>'] = {
               Api.add_import_current_selection_and_notify,
-              desc('Add Python Import', true, ev.buf),
+              desc('Add Python Import', { buf = ev.buf }),
             },
           },
         }, ev.buf)

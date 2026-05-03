@@ -75,12 +75,7 @@ end
 ---@param old_caps? lsp.ClientCapabilities
 ---@return lsp.ClientCapabilities caps
 function Server.make_capabilities(old_caps)
-  return vim.tbl_deep_extend(
-    'keep',
-    old_caps or {},
-    require('blink.cmp').get_lsp_capabilities({}, true),
-    mk_caps()
-  )
+  return vim.tbl_deep_extend('keep', old_caps or {}, require('blink.cmp').get_lsp_capabilities({}, true), mk_caps())
 end
 
 ---@param name string
@@ -88,8 +83,7 @@ end
 ---@return vim.lsp.Config config
 function Server.populate(name, config)
   if require('user_api.check.value').type_not_empty('table', config.capabilities) then
-    config.capabilities =
-      insert_client(config.capabilities, Server.make_capabilities(config.capabilities or {}))
+    config.capabilities = insert_client(config.capabilities, Server.make_capabilities(config.capabilities or {}))
   else
     config.capabilities = Server.make_capabilities()
   end

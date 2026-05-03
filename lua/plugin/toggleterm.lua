@@ -15,16 +15,16 @@ local function set_terminal_keys(ev) ---@param ev vim.api.keyset.create_autocmd.
     return
   end
   local bufnr = ev.buf
-  local desc = require('user_api.maps').desc
+  local desc = require('user_api.maps').new_desc
   require('user_api.config.keymaps').set({
     t = {
-      ['<Esc>'] = { '<C-\\><C-n>', desc('Escape Terminal', true, bufnr) },
-      ['<C-e>'] = { '<C-\\><C-n>', desc('Escape Terminal', true, bufnr) },
-      ['<C-w>'] = { '<C-\\><C-n><C-w>w', desc('Switch Window', true, bufnr) },
-      ['<C-h>'] = { wincmd('h'), desc('Goto Left Window', true, bufnr) },
-      ['<C-j>'] = { wincmd('j'), desc('Goto Down Window', true, bufnr) },
-      ['<C-k>'] = { wincmd('k'), desc('Goto Up Window', true, bufnr) },
-      ['<C-l>'] = { wincmd('l'), desc('Goto Right Window', true, bufnr) },
+      ['<Esc>'] = { '<C-\\><C-n>', desc('Escape Terminal', { buf = bufnr }) },
+      ['<C-e>'] = { '<C-\\><C-n>', desc('Escape Terminal', { buf = bufnr }) },
+      ['<C-w>'] = { '<C-\\><C-n><C-w>w', desc('Switch Window', { buf = bufnr }) },
+      ['<C-h>'] = { wincmd('h'), desc('Goto Left Window', { buf = bufnr }) },
+      ['<C-j>'] = { wincmd('j'), desc('Goto Down Window', { buf = bufnr }) },
+      ['<C-k>'] = { wincmd('k'), desc('Goto Up Window', { buf = bufnr }) },
+      ['<C-l>'] = { wincmd('l'), desc('Goto Right Window', { buf = bufnr }) },
     },
   }, bufnr)
 end
@@ -78,7 +78,7 @@ return { ---@type LazySpec
       TermOpen = { group = group, callback = set_terminal_keys },
     })
 
-    local desc = require('user_api.maps').desc
+    local desc = require('user_api.maps').new_desc
     local map = { ['<A-t>'] = { ':exe v:count1 . "ToggleTerm"<CR>', desc('Toggleterm') } }
     local i_map = { ['<A-t>'] = { '<Esc>:exe v:count1 . "ToggleTerm"<CR>', desc('Toggleterm') } }
     require('user_api.config.keymaps').set({ n = map, i = i_map, t = map })

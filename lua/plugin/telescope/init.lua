@@ -126,7 +126,7 @@ return { ---@type LazySpec
       end
     end
 
-    local desc = require('user_api.maps').desc
+    local desc = require('user_api.maps').new_desc
     local Keys = { ---@type AllMaps
       ['<leader><C-t>'] = { group = '+Telescope' },
       ['<leader><C-t>b'] = { group = '+Builtins' },

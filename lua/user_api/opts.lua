@@ -229,12 +229,12 @@ function M.setup_cmds()
 end
 
 function M.setup_maps()
-  local desc = require('user_api.maps').desc
+  local desc = require('user_api.maps').new_desc
   require('user_api.config.keymaps').set({
     n = {
       ['<leader>UO'] = { group = '+Options' },
       ['<leader>UOl'] = { M.print_set_opts, desc('Print options set by `user.opts`') },
-      ['<leader>UOT'] = { ':OptsToggle ', desc('Prompt To Toggle Opts', false) },
+      ['<leader>UOT'] = { ':OptsToggle ', desc('Prompt To Toggle Opts', { silent = false }) },
     },
   })
 end
