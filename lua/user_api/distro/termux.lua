@@ -6,57 +6,50 @@ local function is_dir(dir) ---@param dir string
 end
 
 ---@class User.Distro.Termux
-local Termux = {}
+local M = {}
 
-Termux.PREFIX = vim.fn.has_key(vim.fn.environ(), 'PREFIX') and vim.fn.environ().PREFIX or '' ---@type string
+M.PREFIX = vim.fn.has_key(vim.fn.environ(), 'PREFIX') and vim.fn.environ().PREFIX or '' ---@type string
 
 local RTPATHS = {
-  vim.fs.joinpath(Termux.PREFIX, 'share/vim/vimfiles/after'),
-  vim.fs.joinpath(Termux.PREFIX, 'share/vim/vimfiles'),
-  vim.fs.joinpath(Termux.PREFIX, 'share/nvim/runtime'),
-  vim.fs.joinpath(Termux.PREFIX, 'local/share/vim/vimfiles/after'),
-  vim.fs.joinpath(Termux.PREFIX, 'local/share/vim/vimfiles'),
-  vim.fs.joinpath(Termux.PREFIX, 'local/share/nvim/runtime'),
+  vim.fs.joinpath(M.PREFIX, 'share/vim/vimfiles/after'),
+  vim.fs.joinpath(M.PREFIX, 'share/vim/vimfiles'),
+  vim.fs.joinpath(M.PREFIX, 'share/nvim/runtime'),
+  vim.fs.joinpath(M.PREFIX, 'local/share/vim/vimfiles/after'),
+  vim.fs.joinpath(M.PREFIX, 'local/share/vim/vimfiles'),
+  vim.fs.joinpath(M.PREFIX, 'local/share/nvim/runtime'),
 }
 
-Termux.rtpaths = setmetatable(RTPATHS, { ---@type string[]
+M.rtpaths = setmetatable(RTPATHS, { ---@type string[]
   __index = RTPATHS,
   __newindex = function()
     vim.notify('User.Distro.Termux.rtpaths is Read-Only!', vim.log.levels.ERROR)
   end,
 })
 
-function Termux.is_distro()
-  if Termux.PREFIX == '' or not is_dir(Termux.PREFIX) then
+function M.is_distro()
+  if M.PREFIX == '' or not is_dir(M.PREFIX) then
     return false
   end
 
-  for i, path in ipairs(Termux.rtpaths) do
+  for i, path in ipairs(M.rtpaths) do
     if not is_dir(path) then
-      table.remove(Termux.rtpaths, i)
+      table.remove(M.rtpaths, i)
     end
   end
-  return not require('user_api.check.value').empty(Termux.rtpaths)
+  return not require('user_api.check.value').empty(M.rtpaths)
 end
 
-function Termux.setup()
-  if not (Termux.is_distro() and is_dir(Termux.PREFIX)) then
+function M.setup()
+  if not (M.is_distro() and is_dir(M.PREFIX)) then
     return
   end
-  for _, path in ipairs(Termux.rtpaths) do
+  for _, path in ipairs(M.rtpaths) do
     if is_dir(path) == 1 then
       vim.o.rtp = vim.o.rtp .. ',' .. path
     end
   end
   vim.api.nvim_set_option_value('wrap', true, { scope = 'global' })
 end
-
-local M = setmetatable({}, { ---@type User.Distro.Termux
-  __index = Termux,
-  __newindex = function()
-    vim.notify('User.Distro.Termux is Read-Only!', vim.log.levels.ERROR)
-  end,
-})
 
 return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

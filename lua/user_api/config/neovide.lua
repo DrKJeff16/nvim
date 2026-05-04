@@ -1,5 +1,4 @@
 local INFO = vim.log.levels.INFO
-local ERROR = vim.log.levels.ERROR
 local validate = require('user_api.check').validate
 
 ---Helper function for transparency formatting.
@@ -56,13 +55,13 @@ local g_opts = {
 local o_opts = { linespace = 0, guifont = 'FiraCode Nerd Font Mono:h19' }
 
 ---@class User.Config.Neovide
-local Neovide = {}
+local M = {}
 
-Neovide.g_opts = {} ---@type table<string, any>
-Neovide.active = false ---@type boolean
+M.g_opts = {} ---@type table<string, any>
+M.active = false ---@type boolean
 
 ---@return Config.Neovide.Opts defaults
-function Neovide.get_defaults()
+function M.get_defaults()
   ---@class Config.Neovide.Opts
   ---@field g Config.Neovide.Opts.G
   ---@field o Config.Neovide.Opts.O
@@ -72,7 +71,7 @@ function Neovide.get_defaults()
 end
 
 ---@return boolean active
-function Neovide.check()
+function M.check()
   return require('user_api.check.exists').executable('neovide') and vim.g.neovide or false
 end
 
@@ -82,7 +81,7 @@ end
 ---@overload fun()
 ---@overload fun(opacity: number)
 ---@overload fun(opacity: number, transparency: number)
-function Neovide.set_transparency(opacity, transparency, bg)
+function M.set_transparency(opacity, transparency, bg)
   validate({
     opacity = { opacity, { 'number', 'nil' } },
     transparency = { transparency, { 'number', 'nil' } },
@@ -101,14 +100,14 @@ function Neovide.set_transparency(opacity, transparency, bg)
     bg = ((bg:len() ~= 7 and bg:len() ~= 9) and '#0f1117' or bg) .. alpha()
   end
 
-  Neovide.g_opts.neovide_opacity = opacity
-  Neovide.g_opts.transparency = transparency
-  Neovide.g_opts.neovide_background_color = bg
+  M.g_opts.neovide_opacity = opacity
+  M.g_opts.transparency = transparency
+  M.g_opts.neovide_background_color = bg
 end
 
 ---@param O any[]
 ---@param pfx string
-function Neovide.parse_g_opts(O, pfx)
+function M.parse_g_opts(O, pfx)
   validate({
     O = { O, { 'table' } },
     pfx = { pfx, { 'string' } },
@@ -118,15 +117,15 @@ function Neovide.parse_g_opts(O, pfx)
   for k, v in ipairs(O) do
     local key = pfx .. k
     if require('user_api.check.value').is_tbl(v) then
-      Neovide.parse_g_opts(v, key .. '_')
+      M.parse_g_opts(v, key .. '_')
     else
-      Neovide.g_opts[key] = v
+      M.g_opts[key] = v
     end
   end
 end
 
-function Neovide.setup_maps()
-  if not Neovide.check() then
+function M.setup_maps()
+  if not M.check() then
     return
   end
 
@@ -150,30 +149,30 @@ end
 ---@overload fun()
 ---@overload fun(T: table)
 ---@overload fun(T: table, transparent: boolean)
-function Neovide.setup(T, transparent, verbose)
+function M.setup(T, transparent, verbose)
   validate({
     T = { T, { 'table', 'nil' }, true },
     transparent = { transparent, { 'boolean', 'nil' }, true },
     verbose = { verbose, { 'boolean', 'nil' }, true },
   })
 
-  if not Neovide.check() then
+  if not M.check() then
     return
   end
   T = T or {}
   transparent = transparent ~= nil and transparent or false
   verbose = verbose ~= nil and verbose or false
 
-  local Defaults = Neovide.get_defaults()
+  local Defaults = M.get_defaults()
   for o, v in pairs(Defaults.o) do
     vim.o[o] = v
   end
 
-  Neovide.g_opts = {}
+  M.g_opts = {}
   T = vim.tbl_deep_extend('keep', T, Defaults.g)
-  Neovide.parse_g_opts(T, 'neovide_')
+  M.parse_g_opts(T, 'neovide_')
   if transparent then
-    Neovide.set_transparency()
+    M.set_transparency()
   end
 
   local ime_input = vim.api.nvim_create_augroup('ime_input', { clear = true })
@@ -187,22 +186,15 @@ function Neovide.setup(T, transparent, verbose)
     pattern = '[/\\?]',
     callback = set_ime,
   })
-  for k, v in pairs(Neovide.g_opts) do
+  for k, v in pairs(M.g_opts) do
     vim.g[k] = v
   end
 
   if verbose then
-    vim.notify(vim.inspect(Neovide.g_opts), INFO)
+    vim.notify(vim.inspect(M.g_opts), INFO)
   end
-  Neovide.setup_maps()
+  M.setup_maps()
 end
-
-local M = setmetatable(Neovide, { ---@type User.Config.Neovide
-  __index = Neovide,
-  __newindex = function()
-    vim.notify('User.Config.Neovide is Read-Only!', ERROR)
-  end,
-})
 
 return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

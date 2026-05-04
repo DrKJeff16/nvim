@@ -3,28 +3,28 @@ local uv = vim.uv or vim.loop
 ---Checking Utilities.
 --- ---
 ---@class User.Check
-local Check = {}
+local M = {}
 
-Check.value = require('user_api.check.value')
-Check.exists = require('user_api.check.exists')
+M.value = require('user_api.check.value')
+M.exists = require('user_api.check.exists')
 
-Check.env_vars = Check.exists.env_vars
-Check.executable = Check.exists.executable
-Check.is_int = Check.value.is_int
-Check.module = Check.exists.module
-Check.validate = Check.exists.validate
+M.env_vars = M.exists.env_vars
+M.executable = M.exists.executable
+M.is_int = M.value.is_int
+M.module = M.exists.module
+M.validate = M.exists.validate
 
 ---Check whether Neovim is running as root (`PID == 0`).
 --- ---
 ---@return boolean is_root
-function Check.is_root()
+function M.is_root()
   return uv.getuid() == 0
 end
 
 ---Check whether Neovim is running in a Windows environment.
 --- ---
 ---@return boolean is_windows
-function Check.is_windows()
+function M.is_windows()
   return vim.fn.has('win32') == 1
 end
 
@@ -34,18 +34,11 @@ end
 ---that conflict with the Linux console, for example.
 --- ---
 ---@return boolean in_console
-function Check.in_console()
+function M.in_console()
   --- FIXME: This is not a good enough check. Must find a better solution
   local env = vim.fn.environ() ---@type table<string, string>
-  return vim.list_contains({ 'linux' }, env.TERM) and not Check.value.fields('DISPLAY', env)
+  return vim.list_contains({ 'linux' }, env.TERM) and not M.value.fields('DISPLAY', env)
 end
-
-local M = setmetatable(Check, { ---@type User.Check
-  __index = Check,
-  __newindex = function()
-    vim.notify('User.Check is Read-Only!', vim.log.levels.ERROR)
-  end,
-})
 
 return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

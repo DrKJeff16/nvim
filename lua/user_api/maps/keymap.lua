@@ -56,21 +56,12 @@ local function variant(mode)
 end
 
 ---@class User.Maps.Keymap
-local Keymap = {}
-
-Keymap.n = variant('n')
-Keymap.i = variant('i')
-Keymap.v = variant('v')
-Keymap.t = variant('t')
-Keymap.o = variant('o')
-Keymap.x = variant('x')
-
-local M = setmetatable({}, { ---@type User.Maps.Keymap
-  __index = Keymap,
-  __newindex = function()
-    vim.notify('User.Maps.Keymap is Read-Only!', vim.log.levels.ERROR)
-  end,
-})
-
-return M
+return {
+  n = variant('n'),
+  i = variant('i'),
+  v = variant('v'),
+  t = variant('t'),
+  o = variant('o'),
+  x = variant('x'),
+}
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

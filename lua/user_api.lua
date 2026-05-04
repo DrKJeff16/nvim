@@ -1,8 +1,7 @@
 local uv = vim.uv or vim.loop
 
 local timer = nil ---@type uv.uv_timer_t|nil
-
-local function timer_cb()
+local timer_cb = vim.schedule_wrap(function()
   local logfile = vim.fs.joinpath(vim.fn.stdpath('state'), 'nvim.log')
   local stat = uv.fs_stat(logfile)
   if not stat or stat.size < 1048576 then -- 1GiB
@@ -20,7 +19,7 @@ local function timer_cb()
   if ok then
     vim.notify(('`%s` has been cleared!'):format(logfile), vim.log.levels.INFO)
   end
-end
+end)
 
 local function make_timer()
   if timer and timer:is_active() then
@@ -32,7 +31,7 @@ local function make_timer()
     return
   end
 
-  timer:start(1000, 900000, vim.schedule_wrap(timer_cb))
+  timer:start(1000, 900000, timer_cb)
 
   vim.api.nvim_create_autocmd({ 'VimLeavePre' }, {
     group = vim.api.nvim_create_augroup('log_autoclear', { clear = true }),

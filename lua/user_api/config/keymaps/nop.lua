@@ -1,5 +1,5 @@
 ---@class User.Config.Keymaps.NOP
-local NOP = {
+return {
   "'",
   '!',
   '"',
@@ -94,13 +94,4 @@ local NOP = {
   '}',
   '~',
 }
-
-local M = setmetatable(NOP, { ---@type User.Config.Keymaps.NOP
-  __index = NOP,
-  __newindex = function()
-    vim.notify('User.Config.Keymaps.NOP is Read-Only!', vim.log.levels.ERROR)
-  end,
-})
-
-return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

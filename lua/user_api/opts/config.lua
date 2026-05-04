@@ -1,5 +1,5 @@
 ---@class User.Opts.Spec: vim.wo,vim.bo
-local Defaults = {
+local M = {
   autoindent = true,
   autoread = true,
   backspace = 'indent,eol,start',
@@ -48,26 +48,19 @@ local Defaults = {
 if vim.fn.has('win32') == 1 then
   local executable = require('user_api.check.exists').executable
   if executable('mingw32-make') then
-    Defaults.makeprg = 'mingw32-make'
+    M.makeprg = 'mingw32-make'
   end
 
   if executable({ 'bash', 'sh' }) then
-    Defaults.shell = executable('bash') and 'bash' or 'sh'
-    Defaults.shellcmdflag = '-c'
+    M.shell = executable('bash') and 'bash' or 'sh'
+    M.shellcmdflag = '-c'
   elseif executable('pwsh') then
-    Defaults.shell = 'pwsh'
+    M.shell = 'pwsh'
   end
 
-  Defaults.fileignorecase = true
-  Defaults.shellslash = true
+  M.fileignorecase = true
+  M.shellslash = true
 end
-
-local M = setmetatable(Defaults, { ---@type User.Opts.Spec
-  __index = Defaults,
-  __newindex = function()
-    vim.notify('User.Opts.Spec is Read-Only!', vim.log.levels.ERROR)
-  end,
-})
 
 return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

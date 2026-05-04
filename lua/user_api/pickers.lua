@@ -1,4 +1,6 @@
----@alias User.Pickers.Spec { mod: string, cb: function }
+---@class (exact) User.Pickers.Spec
+---@field mod string
+---@field cb function
 
 ---@class User.Pickers
 local M = {}

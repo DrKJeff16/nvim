@@ -1,5 +1,5 @@
 ---Non-legacy validation spec (>=v0.11)
----@class ValidateSpec
+---@class UserValidateSpec
 ---@field [1] any
 ---@field [2] vim.validate.Validator
 ---@field [3]? boolean
@@ -19,11 +19,11 @@ end
 ---Also, simplified Vim functions can be found here.
 --- ---
 ---@class User.Check.Existance
-local Exists = {}
+local M = {}
 
 ---Dynamic `vim.is_distro()` wrapper. Covers both legacy and newer implementations
----@param T table<string, vim.validate.Spec|ValidateSpec>
-function Exists.validate(T)
+---@param T table<string, vim.validate.Spec|UserValidateSpec>
+function M.validate(T)
   local max = vim.fn.has('nvim-0.11') == 1 and 3 or 4
   for name, spec in pairs(T) do
     while #spec > max do
@@ -33,7 +33,7 @@ function Exists.validate(T)
     T[name] = spec
   end
 
-  if vim.fn.has('nvim-0.11') == 1 then
+  if max == 3 then
     for name, spec in pairs(T) do
       table.insert(spec, 1, name)
       vim.validate(unpack(spec))
@@ -45,8 +45,8 @@ end
 
 ---@param mod string
 ---@return boolean exists
-function Exists.module(mod)
-  Exists.validate({ mod = { mod, { 'string' } } })
+function M.module(mod)
+  M.validate({ mod = { mod, { 'string' } } })
 
   if not get_value().type_not_empty('string', mod) then
     error(('`(%s.module)`: Input is not valid'):format(MODSTR), ERROR)
@@ -58,8 +58,8 @@ end
 
 ---@param expr string[]|string
 ---@return boolean has
-function Exists.vim_has(expr)
-  Exists.validate({ expr = { expr, { 'string', 'table' } } })
+function M.vim_has(expr)
+  M.validate({ expr = { expr, { 'string', 'table' } } })
 
   ---@cast expr string
   if get_value().type_not_empty('string', expr) then
@@ -68,7 +68,7 @@ function Exists.vim_has(expr)
 
   ---@cast expr string[]
   for _, v in ipairs(expr) do
-    if not Exists.vim_has(v) then
+    if not M.vim_has(v) then
       return false
     end
   end
@@ -77,8 +77,8 @@ end
 
 ---@param expr string[]|string
 ---@return boolean exists
-function Exists.vim_exists(expr)
-  Exists.validate({ expr = { expr, { 'string', 'table' } } })
+function M.vim_exists(expr)
+  M.validate({ expr = { expr, { 'string', 'table' } } })
 
   ---@cast expr string
   if get_value().type_not_empty('string', expr) then
@@ -89,7 +89,7 @@ function Exists.vim_exists(expr)
 
   ---@cast expr string[]
   for _, v in ipairs(expr) do
-    res = Exists.vim_exists(v)
+    res = M.vim_exists(v)
     if not res then
       break
     end
@@ -101,8 +101,8 @@ end
 ---@param callback function|nil
 ---@return boolean found
 ---@overload fun(vars: string[]|string): found: boolean
-function Exists.env_vars(vars, callback)
-  Exists.validate({
+function M.env_vars(vars, callback)
+  M.validate({
     vars = { vars, { 'string', 'table' } },
     callback = { callback, { 'function', 'nil' }, true },
   })
@@ -116,7 +116,7 @@ function Exists.env_vars(vars, callback)
   elseif get_value().is_tbl(vars) then
     ---@cast vars string[]
     for _, v in ipairs(vars) do
-      res = Exists.env_vars(v)
+      res = M.env_vars(v)
       if not res then
         break
       end
@@ -130,8 +130,8 @@ end
 
 ---@param exe string[]|string
 ---@return boolean found
-function Exists.executable(exe)
-  Exists.validate({ exe = { exe, { 'string', 'table' } } })
+function M.executable(exe)
+  M.validate({ exe = { exe, { 'string', 'table' } } })
 
   local res = false
 
@@ -141,7 +141,7 @@ function Exists.executable(exe)
   elseif get_value().is_tbl(exe) then
     ---@cast exe string[]
     for _, v in ipairs(exe) do
-      res = Exists.executable(v)
+      res = M.executable(v)
       if not res then
         break
       end
@@ -152,18 +152,11 @@ end
 
 ---@param path string
 ---@return boolean is_dir
-function Exists.vim_isdir(path)
-  Exists.validate({ path = { path, { 'string' } } })
+function M.vim_isdir(path)
+  M.validate({ path = { path, { 'string' } } })
 
   return get_value().type_not_empty('string', path) and (vim.fn.isdirectory(path) == 1) or false
 end
-
-local M = setmetatable(Exists, { ---@type User.Check.Existance
-  __index = Exists,
-  __newindex = function()
-    vim.notify('User.Check.Exists table is Read-Only!', ERROR)
-  end,
-})
 
 return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

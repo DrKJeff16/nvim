@@ -8,7 +8,7 @@ local function is_dir(dir) ---@param dir string
 end
 
 ---@class User.Distro.Archlinux
-local Archlinux = {}
+local M = {}
 
 local RTPATHS = { ---@type string[]
   '/usr/share/vim/vimfiles/after',
@@ -19,17 +19,17 @@ local RTPATHS = { ---@type string[]
   '/usr/local/share/nvim/runtime',
 }
 
-Archlinux.rtpaths = setmetatable(RTPATHS, { ---@type string[]
+M.rtpaths = setmetatable(RTPATHS, { ---@type string[]
   __index = RTPATHS,
   __newindex = function()
     vim.notify('User.Distro.Archlinux.rtpaths is Read-Only!', ERROR)
   end,
 })
 
-function Archlinux.is_distro()
+function M.is_distro()
   -- First check for each dir's existance
   local new_rtpaths = {} ---@type string[]
-  for _, p in ipairs(Archlinux.rtpaths) do
+  for _, p in ipairs(M.rtpaths) do
     if vim.fn.isdirectory(p) == 1 and not vim.list_contains(new_rtpaths, p) then
       table.insert(new_rtpaths, p)
     end
@@ -38,28 +38,21 @@ function Archlinux.is_distro()
     return false
   end
 
-  Archlinux.rtpaths = vim.deepcopy(new_rtpaths)
+  M.rtpaths = vim.deepcopy(new_rtpaths)
   return true
 end
 
-function Archlinux.setup()
-  if not Archlinux.is_distro() then
+function M.setup()
+  if not M.is_distro() then
     return
   end
-  for _, path in ipairs(Archlinux.rtpaths) do
+  for _, path in ipairs(M.rtpaths) do
     if is_dir(path) then
       vim.o.runtimepath = vim.o.runtimepath .. ',' .. path
     end
   end
   pcall(vim.cmd.runtime, { 'archlinux.vim', bang = true })
 end
-
-local M = setmetatable({}, { ---@type User.Distro.Archlinux
-  __index = Archlinux,
-  __newindex = function()
-    vim.notify('User.Distro.Archlinux is Read-Only!', ERROR)
-  end,
-})
 
 return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

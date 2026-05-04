@@ -117,11 +117,11 @@ local validate = require('user_api.check').validate
 
 ---`which_key` API entrypoints.
 ---@class User.Maps.WK
-local WK = {}
+local M = {}
 
 ---@return boolean
-function WK.available()
-  return require('user_api.check.exists').module('which-key')
+function M.available()
+  return require('user_api.check').module('which-key')
 end
 
 ---@param lhs string
@@ -129,13 +129,13 @@ end
 ---@param opts User.Maps.Opts|vim.keymap.set.Opts|wk.Spec
 ---@return wk.Spec converted
 ---@overload fun(lhs: string, rhs: string|function): converted: wk.Spec
-function WK.convert(lhs, rhs, opts)
+function M.convert(lhs, rhs, opts)
   validate({
     lhs = { lhs, { 'string' } },
     rhs = { rhs, { 'string', 'function' } },
     opts = { opts, { 'table', 'nil' }, true },
   })
-  if not WK.available() then
+  if not M.available() then
     error('(user.maps.wk.convert): `which_key` not available', WARN)
   end
   local Value = require('user_api.check.value')
@@ -167,7 +167,7 @@ end
 
 ---@param T AllMaps
 ---@return AllMaps res
-function WK.convert_dict(T)
+function M.convert_dict(T)
   validate({ T = { T, { 'table' } } })
 
   local Value = require('user_api.check.value')
@@ -175,7 +175,7 @@ function WK.convert_dict(T)
   for lhs, v in pairs(T) do
     local rhs = v[1] ---@type string|function
     local opts = Value.is_tbl(v[2]) and v[2] or {} ---@type User.Maps.Opts
-    table.insert(res, WK.convert(lhs, rhs, opts))
+    table.insert(res, M.convert(lhs, rhs, opts))
   end
   return res
 end
@@ -184,13 +184,13 @@ end
 ---@param opts User.Maps.Opts|wk.Spec
 ---@return false|nil
 ---@overload fun(T: AllMaps): false|nil
-function WK.register(T, opts)
+function M.register(T, opts)
   validate({
     T = { T, { 'table' } },
     opts = { opts, { 'table', 'nil' }, true },
   })
 
-  if not WK.available() then
+  if not M.available() then
     vim.notify('(user.maps.wk.register): `which_key` unavailable', ERROR)
     return false
   end
@@ -205,13 +205,6 @@ function WK.register(T, opts)
   end
   require('which-key').add(filtered)
 end
-
-local M = setmetatable(WK, { ---@type User.Maps.WK
-  __index = WK,
-  __newindex = function()
-    vim.notify('User.Maps.WK is Read-Only!', ERROR)
-  end,
-})
 
 return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

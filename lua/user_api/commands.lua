@@ -8,14 +8,14 @@ local desc = require('user_api.maps').new_desc
 local validate = require('user_api.check').validate
 
 ---@class User.Commands
-local Commands = {}
+local M = {}
 
 ---@param txt? string
 ---@param bang? boolean
 ---@param nargs? integer|'+'|'?'|'*'
 ---@param complete? string|fun(a: string, b: string, c: integer): items: string[]
 ---@return vim.api.keyset.user_command opts
-function Commands.desc(txt, bang, nargs, complete)
+function M.desc(txt, bang, nargs, complete)
   validate({
     txt = { txt, { 'string', 'nil' }, true },
     bang = { bang, { 'boolean', 'nil' }, true },
@@ -46,9 +46,9 @@ function Commands.desc(txt, bang, nargs, complete)
   return opts
 end
 
-Commands.commands = {} ---@type table<string, User.Commands.CmdSpec>
+M.commands = {} ---@type table<string, User.Commands.CmdSpec>
 
-Commands.commands.Redir = {
+M.commands.Redir = {
   function(ctx)
     local l =
       vim.split(vim.api.nvim_exec2(ctx.args, { output = true }).output, '\n', { plain = true, trimempty = false })
@@ -90,10 +90,10 @@ Commands.commands.Redir = {
 
     vim.cmd.wincmd('=')
   end,
-  Commands.desc('Redirect command output to scratch buffer', true, '+', 'command'),
+  M.desc('Redirect command output to scratch buffer', true, '+', 'command'),
 }
 
-Commands.commands.Current = {
+M.commands.Current = {
   function(ctx)
     local curr = { ---@type { buffer: integer, window: integer, tabpage: integer }
       buffer = vim.api.nvim_get_current_buf(),
@@ -125,7 +125,7 @@ Commands.commands.Current = {
 
     vim.notify(msg, INFO, { title = title })
   end,
-  Commands.desc('', false, '?', function(_, lead)
+  M.desc('', false, '?', function(_, lead)
     local args = vim.split(lead, '%s+', { trimempty = false })
     table.remove(args, 1)
 
@@ -143,7 +143,7 @@ Commands.commands.Current = {
   end),
 }
 
-Commands.commands.DeleteInactiveBuffers = {
+M.commands.DeleteInactiveBuffers = {
   function(ctx)
     local notify = ctx.bang ~= nil and ctx.bang or false
     for _, buf in ipairs(vim.fn.getbufinfo()) do
@@ -156,13 +156,13 @@ Commands.commands.DeleteInactiveBuffers = {
       vim.notify('Deleted inactive buffers.', vim.log.levels.INFO)
     end
   end,
-  Commands.desc('Delete listed unmodified buffers out of window', true),
+  M.desc('Delete listed unmodified buffers out of window', true),
 }
 
 ---@param name string
 ---@param cmd fun(ctx?: vim.api.keyset.create_user_command.command_args)
 ---@param opts? vim.api.keyset.user_command
-function Commands.add_command(name, cmd, opts)
+function M.add_command(name, cmd, opts)
   validate({
     name = { name, { 'string' } },
     cmd = { cmd, { 'function' } },
@@ -170,15 +170,15 @@ function Commands.add_command(name, cmd, opts)
   })
 
   local cmnd = { cmd, opts or {} } ---@type User.Commands.CmdSpec
-  Commands.setup({ [name] = cmnd })
+  M.setup({ [name] = cmnd })
 end
 
 ---@param cmds? table<string, User.Commands.CmdSpec>
-function Commands.setup(cmds)
+function M.setup(cmds)
   validate({ cmds = { cmds, { 'table', 'nil' }, true } })
 
-  Commands.commands = vim.tbl_deep_extend('keep', cmds or {}, Commands.commands)
-  for cmd, T in pairs(Commands.commands) do
+  M.commands = vim.tbl_deep_extend('keep', cmds or {}, M.commands)
+  for cmd, T in pairs(M.commands) do
     local exec, opts = T[1], T[2] or {}
     vim.api.nvim_create_user_command(cmd, exec, opts)
   end
@@ -191,13 +191,6 @@ function Commands.setup(cmds)
     },
   })
 end
-
-local M = setmetatable(Commands, { ---@type User.Commands
-  __index = Commands,
-  __newindex = function()
-    vim.notify('User.Commands is Read-Only!', ERROR)
-  end,
-})
 
 return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

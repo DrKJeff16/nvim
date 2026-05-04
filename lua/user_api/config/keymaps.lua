@@ -147,15 +147,15 @@ end
 
 ---@class User.Config.Keymaps
 ---@field no_oped? boolean
-local Keymaps = {}
+local M = {}
 
-Keymaps.NOP = require('user_api.config.keymaps.nop')
+M.NOP = require('user_api.config.keymaps.nop')
 
-function Keymaps.print_keys()
-  vim.notify(vim.inspect(Keymaps.Keys), INFO)
+function M.print_keys()
+  vim.notify(vim.inspect(M.Keys), INFO)
 end
 
-Keymaps.Keys = { ---@type AllModeMaps
+M.Keys = { ---@type AllModeMaps
   n = {
     ['<C-w>W'] = { group = '+Move Window' },
     ['<C-w>s'] = { group = '+Split' },
@@ -223,7 +223,7 @@ Keymaps.Keys = { ---@type AllModeMaps
       ':horizontal h ',
       desc('Prompt For Help On Horizontal Split', { silent = false }),
     },
-    ['<leader>UKp'] = { Keymaps.print_keys, desc('Print all custom keymaps') },
+    ['<leader>UKp'] = { M.print_keys, desc('Print all custom keymaps') },
     ['<leader>bD'] = { buf_del(true), desc('Close Buffer Forcefully') },
     ['<leader>bd'] = { buf_del(), desc('Close Buffer') },
     ['<leader>bf'] = { ':bfirst<CR>', desc('Goto First Buffer') },
@@ -319,7 +319,7 @@ Keymaps.Keys = { ---@type AllModeMaps
 ---@param force boolean Force leader switch (defaults to `false`)
 ---@overload fun(leader: string)
 ---@overload fun(leader: string, local_leader: string)
-function Keymaps.set_leader(leader, local_leader, force)
+function M.set_leader(leader, local_leader, force)
   validate({
     leader = { leader, { 'string' } },
     local_leader = { local_leader, { 'string', 'nil' }, true },
@@ -373,7 +373,7 @@ end
 ---@param bufnr integer
 ---@return User.Keymaps.Delete|nil deleted_keys
 ---@overload fun(K: User.Keymaps.Delete): deleted_keys: User.Keymaps.Delete|nil
-function Keymaps.delete(K, bufnr)
+function M.delete(K, bufnr)
   validate({
     K = { K, { 'table' } },
     bufnr = { bufnr, { 'number', 'nil' }, true },
@@ -396,7 +396,7 @@ end
 ---@param keys AllModeMaps
 ---@param bufnr? integer
 ---@param defaults? boolean
-function Keymaps.set(keys, bufnr, defaults)
+function M.set(keys, bufnr, defaults)
   validate({
     keys = { keys, { 'table' } },
     bufnr = { bufnr, { 'number', 'nil' }, true },
@@ -422,31 +422,24 @@ function Keymaps.set(keys, bufnr, defaults)
     end
   end
 
-  Keymaps.no_oped = Keymaps.no_oped ~= nil and Keymaps.no_oped or false
+  M.no_oped = M.no_oped ~= nil and M.no_oped or false
 
   -- Noop keys after `<leader>` to avoid accidents
   for _, mode in ipairs(modes) do
-    if Keymaps.no_oped then
+    if M.no_oped then
       break
     end
     if vim.list_contains({ 'n', 'v' }, mode) then
-      require('user_api.maps').nop(Keymaps.NOP, { noremap = false }, mode, '<leader>')
+      require('user_api.maps').nop(M.NOP, { noremap = false }, mode, '<leader>')
     end
   end
 
-  Keymaps.no_oped = true
-  Keymaps.Keys = vim.tbl_deep_extend('keep', parsed_keys, Keymaps.Keys) ---@type AllModeMaps
+  M.no_oped = true
+  M.Keys = vim.tbl_deep_extend('keep', parsed_keys, M.Keys) ---@type AllModeMaps
 
-  local passed = defaults and Keymaps.Keys or parsed_keys
+  local passed = defaults and M.Keys or parsed_keys
   require('user_api.maps').map_dict(passed, 'wk.register', true, nil, bufnr)
 end
-
-local M = setmetatable({}, { ---@type User.Config.Keymaps
-  __index = Keymaps,
-  __newindex = function()
-    vim.notify('User.Config.Keymaps table is Read-Only!', ERROR)
-  end,
-})
 
 return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

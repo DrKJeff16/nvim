@@ -9,13 +9,13 @@ local ERROR = vim.log.levels.ERROR
 ---A set of utilities to make Vim highlighting easier.
 --- ---
 ---@class User.Hl
-local Hl = {}
+local M = {}
 
 ---@param name string The highlight group
 ---@param opts vim.api.keyset.highlight The highlight options
 ---@param ns integer|nil The highlighting namespace
 ---@overload fun(name: string, opts: vim.api.keyset.highlight)
-function Hl.hl(name, opts, ns)
+function M.hl(name, opts, ns)
   local type_not_empty = require('user_api.check.value').type_not_empty
   if not (type_not_empty('string', name) and type_not_empty('table', opts)) then
     vim.notify('(user_api.highlight.hl): Bad argument', ERROR)
@@ -41,7 +41,7 @@ end
 ---@param A HlPair[] The array of `HlPair` objects
 ---@param ns integer|nil
 ---@overload fun(A: HlPair[])
-function Hl.hl_from_arr(A, ns)
+function M.hl_from_arr(A, ns)
   local type_not_empty = require('user_api.check.value').type_not_empty
   if not type_not_empty('table', A) then
     vim.notify('(user_api.highlight.hl_from_arr): Bad argument', ERROR)
@@ -50,7 +50,7 @@ function Hl.hl_from_arr(A, ns)
 
   for _, t in ipairs(A) do
     if type_not_empty('string', t.name) and type_not_empty('table', t.opts) then
-      Hl.hl(t.name, t.opts, ns or nil)
+      M.hl(t.name, t.opts, ns or nil)
     else
       vim.notify('(user_api.highlight.hl_from_arr): Skipping invalid table', ERROR)
     end
@@ -70,9 +70,8 @@ end
 ---To know what options are valid try `:h nvim_set_hl`.
 --- ---
 ---@param D HlDict
----@param ns integer|nil
----@overload fun(D: HlDict)
-function Hl.hl_from_dict(D, ns)
+---@param ns? integer
+function M.hl_from_dict(D, ns)
   local Value = require('user_api.check.value')
   if not Value.type_not_empty('table', D) then
     vim.notify('(user_api.highlight.hl_from_dict): Unable to parse argument', ERROR)
@@ -81,19 +80,12 @@ function Hl.hl_from_dict(D, ns)
 
   for k, v in pairs(D) do
     if Value.type_not_empty('string', k) and Value.type_not_empty('table', v) then
-      Hl.hl(k, v, ns or nil)
+      M.hl(k, v, ns or nil)
     else
       vim.notify('(user_api.highlight.hl_from_dict): Skipping bad highlight', ERROR)
     end
   end
 end
-
-local M = setmetatable(Hl, { ---@type User.Hl
-  __index = Hl,
-  __newindex = function()
-    vim.notify('User.Hl is Read-Only!', ERROR)
-  end,
-})
 
 return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

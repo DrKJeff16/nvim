@@ -1,5 +1,5 @@
 ---@class User.Opts.AllOpts
-local AllOpts = {
+return {
   allowrevins = 'ari',
   ambiwidth = 'ambw',
   arabic = 'arab',
@@ -341,13 +341,4 @@ local AllOpts = {
   writebackup = 'wb',
   writedelay = 'wd',
 }
-
-local M = setmetatable(AllOpts, { ---@type User.Opts.AllOpts
-  __index = AllOpts,
-  __newindex = function()
-    vim.notify('User.Opts.AllOpts is Read-Only!', vim.log.levels.ERROR)
-  end,
-})
-
-return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

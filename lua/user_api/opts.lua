@@ -5,9 +5,10 @@ local curr_buf = vim.api.nvim_get_current_buf
 local validate = require('user_api.check').validate
 
 ---@class User.Opts
+---@field options User.Opts.Spec
 local M = {}
 
-M.options = {} ---@type User.Opts.Spec
+M.options = {}
 
 ---@return User.Opts.AllOpts all_opts
 function M.get_all_opts()

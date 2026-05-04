@@ -4,12 +4,12 @@ local in_list = vim.list_contains
 local validate = require('user_api.check').validate
 
 ---@class User.Util
-local Util = {}
+local M = {}
 
-Util.au = require('user_api.util.autocmd')
-Util.notify = require('user_api.util.notify')
-Util.spinner = require('user_api.util.spinner')
-Util.string = require('user_api.util.string')
+M.au = require('user_api.util.autocmd')
+M.notify = require('user_api.util.notify')
+M.spinner = require('user_api.util.spinner')
+M.string = require('user_api.util.string')
 
 ---@overload fun(option: string): value: any
 ---@overload fun(option: string[]): value: vim.bo|vim.wo
@@ -20,7 +20,7 @@ Util.string = require('user_api.util.string')
 ---@overload fun(option: string, param: 'buf'|'win', param_value: integer): value: any
 ---@overload fun(option: string[], param: 'buf', param_value: integer): value: vim.bo
 ---@overload fun(option: string[], param: 'win', param_value: integer): value: vim.wo
-function Util.optget(option, param, param_value)
+function M.optget(option, param, param_value)
   validate({
     option = { option, { 'string', 'table' } },
     param = { param, { 'string', 'nil' }, true },
@@ -71,7 +71,7 @@ end
 ---@overload fun(option: vim.wo|vim.bo, value: nil, param: 'ft', param_value: string)
 ---@overload fun(option: string, value: any, param: 'buf'|'win', param_value: integer)
 ---@overload fun(option: vim.wo|vim.bo, value: nil, param: 'buf'|'win', param_value: integer)
-function Util.optset(option, value, param, param_value)
+function M.optset(option, value, param, param_value)
   validate({
     option = { option, { 'string', 'table' } },
     param = { param, { 'string', 'nil' }, true },
@@ -113,7 +113,7 @@ function Util.optset(option, value, param, param_value)
   end
 end
 
-function Util.has_words_before()
+function M.has_words_before()
   local col = vim.api.nvim_win_get_cursor(vim.api.nvim_get_current_win())[2]
   if col == 0 then
     return false
@@ -127,7 +127,7 @@ end
 ---@param str string
 ---@return string new_str
 ---@nodiscard
-function Util.lstrip(char, str)
+function M.lstrip(char, str)
   validate({
     char = { char, { 'string', 'table' } },
     str = { str, { 'string' } },
@@ -143,7 +143,7 @@ function Util.lstrip(char, str)
         if c:len() > str:len() then
           return str
         end
-        str = Util.lstrip(c, str)
+        str = M.lstrip(c, str)
       end
     end
     return str
@@ -173,7 +173,7 @@ end
 ---@param str string
 ---@return string new_str
 ---@nodiscard
-function Util.rstrip(char, str)
+function M.rstrip(char, str)
   validate({
     char = { char, { 'string', 'table' } },
     str = { str, { 'string' } },
@@ -189,7 +189,7 @@ function Util.rstrip(char, str)
         if c:len() > str:len() then
           return str
         end
-        str = Util.rstrip(c, str)
+        str = M.rstrip(c, str)
       end
     end
     return str
@@ -200,7 +200,7 @@ function Util.rstrip(char, str)
     return str
   end
 
-  return Util.lstrip(char, str:reverse()):reverse()
+  return M.lstrip(char, str:reverse()):reverse()
 end
 
 ---Strip given a leading string (or list of strings) within a string, if any, bidirectionally.
@@ -209,7 +209,7 @@ end
 ---@param str string
 ---@return string new_str
 ---@nodiscard
-function Util.strip(char, str)
+function M.strip(char, str)
   validate({
     char = { char, { 'string', 'table' } },
     str = { str, { 'string' } },
@@ -225,7 +225,7 @@ function Util.strip(char, str)
         if c:len() > str:len() then
           return str
         end
-        str = Util.strip(c, str)
+        str = M.strip(c, str)
       end
     end
     return str
@@ -236,7 +236,7 @@ function Util.strip(char, str)
   end
 
   ---@cast char string
-  return Util.rstrip(char, Util.lstrip(char, str))
+  return M.rstrip(char, M.lstrip(char, str))
 end
 
 ---@param s string[]|string
@@ -246,7 +246,7 @@ end
 ---@overload fun(s: string, bufnr: integer): res: table<string, any>
 ---@overload fun(s: string[]): res: table<string, any>
 ---@overload fun(s: string[], bufnr: integer): res: table<string, any>
-function Util.get_opts_tbl(s, bufnr)
+function M.get_opts_tbl(s, bufnr)
   validate({
     s = { s, { 'string', 'table' } },
     bufnr = { bufnr, { 'number', 'nil' }, true },
@@ -260,7 +260,7 @@ function Util.get_opts_tbl(s, bufnr)
   end
   if Value.type_not_empty('table', s) then ---@cast s string[]
     for _, opt in ipairs(s) do
-      res[opt] = Util.get_opts_tbl(opt, bufnr)
+      res[opt] = M.get_opts_tbl(opt, bufnr)
     end
   end
   return res
@@ -273,7 +273,7 @@ end
 ---@overload fun(T: table<string, any>): res: table<string, any>
 ---@overload fun(T: table<string, any>, steps: integer): res: table<string, any>
 ---@overload fun(T: table<string, any>, steps?: integer, direction: 'l'|'r'): res: table<string, any>
-function Util.mv_tbl_values(T, steps, direction)
+function M.mv_tbl_values(T, steps, direction)
   validate({
     T = { T, { 'table' } },
     steps = { steps, { 'number', 'nil' }, true },
@@ -318,7 +318,7 @@ end
 ---@param x boolean
 ---@param y boolean
 ---@return boolean
-function Util.xor(x, y)
+function M.xor(x, y)
   validate({ x = { x, { 'boolean' } }, y = { y, { 'boolean' } } })
 
   return (x and not y) or (not x and y)
@@ -332,7 +332,7 @@ end
 ---@overload fun(T: table<string, any>, fields: string[])
 ---@overload fun(T: table<string, any>, fields: integer[])
 ---@overload fun(T: table<string, any>, fields: (string|integer)[])
-function Util.strip_fields(T, fields)
+function M.strip_fields(T, fields)
   validate({
     T = { T, { 'table' } },
     fields = { fields, { 'string', 'number', 'table' } },
@@ -364,7 +364,7 @@ end
 ---@param max_instances? integer
 ---@return table<string, any> res
 ---@overload fun(T: table<string, any>, values: any[]): res: table<string, any>
-function Util.strip_values(T, values, max_instances)
+function M.strip_values(T, values, max_instances)
   validate({
     T = { T, { 'table' } },
     values = { values, { 'table' } },
@@ -380,7 +380,7 @@ function Util.strip_values(T, values, max_instances)
   local res, count = {}, 0 ---@type table<string, any>, integer
   for k, v in pairs(T) do
     -- Both arguments can't be true simultaneously
-    if Util.xor((max_instances == 0), (max_instances ~= 0 and max_instances > count)) then
+    if M.xor((max_instances == 0), (max_instances ~= 0 and max_instances > count)) then
       if not in_list(values, v) and Value.is_int(k) then
         table.insert(res, v)
       elseif not in_list(values, v) then
@@ -403,7 +403,7 @@ end
 ---@overload fun(): function
 ---@overload fun(s: string): function
 ---@overload fun(s: string, bufnr: integer): function
-function Util.ft_set(s, bufnr)
+function M.ft_set(s, bufnr)
   validate({
     s = { s, { 'string', 'nil' }, true },
     bufnr = { bufnr, { 'number', 'nil' }, true },
@@ -418,7 +418,7 @@ end
 ---@return string|''|'acwrite'|'help'|'nofile'|'nowrite'|'prompt'|'quickfix'|'terminal' bt
 ---@overload fun(): bt: string|''|'acwrite'|'help'|'nofile'|'nowrite'|'prompt'|'quickfix'|'terminal'
 ---@overload fun(bufnr: integer): bt: string|''|'acwrite'|'help'|'nofile'|'nowrite'|'prompt'|'quickfix'|'terminal'
-function Util.bt_get(bufnr)
+function M.bt_get(bufnr)
   validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
 
   return vim.api.nvim_get_option_value('buftype', { buf = bufnr or curr_buf() })
@@ -428,7 +428,7 @@ end
 ---@return string ft
 ---@overload fun(): ft: string
 ---@overload fun(bufnr: integer): ft: string
-function Util.ft_get(bufnr)
+function M.ft_get(bufnr)
   validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
 
   return vim.api.nvim_get_option_value('filetype', { buf = bufnr or curr_buf() })
@@ -438,7 +438,7 @@ end
 ---@param V any
 ---@return table T
 ---@return any val
-function Util.pop_values(T, V)
+function M.pop_values(T, V)
   validate({ T = { T, { 'table' } } })
 
   local idx = 0
@@ -459,7 +459,7 @@ end
 ---@return string displaced
 ---@overload fun(c: string): displaced: string
 ---@overload fun(c: string, direction: 'next'|'prev'): displaced: string
-function Util.displace_letter(c, direction)
+function M.displace_letter(c, direction)
   validate({
     c = { c, { 'string' } },
     direction = { direction, { 'string', 'nil' }, true },
@@ -470,8 +470,8 @@ function Util.displace_letter(c, direction)
   end
 
   local Value = require('user_api.check.value')
-  local mv = Util.mv_tbl_values
-  local A = vim.deepcopy(Util.string.alphabet)
+  local mv = M.mv_tbl_values
+  local A = vim.deepcopy(M.string.alphabet)
   local LOWER, UPPER = A.lower_map, A.upper_map
   if direction == 'prev' then
     if Value.fields(c, LOWER) then
@@ -489,7 +489,7 @@ end
 ---@return string[]|string res
 ---@overload fun(data: string): res: string
 ---@overload fun(data: string[]): res: string[]
-function Util.discard_dups(data)
+function M.discard_dups(data)
   local Value = require('user_api.check.value')
   if not (Value.type_not_empty('string', data) or Value.type_not_empty('table', data)) then
     vim.notify('Input is not valid!', ERROR, {
@@ -528,7 +528,7 @@ end
 
 ---@param T any[]
 ---@return any[] reversed
-function Util.reverse_tbl(T)
+function M.reverse_tbl(T)
   validate({ T = { T, { 'table' } } })
   if vim.tbl_isempty(T) then
     error('(user_api.util.reverse_tbl): Empty table!', ERROR)
@@ -540,13 +540,6 @@ function Util.reverse_tbl(T)
   end
   return T
 end
-
-local M = setmetatable(Util, { ---@type User.Util
-  __index = Util,
-  __newindex = function()
-    vim.notify('User.Util is Read-Only!', ERROR)
-  end,
-})
 
 return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:
