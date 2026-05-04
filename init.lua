@@ -78,7 +78,6 @@ Opts.setup({
   switchbuf = 'usetab',
   tabstop = 4,
   title = true,
-  whichwrap = 'b,s,<,>,[,]',
   wrap = is_distro('termux'),
 }, false, true)
 
@@ -123,7 +122,7 @@ require('config.lazy').setup({
   git_rehunk = false,
   git_utils = false,
   goto_preview = false,
-  helpview = true,
+  helpview = false,
   hlargs = false,
   hoversplit = false,
   ibl = false,

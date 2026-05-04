@@ -9,6 +9,7 @@ return { ---@type LazySpec
       enabled = true,
       backdrop = { enabled = false, backdrop = 20 },
       gamification_enabled = true,
+      icon_engine = 'mini',
       notifications = { enabled = true, level_up = true, achievements = true },
       keymap = { show_profile = '<leader>Tp' },
       auto_save_interval = 300,
