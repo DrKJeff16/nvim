@@ -298,10 +298,11 @@ return { ---@type LazySpec
               return cmp.snippet_forward()
             end
 
-            if not cmp.is_menu_visible() and has_words_before() then
-              return cmp.show({ providers = BUtil.gen_sources(true, true) })
+            if not has_words_before() then
+              return
             end
-            return cmp.insert_next()
+            return cmp.is_menu_visible() and cmp.insert_next()
+              or cmp.show({ providers = BUtil.gen_sources(true, true) })
           end,
           'fallback',
         },
@@ -311,10 +312,11 @@ return { ---@type LazySpec
               return cmp.snippet_backward()
             end
 
-            if not cmp.is_menu_visible() and has_words_before() then
-              return cmp.show({ providers = BUtil.gen_sources(true, true) })
+            if not has_words_before() then
+              return
             end
-            return cmp.insert_prev()
+            return cmp.is_menu_visible() and cmp.insert_prev()
+              or cmp.show({ providers = BUtil.gen_sources(true, true) })
           end,
           'fallback',
         },
@@ -336,13 +338,13 @@ return { ---@type LazySpec
         ['<C-n>'] = { 'fallback' },
         ['<C-b>'] = {
           function(cmp)
-            return cmp.is_documentation_visible() and cmp.scroll_documentation_up(4) or nil
+            return cmp.is_documentation_visible() and cmp.scroll_documentation_up(4) or false
           end,
           'fallback',
         },
         ['<C-f>'] = {
           function(cmp)
-            return cmp.is_documentation_visible() and cmp.scroll_documentation_down(4) or nil
+            return cmp.is_documentation_visible() and cmp.scroll_documentation_down(4) or false
           end,
           'fallback',
         },
