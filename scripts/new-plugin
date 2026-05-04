@@ -14,5 +14,9 @@ TARGET="$1"
 
 [[ "$F_EXT" != "lua" ]] && TARGET+=".lua"
 
-cp -v "scripts/${TEMPLATE}" "${TARGET_DIR}/${TARGET}"
-exit $?
+if [[ -f "${TARGET_DIR}/${TARGET}" ]]; then
+    cp -vi "scripts/${TEMPLATE}" "${TARGET_DIR}/${TARGET}" || exit 1
+else
+    cp -v "scripts/${TEMPLATE}" "${TARGET_DIR}/${TARGET}" || exit 1
+fi
+exit 0
