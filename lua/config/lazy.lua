@@ -14,7 +14,6 @@ local M = {}
 function M.get_default_specs()
   return { ---@type LazyPlugins
     Comment = { import = 'plugin.Comment' },
-    _spec = { import = 'plugin._spec' },
     alpha = { import = 'plugin.alpha' },
     autopairs = { import = 'plugin.autopairs' },
     barbar = { import = 'plugin.barbar' },
@@ -34,6 +33,7 @@ function M.get_default_specs()
     code_runner = { import = 'plugin.code-runner' },
     codeowners = { import = 'plugin.codeowners' },
     color_skimer = { import = 'plugin.color-skimer' },
+    colorschemes = { import = 'plugin.colorschemes' },
     colorizer = { import = 'plugin.colorizer' },
     conform = { import = 'plugin.conform' },
     diffview = { import = 'plugin.diffview' },
@@ -227,6 +227,7 @@ function M.get_default_toggles()
     code_runner = false,
     codeowners = true,
     color_skimer = false,
+    colorschemes = true,
     colorizer = true,
     conform = true,
     diffview = false,
@@ -358,7 +359,7 @@ function M.setup(toggles)
 
   local dict = M.get_default_specs()
   local dict_keys = vim.tbl_keys(dict) ---@type string[]
-  local specs = { { import = 'plugin._spec' } } ---@type (string|LazyPluginSpec|LazySpecImport)[]
+  local specs = {} ---@type (string|LazyPluginSpec|LazySpecImport)[]
   local err = ''
   for name, val in pairs(toggles) do
     if type(val) == 'boolean' then

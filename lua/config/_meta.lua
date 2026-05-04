@@ -3,7 +3,6 @@
 
 ---@class LazyPlugins
 ---@field Comment? LazySpecImport
----@field _spec LazySpecImport
 ---@field alpha? LazySpecImport
 ---@field autopairs? LazySpecImport
 ---@field barbar? LazySpecImport
@@ -11,9 +10,9 @@
 ---@field blink_cmp? LazySpecImport
 ---@field blink_indent? LazySpecImport
 ---@field blink_pairs? LazySpecImport
----@field boolean_toggle? LazySpecImport
 ---@field bmessages? LazySpecImport
 ---@field bookmarks? LazySpecImport
+---@field boolean_toggle? LazySpecImport
 ---@field buffer_sticks? LazySpecImport
 ---@field bufferline? LazySpecImport
 ---@field cheaty? LazySpecImport
@@ -24,6 +23,7 @@
 ---@field codeowners? LazySpecImport
 ---@field color_skimer? LazySpecImport
 ---@field colorizer? LazySpecImport
+---@field colorschemes? LazySpecImport
 ---@field conform? LazySpecImport
 ---@field diffview? LazySpecImport
 ---@field dooku? LazySpecImport
@@ -62,8 +62,8 @@
 ---@field mason? LazySpecImport
 ---@field match? LazySpecImport
 ---@field mini_animate? LazySpecImport
----@field mini_basics? LazySpecImport
 ---@field mini_base16? LazySpecImport
+---@field mini_basics? LazySpecImport
 ---@field mini_bufremove? LazySpecImport
 ---@field mini_cmdline? LazySpecImport
 ---@field mini_cursorword? LazySpecImport
@@ -157,6 +157,7 @@
 ---@field codeowners? boolean
 ---@field color_skimer? boolean
 ---@field colorizer? boolean
+---@field colorschemes? boolean
 ---@field conform? boolean
 ---@field diffview? boolean
 ---@field dooku? boolean
