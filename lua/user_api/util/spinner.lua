@@ -40,12 +40,16 @@ local M = {}
 
 ---@param id string
 ---@param opts spinner.Opts
----@return SpinnerObj spinner
+---@return SpinnerObj|nil spinner
 function M.new(id, opts)
   validate({
     id = { id, { 'string' } },
     opts = { opts, { 'table' } },
   })
+
+  if not require('user_api.check').module('spinner') then
+    return
+  end
 
   require('spinner').config(id, opts)
 

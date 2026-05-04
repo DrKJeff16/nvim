@@ -1,78 +1,16 @@
----@module 'spinner'
-
-local MODSTR = 'user_api.update'
 local WARN = vim.log.levels.WARN
 local ERROR = vim.log.levels.ERROR
 local INFO = vim.log.levels.INFO
 
----@class UserSpinner
----@field id string
-local Spinner = {}
-
----@return boolean available
-function Spinner.available()
-  return require('user_api.check').module('spinner')
-end
-
----@param id string
----@return UserSpinner|nil spinner
-function Spinner.new(id)
-  require('user_api.check').validate({ id = { id, { 'string' } } })
-
-  if not Spinner.available() then
-    return
-  end
-  if id == '' then
-    error('Empty ID!', ERROR)
-  end
-
-  require('spinner').config(id, { kind = 'cursor' })
-
-  local spinner = setmetatable({ id = id }, { __index = Spinner }) ---@type UserSpinner
-  return spinner
-end
-
-function Spinner:start()
-  if not (Spinner.available() and self.id) or self.id == '' then
-    return
-  end
-
-  require('spinner').start(self.id)
-end
-
-function Spinner:stop()
-  if not (Spinner.available() and self.id) or self.id == '' then
-    return
-  end
-
-  require('spinner').stop(self.id, true)
-end
-
-function Spinner:pause()
-  if not (Spinner.available() and self.id) or self.id == '' then
-    return
-  end
-
-  require('spinner').pause(self.id)
-end
-
-function Spinner:reset()
-  if not (Spinner.available() and self.id) or self.id == '' then
-    return
-  end
-
-  require('spinner').reset(self.id)
-end
-
 ---@class User.Update
-local Update = {}
+local M = {}
 
 ---@param verbose? boolean
-function Update.update(verbose)
+function M.update(verbose)
   require('user_api.check').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
   verbose = verbose ~= nil and verbose or false
 
-  local spinner = Spinner.new('user')
+  local spinner = require('user_api.util.spinner').new('user', { kind = 'cursor' })
   if spinner then
     spinner:start()
   end
@@ -93,7 +31,7 @@ function Update.update(verbose)
     end
 
     if obj.code ~= 0 then
-      vim.notify(('Failed to update Jnvim, try to do it manually'):format(MODSTR), ERROR, {
+      vim.notify('Failed to update Jnvim, try to do it manually', ERROR, {
         animate = true,
         hide_from_history = false,
         timeout = 5000,
@@ -111,7 +49,7 @@ function Update.update(verbose)
     end
 
     if obj.stdout and obj.stdout:match('Already up to date') then
-      vim.notify(('(%s.update): Jnvim is up to date!'):format(MODSTR), INFO, {
+      vim.notify('Jnvim is up to date!', INFO, {
         animate = true,
         hide_from_history = true,
         timeout = 1750,
@@ -119,7 +57,7 @@ function Update.update(verbose)
       })
       return
     end
-    vim.notify(('(%s.update): You need to restart Nvim!'):format(MODSTR), WARN, {
+    vim.notify('You need to restart Nvim!', WARN, {
       animate = true,
       hide_from_history = false,
       timeout = 5000,
@@ -128,15 +66,15 @@ function Update.update(verbose)
   end)
 end
 
-function Update.setup()
+function M.setup()
   local desc = require('user_api.maps').new_desc
   require('user_api.config.keymaps').set({
     n = {
       ['<leader>U'] = { group = '+User API' },
-      ['<leader>Uu'] = { Update.update, desc('Update User Config') },
+      ['<leader>Uu'] = { M.update, desc('Update User Config') },
       ['<leader>UU'] = {
         function()
-          Update.update(true)
+          M.update(true)
         end,
         desc('Update User Config (Verbose)'),
       },
@@ -144,16 +82,9 @@ function Update.setup()
   })
 
   vim.api.nvim_create_user_command('UserUpdate', function(ctx)
-    Update.update(ctx.bang)
+    M.update(ctx.bang)
   end, { bang = true, desc = 'Update Jnvim' })
 end
-
-local M = setmetatable(Update, { ---@type User.Update
-  __index = Update,
-  __newindex = function()
-    vim.notify('User.Update is Read-Only!', ERROR)
-  end,
-})
 
 return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:
