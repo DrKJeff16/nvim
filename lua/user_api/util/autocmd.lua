@@ -1,16 +1,13 @@
----@alias AuOpts vim.api.keyset.create_autocmd
----@alias AuGroupOpts vim.api.keyset.create_augroup
-
 ---@class AuPair
 ---@field event string[]|string
----@field opts AuOpts
+---@field opts vim.api.keyset.create_autocmd
 
 ---@class AuRepeatEvents
 ---@field events string[]
----@field opts_tbl AuOpts[]
+---@field opts_tbl vim.api.keyset.create_autocmd[]
 
----@alias AuDict table<string, AuOpts>
----@alias AuRepeat table<string, AuOpts[]>
+---@alias AuDict table<string, vim.api.keyset.create_autocmd>
+---@alias AuRepeat table<string, vim.api.keyset.create_autocmd[]>
 ---@alias AuList AuPair[]
 
 local ERROR = vim.log.levels.ERROR
@@ -29,7 +26,9 @@ function M.gen_augroups(names, clear)
     names = { names, { 'string', 'table' } },
     clear = { clear, { 'boolean', 'nil' }, true },
   })
-  clear = clear ~= nil and clear or true
+  if clear == nil then
+    clear = true
+  end
 
   if require('user_api.check.value').is_tbl(names) and not vim.tbl_isempty(names) then
     ---@cast names string[]

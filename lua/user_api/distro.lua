@@ -9,7 +9,9 @@ M.termux = require('user_api.distro.termux')
 ---@param verbose? boolean
 function M.setup(verbose)
   validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
-  verbose = verbose ~= nil and verbose or false
+  if verbose == nil then
+    verbose = false
+  end
 
   if M.termux.is_distro() then
     M.termux.setup()

@@ -35,7 +35,9 @@ local function type_fun(t)
     require('user_api.check.exists').validate({
       multiple = { multiple, { 'boolean', 'nil' }, true },
     })
-    multiple = multiple ~= nil and multiple or false
+    if multiple == nil then
+      multiple = false
+    end
 
     if not multiple then
       return var ~= nil and type(var) == t
@@ -91,7 +93,9 @@ M.is_tbl = type_fun('table')
 ---@return boolean is_int
 function M.is_int(var, multiple)
   require('user_api.check.exists').validate({ multiple = { multiple, { 'boolean', 'nil' }, true } })
-  multiple = multiple ~= nil and multiple or false
+  if multiple == nil then
+    multiple = false
+  end
 
   if not multiple then
     return M.is_num(var) and var == math.floor(var) and var == math.ceil(var)
@@ -130,7 +134,9 @@ function M.empty(data, multiple)
     data = { data, { 'string', 'table', 'number' } },
     multiple = { multiple, { 'boolean', 'nil' }, true },
   })
-  multiple = multiple ~= nil and multiple or false
+  if multiple == nil then
+    multiple = false
+  end
 
   if M.is_str(data) then
     return data == ''
@@ -235,7 +241,9 @@ function M.tbl_values(values, T, return_keys)
     T = { T, { 'table' } },
     return_keys = { return_keys, { 'boolean', 'nil' }, true },
   })
-  return_keys = return_keys ~= nil and return_keys or false
+  if return_keys == nil then
+    return_keys = false
+  end
 
   local res = return_keys and {} or false ---@type boolean|string|integer|(string|integer)[]
   for _, val in pairs(values) do

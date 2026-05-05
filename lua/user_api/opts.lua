@@ -78,7 +78,9 @@ function M.long_opts_convert(T, verbose)
     T = { T, { 'table' } },
     verbose = { verbose, { 'boolean', 'nil' }, true },
   })
-  verbose = verbose ~= nil and verbose or false
+  if verbose == nil then
+    verbose = false
+  end
 
   local Value = require('user_api.check.value')
   local parsed_opts = {} ---@type User.Opts.Spec
@@ -127,7 +129,9 @@ function M.optset(O, verbose)
     O = { O, { 'table' } },
     verbose = { verbose, { 'boolean', 'nil' }, true },
   })
-  verbose = verbose ~= nil and verbose or false
+  if verbose == nil then
+    verbose = false
+  end
   if not vim.api.nvim_get_option_value('modifiable', { buf = curr_buf() }) then
     return
   end
@@ -177,7 +181,9 @@ function M.toggle(O, verbose)
     O = { O, { 'string', 'table' } },
     verbose = { verbose, { 'boolean', 'nil' }, true },
   })
-  verbose = verbose ~= nil and verbose or false
+  if verbose == nil then
+    verbose = false
+  end
 
   local Value = require('user_api.check.value')
 
@@ -249,8 +255,12 @@ function M.setup(override, verbose, cursor_blink)
     verbose = { verbose, { 'boolean', 'nil' }, true },
     cursor_blink = { cursor_blink, { 'boolean', 'nil' }, true },
   })
-  verbose = verbose ~= nil and verbose or false
-  cursor_blink = cursor_blink ~= nil and cursor_blink or false
+  if verbose == nil then
+    verbose = false
+  end
+  if cursor_blink == nil then
+    cursor_blink = false
+  end
 
   if vim.tbl_isempty(M.options) then
     M.options = M.long_opts_convert(M.get_defaults(), verbose)

@@ -8,7 +8,9 @@ local M = {}
 ---@param verbose? boolean
 function M.update(verbose)
   require('user_api.check').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
-  verbose = verbose ~= nil and verbose or false
+  if verbose == nil then
+    verbose = false
+  end
 
   local spinner = require('user_api.util.spinner').new('user', { kind = 'cursor' })
   if spinner then

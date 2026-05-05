@@ -173,8 +173,9 @@ function String.capitalize(str, use_dot, triggers)
   if str == '' then
     return str
   end
-
-  use_dot = use_dot ~= nil and use_dot or false
+  if use_dot == nil then
+    use_dot = false
+  end
   triggers = vim.tbl_deep_extend('force', triggers or {}, { ' ', '' })
 
   local strlen = str:len()

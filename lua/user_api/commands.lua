@@ -145,14 +145,13 @@ M.commands.Current = {
 
 M.commands.DeleteInactiveBuffers = {
   function(ctx)
-    local notify = ctx.bang ~= nil and ctx.bang or false
     for _, buf in ipairs(vim.fn.getbufinfo()) do
       if vim.tbl_isempty(buf.windows) and buf.listed == 1 and buf.loaded == 1 then
-        notify = true
+        ctx.bang = true
         vim.cmd.bdelete({ buf.bufnr, bang = true })
       end
     end
-    if notify then
+    if ctx.bang then
       vim.notify('Deleted inactive buffers.', vim.log.levels.INFO)
     end
   end,

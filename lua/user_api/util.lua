@@ -280,7 +280,7 @@ function M.mv_tbl_values(T, steps, direction)
     direction = { direction, { 'string', 'nil' }, true },
   })
   steps = steps > 0 and steps or 1
-  direction = (direction ~= nil and in_list({ 'l', 'r' }, direction)) and direction or 'r'
+  direction = (direction and in_list({ 'l', 'r' }, direction)) and direction or 'r'
 
   local direction_funcs = { ---@class DirectionFuns
     r = function(t) ---@param t table<string, any>
