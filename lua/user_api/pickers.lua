@@ -2,53 +2,65 @@
 ---@field mod string
 ---@field cb function
 
+local validate = require('user_api.check').validate
+
+---@class User.Pickers.Entry
+---@field mod string
+local P = {}
+
+---@param spec User.Pickers.Spec
+---@return User.Pickers.Entry|function entry
+function P:new(spec)
+  validate({
+    spec = { spec, { 'table' } },
+    ['spec.mod'] = { spec.mod, { 'string' } },
+    ['spec.cb'] = { spec.cb, { 'function' } },
+  })
+
+  return setmetatable({ mod = spec.mod }, {
+    __index = self,
+    __call = function()
+      spec.cb()
+    end,
+  })
+end
+
 ---@class User.Pickers
+---@field pickers table<string, User.Pickers.Entry|function>
 local M = {}
 
-M.pickers = {} ---@type table<string, User.Pickers.Spec>
+M.pickers = {}
 
 ---@param name string
 ---@param spec User.Pickers.Spec
 function M.new_picker(name, spec)
-  require('user_api.check').validate({
+  validate({
     name = { name, { 'string' } },
     spec = { spec, { 'table' } },
     ['spec.mod'] = { spec.mod, { 'string' } },
     ['spec.cb'] = { spec.cb, { 'function' } },
   })
 
-  M.pickers[name] = spec
+  M.pickers[name] = P:new(spec)
 end
 
 function M.setup()
   M.new_picker('telescope', {
     mod = 'telescope._extensions.picker_list',
-    cb = function()
-      require('telescope._extensions.picker_list').exports.picker_list()
-    end,
+    cb = require('telescope._extensions.picker_list').exports.picker_list,
   })
-
   M.new_picker('snacks.nvim', {
     mod = 'snacks.picker',
-    cb = function()
-      require('snacks.picker').pickers()
-    end,
+    cb = require('snacks.picker').pickers,
   })
-
   M.new_picker('fzf-lua', {
     mod = 'fzf-lua.cmd',
-    cb = function()
-      require('fzf-lua.cmd').run_command() ---@diagnostic disable-line:missing-parameter
-    end,
+    cb = require('fzf-lua.cmd').run_command,
   })
-
   M.new_picker('picker.nvim', {
     mod = 'picker',
     cb = function()
       require('picker').open({})
-      vim.schedule(function()
-        vim.api.nvim_feedkeys('i', 'n', false)
-      end)
     end,
   })
 end
@@ -62,18 +74,13 @@ function M.run()
   end
 
   local keys = vim.tbl_keys(M.pickers) ---@type string[]
-  table.sort(keys)
-
-  vim.ui.select(keys, { prompt = 'Select The Desired Picker' }, function(item)
-    if not item then
-      return
-    end
-    if not vim.list_contains(keys, item) then
+  vim.ui.select(keys, { prompt = 'Select The Desired Picker' }, function(item) ---@param item string
+    if not (item and vim.list_contains(keys, item)) then
       vim.notify(('Invalid picker `%s`'):format(item), vim.log.levels.ERROR)
       return
     end
 
-    pcall(M.pickers[item].cb)
+    pcall(M.pickers[item])
   end)
 end
 
