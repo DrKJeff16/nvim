@@ -18,14 +18,11 @@ function M.setup(verbose)
     if verbose then
       vim.notify('Termux distribution detected...', vim.log.levels.INFO)
     end
-    return
-  end
-  if M.archlinux.is_distro() then
+  elseif M.archlinux.is_distro() then
     M.archlinux.setup()
     if verbose then
       vim.notify('Arch Linux distribution detected...', vim.log.levels.INFO)
     end
-    return
   end
 end
 
