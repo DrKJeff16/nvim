@@ -3,6 +3,8 @@
 
 local validate = require('user_api.check').validate
 local has_words_before = require('user_api.util').has_words_before
+local exists = require('user_api.check').module
+local ft_get = require('user_api.util').ft_get
 
 ---@param idx integer
 ---@return fun(cmp: blink.cmp.API): boolean|nil
@@ -43,36 +45,19 @@ local function up_or_down(direction)
 end
 
 ---@class BUtil
+---@field Sources string[]
+---@field Providers table<string, blink.cmp.SourceProviderConfigPartial>
+---@field curr_ft string
 local BUtil = {}
 
-BUtil.Sources = {} ---@type string[]
-BUtil.Providers = {} ---@type table<string, blink.cmp.SourceProviderConfigPartial>
+BUtil.Sources = {}
+BUtil.Providers = {}
 BUtil.curr_ft = ''
 
----@param snipps? boolean
----@param buf? boolean
-function BUtil.reset_sources(snipps, buf)
-  validate({
-    snipps = { snipps, { 'boolean', 'nil' }, true },
-    buf = { buf, { 'boolean', 'nil' }, true },
-  })
-  snipps = snipps ~= nil and snipps or true
-  buf = buf ~= nil and buf or true
+function BUtil.reset_sources()
+  BUtil.Sources = { 'lazydev', 'lsp', 'path', 'buffer' } --[[@as string[]\]]
 
-  BUtil.Sources = { 'lsp', 'path' } --[[@as string[]\]]
-  if snipps then
-    table.insert(BUtil.Sources, 'snippets')
-  end
-  if buf then
-    table.insert(BUtil.Sources, 'buffer')
-  end
-
-  local ft = require('user_api.util').ft_get(vim.api.nvim_get_current_buf())
-  if ft == 'lua' then
-    table.insert(BUtil.Sources, 1, 'lazydev')
-    table.insert(BUtil.Sources, 1, 'nvim_lua')
-    return
-  end
+  local ft = ft_get(vim.api.nvim_get_current_buf())
   if ft == 'sshconfig' then
     table.insert(BUtil.Sources, 1, 'sshconfig')
     return
@@ -91,16 +76,9 @@ function BUtil.reset_sources(snipps, buf)
   end
 end
 
----@param snipps? boolean
----@param buf? boolean
 ---@return string[] sources
-function BUtil.gen_sources(snipps, buf)
-  validate({
-    snipps = { snipps, { 'boolean', 'nil' }, true },
-    buf = { buf, { 'boolean', 'nil' }, true },
-  })
-
-  BUtil.reset_sources(snipps, buf)
+function BUtil.gen_sources()
+  BUtil.reset_sources()
   return BUtil.Sources
 end
 
@@ -108,8 +86,8 @@ function BUtil.reset_providers()
   BUtil.Providers = {
     cmdline = { module = 'blink.cmp.sources.cmdline' },
     buffer = {
-      score_offset = -20,
-      max_items = 10,
+      score_offset = -70,
+      max_items = 5,
       opts = {
         get_bufnrs = function()
           return vim
@@ -161,7 +139,7 @@ function BUtil.reset_providers()
     path = {
       name = 'Path',
       module = 'blink.cmp.sources.path',
-      score_offset = 30,
+      score_offset = 50,
       opts = {
         trailing_slash = false,
         label_trailing_slash = true,
@@ -171,17 +149,6 @@ function BUtil.reset_providers()
           return vim.fn.getcwd()
         end,
       },
-    },
-    snippets = {
-      name = 'Snippet',
-      module = 'blink.cmp.sources.snippets',
-      score_offset = -10,
-      ---@module 'blink.cmp.sources.snippets'
-      ---@type blink.cmp.SnippetsOpts
-      opts = { use_show_condition = true, show_autosnippets = false, prefer_doc_trig = false },
-      should_show_items = function(ctx)
-        return ctx.trigger.initial_kind ~= 'trigger_character'
-      end,
     },
     lazydev = { name = 'LazyDev', module = 'lazydev.integrations.blink', score_offset = 100 },
     lsp = {
@@ -194,13 +161,8 @@ function BUtil.reset_providers()
         end, items)
       end,
     },
-    nvim_lua = {
-      name = 'nvim_lua',
-      module = 'blink.compat.source',
-    },
   }
 
-  local exists = require('user_api.check.exists').module
   if exists('css-vars.blink') then
     BUtil.Providers.css_vars = {
       name = 'css-vars',
@@ -217,7 +179,7 @@ function BUtil.reset_providers()
       module = 'blink-cmp-git',
       enabled = function()
         local git_fts = { 'git', 'gitcommit', 'gitattributes', 'gitrebase' }
-        return vim.list_contains(git_fts, require('user_api.util').ft_get(vim.api.nvim_get_current_buf()))
+        return vim.list_contains(git_fts, ft_get(vim.api.nvim_get_current_buf()))
       end,
       opts = {},
     }
@@ -228,7 +190,7 @@ function BUtil.reset_providers()
       module = 'blink-cmp-conventional-commits',
       score_offset = 100,
       enabled = function()
-        return require('user_api.util').ft_get(vim.api.nvim_get_current_buf()) == 'gitcommit'
+        return ft_get(vim.api.nvim_get_current_buf()) == 'gitcommit'
       end,
       opts = {},
     }
@@ -262,27 +224,18 @@ return { ---@type LazySpec
   version = false,
   dependencies = {
     'saghen/blink.lib',
-    { 'L3MON4D3/LuaSnip', build = 'make install_jsregexp' },
-    'saghen/blink.compat',
-    'hrsh7th/cmp-nvim-lsp',
-    'rafamadriz/friendly-snippets',
     'onsails/lspkind.nvim',
     'folke/lazydev.nvim',
     'jdrupal-dev/css-vars.nvim',
     'Kaiser-Yang/blink-cmp-git',
     'disrupted/blink-cmp-conventional-commits',
     { 'bydlw98/blink-cmp-env', dev = true, version = false },
-    {
-      'bydlw98/blink-cmp-sshconfig',
-      build = executable('uv') and 'make' or false,
-      version = false,
-    },
+    { 'bydlw98/blink-cmp-sshconfig', build = executable('uv') and 'make' or false, version = false },
   },
   build = function()
     require('blink.cmp').build():wait(60000)
   end,
   config = function()
-    require('luasnip.loaders.from_vscode').lazy_load()
     require('blink.cmp').setup({
       enabled = function()
         return not vim.list_contains({ 'picker-prompt' }, vim.bo.filetype)
@@ -299,24 +252,28 @@ return { ---@type LazySpec
             end
 
             if not has_words_before() then
+              if cmp.is_menu_visible() then
+                return cmp.insert_next()
+              end
               return
             end
-            return cmp.is_menu_visible() and cmp.insert_next()
-              or cmp.show({ providers = BUtil.gen_sources(true, true) })
+            return cmp.is_menu_visible() and cmp.insert_next() or cmp.show({ providers = BUtil.gen_sources() })
           end,
           'fallback',
         },
         ['<S-Tab>'] = {
           function(cmp)
-            if cmp.snippet_active({ direction = -1 }) then
-              return cmp.snippet_backward()
+            if cmp.snippet_active({ direction = 1 }) then
+              return cmp.snippet_forward()
             end
 
             if not has_words_before() then
+              if cmp.is_menu_visible() then
+                return cmp.insert_prev()
+              end
               return
             end
-            return cmp.is_menu_visible() and cmp.insert_prev()
-              or cmp.show({ providers = BUtil.gen_sources(true, true) })
+            return cmp.is_menu_visible() and cmp.insert_prev() or cmp.show({ providers = BUtil.gen_sources() })
           end,
           'fallback',
         },
@@ -442,7 +399,7 @@ return { ---@type LazySpec
       },
       sources = {
         providers = BUtil.gen_providers(),
-        default = BUtil.gen_sources(true, true),
+        default = BUtil.gen_sources(),
         transform_items = function(_, items)
           return items
         end,
@@ -454,7 +411,7 @@ return { ---@type LazySpec
         sorts = { 'exact', 'score', 'sort_text', 'label' },
         implementation = 'prefer_rust',
       },
-      snippets = { preset = 'luasnip' },
+      snippets = { preset = 'default' },
       signature = {
         enabled = true,
         trigger = {
@@ -470,7 +427,7 @@ return { ---@type LazySpec
           treesitter_highlighting = true,
           show_documentation = true,
           scrollbar = true,
-          direction_priority = { 'n', 's' },
+          direction_priority = { 's', 'n' },
         },
       },
       cmdline = { enabled = false },
