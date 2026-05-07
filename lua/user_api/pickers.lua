@@ -76,7 +76,6 @@ function M.run()
   local keys = vim.tbl_keys(M.pickers) ---@type string[]
   vim.ui.select(keys, { prompt = 'Select The Desired Picker' }, function(item) ---@param item string
     if not (item and vim.list_contains(keys, item)) then
-      vim.notify(('Invalid picker `%s`'):format(item), vim.log.levels.ERROR)
       return
     end
 
