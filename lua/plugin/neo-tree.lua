@@ -9,7 +9,7 @@ return { ---@type LazySpec
     'nvim-tree/nvim-web-devicons',
     'saifulapm/neotree-file-nesting-config',
     {
-      'antosha417/nvim-lsp-file-operations',
+      'DrKJeff16/nvim-lsp-file-operations',
       dev = true,
       config = function()
         require('lsp-file-operations').setup()
