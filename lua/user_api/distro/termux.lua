@@ -6,11 +6,13 @@ local function is_dir(dir) ---@param dir string
 end
 
 ---@class User.Distro.Termux
+---@field PREFIX string
+---@field rtpaths string[]
 local M = {}
 
-M.PREFIX = vim.fn.has_key(vim.fn.environ(), 'PREFIX') and vim.fn.environ().PREFIX or '' ---@type string
+M.PREFIX = vim.fn.has_key(vim.fn.environ(), 'PREFIX') and vim.fn.environ().PREFIX or ''
 
-local RTPATHS = {
+M.RTPATHS = {
   vim.fs.joinpath(M.PREFIX, 'share/vim/vimfiles/after'),
   vim.fs.joinpath(M.PREFIX, 'share/vim/vimfiles'),
   vim.fs.joinpath(M.PREFIX, 'share/nvim/runtime'),
@@ -18,13 +20,6 @@ local RTPATHS = {
   vim.fs.joinpath(M.PREFIX, 'local/share/vim/vimfiles'),
   vim.fs.joinpath(M.PREFIX, 'local/share/nvim/runtime'),
 }
-
-M.rtpaths = setmetatable(RTPATHS, { ---@type string[]
-  __index = RTPATHS,
-  __newindex = function()
-    vim.notify('User.Distro.Termux.rtpaths is Read-Only!', vim.log.levels.ERROR)
-  end,
-})
 
 function M.is_distro()
   if M.PREFIX == '' or not is_dir(M.PREFIX) then

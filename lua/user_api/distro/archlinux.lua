@@ -1,16 +1,15 @@
 ---Modify runtimepath to also search the system-wide Vim directory
 ---(e.g. for Vim runtime files from Arch Linux packages)
 
-local ERROR = vim.log.levels.ERROR
-
 local function is_dir(dir) ---@param dir string
   return vim.fn.isdirectory(dir) == 1
 end
 
 ---@class User.Distro.Archlinux
+---@field rtpaths string[]
 local M = {}
 
-local RTPATHS = { ---@type string[]
+M.rtpaths = {
   '/usr/share/vim/vimfiles/after',
   '/usr/share/vim/vimfiles',
   '/usr/share/nvim/runtime',
@@ -18,13 +17,6 @@ local RTPATHS = { ---@type string[]
   '/usr/local/share/vim/vimfiles',
   '/usr/local/share/nvim/runtime',
 }
-
-M.rtpaths = setmetatable(RTPATHS, { ---@type string[]
-  __index = RTPATHS,
-  __newindex = function()
-    vim.notify('User.Distro.Archlinux.rtpaths is Read-Only!', ERROR)
-  end,
-})
 
 function M.is_distro()
   -- First check for each dir's existance

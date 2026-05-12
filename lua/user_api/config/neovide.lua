@@ -55,10 +55,12 @@ local g_opts = {
 local o_opts = { linespace = 0, guifont = 'FiraCode Nerd Font Mono:h19' }
 
 ---@class User.Config.Neovide
+---@field g_opts table<string, any>
+---@field active boolean
 local M = {}
 
-M.g_opts = {} ---@type table<string, any>
-M.active = false ---@type boolean
+M.g_opts = {}
+M.active = false
 
 ---@return Config.Neovide.Opts defaults
 function M.get_defaults()
@@ -75,26 +77,23 @@ function M.check()
   return require('user_api.check.exists').executable('neovide') and vim.g.neovide or false
 end
 
----@param opacity number
----@param transparency number
----@param bg string
----@overload fun()
----@overload fun(opacity: number)
----@overload fun(opacity: number, transparency: number)
+---@param opacity? number
+---@param transparency? number
+---@param bg? string
 function M.set_transparency(opacity, transparency, bg)
   validate({
-    opacity = { opacity, { 'number', 'nil' } },
-    transparency = { transparency, { 'number', 'nil' } },
-    bg = { bg, { 'string', 'nil' } },
+    opacity = { opacity, { 'number', 'nil' }, true },
+    transparency = { transparency, { 'number', 'nil' }, true },
+    bg = { bg, { 'string', 'nil' }, true },
   })
   opacity = opacity or 0.85
   transparency = transparency or 1.0
 
   local num_range = require('user_api.check.value').num_range
   local eq = { high = true, low = true }
-  opacity = (opacity and not num_range(opacity, 0.0, 1.0, eq)) and 0.85 or opacity
+  opacity = num_range(opacity, 0.0, 1.0, eq) and opacity or 0.85
   bg = bg and bg:len() == 7 and bg or '#0f1117'
-  transparency = (transparency and not num_range(transparency, 0.0, 1.0, eq)) and 1.0 or transparency
+  transparency = num_range(transparency, 0.0, 1.0, eq) and transparency or 1.0
 
   if bg:sub(1, 1) == '#' then
     bg = ((bg:len() ~= 7 and bg:len() ~= 9) and '#0f1117' or bg) .. alpha()
@@ -143,12 +142,9 @@ function M.setup_maps()
   })
 end
 
----@param T table
----@param transparent boolean
----@param verbose boolean
----@overload fun()
----@overload fun(T: table)
----@overload fun(T: table, transparent: boolean)
+---@param T? table
+---@param transparent? boolean
+---@param verbose? boolean
 function M.setup(T, transparent, verbose)
   validate({
     T = { T, { 'table', 'nil' }, true },
@@ -160,8 +156,12 @@ function M.setup(T, transparent, verbose)
     return
   end
   T = T or {}
-  transparent = transparent ~= nil and transparent or false
-  verbose = verbose ~= nil and verbose or false
+  if transparent == nil then
+    transparent = false
+  end
+  if verbose == nil then
+    verbose = false
+  end
 
   local Defaults = M.get_defaults()
   for o, v in pairs(Defaults.o) do

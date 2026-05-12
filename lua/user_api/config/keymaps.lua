@@ -1,4 +1,10 @@
----@alias User.Keymaps.Delete table<'n'|'i'|'v'|'t'|'o'|'x', string[]>
+---@class User.Keymaps.Delete
+---@field n? string[]
+---@field i? string[]
+---@field v? string[]
+---@field t? string[]
+---@field o? string[]
+---@field x? string[]
 
 local VIMRC = vim.fs.joinpath(vim.fn.stdpath('config'), 'init.lua')
 local ERROR = vim.log.levels.ERROR
@@ -13,7 +19,9 @@ local validate = require('user_api.check').validate
 ---@return function op
 local function delete_file(force)
   validate({ force = { force, { 'boolean', 'nil' }, true } })
-  force = force ~= nil and force or false
+  if force == nil then
+    force = false
+  end
 
   return function()
     local bufnr = vim.api.nvim_get_current_buf()
@@ -104,7 +112,9 @@ end
 ---@param vertical? boolean
 local function gen_fun_blank(vertical)
   validate({ vertical = { vertical, { 'boolean', 'nil' }, true } })
-  vertical = vertical ~= nil and vertical or false
+  if vertical == nil then
+    vertical = false
+  end
 
   return function()
     local buf = vim.api.nvim_create_buf(true, false)
@@ -123,7 +133,9 @@ end
 ---@overload fun()
 local function buf_del(force)
   validate({ force = { force, { 'boolean', 'nil' }, true } })
-  force = force ~= nil and force or false
+  if force == nil then
+    force = false
+  end
 
   local ft_triggers = { 'NvimTree', 'noice', 'trouble' }
   local pre_exc = { ft = { 'help', 'lazy', 'man', 'noice' }, bt = { 'help' } }
@@ -226,10 +238,10 @@ M.Keys = { ---@type AllModeMaps
     ['<leader>UKp'] = { M.print_keys, desc('Print all custom keymaps') },
     ['<leader>bD'] = { buf_del(true), desc('Close Buffer Forcefully') },
     ['<leader>bd'] = { buf_del(), desc('Close Buffer') },
-    ['<leader>bf'] = { ':bfirst<CR>', desc('Goto First Buffer') },
-    ['<leader>bl'] = { ':blast<CR>', desc('Goto Last Buffer') },
-    ['<leader>bn'] = { ':bnext<CR>', desc('Next Buffer') },
-    ['<leader>bp'] = { ':bprevious<CR>', desc('Previous Buffer') },
+    ['<leader>bf'] = { vim.cmd.bfirst, desc('Goto First Buffer') },
+    ['<leader>bl'] = { vim.cmd.blast, desc('Goto Last Buffer') },
+    ['<leader>bn'] = { vim.cmd.bnext, desc('Next Buffer') },
+    ['<leader>bp'] = { vim.cmd.bprevious, desc('Previous Buffer') },
     ['<leader>fD'] = { delete_file(true), desc('Delete Current File (Forcefully)') },
     ['<leader>fFv'] = { gen_fun_blank(true), desc('New Vertical Blank File') },
     ['<leader>fFx'] = { gen_fun_blank(), desc('New Horizontal Blank File') },
@@ -238,24 +250,24 @@ M.Keys = { ---@type AllModeMaps
     ['<leader>fiR'] = { ':%retab!<CR>', desc('Retab File (Forcefully)') },
     ['<leader>fii'] = { indent_file, desc('Indent Whole File') },
     ['<leader>fir'] = { ':%retab<CR>', desc('Retab File') },
-    ['<leader>fs'] = { ':w<CR>', desc('Save File') },
+    ['<leader>fs'] = { ':w ++p<CR>', desc('Save File') },
     ['<leader>fvL'] = { ':luafile ', desc('Source Lua File (Prompt)', { silent = false }) },
-    ['<leader>fvV'] = { ':so ', desc('Source VimScript File (Prompt)', { silent = false }) },
+    ['<leader>fvV'] = { ':source ', desc('Source VimScript File (Prompt)', { silent = false }) },
     ['<leader>fvl'] = { ':luafile %<CR>', desc('Source Current File As Lua File') },
     ['<leader>fvv'] = { ':source %<CR>', desc('Source Current File') },
-    ['<leader>qQ'] = { ':qa!<CR>', desc('Quit Nvim Forcefully') },
-    ['<leader>qq'] = { ':qa<CR>', desc('Quit Nvim') },
+    ['<leader>qQ'] = { ':quitall!<CR>', desc('Quit Nvim Forcefully') },
+    ['<leader>qq'] = { vim.cmd.quitall, desc('Quit Nvim') },
     ['<leader>qr'] = { ':restart +qall!<CR>', desc('Restart Nvim') },
-    ['<leader>tA'] = { ':tabnew<CR>', desc('New Tab') },
+    ['<leader>tA'] = { vim.cmd.tabnew, desc('New Tab') },
     ['<leader>tD'] = { ':tabclose!<CR>', desc('Close Tab Forcefully') },
     ['<leader>ta'] = { ':tabnew ', desc('New Tab (Prompt)', { silent = false }) },
-    ['<leader>td'] = { ':tabclose<CR>', desc('Close Tab') },
-    ['<leader>tf'] = { ':tabfirst<CR>', desc('Goto First Tab') },
-    ['<leader>tl'] = { ':tablast<CR>', desc('Goto Last Tab') },
-    ['<leader>tn'] = { ':tabnext<CR>', desc('Next Tab') },
-    ['<leader>tp'] = { ':tabprevious<CR>', desc('Previous Tab') },
-    ['<leader>vM'] = { ':messages<CR>', desc('Run `:messages`') },
-    ['<leader>vN'] = { ':Notifications<CR>', desc('Run `:Notifications`') },
+    ['<leader>td'] = { vim.cmd.tabclose, desc('Close Tab') },
+    ['<leader>tf'] = { vim.cmd.tabfirst, desc('Goto First Tab') },
+    ['<leader>tl'] = { vim.cmd.tablast, desc('Goto Last Tab') },
+    ['<leader>tn'] = { vim.cmd.tabnext, desc('Next Tab') },
+    ['<leader>tp'] = { vim.cmd.tabprevious, desc('Previous Tab') },
+    ['<leader>vM'] = { vim.cmd.messages, desc('Run `:messages`') },
+    ['<leader>vN'] = { vim.cmd.Notifications, desc('Run `:Notifications`') },
     ['<leader>vee'] = { rcfile('edit'), desc('Open In Current Window') },
     ['<leader>vet'] = { rcfile('tabnew'), desc('Open In New Tab') },
     ['<leader>vev'] = { rcfile('vsplit'), desc('Open In Vertical Split') },
@@ -315,10 +327,8 @@ M.Keys = { ---@type AllModeMaps
 ---Set both the `<leader>` and `<localleader>` keys.
 --- ---
 ---@param leader string `<leader>` key string (defaults to `<Space>`)
----@param local_leader string `<localleader>` string (defaults to `<Space>`)
----@param force boolean Force leader switch (defaults to `false`)
----@overload fun(leader: string)
----@overload fun(leader: string, local_leader: string)
+---@param local_leader? string `<localleader>` string (defaults to `<Space>`)
+---@param force? boolean Force leader switch (defaults to `false`)
 function M.set_leader(leader, local_leader, force)
   validate({
     leader = { leader, { 'string' } },
@@ -326,8 +336,10 @@ function M.set_leader(leader, local_leader, force)
     force = { force, { 'boolean', 'nil' }, true },
   })
   leader = leader ~= '' and leader or '<Space>'
-  local_leader = (local_leader ~= nil and local_leader ~= '') and local_leader or leader
-  force = force ~= nil and force or false
+  local_leader = (local_leader and local_leader ~= '') and local_leader or leader
+  if force == nil then
+    force = false
+  end
   if vim.g.leader_set and not force then
     return
   end
@@ -403,7 +415,9 @@ function M.set(keys, bufnr, defaults)
     defaults = { defaults, { 'boolean', 'nil' }, true },
   })
   bufnr = bufnr or nil
-  defaults = defaults ~= nil and defaults or false
+  if defaults == nil then
+    defaults = false
+  end
   if vim.tbl_isempty(keys) then
     return
   end
@@ -422,7 +436,9 @@ function M.set(keys, bufnr, defaults)
     end
   end
 
-  M.no_oped = M.no_oped ~= nil and M.no_oped or false
+  if M.no_oped == nil then
+    M.no_oped = false
+  end
 
   -- Noop keys after `<leader>` to avoid accidents
   for _, mode in ipairs(modes) do
