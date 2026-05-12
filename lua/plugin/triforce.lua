@@ -34,17 +34,7 @@ return { ---@type LazySpec
           end,
         },
       },
-      ignore_ft = {
-        'conf',
-        'config',
-        'dosini',
-        'hyprlang',
-        'json',
-        'make',
-        'markdown',
-        'toml',
-        'yaml',
-      },
+      ignore_ft = { 'conf', 'config', 'dosini', 'hyprlang', 'json', 'make', 'markdown', 'toml', 'yaml' },
       custom_languages = {
         gleam = { icon = '✨', name = 'Gleam' },
         odin = { icon = '🔷', name = 'Odin' },
@@ -55,7 +45,7 @@ return { ---@type LazySpec
         { level = 80, title = 'Lieutenant' },
         { level = 100, title = 'Foo' },
       },
-      xp_rewards = { char = 1, line = 2, save = 10 },
+      xp_rewards = { char = 1, line = 2, save = 7.5 },
     })
 
     local desc = require('user_api.maps').new_desc
