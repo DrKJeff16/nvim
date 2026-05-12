@@ -7,6 +7,7 @@ return { ---@type LazySpec
     require('project').setup({
       custom_projects = {
         { path = vim.fn.expand('~/Documents'), name = 'Documents' },
+        { path = vim.fn.expand('~/.bin'), name = 'Custom Scripts' },
       },
       log = { enabled = true, logpath = vim.fn.stdpath('state'), max_size = 0.5 },
       snacks = { enabled = true, opts = { sort = 'newest', show = 'names' } },
