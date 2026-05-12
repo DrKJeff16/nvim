@@ -85,6 +85,7 @@ Opts.setup({
 require('user_api').disable_netrw()
 
 require('config.lazy').setup({
+  { 'https://github.com/gentoo/gentoo-syntax' },
   Comment = true,
   alpha = false,
   autopairs = true,

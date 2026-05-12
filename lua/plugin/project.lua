@@ -5,6 +5,9 @@ return { ---@type LazySpec
   version = false,
   config = function()
     require('project').setup({
+      custom_projects = {
+        { path = vim.fn.expand('~/Documents'), name = 'Documents' },
+      },
       log = { enabled = true, logpath = vim.fn.stdpath('state'), max_size = 0.5 },
       snacks = { enabled = true, opts = { sort = 'newest', show = 'names' } },
       different_owners = { allow = true, notify = false },
