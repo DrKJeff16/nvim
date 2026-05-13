@@ -4,7 +4,7 @@ return { ---@type LazySpec
   version = false,
   config = function()
     require('trouble').setup({
-      auto_close = true,
+      auto_close = false,
       auto_open = false,
       auto_preview = true,
       auto_refresh = true,
@@ -83,6 +83,19 @@ return { ---@type LazySpec
       modes = {
         lsp_references = { params = { include_declaration = true } },
         lsp_base = { params = { include_current = true } },
+        preview_float = {
+          mode = 'diagnostics',
+          preview = {
+            type = 'float',
+            relative = 'editor',
+            border = 'rounded',
+            title = 'Preview',
+            title_pos = 'center',
+            position = { 0, -2 },
+            size = { width = 0.3, height = 0.3 },
+            zindex = 200,
+          },
+        },
         diagnostics = {
           mode = 'diagnostics',
           auto_preview = true,
@@ -92,7 +105,7 @@ return { ---@type LazySpec
           indent_guides = true,
           focus = true,
           auto_open = false,
-          auto_close = true,
+          auto_close = false,
         },
         test = {
           mode = 'diagnostics',
