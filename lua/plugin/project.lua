@@ -54,19 +54,19 @@ return { ---@type LazySpec
         ['<leader>p'] = { group = '+Project' },
         ['<leader>pR'] = {
           function()
-            vim.cmd.ProjectHistory('rename')
+            vim.cmd.Project({ args = { 'history', 'rename' } })
           end,
           desc('Rename a Project'),
         },
-        ['<leader>pC'] = { vim.cmd.ProjectConfig, desc('Toggle Config Window') },
-        ['<leader>pH'] = { vim.cmd.ProjectHealth, desc('Run `:checkhealth project`') },
-        ['<leader>pa'] = { vim.cmd.ProjectAdd, desc('Add New Project') },
-        ['<leader>pd'] = { vim.cmd.ProjectDelete, desc('Delete Existing Project') },
-        ['<leader>ph'] = { vim.cmd.ProjectHistory, desc('Toggle History Window') },
-        ['<leader>pl'] = { vim.cmd.ProjectLog, desc('Toggle Log Window') },
+        ['<leader>pC'] = { ':Project config<CR>', desc('Toggle Config Window') },
+        ['<leader>pH'] = { ':Project health<CR>', desc('Run `:checkhealth project`') },
+        ['<leader>pa'] = { ':Project add<CR>', desc('Add New Project') },
+        ['<leader>pd'] = { ':Project delete<CR>', desc('Delete Existing Project') },
+        ['<leader>ph'] = { ':Project history<CR>', desc('Toggle History Window') },
+        ['<leader>pl'] = { ':Project log<CR>', desc('Toggle Log Window') },
         ['<leader>pp'] = { vim.cmd.Project, desc('Open Project UI') },
-        ['<leader>pr'] = { vim.cmd.ProjectRecents, desc('Recent Projects') },
-        ['<leader>ps'] = { vim.cmd.ProjectSession, desc('Session') },
+        ['<leader>pr'] = { ':Project recents<CR>', desc('Recent Projects') },
+        ['<leader>ps'] = { ':Project session<CR>', desc('Session') },
       },
     })
 
