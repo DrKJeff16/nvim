@@ -3,6 +3,7 @@
 
 # Tree-sitter
 /.tree-sitter.d/
+/queries/
 /parser/
 
 # Fallback Init (for bug reporting)
