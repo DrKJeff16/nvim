@@ -158,10 +158,9 @@ local function buf_del(force)
 end
 
 ---@class User.Config.Keymaps
+---@field nop User.Config.Keymaps.NOP
 ---@field no_oped? boolean
 local M = {}
-
-M.NOP = require('user_api.config.keymaps.nop')
 
 function M.print_keys()
   vim.notify(vim.inspect(M.Keys), INFO)
@@ -446,7 +445,7 @@ function M.set(keys, bufnr, defaults)
       break
     end
     if vim.list_contains({ 'n', 'v' }, mode) then
-      require('user_api.maps').nop(M.NOP, { noremap = false }, mode, '<leader>')
+      require('user_api.maps').nop(require('user_api.config.keymaps.nop'), { noremap = false }, mode, '<leader>')
     end
   end
 
@@ -457,5 +456,13 @@ function M.set(keys, bufnr, defaults)
   require('user_api.maps').map_dict(passed, 'wk.register', true, nil, bufnr)
 end
 
-return M
+return setmetatable(M, { ---@type User.Config.Keymaps
+  __index = function(self, k)
+    if require('user_api.check').module('user_api.config.keymaps.' .. k) then
+      return require('user_api.config.keymaps.' .. k)
+    end
+
+    return rawget(self, k) or nil
+  end,
+})
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

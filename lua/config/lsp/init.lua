@@ -15,6 +15,9 @@ local function insert_client(original, inserts)
 end
 
 ---@class Lsp.Server
+---@field autocmd Lsp.SubMods.Autocmd
+---@field kinds Lsp.SubMods.Kinds
+---@field servers Lsp.Server.Clients
 local Server = {}
 
 function Server.timer_cb()
@@ -208,5 +211,14 @@ function Server.add(config, name, exe)
   Server.setup()
 end
 
-return Server
+local M = setmetatable(Server, { ---@type Lsp.Server
+  __index = function(self, k)
+    if require('user_api').check.module('config.lsp.' .. k) then
+      return require('config.lsp.' .. k)
+    end
+    return rawget(self, k) or nil
+  end,
+})
+
+return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

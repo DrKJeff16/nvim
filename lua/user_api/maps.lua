@@ -6,11 +6,10 @@ local WARN = vim.log.levels.WARN
 local in_list = vim.list_contains
 local validate = require('user_api.check').validate
 
+---@diagnostic disable-next-line:missing-fields
 local M = {} ---@type User.Maps
 
 M.modes = MODES
-M.keymap = require('user_api.maps.keymap')
-M.wk = require('user_api.maps.wk')
 
 function M.new_desc(desc, opts)
   validate({
@@ -80,7 +79,7 @@ function M.nop(T, opts, mode, prefix)
   end
   prefix = prefix or ''
 
-  local func = M.keymap[mode]
+  local func = require('user_api.maps.keymap')[mode]
   if Value.is_str(T) then
     ---@cast T string
     func(prefix .. T, '<Nop>', opts)
@@ -109,7 +108,7 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
 
   local map_choices = { 'keymap', 'wk.register' }
   map_func = in_list(map_choices, map_func) and map_func or 'wk.register'
-  if not M.wk.available() then
+  if not require('user_api.maps.wk').available() then
     map_func = 'keymap'
   end
   mode = (Value.is_str(mode) and in_list(MODES, mode)) and mode or 'n'
@@ -123,7 +122,7 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
     for mode_choice, t in pairs(T) do
       if in_list(MODES, mode_choice) then
         if map_func == 'keymap' then
-          func = M.keymap[mode_choice]
+          func = require('user_api.maps.keymap')[mode_choice]
           for lhs, v in pairs(t) do
             if v[2] and v[3] then
               func(lhs, v[2], v[3] or {})
@@ -186,8 +185,8 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
     return
   end
 
-  if map_func == 'keymap' then
-    func = M.keymap[mode]
+  if map_func == 'keymap' and require('user_api.maps.keymap')[mode] then
+    func = require('user_api.maps.keymap')[mode] --[[@as fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)]]
     ---@cast T AllMaps
     for lhs, v in pairs(T) do
       if v[2] and v[3] then
@@ -246,5 +245,14 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
   end
 end
 
-return M
+local Maps = setmetatable(M, { ---@type User.Maps
+  __index = function(self, k)
+    if require('user_api.check').module('user_api.maps.' .. k) then
+      return require('user_api.maps.' .. k)
+    end
+    return rawget(self, k) or nil
+  end,
+})
+
+return Maps
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

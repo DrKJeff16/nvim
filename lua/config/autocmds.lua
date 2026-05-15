@@ -1,11 +1,10 @@
 local ERROR = vim.log.levels.ERROR
 local INFO = vim.log.levels.INFO
-local Util = require('user_api.util')
-local au = require('user_api.util.autocmd')
-local executable = require('user_api.check.exists').executable
-local desc = require('user_api.maps').new_desc
-local keyset = require('user_api.config.keymaps').set
-local validate = require('user_api.check').validate
+local User = require('user_api')
+local executable = User.check.exists.executable
+local desc = User.maps.new_desc
+local keyset = User.config.keymaps.set
+local validate = User.check.validate
 
 ---@param bufnr integer
 ---@return function cb
@@ -16,12 +15,12 @@ local function run_formatter(formatter, bufnr)
   })
 
   return function()
-    if Util.optget('modified', 'buf', bufnr) or not executable(formatter) then
+    if User.util.optget('modified', 'buf', bufnr) or not executable(formatter) then
       return
     end
 
     local path = vim.api.nvim_buf_get_name(bufnr)
-    path = Util.rstrip('/', vim.fn.fnamemodify(path, ':p'))
+    path = User.util.rstrip('/', vim.fn.fnamemodify(path, ':p'))
     if vim.fn.filereadable(path) ~= 1 or vim.fn.filewritable(path) ~= 1 then
       return
     end
@@ -50,7 +49,7 @@ local function set_lang(lang, bufnr)
     bufnr = { bufnr, { 'number' } },
   })
 
-  Util.ft_set(lang, bufnr)()
+  User.util.ft_set(lang, bufnr)()
 end
 
 ---@class Config.Autocmds
@@ -59,8 +58,8 @@ local M = {}
 local augroup = -1 ---@type integer
 
 function M.setup()
-  augroup = au.gen_augroups('User_AU', true)['User_AU']
-  au.au_repeated_events({
+  augroup = User.util.autocmd.gen_augroups('User_AU', true)['User_AU']
+  User.util.autocmd.au_repeated_events({
     events = { 'BufCreate', 'BufAdd', 'BufNew', 'BufNewFile', 'BufRead' },
     opts_tbl = {
       {
@@ -93,23 +92,23 @@ function M.setup()
       },
     },
   })
-  au.au_repeated_events({
+  User.util.autocmd.au_repeated_events({
     events = { 'FileType' },
     opts_tbl = {
       {
         pattern = { 'c', 'cpp', 'html', 'markdown', 'yaml' },
         group = augroup,
         callback = function(ev)
-          Util.optset({ tabstop = 2, shiftwidth = 2, softtabstop = 2, expandtab = true }, nil, 'buf', ev.buf)
+          User.util.optset({ tabstop = 2, shiftwidth = 2, softtabstop = 2, expandtab = true }, nil, 'buf', ev.buf)
         end,
       },
       {
         pattern = { 'lua', 'python' },
         group = augroup,
         callback = function(ev)
-          local is_lua = Util.optget('filetype', 'buf', ev.buf) == 'lua'
+          local is_lua = User.util.optget('filetype', 'buf', ev.buf) == 'lua'
           if is_lua then
-            Util.optset({ ts = 2, sw = 2, sts = 2, et = true }, nil, 'buf', ev.buf)
+            User.util.optset({ ts = 2, sw = 2, sts = 2, et = true }, nil, 'buf', ev.buf)
           end
 
           keyset({
@@ -126,11 +125,11 @@ function M.setup()
         pattern = { 'help' },
         group = augroup,
         callback = function(ev)
-          if Util.optget('ft', 'buf', ev.buf) == 'help' and Util.optget('bt', 'buf', ev.buf) ~= 'help' then
+          if User.util.optget('ft', 'buf', ev.buf) == 'help' and User.util.optget('bt', 'buf', ev.buf) ~= 'help' then
             return
           end
 
-          Util.optset(
+          User.util.optset(
             { signcolumn = 'no', number = false, colorcolumn = '', list = false },
             nil,
             'win',
@@ -147,8 +146,8 @@ function M.setup()
         pattern = { 'nvim-undotree', 'startuptime', 'qf', 'oil', 'notify', 'checkhealth' },
         group = augroup,
         callback = function(ev)
-          if Util.optget('filetype', 'buf', ev.buf) == 'checkhealth' then
-            Util.optset(
+          if User.util.optget('filetype', 'buf', ev.buf) == 'checkhealth' then
+            User.util.optset(
               { wrap = true, number = false, signcolumn = 'no', list = false, colorcolumn = '' },
               nil,
               'win',

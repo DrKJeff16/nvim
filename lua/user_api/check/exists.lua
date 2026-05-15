@@ -98,9 +98,8 @@ function M.vim_exists(expr)
 end
 
 ---@param vars string[]|string
----@param callback function|nil
+---@param callback? function
 ---@return boolean found
----@overload fun(vars: string[]|string): found: boolean
 function M.env_vars(vars, callback)
   M.validate({
     vars = { vars, { 'string', 'table' } },

@@ -6,11 +6,11 @@
 ---@module 'user_api.maps.keymap'
 
 ---@class User.Maps
-local Maps = {
-  modes = { 'n', 'i', 'v', 't', 'o', 'x' },
-  wk = {}, ---@type User.Maps.WK
-  keymap = {}, ---@type User.Maps.Keymap|table<MapModes, fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)>
-}
+---@field keymap User.Maps.Keymap
+---@field modes Modes
+---@field objects User.Maps.Opts
+---@field wk User.Maps.WK
+local Maps = {}
 
 ---@class User.Maps.DescOpts
 ---@field buf? integer

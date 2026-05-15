@@ -1,12 +1,13 @@
 ---@module 'lazy'
 
 local INFO = vim.log.levels.INFO
-local Opts = require('user_api.opts')
-local is_distro = require('user_api.distro').is_distro
+local User = require('user_api')
+local Config = require('config')
+local is_distro = User.distro.is_distro
+local desc = User.maps.new_desc
 
 function _G.notify_inspect(...)
-  ---@type integer, integer, string
-  local nargs, i, txt = select('#', ...), 1, ''
+  local nargs, i, txt = select('#', ...), 1, '' ---@type integer, integer, string
   while i <= nargs do
     local selection = select(i, ...)
     if not vim.list_contains({ 'string', 'number', 'boolean', 'nil' }, type(selection)) then
@@ -21,9 +22,8 @@ end
 
 vim.g.loaded_perl_provider = 0
 
-require('user_api.config.keymaps').set_leader('<Space>')
-
-Opts.setup({
+User.config.keymaps.set_leader('<Space>')
+User.opts.setup({
   -- clipboard = 'unnamedplus', -- Uncomment to use system clipboard
   autoindent = true,
   autoread = true,
@@ -41,7 +41,7 @@ Opts.setup({
   errorbells = false,
   expandtab = true,
   fileformat = 'unix',
-  fileignorecase = not require('user_api.check').is_windows(),
+  fileignorecase = not User.check.is_windows(),
   foldenable = false,
   foldmethod = 'manual',
   formatoptions = 'jlnopw/',
@@ -82,9 +82,9 @@ Opts.setup({
 }, false, true)
 
 ---Disable `netrw` regardless of whether `nvim_tree/neo_tree` exist or not.
-require('user_api').disable_netrw()
+User.disable_netrw()
 
-require('config.lazy').setup({
+Config.lazy.setup({
   { 'https://github.com/gentoo/gentoo-syntax' },
   Comment = true,
   alpha = false,
@@ -217,36 +217,34 @@ require('config.lazy').setup({
   zen_mode = false,
 })
 
-local desc = require('user_api.maps').new_desc
-require('user_api.config.keymaps').set({
+User.config.keymaps.set({
   n = { ['<C-/>'] = { ':norm gcc<CR><Up>', desc('Toggle Comment') } },
   v = { ['<C-/>'] = { ":'<,'>normal gcc<CR><Up>", desc('Toggle Comment') } },
 }, nil, true)
 
 -- Initialize the User API
-require('user_api').setup()
+User.setup()
+User.opts.setup_cmds()
+User.opts.setup_maps()
 
-Opts.setup_cmds()
-Opts.setup_maps()
-
-require('config.autocmds').setup()
+Config.autocmds.setup()
 
 vim.cmd([[
 set t_8f=[38;2;%lu;%lu;%lum
 set t_8b=[48;2;%lu;%lu;%lum
 ]])
 
-require('config.colorschemes')('tokyonight')
--- require('config.colorschemes')('catppuccin')
--- require('config.colorschemes')('everblush')
--- require('config.colorschemes')('calvera')
--- require('config.colorschemes')('lavender')
--- require('config.colorschemes')('flow')
--- require('config.colorschemes')('thorn')
--- require('config.colorschemes')('nightfox')
--- require('config.colorschemes')('conifer')
--- require('config.colorschemes')('tokyodark')
--- require('config.colorschemes')('spaceduck')
+Config.colorschemes('tokyonight')
+-- Config.colorschemes('catppuccin')
+-- Config.colorschemes('everblush')
+-- Config.colorschemes('calvera')
+-- Config.colorschemes('lavender')
+-- Config.colorschemes('flow')
+-- Config.colorschemes('thorn')
+-- Config.colorschemes('nightfox')
+-- Config.colorschemes('conifer')
+-- Config.colorschemes('tokyodark')
+-- Config.colorschemes('spaceduck')
 
 if vim.fn.has('nvim-0.11') == 1 then
   vim.cmd.packadd('nohlsearch')
@@ -256,5 +254,5 @@ if vim.fn.has('nvim-0.12') == 1 then
   vim.cmd.packadd('nvim.undotree')
 end
 
-require('config.lsp').setup()
+Config.lsp.setup()
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

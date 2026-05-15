@@ -1,10 +1,9 @@
 local validate = require('user_api.check').validate
 
 ---@class User.Distro
+---@field archlinux User.Distro.Archlinux
+---@field termux User.Distro.Termux
 local M = {}
-
-M.archlinux = require('user_api.distro.archlinux')
-M.termux = require('user_api.distro.termux')
 
 ---@param verbose? boolean
 function M.setup(verbose)
@@ -13,13 +12,13 @@ function M.setup(verbose)
     verbose = false
   end
 
-  if M.termux.is_distro() then
-    M.termux.setup()
+  if require('user_api.distro.termux').is_distro() then
+    require('user_api.distro.termux').setup()
     if verbose then
       vim.notify('Termux distribution detected...', vim.log.levels.INFO)
     end
-  elseif M.archlinux.is_distro() then
-    M.archlinux.setup()
+  elseif require('user_api.distro.archlinux').is_distro() then
+    require('user_api.distro.archlinux').setup()
     if verbose then
       vim.notify('Arch Linux distribution detected...', vim.log.levels.INFO)
     end
@@ -34,10 +33,19 @@ function M.is_distro(distro)
     return false
   end
   if distro == 'termux' then
-    return M.termux.is_distro()
+    return require('user_api.distro.termux').is_distro()
   end
-  return M.archlinux.is_distro()
+  return require('user_api.distro.termux').is_distro()
 end
 
-return M
+local Distro = setmetatable(M, { ---@type User.Distro
+  __index = function(self, k)
+    if require('user_api.check').module('user_api.distro.' .. k) then
+      return require('user_api.distro.' .. k)
+    end
+    return rawget(self, k) or nil
+  end,
+})
+
+return Distro
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

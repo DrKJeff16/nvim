@@ -176,9 +176,9 @@ function M.bootstrap()
 end
 
 function M.setup_keys()
-  local desc = require('user_api.maps').new_desc
+  local desc = require('user_api').maps.new_desc
   local lazy = require('lazy')
-  require('user_api.config.keymaps').set({
+  require('user_api').config.keymaps.set({
     n = {
       ['<leader>L'] = { group = '+Lazy' },
       ['<leader>Le'] = { group = '+Edit Lazy File' },
@@ -348,7 +348,7 @@ end
 --- ---
 ---@param toggles? table<string, LazySpec|string|LazyPluginSpec|boolean>|LazyToggle
 function M.setup(toggles)
-  require('user_api.check').validate({ toggles = { toggles, { 'table', 'nil' }, true } })
+  require('user_api').check.validate({ toggles = { toggles, { 'table', 'nil' }, true } })
   toggles = vim.tbl_deep_extend('keep', toggles or {}, M.get_default_toggles())
 
   M.bootstrap()
@@ -393,7 +393,7 @@ function M.setup(toggles)
     dev = { path = '~/Projects/nvim', patterns = {}, fallback = true },
     change_detection = {
       enabled = true,
-      notify = require('user_api.distro.archlinux').is_distro(),
+      notify = require('user_api').distro.archlinux.is_distro(),
     },
     performance = {
       reset_packpath = true,
@@ -423,13 +423,13 @@ function M.setup(toggles)
         or { 'lazy', 'packspec', 'rockspec' },
     },
     checker = {
-      enabled = not require('user_api.distro.termux').is_distro(),
-      notify = not require('user_api.distro.termux').is_distro(),
+      enabled = not require('user_api').distro.termux.is_distro(),
+      notify = not require('user_api').distro.termux.is_distro(),
       frequency = 600,
       check_pinned = false,
     },
     ui = {
-      backdrop = not require('user_api.check').in_console() and 60 or 100,
+      backdrop = not require('user_api').check.in_console() and 60 or 100,
       border = 'double',
       title = ('L%sA%sZ%sY'):format((' '):rep(12), (' '):rep(12), (' '):rep(12)),
       title_pos = 'center',
@@ -451,12 +451,5 @@ function M.setup(toggles)
   M.setup_keys()
 end
 
-local Lazy = setmetatable(M, { ---@type Config.Lazy
-  __index = M,
-  __newindex = function()
-    vim.notify('Config.Lazy is Read-Only!', vim.log.levels.ERROR)
-  end,
-})
-
-return Lazy
+return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

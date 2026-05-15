@@ -47,6 +47,16 @@ local function make_timer()
 end
 
 ---@class UserAPI
+---@field check User.Check
+---@field commands User.Commands
+---@field config User.Config
+---@field distro User.Distro
+---@field highlight User.Hl
+---@field maps User.Maps
+---@field opts User.Opts
+---@field pickers User.Pickers
+---@field update User.Update
+---@field util User.Util
 local M = {}
 
 function M.disable_netrw()
@@ -71,11 +81,11 @@ function M.setup(commands, verbose)
   require('user_api.opts').setup()
   require('user_api.distro').setup(verbose)
 
-  require('user_api.config.neovide').setup()
+  require('user_api.config').neovide.setup()
   require('user_api.pickers').setup()
 
   local desc = require('user_api.maps').new_desc
-  require('user_api.config.keymaps').set({
+  require('user_api.config').keymaps.set({
     n = {
       ['<leader>U'] = { group = '+User API' },
       ['<leader><leader>'] = { require('user_api.pickers').run, desc('Select Picker') },
@@ -85,5 +95,14 @@ function M.setup(commands, verbose)
   make_timer()
 end
 
-return M
+local User = setmetatable(M, { ---@type UserAPI
+  __index = function(self, k)
+    if require('user_api.check').module('user_api.' .. k) then
+      return require('user_api.' .. k)
+    end
+    return rawget(self, k) or nil
+  end,
+})
+
+return User
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

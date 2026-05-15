@@ -9,7 +9,7 @@ local M = {}
 
 ---@return boolean termguicolors
 function M.has_tgc()
-  if in_console() or not require('user_api.check.exists').vim_exists('+termguicolors') then
+  if in_console() or not require('user_api').check.vim_exists('+termguicolors') then
     return false
   end
   return vim.o.termguicolors
@@ -28,7 +28,7 @@ end
 
 ---@return boolean has_luarocks
 function M.luarocks_check()
-  return executable('luarocks') and require('user_api.check').env_vars({ 'LUA_PATH', 'LUA_CPATH' })
+  return executable('luarocks') and require('user_api').check.env_vars({ 'LUA_PATH', 'LUA_CPATH' })
 end
 
 ---@param force? boolean
@@ -68,18 +68,11 @@ function M.require(mod_str)
   validate({ mod_str = { mod_str, { 'string' } } })
 
   return function()
-    if require('user_api.check.exists').module(mod_str) then
+    if require('user_api').check.module(mod_str) then
       require(mod_str)
     end
   end
 end
 
-local CfgUtil = setmetatable(M, { ---@type Config.Util
-  __index = M,
-  __newindex = function()
-    vim.notify('Config.Util is Read-Only!', ERROR)
-  end,
-})
-
-return CfgUtil
+return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

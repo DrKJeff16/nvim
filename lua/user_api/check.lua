@@ -2,17 +2,10 @@ local uv = vim.uv or vim.loop
 
 ---Checking Utilities.
 --- ---
----@class User.Check
+---@class User.Check: User.Check.Value, User.Check.Existance
+---@field exists User.Check.Existance
+---@field value User.Check.Value
 local M = {}
-
-M.value = require('user_api.check.value')
-M.exists = require('user_api.check.exists')
-
-M.env_vars = M.exists.env_vars
-M.executable = M.exists.executable
-M.is_int = M.value.is_int
-M.module = M.exists.module
-M.validate = M.exists.validate
 
 ---Check whether Neovim is running as root (`PID == 0`).
 --- ---
@@ -37,8 +30,23 @@ end
 function M.in_console()
   --- FIXME: This is not a good enough check. Must find a better solution
   local env = vim.fn.environ() ---@type table<string, string>
-  return vim.list_contains({ 'linux' }, env.TERM) and not M.value.fields('DISPLAY', env)
+  return vim.list_contains({ 'linux' }, env.TERM) and not require('user_api.check.value').fields('DISPLAY', env)
 end
 
-return M
+local Check = setmetatable(M, { ---@type User.Check
+  __index = function(self, k)
+    if require('user_api.check.exists').module('user_api.check.' .. k) then
+      return require('user_api.check.' .. k)
+    end
+    if require('user_api.check.value')[k] then
+      return require('user_api.check.value')[k]
+    end
+    if require('user_api.check.exists')[k] then
+      return require('user_api.check.exists')[k]
+    end
+    return rawget(self, k) or nil
+  end,
+})
+
+return Check
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

@@ -56,12 +56,14 @@ local function variant(mode)
 end
 
 ---@class User.Maps.Keymap
-return {
-  n = variant('n'),
-  i = variant('i'),
-  v = variant('v'),
-  t = variant('t'),
-  o = variant('o'),
-  x = variant('x'),
-}
+local M = {}
+
+M.n = variant('n')
+M.i = variant('i')
+M.v = variant('v')
+M.t = variant('t')
+M.o = variant('o')
+M.x = variant('x')
+
+return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

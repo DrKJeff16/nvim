@@ -47,6 +47,7 @@ return { ---@type LazySpec
       },
     })
 
+    local exists = require('user_api.check').module
     local desc = require('user_api.maps').new_desc
     local keyset = require('user_api.config.keymaps').set
     keyset({
@@ -70,23 +71,18 @@ return { ---@type LazySpec
       },
     })
 
-    if require('user_api.check').module('fzf-lua') and vim.cmd.ProjectFzf and vim.is_callable(vim.cmd.ProjectFzf) then
-      keyset({ n = { ['<leader>pf'] = { vim.cmd.ProjectFzf, desc('Fzf-Lua Picker') } } })
+    if exists('fzf-lua') and vim.g.project_fzf_lua_loaded == 1 then
+      keyset({ n = { ['<leader>pf'] = { ':Project fzf-lua<CR>', desc('Fzf-Lua Picker') } } })
     end
-    if
-      require('user_api.check').module('telescope')
-      and vim.cmd.ProjectTelescope
-      and vim.is_callable(vim.cmd.ProjectTelescope)
-    then
+    if exists('telescope') and vim.g.project_telescope_loaded == 1 then
       require('telescope').load_extension('projects')
-      keyset({ n = { ['<leader>pT'] = { vim.cmd.ProjectTelescope, desc('Telescope Picker') } } })
+      keyset({ n = { ['<leader>pT'] = { ':Project telescope<CR>', desc('Telescope Picker') } } })
     end
-    if
-      require('user_api.check').module('snacks')
-      and vim.cmd.ProjectSnacks
-      and vim.is_callable(vim.cmd.ProjectSnacks)
-    then
-      keyset({ n = { ['<leader>pS'] = { vim.cmd.ProjectSnacks, desc('Snacks Picker') } } })
+    if exists('snacks') and vim.g.project_snacks_loaded == 1 then
+      keyset({ n = { ['<leader>pS'] = { ':Project snacks<CR>', desc('Snacks Picker') } } })
+    end
+    if exists('picker') and vim.g.project_picker_loaded == 1 then
+      keyset({ n = { ['<leader>pP'] = { ':Project picker<CR>', desc('picker.nvim Picker') } } })
     end
   end,
 }
