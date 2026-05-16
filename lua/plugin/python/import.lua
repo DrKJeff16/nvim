@@ -12,7 +12,7 @@ return { ---@type LazySpec
       pattern = { 'python' },
       callback = function(ev)
         local Api = require('python_import.api')
-        local desc = require('user_api.maps').new_desc
+        local desc = require('user_api.maps').desc
         require('user_api.config.keymaps').set({
           n = {
             ['<M-\\>'] = {

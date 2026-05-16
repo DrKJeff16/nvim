@@ -15,7 +15,7 @@ return { ---@type LazySpec
       commit_input = { max_length = 72, format_message = nil, hints = true },
     })
 
-    local desc = require('user_api.maps').new_desc
+    local desc = require('user_api.maps').desc
     require('user_api.config.keymaps').set({
       n = {
         ['<leader>GcC'] = { vim.cmd.GitCommit, desc('Commit') },

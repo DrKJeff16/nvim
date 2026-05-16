@@ -27,7 +27,7 @@ return { ---@type LazySpec
       vim.g[('startuptime_%s'):format(flag)] = val
     end
 
-    local desc = require('user_api').maps.new_desc
+    local desc = require('user_api').maps.desc
     require('user_api').config.keymaps.set({
       n = { ['<leader>vS'] = { vim.cmd.StartupTime, desc('Run StartupTime') } },
     })

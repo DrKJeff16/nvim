@@ -177,7 +177,7 @@ function M.bootstrap()
 end
 
 function M.setup_keys()
-  local desc = require('user_api').maps.new_desc
+  local desc = require('user_api').maps.desc
   local lazy = require('lazy')
   require('user_api').config.keymaps.set({
     n = {

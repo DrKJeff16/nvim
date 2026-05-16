@@ -69,7 +69,7 @@ function M.update(verbose)
 end
 
 function M.setup()
-  local desc = require('user_api.maps').new_desc
+  local desc = require('user_api.maps').desc
   require('user_api.config.keymaps').set({
     n = {
       ['<leader>U'] = { group = '+User API' },

@@ -5,7 +5,7 @@ return { ---@type LazySpec
   ft = { 'gitcommit', 'gitrebase' },
   dependencies = { 'folke/snacks.nvim' },
   config = function()
-    local desc = require('user_api').maps.new_desc
+    local desc = require('user_api').maps.desc
     require('user_api').config.keymaps.set({ n = { ['<leader>Ga'] = { vim.cmd.CoAuthor, desc('Run `:CoAuthor`') } } })
   end,
 }

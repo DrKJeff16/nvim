@@ -15,7 +15,7 @@ local function set_terminal_keys(ev) ---@param ev vim.api.keyset.create_autocmd.
     return
   end
   local bufnr = ev.buf
-  local desc = require('user_api').maps.new_desc
+  local desc = require('user_api').maps.desc
   require('user_api').config.keymaps.set({
     t = {
       ['<Esc>'] = { '<C-\\><C-n>', desc('Escape Terminal', { buf = bufnr }) },
@@ -78,7 +78,7 @@ return { ---@type LazySpec
       TermOpen = { group = group, callback = set_terminal_keys },
     })
 
-    local desc = require('user_api').maps.new_desc
+    local desc = require('user_api').maps.desc
     local map = { ['<A-t>'] = { ':exe v:count1 . "ToggleTerm"<CR>', desc('Toggleterm') } }
     local i_map = { ['<A-t>'] = { '<Esc>:exe v:count1 . "ToggleTerm"<CR>', desc('Toggleterm') } }
     require('user_api').config.keymaps.set({ n = map, i = i_map, t = map })

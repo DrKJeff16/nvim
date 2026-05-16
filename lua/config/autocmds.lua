@@ -2,7 +2,7 @@ local ERROR = vim.log.levels.ERROR
 local INFO = vim.log.levels.INFO
 local User = require('user_api')
 local executable = User.check.exists.executable
-local desc = User.maps.new_desc
+local desc = User.maps.desc
 local keyset = User.config.keymaps.set
 local validate = User.check.validate
 

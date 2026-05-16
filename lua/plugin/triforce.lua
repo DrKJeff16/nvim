@@ -48,7 +48,7 @@ return { ---@type LazySpec
       xp_rewards = { char = 1, line = 2, save = 7.5 },
     })
 
-    local desc = require('user_api').maps.new_desc
+    local desc = require('user_api').maps.desc
     require('user_api').config.keymaps.set({
       n = {
         ['<leader>T'] = { group = '+Triforce' },

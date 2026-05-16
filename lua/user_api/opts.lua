@@ -237,7 +237,7 @@ function M.setup_cmds()
 end
 
 function M.setup_maps()
-  local desc = require('user_api.maps').new_desc
+  local desc = require('user_api.maps').desc
   require('user_api.config.keymaps').set({
     n = {
       ['<leader>UO'] = { group = '+Options' },

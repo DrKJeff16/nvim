@@ -16,7 +16,7 @@ return { ---@type LazySpec
       spinner = { enabled = true, opts = { hl_group = 'Number', kind = 'cursor' } },
     })
 
-    local desc = require('user_api').maps.new_desc
+    local desc = require('user_api').maps.desc
     require('user_api').config.keymaps.set({
       n = {
         ['<leader>P'] = { group = '+Pipenv' },

@@ -182,7 +182,7 @@ return { ---@type LazySpec
       },
     })
 
-    local desc = require('user_api').maps.new_desc
+    local desc = require('user_api').maps.desc
     require('user_api').config.keymaps.set({
       n = { ---@type AllMaps
         ['<leader>lx'] = { group = '+Trouble' },

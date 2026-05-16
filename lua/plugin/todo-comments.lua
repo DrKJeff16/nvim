@@ -145,7 +145,7 @@ return { ---@type LazySpec
       PERF = { 'PERF', 'OPTIM', 'OPTIMIZED', 'PERFORMANCE' },
     }
 
-    local desc = require('user_api').maps.new_desc
+    local desc = require('user_api').maps.desc
     require('user_api').config.keymaps.set({
       n = {
         ['<leader>c'] = { group = '+Comments' },

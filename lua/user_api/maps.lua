@@ -11,7 +11,7 @@ local M = {} ---@type User.Maps
 
 M.modes = MODES
 
-function M.new_desc(desc, opts)
+function M.desc(desc, opts)
   validate({
     desc = { desc, { 'string', 'nil' }, true },
     opts = { opts, { 'table', 'nil' }, true },
@@ -21,39 +21,6 @@ function M.new_desc(desc, opts)
   opts.desc = desc
 
   return require('user_api.maps.objects').new(opts)
-end
-
----@deprecated Use `new_desc()` instead
-function M.desc(desc, silent, bufnr, noremap, nowait, expr)
-  validate({
-    desc = { desc, { 'string', 'nil' }, true },
-    silent = { silent, { 'boolean', 'nil' }, true },
-    bufnr = { bufnr, { 'number', 'nil' }, true },
-    noremap = { noremap, { 'boolean', 'nil' }, true },
-    nowait = { nowait, { 'boolean', 'nil' }, true },
-    expr = { expr, { 'boolean', 'nil' }, true },
-  })
-  desc = (desc and desc ~= '') and desc or 'Unnamed Key'
-
-  local res = require('user_api.maps.objects').new()
-  res:add({ desc = desc, silent = true, noremap = true })
-
-  if noremap ~= nil then
-    res:add({ noremap = noremap })
-  end
-  if silent ~= nil then
-    res:add({ silent = silent })
-  end
-  if nowait ~= nil then
-    res:add({ nowait = nowait })
-  end
-  if expr ~= nil then
-    res:add({ expr = expr })
-  end
-  if bufnr ~= nil then
-    res:add({ buffer = bufnr })
-  end
-  return res
 end
 
 function M.nop(T, opts, mode, prefix)

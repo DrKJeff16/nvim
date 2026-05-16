@@ -4,7 +4,7 @@
 
 local INFO = vim.log.levels.INFO
 local ERROR = vim.log.levels.ERROR
-local desc = require('user_api.maps').new_desc
+local desc = require('user_api.maps').desc
 local validate = require('user_api.check').validate
 
 ---@class User.Commands

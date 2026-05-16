@@ -4,7 +4,7 @@ local INFO = vim.log.levels.INFO
 local User = require('user_api')
 local Config = require('config')
 local is_distro = User.distro.is_distro
-local desc = User.maps.new_desc
+local desc = User.maps.desc
 
 function _G.notify_inspect(...)
   local nargs, i, txt = select('#', ...), 1, '' ---@type integer, integer, string
@@ -160,7 +160,7 @@ Config.lazy.setup({
   mini_starter = false,
   mini_test = false,
   mini_trailspace = true,
-  music_player = true,
+  music_player = false,
   neo_tree = true,
   neorg = false,
   noice = true,

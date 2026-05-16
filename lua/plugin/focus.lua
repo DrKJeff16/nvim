@@ -61,7 +61,7 @@ return { ---@type LazySpec
       desc = 'Disable focus autoresize for FileType',
     })
 
-    local desc = require('user_api').maps.new_desc
+    local desc = require('user_api').maps.desc
     require('user_api').config.keymaps.set({
       n = {
         ['<C-l>'] = { Focus.split_nicely, desc('Split Nicely') },

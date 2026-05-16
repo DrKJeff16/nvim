@@ -28,17 +28,7 @@ local Maps = {}
 ---@param desc? string
 ---@param opts? User.Maps.DescOpts
 ---@return User.Maps.Opts opts
-function Maps.new_desc(desc, opts) end
-
----@deprecated Use `new_desc()` instead
----@param desc string
----@param silent? boolean
----@param bufnr? integer|nil
----@param noremap? boolean
----@param nowait? boolean
----@param expr? boolean
----@return User.Maps.Opts opts
-function Maps.desc(desc, silent, bufnr, noremap, nowait, expr) end
+function Maps.desc(desc, opts) end
 
 ---@param T AllMaps
 ---@param map_func 'keymap'|'wk.register'
