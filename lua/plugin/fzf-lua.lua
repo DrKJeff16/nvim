@@ -3,7 +3,7 @@ return { ---@type LazySpec
   'ibhagwan/fzf-lua',
   version = false,
   dependencies = { 'nvim-tree/nvim-web-devicons', 'nvim-mini/mini.icons' },
-  cond = require('user_api.check.exists').executable('fzf'),
+  cond = require('user_api').check.exists.executable('fzf'),
   config = function()
     local actions = require('fzf-lua').actions
     require('fzf-lua').setup({

@@ -2,7 +2,7 @@
 return { ---@type LazySpec
   'folke/zen-mode.nvim',
   version = false,
-  cond = not require('user_api.check').in_console(),
+  cond = not require('user_api').check.in_console(),
   config = function()
     require('zen-mode').setup({
       window = {
@@ -38,8 +38,8 @@ return { ---@type LazySpec
       },
     })
 
-    local desc = require('user_api.maps').new_desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.new_desc
+    require('user_api').config.keymaps.set({
       n = {
         ['<leader>Z'] = { group = '+Zen Mode' },
         ['<leader>Zo'] = { require('zen-mode').open, desc('Open Zen Mode') },

@@ -28,8 +28,8 @@ return { ---@type LazySpec
       print_var_statements = {},
       show_success_message = false,
     })
-    local desc = require('user_api.maps').new_desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.new_desc
+    require('user_api').config.keymaps.set({
       n = {
         ['<leader>r'] = { group = '+Refactoring' },
         ['<leader>rB'] = {

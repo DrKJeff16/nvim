@@ -319,8 +319,8 @@ return { ---@type LazySpec
     Snacks.scroll.enable()
 
     local Picker = Snacks.picker
-    local desc = require('user_api.maps').new_desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.new_desc
+    require('user_api').config.keymaps.set({
       n = {
         ['<leader>.'] = { group = 'Scratch' },
         ['<leader>S'] = { group = 'Snacks' },

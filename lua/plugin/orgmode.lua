@@ -5,7 +5,7 @@ local ORG_PFX = vim.fn.expand('~/.org')
 return { ---@type LazySpec
   'nvim-orgmode/orgmode',
   version = false,
-  cond = not require('user_api.check').in_console(),
+  cond = not require('user_api').check.in_console(),
   config = function()
     require('orgmode').setup({
       org_startup_indented = true,
@@ -29,7 +29,7 @@ return { ---@type LazySpec
       calendar_week_start_day = 0,
     })
 
-    require('user_api.config.keymaps').set({ n = { ['<leader>o'] = { group = '+Orgmode' } } })
+    require('user_api').config.keymaps.set({ n = { ['<leader>o'] = { group = '+Orgmode' } } })
   end,
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

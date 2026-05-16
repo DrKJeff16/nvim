@@ -3,8 +3,8 @@ return { ---@type LazySpec
   'comatory/gh-co.nvim',
   version = false,
   config = function()
-    local desc = require('user_api.maps').new_desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.new_desc
+    require('user_api').config.keymaps.set({
       n = { ['<leader>Gg'] = { vim.cmd.GhCoWho, desc('Print GitHub Codeowners') } },
     })
   end,

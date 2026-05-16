@@ -27,12 +27,12 @@ return { ---@type LazySpec
       vim.g[('startuptime_%s'):format(flag)] = val
     end
 
-    local desc = require('user_api.maps').new_desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.new_desc
+    require('user_api').config.keymaps.set({
       n = { ['<leader>vS'] = { vim.cmd.StartupTime, desc('Run StartupTime') } },
     })
 
-    require('user_api.highlight').hl_from_dict({
+    require('user_api').highlight.hl_from_dict({
       StartupTimeSourcingEvent = { link = 'Title' },
     })
   end,

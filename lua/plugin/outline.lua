@@ -14,7 +14,7 @@ return { ---@type LazySpec
         center_on_jump = true,
         show_numbers = false,
         show_relative_numbers = false,
-        wrap = require('user_api.distro.termux').is_distro(),
+        wrap = require('user_api').distro.termux.is_distro(),
         show_cursorline = true,
         hide_cursor = false,
         focus_on_open = true,
@@ -124,8 +124,8 @@ return { ---@type LazySpec
       },
     })
 
-    local desc = require('user_api.maps').new_desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.new_desc
+    require('user_api').config.keymaps.set({
       n = {
         ['<leader>o'] = { group = '+Outline' },
         ['<leader>ot'] = { require('outline').toggle_outline, desc('Toggle Outline') },

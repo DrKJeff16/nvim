@@ -4,7 +4,7 @@
 ---@param func function
 ---@param opts? ibl.hooks.options
 local function reg(htype, func, opts)
-  if not opts or require('user_api.check.value').empty(opts) then
+  if not opts or require('user_api').check.empty(opts) then
     require('ibl.hooks').register(htype, func)
     return
   end
@@ -27,10 +27,10 @@ return { ---@type LazySpec
   main = 'ibl',
   version = false,
   dependencies = { 'HiPhish/rainbow-delimiters.nvim' },
-  cond = not require('user_api.check').in_console(),
+  cond = not require('user_api').check.in_console(),
   config = function()
     reg(require('ibl.hooks').type.HIGHLIGHT_SETUP, function()
-      require('user_api.highlight').hl_from_dict(Hilite)
+      require('user_api').highlight.hl_from_dict(Hilite)
     end)
     require('ibl').setup({
       enabled = true,

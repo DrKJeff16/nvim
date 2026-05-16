@@ -20,10 +20,10 @@ return { ---@type LazySpec
           'spectre_panel',
         }
         local EXCEPT_BT = { 'help', 'nofile', 'nowrite', 'prompt', 'quickfix', 'terminal' }
-        local ft = require('user_api.util').ft_get(bufnr)
-        local bt = require('user_api.util').bt_get(bufnr)
-        local in_list = vim.list_contains
-        return not (in_list(EXCEPT_FT, ft) or in_list(EXCEPT_BT, bt))
+        return not (
+          vim.list_contains(EXCEPT_FT, require('user_api').util.ft_get(bufnr))
+          or vim.list_contains(EXCEPT_BT, require('user_api').util.bt_get(bufnr))
+        )
       end,
       disable_filetype = { 'TelescopePrompt', 'snacks_picker_input', 'spectre_panel' },
       disable_in_macro = true,

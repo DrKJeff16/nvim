@@ -47,9 +47,9 @@ return { ---@type LazySpec
       },
     })
 
-    local exists = require('user_api.check').module
-    local desc = require('user_api.maps').new_desc
-    local keyset = require('user_api.config.keymaps').set
+    local exists = require('user_api').check.module
+    local desc = require('user_api').maps.new_desc
+    local keyset = require('user_api').config.keymaps.set
     keyset({
       n = {
         ['<leader>p'] = { group = '+Project' },

@@ -4,7 +4,7 @@ return { ---@type LazySpec
   lazy = false,
   priority = 1000,
   version = false,
-  cond = require('user_api.check.exists').vim_has('nvim-0.10'),
+  cond = require('user_api').check.vim_has('nvim-0.10'),
   init = function()
     vim.o.timeout = true
     vim.o.timeoutlen = 500
@@ -58,7 +58,7 @@ return { ---@type LazySpec
         title_pos = 'center',
         zindex = 1000,
         bo = { modifiable = false },
-        wo = { winblend = require('user_api.check').in_console() and 0 or 50 },
+        wo = { winblend = require('user_api').check.in_console() and 0 or 50 },
       },
       layout = {
         width = { min = 20, max = math.floor(vim.o.columns / 2) },

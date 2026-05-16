@@ -3,7 +3,7 @@
 ---@param arg string
 ---@return function
 local function wincmd(arg)
-  require('user_api.check.exists').validate({ arg = { arg, { 'string' } } })
+  require('user_api').check.validate({ arg = { arg, { 'string' } } })
 
   return function()
     vim.cmd.wincmd(arg)
@@ -15,8 +15,8 @@ local function set_terminal_keys(ev) ---@param ev vim.api.keyset.create_autocmd.
     return
   end
   local bufnr = ev.buf
-  local desc = require('user_api.maps').new_desc
-  require('user_api.config.keymaps').set({
+  local desc = require('user_api').maps.new_desc
+  require('user_api').config.keymaps.set({
     t = {
       ['<Esc>'] = { '<C-\\><C-n>', desc('Escape Terminal', { buf = bufnr }) },
       ['<C-e>'] = { '<C-\\><C-n>', desc('Escape Terminal', { buf = bufnr }) },
@@ -32,7 +32,7 @@ end
 return { ---@type LazySpec
   'akinsho/toggleterm.nvim',
   version = false,
-  enabled = not require('user_api.check').in_console(),
+  enabled = not require('user_api').check.in_console(),
   config = function()
     require('toggleterm').setup({
       size = function(term) ---@param term Terminal
@@ -74,14 +74,14 @@ return { ---@type LazySpec
     })
 
     local group = vim.api.nvim_create_augroup('ToggleTerm.Hooks', { clear = true })
-    require('user_api.util.autocmd').au_from_dict({
+    require('user_api').util.autocmd.au_from_dict({
       TermOpen = { group = group, callback = set_terminal_keys },
     })
 
-    local desc = require('user_api.maps').new_desc
+    local desc = require('user_api').maps.new_desc
     local map = { ['<A-t>'] = { ':exe v:count1 . "ToggleTerm"<CR>', desc('Toggleterm') } }
     local i_map = { ['<A-t>'] = { '<Esc>:exe v:count1 . "ToggleTerm"<CR>', desc('Toggleterm') } }
-    require('user_api.config.keymaps').set({ n = map, i = i_map, t = map })
+    require('user_api').config.keymaps.set({ n = map, i = i_map, t = map })
   end,
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

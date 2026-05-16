@@ -59,8 +59,8 @@ return { ---@type LazySpec
       sort = { ignore_case = false },
     })
 
-    local desc = require('user_api.maps').new_desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.new_desc
+    require('user_api').config.keymaps.set({
       n = {
         ['<A-p>'] = { '<CMD>BufferPickDelete<CR>', desc('Buffer Pick Delete') },
         ['<C-p>'] = { '<CMD>BufferPick<CR>', desc('Buffer Pick') },

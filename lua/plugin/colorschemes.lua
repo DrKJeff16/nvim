@@ -45,7 +45,7 @@ return { ---@type LazySpec[]
     lazy = false,
     priority = 1000,
     version = false,
-    cond = not require('user_api.check').in_console(),
+    cond = not require('user_api').check.in_console(),
     config = function()
       require('tokyonight').setup({
         cache = true,
@@ -93,7 +93,7 @@ return { ---@type LazySpec[]
     lazy = false,
     priority = 1000,
     version = false,
-    cond = not require('user_api.check').in_console(),
+    cond = not require('user_api').check.in_console(),
     config = function()
       require('tokyodark').setup({
         transparent_background = false,
@@ -116,7 +116,7 @@ return { ---@type LazySpec[]
     lazy = false,
     priority = 1000,
     version = false,
-    cond = not require('user_api.check').in_console(),
+    cond = not require('user_api').check.in_console(),
     config = function()
       require('gruvdark').setup({ transparent = false, colors = {}, highlights = {} })
     end,
@@ -127,7 +127,7 @@ return { ---@type LazySpec[]
     name = 'catppuccin',
     priority = 1000,
     version = false,
-    cond = not require('user_api.check').in_console(),
+    cond = not require('user_api').check.in_console(),
     config = function()
       require('catppuccin').setup({
         flavour = 'auto',
@@ -219,7 +219,7 @@ return { ---@type LazySpec[]
     lazy = false,
     priority = 1000,
     version = false,
-    cond = not require('user_api.check').in_console(),
+    cond = not require('user_api').check.in_console(),
     config = function()
       require('onedark').setup({
         style = 'deep',
@@ -252,7 +252,7 @@ return { ---@type LazySpec[]
     lazy = false,
     priority = 1000,
     version = false,
-    cond = not require('user_api.check').in_console(),
+    cond = not require('user_api').check.in_console(),
     config = function()
       local compile_path = vim.fn.stdpath('state') .. '/nightfox'
       require('nightfox').setup({
@@ -315,18 +315,18 @@ return { ---@type LazySpec[]
     lazy = false,
     priority = 1000,
     version = false,
-    cond = not require('user_api.check').in_console(),
+    cond = not require('user_api').check.in_console(),
     config = function()
       require('kanagawa').setup({
         compile = true,
-        undercurl = not require('user_api.check').in_console(),
+        undercurl = not require('user_api').check.in_console(),
         commentStyle = { italic = false },
         functionStyle = { bold = true, italic = false },
         keywordStyle = { bold = true, italic = false },
         statementStyle = { bold = true, italic = false },
         typeStyle = { italic = false, bold = true },
         transparent = false,
-        dimInactive = not require('user_api.check').in_console(),
+        dimInactive = not require('user_api').check.in_console(),
         terminalColors = true,
         colors = {
           palette = {},
@@ -360,7 +360,7 @@ return { ---@type LazySpec[]
     lazy = false,
     priority = 1000,
     version = false,
-    cond = not require('user_api.check').in_console(),
+    cond = not require('user_api').check.in_console(),
     config = function()
       require('vague').setup({
         transparent = false,
@@ -434,7 +434,7 @@ return { ---@type LazySpec[]
     lazy = false,
     priority = 1000,
     version = false,
-    cond = not require('user_api.check').in_console(),
+    cond = not require('user_api').check.in_console(),
     config = function()
       require('dracula').setup({
         show_end_of_buffer = false,
@@ -450,7 +450,7 @@ return { ---@type LazySpec[]
     lazy = false,
     priority = 1000,
     version = false,
-    cond = not require('user_api.check').in_console(),
+    cond = not require('user_api').check.in_console(),
     config = function()
       require('gruvbox').setup({
         transparent_mode = false,
@@ -481,7 +481,7 @@ return { ---@type LazySpec[]
     lazy = false,
     priority = 1000,
     version = false,
-    cond = not require('user_api.check').in_console(),
+    cond = not require('user_api').check.in_console(),
   },
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

@@ -9,8 +9,8 @@ return { ---@type LazySpec
       winhighlight = 'NormalFloat:Normal,FloatBorder:WinSeparator',
     })
 
-    local desc = require('user_api.maps').new_desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.new_desc
+    require('user_api').config.keymaps.set({
       n = {
         ['<leader>r'] = { group = '+Record Keys' },
         ['<leader>rk'] = { vim.cmd.RecordKeyToggle, desc('Toggle') },

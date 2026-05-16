@@ -11,8 +11,8 @@ return { ---@type LazySpec
       branch = true,
     })
 
-    local desc = require('user_api.maps').new_desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.new_desc
+    require('user_api').config.keymaps.set({
       n = {
         ['<leader>s'] = { group = '+Session' },
         ['<leader>ss'] = { Persistence.load, desc('Load Session') },

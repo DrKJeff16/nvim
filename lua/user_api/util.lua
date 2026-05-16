@@ -10,6 +10,62 @@ local validate = require('user_api.check').validate
 ---@field string User.Util.String
 local M = {}
 
+---Get rid of all duplicates in input table.
+---
+---If table is empty, it'll just return it as-is.
+---
+---If the data passed to the function is not a table,
+---an error will be raised.
+--- ---
+---@generic T: table
+---@param T T
+---@param key? string|integer
+---@return T NT
+---@nodiscard
+function M.dedup(T, key)
+  validate({
+    T = { T, { 'table' } },
+    key = { key, { 'string', 'nil' }, true },
+  })
+  key = (key and key ~= '') and key or nil
+  if vim.tbl_isempty(T) then
+    return T
+  end
+
+  local list = vim.islist(T)
+  local names, NT = {}, {}
+  for k, v in pairs(T) do
+    local not_dup = false
+    if type(v) == 'table' then
+      if not key then
+        not_dup = not vim.tbl_contains(NT, function(val)
+          return vim.deep_equal(val, v)
+        end, { predicate = true })
+      else
+        not_dup = not vim.tbl_contains(names, function(val)
+          return vim.deep_equal(val, v[key])
+        end, { predicate = true })
+        if not_dup then
+          table.insert(names, v[key])
+        end
+      end
+    else
+      not_dup = not vim.tbl_contains(NT, function(val)
+        return vim.deep_equal(val, v)
+      end, { predicate = true })
+    end
+    if not_dup then
+      if list then
+        table.insert(NT, v)
+      else
+        NT[k] = v
+      end
+    end
+  end
+
+  return NT
+end
+
 ---@overload fun(option: string): value: any
 ---@overload fun(option: string[]): value: vim.bo|vim.wo
 ---@overload fun(option: string, param: 'scope', param_value: 'local'|'global'): value: any

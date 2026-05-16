@@ -124,6 +124,7 @@ return { ---@type LazySpec
         if not (lang and vim.treesitter.language.add(lang)) then
           return
         end
+        vim.treesitter.language.register('bash', { 'sh' })
         vim.treesitter.start(ev.buf)
       end,
     })

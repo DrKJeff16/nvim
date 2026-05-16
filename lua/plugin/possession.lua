@@ -36,8 +36,8 @@ return { ---@type LazySpec
       sort = require('nvim-possession.sorting').time_sort,
     })
 
-    local desc = require('user_api.maps').new_desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.new_desc
+    require('user_api').config.keymaps.set({
       n = {
         ['<leader>s'] = { group = '+Session' },
         ['<leader>sl'] = { require('nvim-possession').list, desc('📌 List Sessions') },

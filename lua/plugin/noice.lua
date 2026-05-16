@@ -5,7 +5,7 @@ return { ---@type LazySpec
   event = 'VeryLazy',
   version = false,
   dependencies = { 'MunifTanjim/nui.nvim' },
-  cond = not require('user_api.check').in_console(),
+  cond = not require('user_api').check.in_console(),
   config = function()
     require('noice').setup({
       throttle = 1000 / 25,
@@ -207,11 +207,11 @@ return { ---@type LazySpec
       format = {}, ---@type NoiceFormatOptions
     })
 
-    if require('user_api.check.exists').module('telescope') then
+    if require('user_api').check.module('telescope') then
       require('telescope').load_extension('noice')
 
-      local desc = require('user_api.maps').new_desc
-      require('user_api.config.keymaps').set({
+      local desc = require('user_api').maps.new_desc
+      require('user_api').config.keymaps.set({
         n = {
           ['<leader><C-t>ep'] = { ':Telescope projects<CR>', desc('Project Picker') },
           ['<leader>pT'] = { ':Telescope projects<CR>', desc('Project Telescope Picker') },

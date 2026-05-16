@@ -4,7 +4,7 @@ return { ---@type LazySpec
   priority = 1000,
   version = false,
   dependencies = { 'nvim-lua/plenary.nvim' },
-  cond = not require('user_api.check').in_console(),
+  cond = not require('user_api').check.in_console(),
   config = function()
     local Notify = require('notify')
     Notify.setup({
@@ -22,11 +22,11 @@ return { ---@type LazySpec
     })
     vim.notify = Notify
 
-    if require('user_api.check').module('telescope') then
+    if require('user_api').check.module('telescope') then
       require('telescope').load_extension('notify')
 
-      local desc = require('user_api.maps').new_desc
-      require('user_api.config.keymaps').set({
+      local desc = require('user_api').maps.new_desc
+      require('user_api').config.keymaps.set({
         n = {
           ['<leader>N'] = { group = '+Notify' },
           ['<leader>NT'] = { ':Telescope notify<CR>', desc('Notify Telescope Picker') },

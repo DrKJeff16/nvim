@@ -2,7 +2,7 @@
 return { ---@type LazySpec
   'HiPhish/rainbow-delimiters.nvim',
   version = false,
-  cond = not require('user_api.check').in_console(),
+  cond = not require('user_api').check.in_console(),
   config = function()
     require('rainbow-delimiters.setup').setup({
       strategy = {

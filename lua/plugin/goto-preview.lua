@@ -22,8 +22,8 @@ return { ---@type LazySpec
       vim_ui_input = true,
     })
 
-    local desc = require('user_api.maps').new_desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.new_desc
+    require('user_api').config.keymaps.set({
       n = {
         ['<leader>g'] = { group = '+Go To' },
         ['<leader>gp'] = { group = '+Preview' },

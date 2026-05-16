@@ -122,6 +122,7 @@
 ---@field ts_autotag? LazySpecImport
 ---@field ts_commentstring? LazySpecImport
 ---@field ts_context? LazySpecImport
+---@field ts_enable? LazySpecImport
 ---@field ts_init? LazySpecImport
 ---@field ts_vimdoc? LazySpecImport
 ---@field twilight? LazySpecImport
@@ -256,6 +257,7 @@
 ---@field ts_autotag? boolean
 ---@field ts_commentstring? boolean
 ---@field ts_context? boolean
+---@field ts_enable? boolean
 ---@field ts_init? boolean
 ---@field ts_vimdoc? boolean
 ---@field twilight? boolean

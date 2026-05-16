@@ -2,7 +2,7 @@
 return { ---@type LazySpec
   'gen740/SmoothCursor.nvim',
   version = false,
-  cond = not require('user_api.check').in_console(),
+  cond = not require('user_api').check.in_console(),
   config = function()
     require('smoothcursor').setup({
       type = 'exp', ---@type 'default'|'exp'|'matrix'

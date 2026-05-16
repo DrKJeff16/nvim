@@ -182,8 +182,8 @@ return { ---@type LazySpec
       },
     })
 
-    local desc = require('user_api.maps').new_desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.new_desc
+    require('user_api').config.keymaps.set({
       n = { ---@type AllMaps
         ['<leader>lx'] = { group = '+Trouble' },
         ['<leader>lxx'] = { ':Trouble diagnostics toggle<CR>', desc('Toggle Global Diagnostics') },

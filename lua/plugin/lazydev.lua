@@ -6,8 +6,10 @@ return { ---@type LazySpec
   dependencies = {
     { 'DrKJeff16/wezterm-types', lazy = true, dev = true, version = false },
   },
-  cond = require('user_api.check.exists').executable('lua-language-server'),
+  cond = require('user_api').check.executable('lua-language-server'),
   config = function()
+    local fs_stat = (vim.uv or vim.loop).fs_stat
+
     require('lazydev').setup({
       runtime = vim.env.VIMRUNTIME,
       library = { ---@type lazydev.Library.spec[]
@@ -17,8 +19,9 @@ return { ---@type LazySpec
         { path = 'project.nvim', mods = { 'project' } },
       },
       enabled = function(root_dir) ---@type boolean|(fun(root_dir: string): boolean)
-        local fs_stat = (vim.uv or vim.loop).fs_stat
-        return not (fs_stat(root_dir .. '/.luarc.json') or fs_stat(root_dir .. '/luarc.json'))
+        return not (
+          fs_stat(vim.fs.joinpath(root_dir, '.luarc.json')) or fs_stat(vim.fs.joinpath(root_dir, 'luarc.json'))
+        )
       end,
       integrations = { lspconfig = true, cmp = true, coq = false },
     })

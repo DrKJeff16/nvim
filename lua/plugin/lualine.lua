@@ -262,15 +262,15 @@
 ---@field lualine_y LuaLineSection
 ---@field lualine_z LuaLineSection
 
-local Termux = require('user_api.distro').termux
-local exists = require('user_api.check.exists').module
+local Termux = require('user_api').distro.termux
+local exists = require('user_api').check.module
 local in_list = vim.list_contains
 
 ---@param theme? ''|'auto'|string
 ---@param force_auto? boolean
 ---@return string
 local function theme_select(theme, force_auto)
-  require('user_api.check.exists').validate({
+  require('user_api').check.validate({
     theme = { theme, { 'string', 'nil' } },
     force_auto = { force_auto, { 'boolean', 'nil' } },
   })
@@ -300,7 +300,7 @@ return { ---@type LazySpec
     'nvim-tree/nvim-web-devicons',
     { 'arkav/lualine-lsp-progress', version = false },
   },
-  cond = not require('user_api.check').in_console(),
+  cond = not require('user_api').check.in_console(),
   config = function()
     local Presets = {} ---@class LuaLine.Presets
 

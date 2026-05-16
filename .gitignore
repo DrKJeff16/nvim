@@ -5,6 +5,7 @@
 /.tree-sitter.d/
 /queries/
 /parser/
+/treesitter-parsers.json
 
 # Fallback Init (for bug reporting)
 /fallback.lua
