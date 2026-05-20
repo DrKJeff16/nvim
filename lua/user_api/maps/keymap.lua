@@ -29,12 +29,12 @@
 ---@alias AllMaps table<string, KeyMapRhsArr|RegKey|RegPfx>
 
 ---@class AllModeMaps
----@field n? AllModeMaps
----@field i? AllModeMaps
----@field v? AllModeMaps
----@field t? AllModeMaps
----@field o? AllModeMaps
----@field x? AllModeMaps
+---@field n? AllMaps
+---@field i? AllMaps
+---@field v? AllMaps
+---@field t? AllMaps
+---@field o? AllMaps
+---@field x? AllMaps
 
 ---@class KeyMapTbl
 ---@field lhs string

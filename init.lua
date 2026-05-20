@@ -166,6 +166,7 @@ Config.lazy.setup({
   noice = true,
   notify = true,
   nvim_test = false,
+  nvim_tree = false,
   oil = true,
   oil_git = true,
   orgmode = false,
@@ -181,7 +182,6 @@ Config.lazy.setup({
   python_import = true,
   rainbow_delimiters = false,
   record_key = false,
-  refactoring = false,
   refer = false,
   referencer = false,
   replua = false,
@@ -206,19 +206,17 @@ Config.lazy.setup({
   ts_init = true,
   ts_vimdoc = true,
   twilight = false,
-  undotree = false,
   web_devicons = true,
   wezterm_config = true,
   which_colorscheme = true,
   which_key = true,
   window_picker = false,
-  wrapped = false,
   yanky = false,
   zen_mode = false,
 })
 
 User.config.keymaps.set({
-  n = { ['<C-/>'] = { ':norm gcc<CR><Up>', desc('Toggle Comment') } },
+  n = { ['<C-/>'] = { 'silent! :normal gcc<CR><Up>', desc('Toggle Comment') } },
   v = { ['<C-/>'] = { ":'<,'>normal gcc<CR><Up>", desc('Toggle Comment') } },
 }, nil, true)
 

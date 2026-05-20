@@ -84,6 +84,7 @@
 ---@field noice? LazySpecImport
 ---@field notify? LazySpecImport
 ---@field nvim_test? LazySpecImport
+---@field nvim_tree? LazySpecImport
 ---@field oil? LazySpecImport
 ---@field oil_git? LazySpecImport
 ---@field orgmode? LazySpecImport
@@ -99,7 +100,6 @@
 ---@field python_import? LazySpecImport
 ---@field rainbow_delimiters? LazySpecImport
 ---@field record_key? LazySpecImport
----@field refactoring? LazySpecImport
 ---@field refer? LazySpecImport
 ---@field referencer? LazySpecImport
 ---@field replua? LazySpecImport
@@ -126,13 +126,11 @@
 ---@field ts_init? LazySpecImport
 ---@field ts_vimdoc? LazySpecImport
 ---@field twilight? LazySpecImport
----@field undotree? LazySpecImport
 ---@field web_devicons? LazySpecImport
 ---@field wezterm_config? LazySpecImport
 ---@field which_colorscheme? LazySpecImport
 ---@field which_key? LazySpecImport
 ---@field window_picker? LazySpecImport
----@field wrapped? LazySpecImport
 ---@field yanky? LazySpecImport
 ---@field zen_mode? LazySpecImport
 
@@ -219,6 +217,7 @@
 ---@field noice? boolean
 ---@field notify? boolean
 ---@field nvim_test? boolean
+---@field nvim_tree? boolean
 ---@field oil? boolean
 ---@field oil_git? boolean
 ---@field orgmode? boolean
@@ -234,7 +233,6 @@
 ---@field python_import? boolean
 ---@field rainbow_delimiters? boolean
 ---@field record_key? boolean
----@field refactoring? boolean
 ---@field refer? boolean
 ---@field referencer? boolean
 ---@field replua? boolean
@@ -261,13 +259,11 @@
 ---@field ts_init? boolean
 ---@field ts_vimdoc? boolean
 ---@field twilight? boolean
----@field undotree? boolean
 ---@field wezterm_config? boolean
 ---@field web_devicons? boolean
 ---@field which_colorscheme? boolean
 ---@field which_key? boolean
 ---@field window_picker? boolean
----@field wrapped? boolean
 ---@field yanky? boolean
 ---@field zen_mode? boolean
 

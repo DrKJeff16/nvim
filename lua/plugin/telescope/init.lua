@@ -3,7 +3,7 @@
 ---@param picker string
 ---@return function map_cmd
 local function run_map(picker)
-  require('user_api.check').validate({ picker = { picker, { 'string' } } })
+  require('user_api').check.validate({ picker = { picker, { 'string' } } })
 
   return function()
     vim.cmd.Telescope({ args = vim.split(picker, ' ', { trimempty = true }) })
@@ -19,26 +19,19 @@ return { ---@type LazySpec
     {
       'cljoly/telescope-repo.nvim',
       dev = true,
-      cond = require('user_api.check').executable('fd'),
+      cond = require('user_api').check.executable('fd'),
     },
     'nvim-telescope/telescope-file-browser.nvim',
     { 'polirritmico/telescope-lazy-plugins.nvim', dev = true },
   },
   config = function()
-    local exists = require('user_api.check.exists').module
-
     local Actions = require('telescope.actions')
     local ActionsLayout = require('telescope.actions.layout')
     local Config = require('telescope.config')
+    local exists = require('user_api').check.module
 
-    local vimgrep_arguments = { unpack(Config.values.vimgrep_arguments) }
-    local extra_args = {
-      '--hidden',
-      '--glob',
-      '!**/.git/*',
-      '!**/.ropeproject/*',
-      '!**/.mypy_cache/*',
-    }
+    local vimgrep_arguments = vim.deepcopy(Config.values.vimgrep_arguments)
+    local extra_args = { '--hidden', '--glob', '!**/.git/*', '!**/.ropeproject/*', '!**/.mypy_cache/*' }
 
     for _, arg in ipairs(extra_args) do
       table.insert(vimgrep_arguments, arg)
@@ -47,14 +40,8 @@ return { ---@type LazySpec
       defaults = {
         layout_strategy = 'flex',
         layout_config = {
-          vertical = {
-            width = math.floor(vim.o.columns * 0.8),
-            height = math.floor(vim.o.lines * 0.85),
-          },
-          horizontal = {
-            width = math.floor(vim.o.columns * 0.8),
-            height = math.floor(vim.o.lines * 0.8),
-          },
+          vertical = { width = math.floor(vim.o.columns * 0.8), height = math.floor(vim.o.lines * 0.85) },
+          horizontal = { width = math.floor(vim.o.columns * 0.8), height = math.floor(vim.o.lines * 0.8) },
         },
         mappings = {
           i = {
@@ -126,7 +113,7 @@ return { ---@type LazySpec
       end
     end
 
-    local desc = require('user_api.maps').desc
+    local desc = require('user_api').maps.desc
     local Keys = { ---@type AllMaps
       ['<leader><C-t>'] = { group = '+Telescope' },
       ['<leader><C-t>b'] = { group = '+Builtins' },
@@ -183,7 +170,7 @@ return { ---@type LazySpec
       end
     end
 
-    require('user_api.config.keymaps').set({ n = Keys })
+    require('user_api').config.keymaps.set({ n = Keys })
 
     vim.api.nvim_create_autocmd('User', {
       group = vim.api.nvim_create_augroup('UserTelescope', { clear = true }),

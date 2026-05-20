@@ -74,9 +74,11 @@ return { ---@type LazySpec
     if exists('fzf-lua') and vim.g.project_fzf_lua_loaded == 1 then
       keyset({ n = { ['<leader>pf'] = { ':Project fzf-lua<CR>', desc('Fzf-Lua Picker') } } })
     end
-    if exists('telescope') and vim.g.project_telescope_loaded == 1 then
+    if exists('telescope.init') then
       require('telescope').load_extension('projects')
-      keyset({ n = { ['<leader>pT'] = { ':Project telescope<CR>', desc('Telescope Picker') } } })
+      if vim.g.project_telescope_loaded == 1 then
+        keyset({ n = { ['<leader>pT'] = { ':Project telescope<CR>', desc('Telescope Picker') } } })
+      end
     end
     if exists('snacks') and vim.g.project_snacks_loaded == 1 then
       keyset({ n = { ['<leader>pS'] = { ':Project snacks<CR>', desc('Snacks Picker') } } })

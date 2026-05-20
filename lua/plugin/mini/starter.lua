@@ -17,7 +17,6 @@ return { ---@type LazySpec
           { name = 'Projects', action = 'Project', section = 'Projects' },
           { name = 'Recent Projects', action = 'ProjectRecents', section = 'Projects' },
         },
-        MS.sections.telescope(),
       },
       content_hooks = {
         MS.gen_hook.adding_bullet(),

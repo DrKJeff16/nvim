@@ -206,18 +206,6 @@ return { ---@type LazySpec
       status = {}, ---@type table<string, NoiceFilter>
       format = {}, ---@type NoiceFormatOptions
     })
-
-    if require('user_api').check.module('telescope') then
-      require('telescope').load_extension('noice')
-
-      local desc = require('user_api').maps.desc
-      require('user_api').config.keymaps.set({
-        n = {
-          ['<leader><C-t>ep'] = { ':Telescope projects<CR>', desc('Project Picker') },
-          ['<leader>pT'] = { ':Telescope projects<CR>', desc('Project Telescope Picker') },
-        },
-      })
-    end
   end,
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

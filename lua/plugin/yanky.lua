@@ -2,7 +2,7 @@
 return { ---@type LazySpec
   'gbprod/yanky.nvim',
   version = false,
-  dependencies = { 'kkharji/sqlite.lua', 'nvim-telescope/telescope.nvim', 'folke/snacks.nvim' },
+  dependencies = { 'kkharji/sqlite.lua', 'folke/snacks.nvim' },
   config = function()
     require('yanky').setup({
       ring = {
@@ -21,7 +21,9 @@ return { ---@type LazySpec
       preserve_cursor_position = { enabled = true },
       textobj = { enabled = true },
     })
-    pcall(require('telescope').load_extension, 'yank_history')
+    if require('user_api').check.module('telescope') then
+      pcall(require('telescope').load_extension, 'yank_history')
+    end
 
     vim.keymap.set({ 'o', 'x' }, 'iy', function()
       require('yanky.textobj').last_put()
