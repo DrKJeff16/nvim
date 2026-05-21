@@ -16,6 +16,25 @@ return { ---@type LazySpec
       end,
     },
     { 'mrbjarksen/neo-tree-diagnostics.nvim', main = 'neo-tree.sources.diagnostics' },
+    {
+      's1n7ax/nvim-window-picker',
+      version = '2.*',
+      config = function()
+        require('window-picker').setup({
+          filter_rules = {
+            include_current_win = false,
+            autoselect_one = true,
+            -- filter using buffer options
+            bo = {
+              -- if the file type is one of following, the window will be ignored
+              filetype = { 'neo-tree', 'neo-tree-popup', 'notify' },
+              -- if the buffer type is one of following, the window will be ignored
+              buftype = { 'terminal', 'quickfix' },
+            },
+          },
+        })
+      end,
+    },
   },
   config = function()
     require('neo-tree').setup({
@@ -23,7 +42,7 @@ return { ---@type LazySpec
       hide_root_node = true,
       retain_hidden_root_indent = true,
       close_if_last_window = false,
-      popup_border_style = '',
+      popup_border_style = 'NC',
       clipboard = { sync = 'global' },
       enable_git_status = true,
       enable_diagnostics = true,
