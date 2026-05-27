@@ -1,16 +1,18 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'nxhung2304/lastplace.nvim',
+  dev = true,
   version = false,
   config = function()
     require('lastplace').setup({
       ignore_filetypes = {
+        '',
+        'COMMIT_EDITMSG',
         'gitcommit',
         'gitrebase',
-        'svn',
         'hgcommit',
+        'svn',
         'xxd',
-        'COMMIT_EDITMSG',
       },
       ignore_buftypes = { 'quickfix', 'nofile', 'help', 'terminal' },
       center_on_jump = true,
