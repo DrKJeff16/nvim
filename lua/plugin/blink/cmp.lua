@@ -19,31 +19,6 @@ local function accept_nth(idx)
   end
 end
 
----@param key string
----@return function
-local function gen_termcode_fun(key)
-  validate({ key = { key, { 'string' } } })
-
-  return function()
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, false, true), 'i', false)
-  end
-end
-
----@param direction 'up'|'down'
----@return (fun(cmp: blink.cmp.API): boolean|nil) callback
-local function up_or_down(direction)
-  validate({ direction = { direction, { 'string' } } })
-  direction = vim.list_contains({ 'up', 'down' }, direction) and direction or 'up'
-
-  local key = direction == 'up' and '<Up>' or '<Down>'
-  return function(cmp) ---@param cmp blink.cmp.API
-    if not cmp.is_menu_visible() then
-      return
-    end
-    return cmp.cancel({ callback = gen_termcode_fun(key) })
-  end
-end
-
 ---@class BUtil
 ---@field Sources string[]
 ---@field Providers table<string, blink.cmp.SourceProviderConfigPartial>
@@ -241,39 +216,37 @@ return { ---@type LazySpec
         return not vim.list_contains({ 'picker-prompt' }, vim.bo.filetype)
       end,
       keymap = {
-        preset = 'super-tab',
-        ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
+        preset = 'cmdline',
+        ['<C-Space>'] = { 'show' },
         ['<C-e>'] = { 'cancel', 'fallback' },
         ['<CR>'] = { 'accept', 'fallback' },
         ['<Tab>'] = {
           function(cmp)
-            if cmp.snippet_active({ direction = 1 }) then
-              return cmp.snippet_forward()
+            if cmp.snippet_active() then
+              return cmp.accept()
             end
-
-            if not has_words_before() then
-              if cmp.is_menu_visible() then
-                return cmp.insert_next()
-              end
-              return
+            if not (has_words_before() or cmp.is_visible()) then
+              return cmp.show()
             end
-            return cmp.is_menu_visible() and cmp.insert_next() or cmp.show({ providers = BUtil.gen_sources() })
+            if not cmp.is_visible() then
+              return cmp.select_next({ auto_insert = true })
+            end
+            return false
           end,
           'fallback',
         },
         ['<S-Tab>'] = {
           function(cmp)
-            if cmp.snippet_active({ direction = 1 }) then
-              return cmp.snippet_forward()
+            if cmp.snippet_active() then
+              return cmp.accept()
             end
-
-            if not has_words_before() then
-              if cmp.is_menu_visible() then
-                return cmp.insert_prev()
-              end
-              return
+            if not (has_words_before() or cmp.is_visible()) then
+              return cmp.show()
             end
-            return cmp.is_menu_visible() and cmp.insert_prev() or cmp.show({ providers = BUtil.gen_sources() })
+            if cmp.is_visible() then
+              return cmp.select_prev({ auto_insert = true })
+            end
+            return false
           end,
           'fallback',
         },
@@ -287,12 +260,12 @@ return { ---@type LazySpec
         ['<A-8>'] = { accept_nth(8), 'fallback' },
         ['<A-9>'] = { accept_nth(9), 'fallback' },
         ['<A-0>'] = { accept_nth(0), 'fallback' },
-        ['<Up>'] = { up_or_down('up'), 'fallback' },
-        ['<Down>'] = { up_or_down('down'), 'fallback' },
-        ['<Left>'] = { 'fallback' },
-        ['<Right>'] = { 'fallback' },
-        ['<C-p>'] = { 'fallback' },
-        ['<C-n>'] = { 'fallback' },
+        ['<Up>'] = false,
+        ['<Down>'] = false,
+        ['<Left>'] = false,
+        ['<Right>'] = false,
+        ['<C-p>'] = false,
+        ['<C-n>'] = false,
         ['<C-b>'] = {
           function(cmp)
             return cmp.is_documentation_visible() and cmp.scroll_documentation_up(4) or false
