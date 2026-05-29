@@ -3,6 +3,10 @@
 return { ---@type LazySpec
   'saghen/blink.pairs',
   version = false,
+  dependencies = { 'saghen/blink.lib' },
+  build = function()
+    require('blink.pairs').download():pwait(60000)
+  end,
   config = function()
     require('blink.pairs').setup({
       mappings = {

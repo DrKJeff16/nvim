@@ -1,20 +1,17 @@
-(option
-  .
-  _ @keyword)
+(option . _ @keyword)
 
 (option
   ("no-" @variable.parameter)?
   (name) @variable.parameter)
 
-(string
-  (content) @string)
+(string (content) @string)
 
 [
   (value)
   "clear"
 ] @string.special
 
-(url) @string.special.url
+(url) @markup.link.url
 
 (key) @constant
 
@@ -24,9 +21,9 @@
   (iso_time)
 ] @number
 
-(format) @character.special
+(format) @embedded
 
-"sensitive:" @keyword.modifier
+"sensitive:" @attribute
 
 (filter_name) @variable.parameter
 
@@ -45,10 +42,6 @@
 
 "!" @punctuation.special
 
-[
-  "\""
-  "'"
-  ","
-] @punctuation.delimiter
+[ "\"" "'" "," ] @punctuation.delimiter
 
-(comment) @comment @spell
+(comment) @comment
