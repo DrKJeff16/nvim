@@ -110,10 +110,10 @@ return { ---@type LazySpec
   build = ':TSUpdate',
   version = false,
   config = function()
-    require('nvim-treesitter').setup({
-      install_dir = vim.fs.joinpath(vim.fn.stdpath('data'), 'site'),
-    })
-    require('nvim-treesitter').install(ensure_langs)
+    local TS = require('nvim-treesitter')
+    TS.setup({ install_dir = vim.fs.joinpath(vim.fn.stdpath('data'), 'site') })
+    TS.install(ensure_langs)
+
     vim.api.nvim_create_autocmd('FileType', {
       pattern = patterns,
       callback = function(ev)
@@ -126,6 +126,15 @@ return { ---@type LazySpec
         end
         vim.treesitter.language.register('bash', { 'sh' })
         vim.treesitter.start(ev.buf)
+
+        vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+
+        vim.api.nvim_create_autocmd('User', {
+          pattern = 'TSUpdate',
+          callback = function()
+            require('nvim-treesitter.parsers').lua.install_info.generate = true
+          end,
+        })
       end,
     })
   end,
