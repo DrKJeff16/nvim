@@ -208,7 +208,7 @@ return { ---@type LazySpec
     { 'bydlw98/blink-cmp-sshconfig', build = executable('uv') and 'make' or false, version = false },
   },
   build = function()
-    require('blink.cmp').build():wait(60000)
+    require('blink.cmp').build():pwait(60000)
   end,
   config = function()
     require('blink.cmp').setup({
