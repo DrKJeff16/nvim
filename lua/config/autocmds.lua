@@ -41,17 +41,6 @@ local function run_formatter(formatter, bufnr)
   end
 end
 
----@param lang string
----@param bufnr integer
-local function set_lang(lang, bufnr)
-  validate({
-    lang = { lang, { 'string' } },
-    bufnr = { bufnr, { 'number' } },
-  })
-
-  User.util.ft_set(lang, bufnr)()
-end
-
 ---@class Config.Autocmds
 local M = {}
 
@@ -59,39 +48,6 @@ local augroup = -1 ---@type integer
 
 function M.setup()
   augroup = User.util.autocmd.gen_augroups('User_AU', true)['User_AU']
-  User.util.autocmd.au_repeated_events({
-    events = { 'BufCreate', 'BufAdd', 'BufNew', 'BufNewFile', 'BufRead' },
-    opts_tbl = {
-      {
-        group = augroup,
-        pattern = { '.spacemacs', '*.el' },
-        callback = function(ev)
-          set_lang('lisp', ev.buf)
-        end,
-      },
-      {
-        group = augroup,
-        pattern = { '.github/CODEOWNERS' },
-        callback = function(ev)
-          set_lang('codeowners', ev.buf)
-        end,
-      },
-      {
-        group = augroup,
-        pattern = { '.clangd' },
-        callback = function(ev)
-          set_lang('yaml', ev.buf)
-        end,
-      },
-      {
-        group = augroup,
-        pattern = { '*.h' },
-        callback = function(ev)
-          set_lang('c', ev.buf)
-        end,
-      },
-    },
-  })
   User.util.autocmd.au_repeated_events({
     events = { 'FileType' },
     opts_tbl = {

@@ -93,6 +93,15 @@ function M.setup(commands, verbose)
   })
 
   make_timer()
+
+  vim.filetype.add({
+    extension = { el = 'lisp', h = 'c' },
+    filename = {
+      [vim.fn.expand('~/.spacemacs')] = 'lisp',
+      ['.clangd'] = 'yaml',
+      ['.github/CODEOWNERS'] = 'codeowners',
+    },
+  })
 end
 
 local User = setmetatable(M, { ---@type UserAPI
