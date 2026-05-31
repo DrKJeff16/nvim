@@ -2,7 +2,6 @@
 /lazy-lock.json
 
 # Tree-sitter
-/.tree-sitter.d/
 # /queries/
 # /parser/
 /treesitter-parsers.json

@@ -1,0 +1,111 @@
+[submodule "tree-sitter-arduino"]
+    path = .tree-sitter.d/arduino
+    url = https://github.com/tree-sitter-grammars/tree-sitter-arduino
+[submodule "tree-sitter-bash"]
+    path = .tree-sitter.d/bash
+    url = https://github.com/tree-sitter/tree-sitter-bash
+[submodule "tree-sitter-comment"]
+    path = .tree-sitter.d/comment
+    url = https://github.com/stsewd/tree-sitter-comment
+[submodule "tree-sitter-commonlisp"]
+    path = .tree-sitter.d/commonlisp
+    url = https://github.com/tree-sitter-grammars/tree-sitter-commonlisp
+[submodule "tree-sitter-cpp"]
+    path = .tree-sitter.d/cpp
+    url = https://github.com/tree-sitter/tree-sitter-cpp
+[submodule "tree-sitter-css"]
+    path = .tree-sitter.d/css
+    url = https://github.com/tree-sitter/tree-sitter-css
+[submodule "tree-sitter-csv"]
+    path = .tree-sitter.d/csv
+    url = https://github.com/tree-sitter-grammars/tree-sitter-csv
+[submodule "tree-sitter-diff"]
+    path = .tree-sitter.d/diff
+    url = https://github.com/tree-sitter-grammars/tree-sitter-diff
+[submodule "tree-sitter-dockerfile"]
+    path = .tree-sitter.d/dockerfile
+    url = https://github.com/camdencheek/tree-sitter-dockerfile
+[submodule "tree-sitter-doxygen"]
+    path = .tree-sitter.d/doxygen
+    url = https://github.com/tree-sitter-grammars/tree-sitter-doxygen
+[submodule "tree-sitter-gitattributes"]
+    path = .tree-sitter.d/gitattributes
+    url = https://github.com/tree-sitter-grammars/tree-sitter-gitattributes
+[submodule "tree-sitter-gpg"]
+    path = .tree-sitter.d/gpg
+    url = https://github.com/tree-sitter-grammars/tree-sitter-gpg-config
+[submodule "tree-sitter-html"]
+    path = .tree-sitter.d/html
+    url = https://github.com/tree-sitter/tree-sitter-html
+[submodule "tree-sitter-java"]
+    path = .tree-sitter.d/java
+    url = https://github.com/tree-sitter/tree-sitter-java
+[submodule "tree-sitter-json"]
+    path = .tree-sitter.d/json
+    url = https://github.com/tree-sitter/tree-sitter-json
+[submodule "tree-sitter-julia"]
+    path = .tree-sitter.d/julia
+    url = https://github.com/tree-sitter/tree-sitter-julia
+[submodule "tree-sitter-latex"]
+    path = .tree-sitter.d/latex
+    url = https://github.com/latex-lsp/tree-sitter-latex
+[submodule "tree-sitter-lua"]
+    path = .tree-sitter.d/lua
+    url = https://github.com/tree-sitter-grammars/tree-sitter-lua
+[submodule "tree-sitter-luadoc"]
+    path = .tree-sitter.d/luadoc
+    url = https://github.com/tree-sitter-grammars/tree-sitter-luadoc
+[submodule "tree-sitter-make"]
+    path = .tree-sitter.d/make
+    url = https://github.com/tree-sitter-grammars/tree-sitter-make
+[submodule "tree-sitter-meson"]
+    path = .tree-sitter.d/meson
+    url = https://github.com/tree-sitter-grammars/tree-sitter-meson
+[submodule "tree-sitter-printf"]
+    path = .tree-sitter.d/printf
+    url = https://github.com/tree-sitter-grammars/tree-sitter-printf
+[submodule "tree-sitter-python"]
+    path = .tree-sitter.d/python
+    url = https://github.com/tree-sitter/tree-sitter-python
+[submodule "tree-sitter-query"]
+    path = .tree-sitter.d/query
+    url = https://github.com/tree-sitter-grammars/tree-sitter-query
+[submodule "tree-sitter-readline"]
+    path = .tree-sitter.d/readline
+    url = https://github.com/tree-sitter-grammars/tree-sitter-readline
+[submodule "tree-sitter-regex"]
+    path = .tree-sitter.d/regex
+    url = https://github.com/tree-sitter/tree-sitter-regex
+[submodule "tree-sitter-requirements"]
+    path = .tree-sitter.d/requirements
+    url = https://github.com/tree-sitter-grammars/tree-sitter-requirements
+[submodule "tree-sitter-ruby"]
+    path = .tree-sitter.d/ruby
+    url = https://github.com/tree-sitter/tree-sitter-ruby
+[submodule "tree-sitter-rust"]
+    path = .tree-sitter.d/rust
+    url = https://github.com/tree-sitter/tree-sitter-rust
+[submodule "tree-sitter-scss"]
+    path = .tree-sitter.d/scss
+    url = https://github.com/tree-sitter-grammars/tree-sitter-scss
+[submodule "tree-sitter-ssh_config"]
+    path = .tree-sitter.d/ssh_config
+    url = https://github.com/tree-sitter-grammars/tree-sitter-ssh-config
+[submodule "tree-sitter-toml"]
+    path = .tree-sitter.d/toml
+    url = https://github.com/tree-sitter-grammars/tree-sitter-toml
+[submodule "tree-sitter-udev"]
+    path = .tree-sitter.d/udev
+    url = https://github.com/tree-sitter-grammars/tree-sitter-udev
+[submodule "tree-sitter-vim"]
+    path = .tree-sitter.d/vim
+    url = https://github.com/tree-sitter-grammars/tree-sitter-vim
+[submodule "tree-sitter-xml"]
+    path = .tree-sitter.d/xml
+    url = https://github.com/tree-sitter-grammars/tree-sitter-xml
+[submodule "tree-sitter-yaml"]
+    path = .tree-sitter.d/yaml
+    url = https://github.com/ikatyang/tree-sitter-yaml
+[submodule "tree-sitter-zig"]
+    path = .tree-sitter.d/zig
+    url = https://github.com/tree-sitter-grammars/tree-sitter-zig
