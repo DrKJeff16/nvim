@@ -1,5 +1,3 @@
-; inherits: cpp
-
 ((identifier) @function.builtin
   (#any-of? @function.builtin
     ; Digital I/O
@@ -40,14 +38,11 @@
   (#any-of? @function.builtin "loop" "setup"))
 
 (call_expression
-  function: (primitive_type) @function.builtin)
-
-(call_expression
-  function: (identifier) @constructor
-  (#any-of? @constructor "SPISettings" "String"))
+  function: (identifier) @constructor.builtin
+  (#any-of? @constructor.builtin "SPISettings" "String"))
 
 (declaration
   (type_identifier) @type.builtin
   (function_declarator
-    declarator: (identifier) @constructor)
+    declarator: (identifier) @constructor.builtin)
   (#eq? @type.builtin "SPISettings"))
