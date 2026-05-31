@@ -9,6 +9,7 @@
 ---@field blink? LazySpecImport
 ---@field blink_cmp? LazySpecImport
 ---@field blink_indent? LazySpecImport
+---@field blink_lib? LazySpecImport
 ---@field blink_pairs? LazySpecImport
 ---@field bmessages? LazySpecImport
 ---@field bookmarks? LazySpecImport
@@ -142,6 +143,7 @@
 ---@field blink? boolean
 ---@field blink_cmp? boolean
 ---@field blink_indent? boolean
+---@field blink_lib? boolean
 ---@field blink_pairs? boolean
 ---@field boolean_toggle? boolean
 ---@field bmessages? boolean

@@ -74,23 +74,3 @@
   (#any-of? @_name "persistUpperCase" "persistLowerCase" "persistWith")
   (quasiquote_body) @injection.content
   (#set! injection.language "haskell_persistent"))
-
-; -----------------------------------------------------------------------------
-; Python
-; inline-python
-(quasiquote
-  (quoter) @_name
-  (#any-of? @_name "pymain" "pye" "py_" "pyf")
-  (quasiquote_body) @injection.content
-  (#set! injection.language "python"))
-
-; -----------------------------------------------------------------------------
-; GraphQL
-; morpheus-graphql-client
-(_
-  function: (apply
-    function: (variable) @_name)
-  argument: (quasiquote
-    body: (quasiquote_body) @injection.content)
-  (#set! injection.language "graphql")
-  (#eq? @_name "declareLocalTypesInline"))

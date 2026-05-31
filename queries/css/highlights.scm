@@ -1,94 +1,63 @@
-[
-  "@media"
-  "@charset"
-  "@namespace"
-  "@supports"
-  "@keyframes"
-  (at_keyword)
-] @keyword.directive
-
-"@import" @keyword.import
-
-[
-  (to)
-  (from)
-] @keyword
-
-(comment) @comment @spell
+(comment) @comment
 
 (tag_name) @tag
+(nesting_selector) @tag
+(universal_selector) @tag
 
-(class_name) @type
+"~" @operator
+">" @operator
+"+" @operator
+"-" @operator
+"*" @operator
+"/" @operator
+"=" @operator
+"^=" @operator
+"|=" @operator
+"~=" @operator
+"$=" @operator
+"*=" @operator
 
-(id_name) @constant
+"and" @operator
+"or" @operator
+"not" @operator
+"only" @operator
 
-[
-  (property_name)
-  (feature_name)
-] @property
+(attribute_selector (plain_value) @string)
+
+((property_name) @variable
+ (#match? @variable "^--"))
+((plain_value) @variable
+ (#match? @variable "^--"))
+
+(class_name) @property
+(id_name) @property
+(namespace_name) @property
+(property_name) @property
+(feature_name) @property
+
+(pseudo_element_selector (tag_name) @attribute)
+(pseudo_class_selector (class_name) @attribute)
+(attribute_name) @attribute
 
 (function_name) @function
 
-[
-  "~"
-  ">"
-  "+"
-  "-"
-  "*"
-  "/"
-  "="
-  "^="
-  "|="
-  "~="
-  "$="
-  "*="
-] @operator
+"@media" @keyword
+"@import" @keyword
+"@charset" @keyword
+"@namespace" @keyword
+"@supports" @keyword
+"@keyframes" @keyword
+(at_keyword) @keyword
+(to) @keyword
+(from) @keyword
+(important) @keyword
 
-[
-  "and"
-  "or"
-  "not"
-  "only"
-] @keyword.operator
-
-(important) @keyword.modifier
-
-[
-  (nesting_selector)
-  (universal_selector)
-] @character.special
-
-(attribute_selector
-  (plain_value) @string)
-
-(pseudo_element_selector
-  "::"
-  (tag_name) @attribute)
-
-(pseudo_class_selector
-  (class_name) @attribute)
-
-(attribute_name) @tag.attribute
-
-(namespace_name) @module
-
-(keyframes_name) @variable
-
-((property_name) @variable
-  (#lua-match? @variable "^[-][-]"))
-
-((plain_value) @variable
-  (#lua-match? @variable "^[-][-]"))
-
-[
-  (string_value)
-  (color_value)
-  (unit)
-] @string
+(string_value) @string
+(color_value) @string.special
 
 (integer_value) @number
-
-(float_value) @number.float
+(float_value) @number
+(unit) @type
 
 [
   "#"
@@ -104,6 +73,4 @@
   ")"
   "("
   "}"
-  "["
-  "]"
 ] @punctuation.bracket
