@@ -32,6 +32,7 @@
 ---@field doxygen_init? LazySpecImport
 ---@field doxygen_previewer? LazySpecImport
 ---@field echo? LazySpecImport
+---@field fff? LazySpecImport
 ---@field focus? LazySpecImport
 ---@field fzf_lua? LazySpecImport
 ---@field fzf_nerdfont? LazySpecImport
@@ -168,6 +169,7 @@
 ---@field doxygen_init? boolean
 ---@field doxygen_previewer? boolean
 ---@field echo? boolean
+---@field fff? boolean
 ---@field focus? boolean
 ---@field fzf_lua? boolean
 ---@field fzf_nerdfont? boolean
