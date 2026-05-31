@@ -1,15 +1,14 @@
 ---@param name string
----@param exe string|nil
+---@param exe? string
 ---@return vim.lsp.Config|nil config
----@overload fun(name: string): server: vim.lsp.Config|nil
 local function server_load(name, exe)
-  require('user_api.check').validate({
+  require('user_api').check.validate({
     name = { name, 'string' },
     exe = { exe, { 'string', 'nil' }, true },
   })
   exe = exe or name
   exe = exe ~= '' and exe or name
-  if not require('user_api.check.exists').executable(exe) then
+  if not require('user_api').check.executable(exe) then
     return
   end
 
@@ -21,7 +20,7 @@ local function server_load(name, exe)
 end
 
 ---@class Lsp.Server.Clients
-local Clients = {
+local M = {
   -- stylua = server_load('stylua'),
   -- emmylua_ls = server_load('emmylua_ls'),
   lua_ls = server_load('lua_ls', 'lua-language-server'),
@@ -55,5 +54,5 @@ local Clients = {
   yamlls = server_load('yamlls', 'yaml-language-server'),
 }
 
-return Clients
+return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

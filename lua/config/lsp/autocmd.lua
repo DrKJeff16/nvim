@@ -1,6 +1,6 @@
 local INFO = vim.log.levels.INFO
-local desc = require('user_api.maps').desc
-local validate = require('user_api.check').validate
+local desc = require('user_api').maps.desc
+local validate = require('user_api').check.validate
 
 local function print_workspace_folders()
   local msg = ''
@@ -76,9 +76,9 @@ local function server_info()
 end
 
 ---@class Lsp.SubMods.Autocmd
-local Autocmd = {}
+local M = {}
 
-Autocmd.AUKeys = { ---@type AllModeMaps
+local Keys = { ---@type AllModeMaps
   n = {
     K = { vim.lsp.buf.hover, desc('Hover') },
     ['<leader>lS'] = { group = '+Server' },
@@ -107,7 +107,7 @@ Autocmd.AUKeys = { ---@type AllModeMaps
 }
 
 ---@type AuRepeat
-Autocmd.autocommands = {
+M.autocommands = {
   LspProgress = {
     {
       group = vim.api.nvim_create_augroup('UserLsp', { clear = false }),
@@ -120,14 +120,13 @@ Autocmd.autocommands = {
 }
 
 ---@param override? AuRepeat
-function Autocmd.setup(override)
+function M.setup(override)
   validate({ override = { override, { 'table', 'nil' }, true } })
 
-  Autocmd.autocommands = vim.tbl_deep_extend('keep', override or {}, Autocmd.autocommands)
-  require('user_api.util.autocmd').au_repeated(Autocmd.autocommands)
-
-  require('user_api.config.keymaps').set(Autocmd.AUKeys)
+  M.autocommands = vim.tbl_deep_extend('keep', override or {}, M.autocommands)
+  require('user_api').util.autocmd.au_repeated(M.autocommands)
+  require('user_api').config.keymaps.set(Keys)
 end
 
-return Autocmd
+return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

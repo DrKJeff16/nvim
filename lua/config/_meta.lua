@@ -21,6 +21,7 @@
 ---@field classlayout? LazySpecImport
 ---@field co_author? LazySpecImport
 ---@field code_runner? LazySpecImport
+---@field codedocs? LazySpecImport
 ---@field codeowners? LazySpecImport
 ---@field color_skimer? LazySpecImport
 ---@field colorizer? LazySpecImport
@@ -84,6 +85,7 @@
 ---@field neorg? LazySpecImport
 ---@field noice? LazySpecImport
 ---@field notify? LazySpecImport
+---@field nvim_file_operations? LazySpecImport
 ---@field nvim_test? LazySpecImport
 ---@field nvim_tree? LazySpecImport
 ---@field oil? LazySpecImport
@@ -155,6 +157,7 @@
 ---@field classlayout? boolean
 ---@field co_author? boolean
 ---@field code_runner? boolean
+---@field codedocs? boolean
 ---@field codeowners? boolean
 ---@field color_skimer? boolean
 ---@field colorizer? boolean
@@ -218,6 +221,7 @@
 ---@field neorg? boolean
 ---@field noice? boolean
 ---@field notify? boolean
+---@field nvim_file_operations? boolean
 ---@field nvim_test? boolean
 ---@field nvim_tree? boolean
 ---@field oil? boolean

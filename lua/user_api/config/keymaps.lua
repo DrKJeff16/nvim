@@ -129,8 +129,7 @@ local function gen_fun_blank(vertical)
   end
 end
 
----@param force boolean|nil
----@overload fun()
+---@param force? boolean
 local function buf_del(force)
   validate({ force = { force, { 'boolean', 'nil' }, true } })
   if force == nil then
@@ -381,9 +380,8 @@ function M.set_leader(leader, local_leader, force)
 end
 
 ---@param K User.Keymaps.Delete
----@param bufnr integer
+---@param bufnr? integer
 ---@return User.Keymaps.Delete|nil deleted_keys
----@overload fun(K: User.Keymaps.Delete): deleted_keys: User.Keymaps.Delete|nil
 function M.delete(K, bufnr)
   validate({
     K = { K, { 'table' } },

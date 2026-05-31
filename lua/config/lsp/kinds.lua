@@ -1,8 +1,8 @@
 ---@class Lsp.SubMods.Kinds
-local Kinds = {}
+local M = {}
 
----@class Lsp.SubMods.Kinds.Icons
-Kinds.icons = {
+---@enum Lsp.SubMods.Kinds.Icons
+local icons = {
   Class = ' ',
   Color = ' ',
   Constant = ' ',
@@ -26,12 +26,12 @@ Kinds.icons = {
   Variable = ' ',
 }
 
-function Kinds.setup()
+function M.setup()
   for s, kind in pairs(vim.lsp.protocol.CompletionItemKind) do
-    local icon = Kinds.icons[s] or kind ---@type Lsp.SubMods.Kinds.Icons|lsp.CompletionItemKind
+    local icon = icons[s] or kind
     vim.lsp.protocol.CompletionItemKind[s] = icon ~= '' and icon or kind
   end
 end
 
-return Kinds
+return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

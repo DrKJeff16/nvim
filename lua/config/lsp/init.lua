@@ -78,14 +78,21 @@ end
 ---@param old_caps? lsp.ClientCapabilities
 ---@return lsp.ClientCapabilities caps
 function Server.make_capabilities(old_caps)
-  return vim.tbl_deep_extend('keep', old_caps or {}, require('blink.cmp').get_lsp_capabilities({}, true), mk_caps())
+  local caps = old_caps or {}
+  if require('user_api').check.module('blink.cmp') then
+    caps = vim.tbl_deep_extend('force', caps, require('blink.cmp').get_lsp_capabilities({}, true), mk_caps())
+  end
+  if require('user_api').check.module('nvim-file-operations.config') then
+    caps = vim.tbl_deep_extend('force', caps, require('nvim-file-operations.config').default_capabilities())
+  end
+  return caps
 end
 
 ---@param name string
 ---@param config vim.lsp.Config
 ---@return vim.lsp.Config config
 function Server.populate(name, config)
-  if require('user_api.check.value').type_not_empty('table', config.capabilities) then
+  if require('user_api').check.type_not_empty('table', config.capabilities) then
     config.capabilities = insert_client(config.capabilities, Server.make_capabilities(config.capabilities or {}))
   else
     config.capabilities = Server.make_capabilities()
@@ -118,7 +125,7 @@ function Server.populate(name, config)
     return config
   end
 
-  local exists = require('user_api.check.exists').module
+  local exists = require('user_api').check.module
   if name == 'lua_ls' and exists('lazydev') then
     config.root_dir = function(bufnr, on_dir)
       on_dir(require('lazydev').find_workspace(bufnr))
@@ -171,8 +178,8 @@ function Server.setup()
 
   vim.lsp.enable(Server.client_names)
 
-  local desc = require('user_api.maps').desc
-  require('user_api.config.keymaps').set({
+  local desc = require('user_api').maps.desc
+  require('user_api').config.keymaps.set({
     n = {
       ['<leader>l'] = { group = '+LSP' },
       ['<leader>lC'] = {
@@ -193,14 +200,14 @@ end
 ---@param name string
 ---@param exe? string
 function Server.add(config, name, exe)
-  require('user_api.check').validate({
+  require('user_api').check.validate({
     config = { config, { 'table' } },
     name = { name, { 'string' } },
     exe = { exe, { 'string', 'nil' }, true },
   })
   exe = (exe and exe ~= '') and exe or name
 
-  if not require('user_api.check.exists').executable(exe) then
+  if not require('user_api').check.executable(exe) then
     return
   end
 

@@ -104,6 +104,7 @@ Config.lazy.setup({
   classlayout = false,
   co_author = true,
   code_runner = false,
+  codedocs = true,
   codeowners = true,
   color_skimer = false,
   colorizer = true,

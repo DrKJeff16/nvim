@@ -1,8 +1,8 @@
 local MODSTR = 'config.util'
 local ERROR = vim.log.levels.ERROR
-local validate = require('user_api.check').validate
-local in_console = require('user_api.check').in_console
-local executable = require('user_api.check').executable
+local validate = require('user_api').check.validate
+local in_console = require('user_api').check.in_console
+local executable = require('user_api').check.executable
 
 ---@class Config.Util
 local M = {}

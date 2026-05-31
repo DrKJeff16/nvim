@@ -297,10 +297,6 @@ end
 ---@param s string[]|string
 ---@param bufnr? integer
 ---@return table<string, any> res
----@overload fun(s: string): res: table<string, any>
----@overload fun(s: string, bufnr: integer): res: table<string, any>
----@overload fun(s: string[]): res: table<string, any>
----@overload fun(s: string[], bufnr: integer): res: table<string, any>
 function M.get_opts_tbl(s, bufnr)
   validate({
     s = { s, { 'string', 'table' } },
@@ -320,13 +316,11 @@ function M.get_opts_tbl(s, bufnr)
   return res
 end
 
----@param T table<string, any>
+---@generic T
+---@param T T
 ---@param steps? integer
 ---@param direction? 'l'|'r'
----@return table<string, any> res
----@overload fun(T: table<string, any>): res: table<string, any>
----@overload fun(T: table<string, any>, steps: integer): res: table<string, any>
----@overload fun(T: table<string, any>, steps?: integer, direction: 'l'|'r'): res: table<string, any>
+---@return T res
 function M.mv_tbl_values(T, steps, direction)
   validate({
     T = { T, { 'table' } },
@@ -378,14 +372,10 @@ function M.xor(x, y)
   return (x and not y) or (not x and y)
 end
 
----@param T table<string, any>
+---@generic T
+---@param T T
 ---@param fields (string|integer)[]|string|integer
----@return table<string, any> T
----@overload fun(T: table<string, any>, fields: string)
----@overload fun(T: table<string, any>, fields: integer)
----@overload fun(T: table<string, any>, fields: string[])
----@overload fun(T: table<string, any>, fields: integer[])
----@overload fun(T: table<string, any>, fields: (string|integer)[])
+---@return T T
 function M.strip_fields(T, fields)
   validate({
     T = { T, { 'table' } },
@@ -414,11 +404,11 @@ function M.strip_fields(T, fields)
   return T
 end
 
----@param T table<string, any>
+---@generic T
+---@param T T
 ---@param values any[]
 ---@param max_instances? integer
----@return table<string, any> res
----@overload fun(T: table<string, any>, values: any[]): res: table<string, any>
+---@return T res
 function M.strip_values(T, values, max_instances)
   validate({
     T = { T, { 'table' } },
@@ -457,10 +447,7 @@ end
 
 ---@param s? string
 ---@param bufnr? integer
----@return function
----@overload fun(): function
----@overload fun(s: string): function
----@overload fun(s: string, bufnr: integer): function
+---@return function setter
 function M.ft_set(s, bufnr)
   validate({
     s = { s, { 'string', 'nil' }, true },
@@ -474,8 +461,6 @@ end
 
 ---@param bufnr? integer
 ---@return string|''|'acwrite'|'help'|'nofile'|'nowrite'|'prompt'|'quickfix'|'terminal' bt
----@overload fun(): bt: string|''|'acwrite'|'help'|'nofile'|'nowrite'|'prompt'|'quickfix'|'terminal'
----@overload fun(bufnr: integer): bt: string|''|'acwrite'|'help'|'nofile'|'nowrite'|'prompt'|'quickfix'|'terminal'
 function M.bt_get(bufnr)
   validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
 
@@ -484,8 +469,6 @@ end
 
 ---@param bufnr? integer
 ---@return string ft
----@overload fun(): ft: string
----@overload fun(bufnr: integer): ft: string
 function M.ft_get(bufnr)
   validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
 
@@ -515,8 +498,6 @@ end
 ---@param c string
 ---@param direction? 'next'|'prev'
 ---@return string displaced
----@overload fun(c: string): displaced: string
----@overload fun(c: string, direction: 'next'|'prev'): displaced: string
 function M.displace_letter(c, direction)
   validate({
     c = { c, { 'string' } },
@@ -542,8 +523,6 @@ function M.displace_letter(c, direction)
   return mv(UPPER, 1, 'l')[c]
 end
 
----@param data string[]|string
----@return string[]|string res
 ---@overload fun(data: string): res: string
 ---@overload fun(data: string[]): res: string[]
 function M.discard_dups(data)
@@ -576,7 +555,7 @@ function M.discard_dups(data)
     return res
   end
 
-  local res = {} ---@type table
+  local res = {} ---@type string[]
 
   ---@cast data table
   for k, v in pairs(data) do

@@ -126,9 +126,8 @@ end
 
 ---@param lhs string
 ---@param rhs string|function
----@param opts User.Maps.Opts|vim.keymap.set.Opts|wk.Spec
+---@param opts? User.Maps.Opts|vim.keymap.set.Opts|wk.Spec
 ---@return wk.Spec converted
----@overload fun(lhs: string, rhs: string|function): converted: wk.Spec
 function M.convert(lhs, rhs, opts)
   validate({
     lhs = { lhs, { 'string' } },
@@ -181,9 +180,8 @@ function M.convert_dict(T)
 end
 
 ---@param T AllMaps
----@param opts User.Maps.Opts|wk.Spec
+---@param opts? User.Maps.Opts|wk.Spec
 ---@return false|nil
----@overload fun(T: AllMaps): false|nil
 function M.register(T, opts)
   validate({
     T = { T, { 'table' } },

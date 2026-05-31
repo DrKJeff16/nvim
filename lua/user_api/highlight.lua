@@ -13,8 +13,7 @@ local M = {}
 
 ---@param name string The highlight group
 ---@param opts vim.api.keyset.highlight The highlight options
----@param ns integer|nil The highlighting namespace
----@overload fun(name: string, opts: vim.api.keyset.highlight)
+---@param ns? integer The highlighting namespace
 function M.hl(name, opts, ns)
   local type_not_empty = require('user_api.check.value').type_not_empty
   if not (type_not_empty('string', name) and type_not_empty('table', opts)) then
@@ -39,8 +38,7 @@ end
 ---See more at `:h nvim_set_hl`.
 --- ---
 ---@param A HlPair[] The array of `HlPair` objects
----@param ns integer|nil
----@overload fun(A: HlPair[])
+---@param ns? integer
 function M.hl_from_arr(A, ns)
   local type_not_empty = require('user_api.check.value').type_not_empty
   if not type_not_empty('table', A) then

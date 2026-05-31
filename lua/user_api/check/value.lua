@@ -126,9 +126,8 @@ end
 ---**THIS FUNCTION IS NOT RECURSIVE!**
 --- ---
 ---@param data (string|number)[]|string|number|table
----@param multiple boolean|nil
+---@param multiple? boolean
 ---@return boolean is_empty
----@overload fun(data: (string|number)[]|string|number|table): is_empty: boolean
 function M.empty(data, multiple)
   require('user_api.check.exists').validate({
     data = { data, { 'string', 'table', 'number' } },
@@ -166,9 +165,8 @@ end
 ---@param num number The number to be checked
 ---@param low number The low limit
 ---@param high number The high limit
----@param eq { low: boolean, high: boolean }|nil A table that defines how equalities will be made
+---@param eq? { low: boolean, high: boolean } A table that defines how equalities will be made
 ---@return boolean in_range
----@overload fun(num: number, low: number, high: number): in_range: boolean
 function M.num_range(num, low, high, eq)
   require('user_api.check.exists').validate({
     num = { num, { 'number' } },
@@ -232,9 +230,8 @@ end
 
 ---@param values any[]|table<string, any>
 ---@param T table
----@param return_keys boolean|nil
+---@param return_keys? boolean
 ---@return boolean|string|integer|(string|integer)[] res
----@overload fun(values: any[]|table<string, any>, T: table): res: boolean|string|integer|(string|integer)[]
 function M.tbl_values(values, T, return_keys)
   require('user_api.check.exists').validate({
     values = { values, { 'table' } },
