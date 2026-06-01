@@ -51,4 +51,6 @@ for F in ./"$TARGET_DIR"/*; do
     popd &> /dev/null || exit 1
 done
 
+[[ -n "$(ls -A1 ./parser/*.so)" ]] && strip ./parser/*.so
+
 exit 0
