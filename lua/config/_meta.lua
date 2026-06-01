@@ -31,6 +31,7 @@
 ---@field dooku? LazySpecImport
 ---@field doxygen_init? LazySpecImport
 ---@field doxygen_previewer? LazySpecImport
+---@field drop? LazySpecImport
 ---@field echo? LazySpecImport
 ---@field fff? LazySpecImport
 ---@field focus? LazySpecImport
@@ -168,6 +169,7 @@
 ---@field dooku? boolean
 ---@field doxygen_init? boolean
 ---@field doxygen_previewer? boolean
+---@field drop? boolean
 ---@field echo? boolean
 ---@field fff? boolean
 ---@field focus? boolean
