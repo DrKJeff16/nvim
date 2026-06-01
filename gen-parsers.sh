@@ -9,14 +9,17 @@ set -o pipefail
 
 TARGET_DIR=".tree-sitter.d"
 
-if ! [[ -d ./"${TARGET_DIR}" ]] || [[ -z "$(ls -A "${TARGET_DIR}")" ]]; then
-    git config -f .gitmodules --get-regexp '^submodule\..*\.path$' \
-                                                               | while read -r PATH_KEY LOCAL_PATH; do
-            URL_KEY=$(echo "$PATH_KEY" | sed 's/\.path/.url/')
-            URL=$(git config -f .gitmodules --get "$URL_KEY")
-            git submodule add "$URL" "$LOCAL_PATH"
-        done
+if ! [[ -d ./"${TARGET_DIR}" ]]; then
+    mkdir -p ./"${TARGET_DIR}"
 fi
+
+git config -f .gitmodules --get-regexp '^submodule\..*\.path$' \
+                                                           | while read -r PATH_KEY LOCAL_PATH; do
+        [[ -d "${LOCAL_PATH}" ]] && continue
+        URL_KEY=$(echo "$PATH_KEY" | sed 's/\.path/.url/')
+        URL=$(git config -f .gitmodules --get "$URL_KEY")
+        git submodule add "$URL" "$LOCAL_PATH"
+    done
 
 mkdir -p parser
 for F in ./"$TARGET_DIR"/*; do

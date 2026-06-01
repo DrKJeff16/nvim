@@ -4,6 +4,9 @@
 [submodule "tree-sitter-bash"]
     path = .tree-sitter.d/bash
     url = https://github.com/tree-sitter/tree-sitter-bash
+[submodule "tree-sitter-c_sharp"]
+    path = .tree-sitter.d/c_sharp
+    url = https://github.com/tree-sitter/tree-sitter-c-sharp
 [submodule "tree-sitter-comment"]
     path = .tree-sitter.d/comment
     url = https://github.com/stsewd/tree-sitter-comment
@@ -31,9 +34,15 @@
 [submodule "tree-sitter-gitattributes"]
     path = .tree-sitter.d/gitattributes
     url = https://github.com/tree-sitter-grammars/tree-sitter-gitattributes
+[submodule "tree-sitter-go"]
+    path = .tree-sitter.d/go
+    url = https://github.com/tree-sitter/tree-sitter-go
 [submodule "tree-sitter-gpg"]
     path = .tree-sitter.d/gpg
     url = https://github.com/tree-sitter-grammars/tree-sitter-gpg-config
+[submodule "tree-sitter-haskell"]
+    path = .tree-sitter.d/haskell
+    url = https://github.com/tree-sitter/tree-sitter-haskell
 [submodule "tree-sitter-html"]
     path = .tree-sitter.d/html
     url = https://github.com/tree-sitter/tree-sitter-html
@@ -61,6 +70,9 @@
 [submodule "tree-sitter-meson"]
     path = .tree-sitter.d/meson
     url = https://github.com/tree-sitter-grammars/tree-sitter-meson
+[submodule "tree-sitter-nix"]
+    path = .tree-sitter.d/nix
+    url = https://github.com/nix-community/tree-sitter-nix
 [submodule "tree-sitter-printf"]
     path = .tree-sitter.d/printf
     url = https://github.com/tree-sitter-grammars/tree-sitter-printf
@@ -172,6 +184,9 @@
 [submodule ".tree-sitter.d/meson"]
 	path = .tree-sitter.d/meson
 	url = https://github.com/tree-sitter-grammars/tree-sitter-meson
+[submodule ".tree-sitter.d/perl"]
+	path = .tree-sitter.d/perl
+	url = https://github.com/tree-sitter-perl/tree-sitter-perl
 [submodule ".tree-sitter.d/printf"]
 	path = .tree-sitter.d/printf
 	url = https://github.com/tree-sitter-grammars/tree-sitter-printf
@@ -211,6 +226,9 @@
 [submodule ".tree-sitter.d/vim"]
 	path = .tree-sitter.d/vim
 	url = https://github.com/tree-sitter-grammars/tree-sitter-vim
+[submodule ".tree-sitter.d/vimdoc"]
+	path = .tree-sitter.d/vimdoc
+	url = https://github.com/neovim/tree-sitter-vimdoc
 [submodule ".tree-sitter.d/xml"]
 	path = .tree-sitter.d/xml
 	url = https://github.com/tree-sitter-grammars/tree-sitter-xml
@@ -220,3 +238,15 @@
 [submodule ".tree-sitter.d/zig"]
 	path = .tree-sitter.d/zig
 	url = https://github.com/tree-sitter-grammars/tree-sitter-zig
+[submodule ".tree-sitter.d/go"]
+	path = .tree-sitter.d/go
+	url = https://github.com/tree-sitter/tree-sitter-go
+[submodule ".tree-sitter.d/c_sharp"]
+	path = .tree-sitter.d/c_sharp
+	url = https://github.com/tree-sitter/tree-sitter-c-sharp
+[submodule ".tree-sitter.d/haskell"]
+	path = .tree-sitter.d/haskell
+	url = https://github.com/tree-sitter/tree-sitter-haskell
+[submodule ".tree-sitter.d/nix"]
+	path = .tree-sitter.d/nix
+	url = https://github.com/nix-community/tree-sitter-nix

@@ -2,7 +2,6 @@
 ---@module 'blink.lib'
 
 local validate = require('user_api.check').validate
-local has_words_before = require('user_api.util').has_words_before
 local exists = require('user_api.check').module
 local ft_get = require('user_api.util').ft_get
 
@@ -217,39 +216,7 @@ return { ---@type LazySpec
       end,
       keymap = {
         preset = 'cmdline',
-        ['<C-Space>'] = { 'show' },
-        ['<C-e>'] = { 'cancel', 'fallback' },
-        ['<CR>'] = { 'accept', 'fallback' },
-        ['<Tab>'] = {
-          function(cmp)
-            if cmp.snippet_active() then
-              return cmp.accept()
-            end
-            if not (has_words_before() or cmp.is_visible()) then
-              return cmp.show()
-            end
-            if not cmp.is_visible() then
-              return cmp.select_next({ auto_insert = true })
-            end
-            return false
-          end,
-          'fallback',
-        },
-        ['<S-Tab>'] = {
-          function(cmp)
-            if cmp.snippet_active() then
-              return cmp.accept()
-            end
-            if not (has_words_before() or cmp.is_visible()) then
-              return cmp.show()
-            end
-            if cmp.is_visible() then
-              return cmp.select_prev({ auto_insert = true })
-            end
-            return false
-          end,
-          'fallback',
-        },
+        ['<A-0>'] = { accept_nth(0), 'fallback' },
         ['<A-1>'] = { accept_nth(1), 'fallback' },
         ['<A-2>'] = { accept_nth(2), 'fallback' },
         ['<A-3>'] = { accept_nth(3), 'fallback' },
@@ -259,36 +226,26 @@ return { ---@type LazySpec
         ['<A-7>'] = { accept_nth(7), 'fallback' },
         ['<A-8>'] = { accept_nth(8), 'fallback' },
         ['<A-9>'] = { accept_nth(9), 'fallback' },
-        ['<A-0>'] = { accept_nth(0), 'fallback' },
-        ['<Up>'] = false,
+        ['<C-Space>'] = { 'show', 'hide', 'fallback' },
+        ['<C-b>'] = { 'scroll_documentation_up', 'fallback' },
+        ['<C-e>'] = { 'cancel', 'fallback' },
+        ['<C-f>'] = { 'scroll_documentation_down', 'fallback' },
+        ['<C-k>'] = { 'show_signature', 'hide_signature', 'fallback' },
+        ['<CR>'] = { 'accept', 'fallback' },
+        ['<S-Tab>'] = { 'accept', 'select_prev', 'fallback' },
+        ['<Tab>'] = { 'accept', 'select_next', 'fallback' },
+        ['<C-n>'] = false,
+        ['<C-p>'] = false,
         ['<Down>'] = false,
+        ['<End>'] = false,
+        ['<Home>'] = false,
         ['<Left>'] = false,
         ['<Right>'] = false,
-        ['<C-p>'] = false,
-        ['<C-n>'] = false,
-        ['<C-b>'] = {
-          function(cmp)
-            return cmp.is_documentation_visible() and cmp.scroll_documentation_up(4) or false
-          end,
-          'fallback',
-        },
-        ['<C-f>'] = {
-          function(cmp)
-            return cmp.is_documentation_visible() and cmp.scroll_documentation_down(4) or false
-          end,
-          'fallback',
-        },
-        ['<C-k>'] = {
-          function(cmp)
-            return cmp.is_signature_visible() and cmp.hide_signature() or cmp.show_signature()
-          end,
-          'fallback',
-        },
+        ['<Up>'] = false,
       },
       appearance = {
         nerd_font_variant = 'mono',
         highlight_ns = vim.api.nvim_create_namespace('blink_cmp'),
-        use_nvim_cmp_as_default = false,
         kind_icons = require('lspkind').symbol_map,
       },
       completion = {

@@ -13,21 +13,17 @@
   (heading) @markup.heading.4)
 
 (column_heading
-  (delimiter) @markup.heading.4
+  (delimiter) @markup.heading.4.marker
   (#set! conceal ""))
 
 (tag
-  "*" @label
-  (#set! conceal ""))
-
-(tag
+  "*" @markup.heading.5.marker
+  (#set! conceal "")
   text: (_) @label)
 
 (taglink
   "|" @markup.link
-  (#set! conceal ""))
-
-(taglink
+  (#set! conceal "")
   text: (_) @markup.link)
 
 (optionlink
@@ -35,37 +31,33 @@
 
 (codespan
   "`" @markup.raw
-  (#set! conceal ""))
-
-(codespan
+  (#set! conceal "")
   text: (_) @markup.raw)
 
 ((codeblock) @markup.raw.block
-  (#set! priority 90))
+  (#set! "priority" 90))
 
 (codeblock
-  ">" @markup.raw
-  (#set! conceal ""))
-
-(codeblock
-  (language) @label
+  [
+    ">"
+    (language)
+  ] @markup.raw.block
   (#set! conceal ""))
 
 (block
-  "<" @markup.raw
+  "<" @markup.raw.block
   (#set! conceal ""))
 
 (argument) @variable.parameter
 
 (keycode) @string.special
 
-((url) @string.special.url
-  (#set! @string.special.url url @string.special.url))
+(url) @string.special.url
 
 (modeline) @keyword.directive
 
-((note) @comment.note
-  (#any-of? @comment.note "Note:" "NOTE:" "Notes:"))
+((note) @comment.hint
+  (#any-of? @comment.hint "Note:" "NOTE:" "Notes:"))
 
 ((note) @comment.warning
   (#any-of? @comment.warning "Warning:" "WARNING:"))
