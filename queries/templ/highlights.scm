@@ -1,5 +1,4 @@
 ; inherits: go
-
 (component_declaration
   name: (component_identifier) @function)
 
@@ -7,10 +6,10 @@
   (tag_start)
   (tag_end)
   (self_closing_tag)
-  (style_element)
+  (style_tag_start)
+  (style_tag_end)
+  (self_closing_style_tag)
 ] @tag
-
-(doctype) @constant
 
 (attribute
   name: (attribute_name) @tag.attribute)
@@ -42,14 +41,6 @@
 (component_render) @function.call
 
 (element_comment) @comment @spell
-
-[
-  "<"
-  ">"
-  "</"
-  "/>"
-  "<!"
-] @tag.delimiter
 
 "@" @operator
 

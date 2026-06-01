@@ -1,229 +1,76 @@
-[
-  (line_comment)
-  (block_comment)
-] @comment @spell
-
-((block_comment) @comment.documentation
-  (#lua-match? @comment.documentation "^{[-]|[^|]"))
-
 ; Keywords
-;---------
 [
-  "if"
-  "then"
-  "else"
-  (case)
-  (of)
-] @keyword.conditional
+    "if"
+    "then"
+    "else"
+    "let"
+    "in"
+ ] @keyword.control.elm
+(case) @keyword.control.elm
+(of) @keyword.control.elm
 
-[
-  "let"
-  "in"
-  (as)
-  (port)
-  (alias)
-  (infix)
-  (module)
-  (type)
-] @keyword
+(colon) @keyword.other.elm
+(backslash) @keyword.other.elm
+(as) @keyword.other.elm
+(port) @keyword.other.elm
+(exposing) @keyword.other.elm
+(alias) @keyword.other.elm
+(infix) @keyword.other.elm
 
-[
-  (import)
-  (exposing)
-] @keyword.import
+(arrow) @keyword.operator.arrow.elm
 
-; Punctuation
-;------------
-(double_dot) @punctuation.special
+(port) @keyword.other.port.elm
 
-[
-  ","
-  "|"
-  (dot)
-] @punctuation.delimiter
+(type_annotation(lower_case_identifier) @function.elm)
+(port_annotation(lower_case_identifier) @function.elm)
+(function_declaration_left(lower_case_identifier) @function.elm)
+(function_call_expr target: (value_expr) @function.elm)
 
-[
-  "("
-  ")"
-  "{"
-  "}"
-  "["
-  "]"
-] @punctuation.bracket
+(field_access_expr(value_expr(value_qid)) @local.function.elm)
+(lower_pattern) @local.function.elm
+(record_base_identifier) @local.function.elm
 
-; Variables
-;----------
-(value_qid
-  (lower_case_identifier) @variable)
 
-(value_declaration
-  (function_declaration_left
-    (lower_case_identifier) @variable))
+(operator_identifier) @keyword.operator.elm
+(eq) @keyword.operator.assignment.elm
 
-(type_annotation
-  (lower_case_identifier) @variable)
 
-(port_annotation
-  (lower_case_identifier) @variable)
+"(" @punctuation.section.braces
+")" @punctuation.section.braces
 
-(anything_pattern
-  (underscore) @character.special)
+"|" @keyword.other.elm
+"," @punctuation.separator.comma.elm
 
-(record_base_identifier
-  (lower_case_identifier) @variable)
+(import) @meta.import.elm
+(module) @keyword.other.elm
 
-(lower_pattern
-  (lower_case_identifier) @variable)
+(number_constant_expr) @constant.numeric.elm
 
-(exposed_value
-  (lower_case_identifier) @variable)
 
-(value_qid
-  ((dot)
-    (lower_case_identifier) @variable.member))
+(type) @keyword.type.elm
 
-(field_access_expr
-  ((dot)
-    (lower_case_identifier) @variable.member))
+(type_declaration(upper_case_identifier) @storage.type.elm)
+(type_ref) @storage.type.elm
+(type_alias_declaration name: (upper_case_identifier) @storage.type.elm)
 
-(function_declaration_left
-  (anything_pattern
-    (underscore) @character.special))
+(union_variant(upper_case_identifier) @union.elm)
+(union_pattern) @union.elm
+(value_expr(upper_case_qid(upper_case_identifier)) @union.elm)
 
-(function_declaration_left
-  (lower_pattern
-    (lower_case_identifier) @variable.parameter))
+; comments
+(line_comment) @comment.elm
+(block_comment) @comment.elm
 
-; Functions
-;----------
-(value_declaration
-  functionDeclarationLeft: (function_declaration_left
-    (lower_case_identifier) @function
-    (pattern)))
+; strings
+(string_escape) @character.escape.elm
 
-(value_declaration
-  functionDeclarationLeft: (function_declaration_left
-    (lower_case_identifier) @function
-    pattern: (_)))
+(open_quote) @string.elm
+(close_quote) @string.elm
+(regular_string_part) @string.elm
 
-(value_declaration
-  functionDeclarationLeft: (function_declaration_left
-    (lower_case_identifier) @function)
-  body: (anonymous_function_expr))
+(open_char) @char.elm
+(close_char) @char.elm
 
-(type_annotation
-  name: (lower_case_identifier) @function
-  typeExpression: (type_expression
-    (arrow)))
 
-(port_annotation
-  name: (lower_case_identifier) @function
-  typeExpression: (type_expression
-    (arrow)))
-
-(function_call_expr
-  target: (value_expr
-    (value_qid
-      (lower_case_identifier) @function.call)))
-
-; Operators
-;----------
-[
-  (operator_identifier)
-  (eq)
-  (colon)
-  (arrow)
-  (backslash)
-  "::"
-] @operator
-
-; Modules
-;--------
-(module_declaration
-  (upper_case_qid
-    (upper_case_identifier) @module))
-
-(import_clause
-  (upper_case_qid
-    (upper_case_identifier) @module))
-
-(as_clause
-  (upper_case_identifier) @module)
-
-(value_expr
-  (value_qid
-    (upper_case_identifier) @module))
-
-; Types
-;------
-(type_declaration
-  (upper_case_identifier) @type)
-
-(type_ref
-  (upper_case_qid
-    (upper_case_identifier) @type))
-
-(type_variable
-  (lower_case_identifier) @type)
-
-(lower_type_name
-  (lower_case_identifier) @type)
-
-(exposed_type
-  (upper_case_identifier) @type)
-
-(type_alias_declaration
-  (upper_case_identifier) @type.definition)
-
-(field_type
-  name: (lower_case_identifier) @property)
-
-(field
-  name: (lower_case_identifier) @property)
-
-(type_declaration
-  (union_variant
-    (upper_case_identifier) @constructor))
-
-(nullary_constructor_argument_pattern
-  (upper_case_qid
-    (upper_case_identifier) @constructor))
-
-(union_pattern
-  (upper_case_qid
-    (upper_case_identifier) @constructor))
-
-(value_expr
-  (upper_case_qid
-    (upper_case_identifier)) @constructor)
-
-; Literals
-;---------
-(number_constant_expr
-  (number_literal) @number)
-
-(upper_case_qid
-  ((upper_case_identifier) @boolean
-    (#any-of? @boolean "True" "False")))
-
-[
-  (open_quote)
-  (close_quote)
-] @string
-
-(string_constant_expr
-  (string_escape) @string)
-
-(string_constant_expr
-  (regular_string_part) @string)
-
-[
-  (open_char)
-  (close_char)
-] @character
-
-(char_constant_expr
-  (string_escape) @character)
-
-(char_constant_expr
-  (regular_string_part) @character)
+; glsl
+(glsl_content) @source.glsl

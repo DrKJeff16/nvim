@@ -1,59 +1,63 @@
-; Comments
-((comment) @injection.content
-  (#set! injection.language "comment"))
-
-; Documentation
-(unary_operator
-  operator: "@"
-  operand: (call
-    target: ((identifier) @_identifier
-      (#any-of? @_identifier "moduledoc" "typedoc" "shortdoc" "doc"))
-    (arguments
-      [
-        (string
-          (quoted_content) @injection.content)
-        (sigil
-          (quoted_content) @injection.content)
-      ])
-    (#set! injection.language "markdown")))
-
-; HEEx
-(sigil
+; Phoenix HTML template
+((sigil
   (sigil_name) @_sigil_name
-  (quoted_content) @injection.content
-  (#any-of? @_sigil_name "H" "LVN")
-  (#set! injection.language "heex"))
-
-; Surface
-(sigil
-  (sigil_name) @_sigil_name
-  (quoted_content) @injection.content
-  (#eq? @_sigil_name "F")
-  (#set! injection.language "surface"))
-
-; Zigler
-(sigil
-  (sigil_name) @_sigil_name
-  (quoted_content) @injection.content
-  (#any-of? @_sigil_name "E" "L")
-  (#set! injection.language "eex"))
-
-(sigil
-  (sigil_name) @_sigil_name
-  (quoted_content) @injection.content
-  (#any-of? @_sigil_name "z" "Z")
-  (#set! injection.language "zig"))
+  (quoted_content) @injection.content)
+ (#any-of? @_sigil_name "H" "LVN" "HOLO")
+ (#set! injection.language "heex")
+ (#set! injection.combined))
 
 ; Regex
-(sigil
+((sigil
   (sigil_name) @_sigil_name
-  (quoted_content) @injection.content
-  (#any-of? @_sigil_name "r" "R")
-  (#set! injection.language "regex"))
+  (quoted_content) @injection.content)
+ (#any-of? @_sigil_name "r" "R")
+ (#set! injection.language "regex")
+ (#set! injection.combined))
 
-; Json
-(sigil
+; SQL injection
+((sigil
   (sigil_name) @_sigil_name
-  (quoted_content) @injection.content
-  (#any-of? @_sigil_name "j" "J")
-  (#set! injection.language "json"))
+  (quoted_content) @injection.content)
+ (#eq? @_sigil_name "SQL")
+ (#set! injection.language "sql")
+ (#set! injection.combined))
+
+; Markdown
+((sigil
+  (sigil_name) @_sigil_name
+  (quoted_content) @injection.content)
+ (#eq? @_sigil_name "MD")
+ (#set! injection.language "markdown")
+ (#set! injection.combined))
+
+; Python
+((sigil
+  (sigil_name) @_sigil_name
+  (quoted_content) @injection.content)
+ (#eq? @_sigil_name "PY")
+ (#set! injection.language "python")
+ (#set! injection.combined))
+
+; Bash
+((sigil
+  (sigil_name) @_sigil_name
+  (quoted_content) @injection.content)
+ (#eq? @_sigil_name "BASH")
+ (#set! injection.language "bash")
+ (#set! injection.combined))
+
+; JavaScript
+((sigil
+  (sigil_name) @_sigil_name
+  (quoted_content) @injection.content)
+ (#eq? @_sigil_name "JS")
+ (#set! injection.language "javascript")
+ (#set! injection.combined))
+
+; Vue
+((sigil
+  (sigil_name) @_sigil_name
+  (quoted_content) @injection.content)
+ (#eq? @_sigil_name "VUE")
+ (#set! injection.language "vue")
+ (#set! injection.combined))

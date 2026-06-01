@@ -1,141 +1,80 @@
-; punctuation
-"#" @punctuation.special
+(call
+  item: (ident) @function)
+(call
+  item: (field field: (ident) @function.method))
+(tagged field: (ident) @tag)
+(field field: (ident) @tag)
+(comment) @comment
 
-[
-  ":"
-  ";"
-  ","
-] @punctuation.delimiter
+; CONTROL
+(let "let" @keyword.storage.type)
+(branch ["if" "else"] @keyword.control.conditional)
+(while "while" @keyword.control.repeat)
+(for ["for" "in"] @keyword.control.repeat)
+(import "import" @keyword.control.import)
+(as "as" @keyword.operator)
+(include "include" @keyword.control.import)
+(show "show" @keyword.control)
+(set "set" @keyword.control)
+(return "return" @keyword.control)
+(flow ["break" "continue"] @keyword.control)
 
-; TODO: context blocks for "[" "]"?
-[
-  "("
-  ")"
-  "{"
-  "}"
-  "["
-  "]"
-] @punctuation.bracket
+; OPERATOR
+(in ["in" "not"] @keyword.operator)
+(context "context" @keyword.control)
+(and "and" @keyword.operator)
+(or "or" @keyword.operator)
+(not "not" @keyword.operator)
+(sign ["+" "-"] @operator)
+(add "+" @operator)
+(sub "-" @operator)
+(mul "*" @operator)
+(div "/" @operator)
+(cmp ["==" "<=" ">=" "!=" "<" ">"] @operator)
+(fraction "/" @operator)
+(fac "!" @operator)
+(attach ["^" "_"] @operator)
+(wildcard) @operator
 
-; operators
-[
-  "-"
-  "+"
-  "*"
-  "/"
-  "=="
-  "!="
-  "<"
-  "<="
-  ">"
-  ">="
-  "="
-  "in"
-  "and"
-  "or"
-  "not"
-] @operator
-
-; keywords
-[
-  "import"
-  "include"
-] @keyword.import
-
-[
-  "let"
-  "set"
-  "show"
-] @keyword
-
-; control flow
-[
-  "for"
-  "while"
-  "break"
-  "continue"
-] @keyword.repeat
-
-[
-  "if"
-  "else"
-] @keyword.conditional
-
-; special case: #for (ident) in (expr)
-(for
-  "in" @keyword.repeat)
-
-; type literals
-(number) @number
-
+; VALUE
+(raw_blck "```" @operator) @markup.raw.block
+(raw_span "`" @operator) @markup.raw.block
+(raw_blck lang: (ident) @tag)
+(label) @tag
+(ref) @tag
+(number) @constant.numeric
 (string) @string
+(content ["[" "]"] @operator)
+(bool) @constant.builtin.boolean
+(none) @constant.builtin
+(auto) @constant.builtin
+(ident) @variable
 
-(bool) @boolean
-
-(ident) @constant
-
-; name-value pairs
-(tagged
-  field: (ident) @variable.member)
-
-(call
-  item: (ident) @function.call)
-
-; text
-(text) @spell
-
-(heading
-  "=" @markup.heading.1) @markup.heading.1
-
-(heading
-  "==" @markup.heading.2) @markup.heading.2
-
-(heading
-  "===" @markup.heading.3) @markup.heading.3
-
-(heading
-  "====" @markup.heading.4) @markup.heading.4
-
-(heading
-  "=====" @markup.heading.5) @markup.heading.5
-
-(heading
-  "======" @markup.heading.6) @markup.heading.6
-
-(strong) @markup.strong
-
+; MARKUP
+(item "-" @markup.list)
+(term ["/" ":"] @markup.list)
+(heading "=" @markup.heading.marker) @markup.heading.1
+(heading "==" @markup.heading.marker) @markup.heading.2
+(heading "===" @markup.heading.marker) @markup.heading.3
+(heading "====" @markup.heading.marker) @markup.heading.4
+(heading "=====" @markup.heading.marker) @markup.heading.5
+(heading "======" @markup.heading.marker) @markup.heading.6
+(url) @tag
 (emph) @markup.italic
+(strong) @markup.bold
+(symbol) @constant.character
+(shorthand) @constant.builtin
+(quote) @markup.quote
+(align) @operator
+(letter) @constant.character
+(linebreak) @constant.builtin
 
-((url) @markup.link.url
-  (#set! @markup.link.url url @markup.link.url))
+(math "$" @operator)
+"#" @operator
+"end" @operator
 
-(call
-  item: (ident) @_link
-  (#eq? @_link "link")
-  (group
-    .
-    (string) @markup.link.url
-    (#offset! @markup.link.url 0 1 0 -1)
-    (#set! @markup.link.url url @markup.link.url)))
-
-; code blocks
-(raw_span) @markup.raw
-
-(raw_blck) @markup.raw
-
-(raw_blck
-  lang: (ident) @label)
-
-(raw_blck
-  (blob) @markup.raw.block)
-
-; refs and labels
-(label) @markup.link.label
-
-(ref) @markup.link
-
-; math
-(math) @markup.math
-
-; comments
-(comment) @comment @spell
+(escape) @constant.character.escape
+["(" ")" "{" "}"] @punctuation.bracket
+["," ";" ".." ":" "sep"] @punctuation.delimiter
+"assign" @punctuation
+(field "." @punctuation)

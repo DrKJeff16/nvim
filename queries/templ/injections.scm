@@ -1,5 +1,4 @@
 ; inherits: go
-
 ((element_comment) @injection.content
   (#set! injection.language "comment"))
 

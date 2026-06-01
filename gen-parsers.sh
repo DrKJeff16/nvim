@@ -25,6 +25,9 @@ mkdir -p parser
 for F in ./"$TARGET_DIR"/*; do
     PARSER="$(basename "$F")"
     pushd "$F" || exit 1
+
+    tree-sitter generate &> /dev/null || true
+
     if tree-sitter build -o "${PARSER}.so" &> /dev/null; then
         mv "${PARSER}.so" ../../parser
 
@@ -37,6 +40,10 @@ for F in ./"$TARGET_DIR"/*; do
             fi
         fi
     fi
+
+    git restore --staged .
+    git restore .
+    git clean -df &> /dev/null || true
 
     popd &> /dev/null || exit 1
 done

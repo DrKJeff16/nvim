@@ -5,22 +5,13 @@
 (header
   name: (_) @constant)
 
-(header
-  value: (_) @string)
-
 ; Variables
-(identifier) @variable
-
 (variable_declaration
-  "@" @character.special)
-
-(variable_declaration
-  (value) @string)
+  name: (identifier) @variable)
 
 ; Operators
 (comment
   "=" @operator)
-
 (variable_declaration
   "=" @operator)
 
@@ -33,22 +24,17 @@
 (request
   url: (_) @string.special.url)
 
-(http_version) @string.special
+(http_version) @constant
 
 ; Response
 (status_code) @number
-
 (status_text) @string
 
 ; Punctuation
 [
   "{{"
   "}}"
-  "{%"
-  "%}"
 ] @punctuation.bracket
-
-">" @punctuation.special
 
 (header
   ":" @punctuation.delimiter)
