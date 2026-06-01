@@ -1,6 +1,12 @@
+[submodule ".tree-sitter.d/agda"]
+	path = .tree-sitter.d/agda
+	url = https://github.com/tree-sitter/tree-sitter-agda
 [submodule ".tree-sitter.d/arduino"]
     path = .tree-sitter.d/arduino
     url = https://github.com/tree-sitter-grammars/tree-sitter-arduino
+[submodule ".tree-sitter.d/asm"]
+	path = .tree-sitter.d/asm
+	url = https://github.com/RubixDev/tree-sitter-asm
 [submodule ".tree-sitter.d/bash"]
 	path = .tree-sitter.d/bash
 	url = https://github.com/tree-sitter/tree-sitter-bash
@@ -10,6 +16,9 @@
 [submodule ".tree-sitter.d/clojure"]
 	path = .tree-sitter.d/clojure
 	url = https://github.com/sogaiu/tree-sitter-clojure
+[submodule ".tree-sitter.d/cmake"]
+	path = .tree-sitter.d/cmake
+	url = https://github.com/uyha/tree-sitter-cmake
 [submodule ".tree-sitter.d/comment"]
 	path = .tree-sitter.d/comment
 	url = https://github.com/stsewd/tree-sitter-comment

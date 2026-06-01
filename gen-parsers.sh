@@ -21,6 +21,9 @@ git config -f .gitmodules --get-regexp '^submodule\..*\.path$' \
         git submodule add "$URL" "$LOCAL_PATH"
     done
 
+git submodule sync &> /dev/null
+git submodule update --init
+
 mkdir -p parser
 for F in ./"$TARGET_DIR"/*; do
     PARSER="$(basename "$F")"

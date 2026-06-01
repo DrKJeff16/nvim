@@ -1,9 +1,6 @@
 ; General
 (label
-  [
-    (ident)
-    (word)
-  ] @label)
+  [(ident) (word)] @label)
 
 (reg) @variable.builtin
 

@@ -1,52 +1,40 @@
-; Constants
-(integer) @number
 
-; Variables and Symbols
-(typed_binding
-  (atom
-    (qid) @variable))
 
+;; Constants
+(integer) @constant
+
+;; Variables and Symbols
+
+(typed_binding (atom (qid) @variable))
 (untyped_binding) @variable
-
-(typed_binding
-  (expr) @type)
+(typed_binding (expr) @type)
 
 (id) @function
-
 (bid) @function
 
-(function_name
-  (atom
-    (qid) @function))
-
+(function_name (atom (qid) @function))
 (field_name) @function
 
-[
-  (data_name)
-  (record_name)
-] @constructor
+
+[(data_name) (record_name)] @constructor
 
 ; Set
 (SetN) @type.builtin
 
-(expr
-  .
-  (atom) @function)
 
-((atom) @boolean
-  (#any-of? @boolean "true" "false" "True" "False"))
+;; Imports and Module Declarations
 
-; Imports and Module Declarations
-"import" @keyword.import
+"import"  @include
 
-(module_name) @module
+(module_name) @namespace
 
-; Pragmas and comments
-(pragma) @keyword.directive
+;; Pragmas and comments
 
-(comment) @comment @spell
+(pragma) @constant.macro
 
-; Keywords
+(comment) @comment
+
+;; Keywords
 [
   "where"
   "data"
@@ -70,18 +58,22 @@
   "infix"
   "infixl"
   "infixr"
+  "record"
+  "forall"
+  "∀"
+  "->"
+  "→"
+  "\\"
+  "λ"
+  "..."
+  "…"
 ] @keyword
 
-"record" @keyword.type
+;; Brackets
 
-;(expr
-;	f_name: (atom) @function)
-; Brackets
 [
   "("
   ")"
   "{"
-  "}"
-] @punctuation.bracket
-
-"=" @operator
+  "}"]
+@punctuation.bracket
