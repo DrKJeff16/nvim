@@ -1,7 +1,7 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'nvim-treesitter/nvim-treesitter-context',
-  cond = not require('user_api.check').in_console(),
+  cond = not require('user_api').check.in_console(),
   config = function()
     local Context = require('treesitter-context')
     Context.setup({
@@ -16,7 +16,7 @@ return { ---@type LazySpec
       zindex = 20,
     })
 
-    require('user_api.highlight').hl_from_dict({
+    require('user_api').highlight.hl_from_dict({
       TreesitterContextBottom = { underline = true, sp = 'Grey' },
       TreesitterContextLineNumberBottom = { underline = true, sp = 'Grey' },
       TreesitterContextLineNumber = { link = 'LineNr' },
@@ -24,8 +24,8 @@ return { ---@type LazySpec
       TreesitterContext = { link = 'NormalFloat' },
     })
 
-    local desc = require('user_api.maps').desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.desc
+    require('user_api').config.keymaps.set({
       n = {
         ['<leader>C'] = { group = '+Context' },
         ['<leader>Cn'] = {

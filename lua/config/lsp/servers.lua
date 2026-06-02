@@ -21,6 +21,7 @@ end
 
 ---@class Lsp.Server.Clients
 local M = {
+  -- julials = server_load('julials', 'julia'),
   -- stylua = server_load('stylua'),
   -- emmylua_ls = server_load('emmylua_ls'),
   lua_ls = server_load('lua_ls', 'lua-language-server'),
@@ -42,7 +43,6 @@ local M = {
   hyprls = server_load('hyprls'),
   jdtls = server_load('jdtls'),
   jsonls = server_load('jsonls', 'vscode-json-language-server'),
-  julials = server_load('julials', 'julia'),
   marksman = server_load('marksman'),
   pylsp = server_load('pylsp'),
   ruby_lsp = server_load('ruby_lsp', 'ruby-lsp'),

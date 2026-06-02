@@ -1,15 +1,16 @@
 ---@module 'lazy'
 ---@module 'blink.lib'
 
-local validate = require('user_api.check').validate
-local exists = require('user_api.check').module
-local ft_get = require('user_api.util').ft_get
+local validate = require('user_api').check.validate
+local exists = require('user_api').check.module
+local ft_get = require('user_api').util.ft_get
+local executable = require('user_api').check.executable
 
 ---@param idx integer
 ---@return fun(cmp: blink.cmp.API): boolean|nil
 local function accept_nth(idx)
   validate({ idx = { idx, { 'number' } } })
-  if not require('user_api.check.value').is_int(idx) then
+  if not require('user_api').check.is_int(idx) then
     error(('Bad index `%d`'):format(idx), vim.log.levels.ERROR)
   end
 
@@ -191,7 +192,6 @@ function BUtil.gen_providers(P)
   return BUtil.Providers
 end
 
-local executable = require('user_api.check.exists').executable
 return { ---@type LazySpec
   'saghen/blink.cmp',
   event = 'InsertEnter',

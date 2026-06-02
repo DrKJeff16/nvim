@@ -4,7 +4,7 @@ return { ---@type LazySpec
   ft = { 'c', 'cpp' },
   version = false,
   init = require('config.util').flag_installed('doxygen_toolkit'),
-  enabled = require('user_api.check.exists').executable('doxygen'),
+  enabled = require('user_api').check.executable('doxygen'),
   config = function()
     local g_vars = {
       authorName = 'Guennadi Maximov C',

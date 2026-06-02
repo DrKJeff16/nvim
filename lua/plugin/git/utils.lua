@@ -8,15 +8,15 @@ return { ---@type LazySpec
     'nvim-telescope/telescope.nvim',
     'sindrets/diffview.nvim',
   },
-  cond = require('user_api.check.exists').executable('git'),
+  cond = require('user_api').check.executable('git'),
   config = function()
     require('nvim-git-utils').setup({
       log = { enabled = true, icon = '' },
       commit_input = { max_length = 72, format_message = nil, hints = true },
     })
 
-    local desc = require('user_api.maps').desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.desc
+    require('user_api').config.keymaps.set({
       n = {
         ['<leader>GcC'] = { vim.cmd.GitCommit, desc('Commit') },
         ['<leader>Gcc'] = { vim.cmd.GitAddCommit, desc('Add and commit') },

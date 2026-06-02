@@ -4,7 +4,7 @@ return { ---@type LazySpec
   dev = true,
   ft = { 'c', 'cpp' },
   version = false,
-  cond = require('user_api.check.exists').executable('clangd'),
+  cond = require('user_api').check.executable('clangd'),
   opts = {
     inlay_hints = { inline = true },
     ast = {

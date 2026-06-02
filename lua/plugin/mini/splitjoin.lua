@@ -14,11 +14,11 @@ return { ---@type LazySpec
       join = { hooks_pre = {}, hooks_post = {} },
     })
 
-    require('user_api.config.keymaps').set({ n = { ['<leader>ms'] = { group = '+Splitjoin' } } })
+    require('user_api').config.keymaps.set({ n = { ['<leader>ms'] = { group = '+Splitjoin' } } })
     vim.api.nvim_create_autocmd({ 'BufNew', 'BufAdd', 'BufEnter', 'BufCreate', 'WinEnter' }, {
       group = vim.api.nvim_create_augroup('UserMini', { clear = false }),
       callback = function(ev)
-        local ft = require('user_api.util').ft_get(ev.buf)
+        local ft = require('user_api').util.ft_get(ev.buf)
         local accepted = { 'lua' }
         if not vim.list_contains(accepted, ft) then
           return

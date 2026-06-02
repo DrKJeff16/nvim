@@ -3,7 +3,7 @@ return { ---@type LazySpec
   'kdheepak/lazygit.nvim',
   cmd = { 'LazyGit' },
   version = false,
-  cond = require('user_api.check.exists').executable({ 'git', 'lazygit' }),
+  cond = require('user_api').check.executable({ 'git', 'lazygit' }),
   config = function()
     local g_vars = {
       floating_window_winblend = 0,
@@ -26,8 +26,8 @@ return { ---@type LazySpec
       vim.g['lazygit_' .. k] = v
     end
 
-    local desc = require('user_api.maps').desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.desc
+    require('user_api').config.keymaps.set({
       n = {
         ['<leader>G'] = { group = '+Git' },
         ['<leader>Gl'] = { group = '+LazyGit' },
@@ -51,7 +51,7 @@ return { ---@type LazySpec
       pattern = '*',
       group = group,
       callback = function()
-        if require('user_api.util').ft_get() ~= 'lazygit' and not vim.v.event.status then
+        if require('user_api').util.ft_get() ~= 'lazygit' and not vim.v.event.status then
           vim.fn.execute('bdelete! ' .. vim.fn.expand('<abuf>'), 'silent!')
         end
       end,

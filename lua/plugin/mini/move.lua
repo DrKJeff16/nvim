@@ -4,7 +4,7 @@ return { ---@type LazySpec
   version = false,
   config = function()
     local mappings = function()
-      if require('user_api.check').in_console() then
+      if require('user_api').check.in_console() then
         return {
           left = '<S-Left>',
           right = '<S-Right>',

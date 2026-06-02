@@ -2,13 +2,13 @@
 return { ---@type LazySpec
   'lewis6991/gitsigns.nvim',
   version = false,
-  cond = require('user_api.check.exists').executable('git'),
+  cond = require('user_api').check.executable('git'),
   config = function()
     local GS = require('gitsigns')
     GS.setup({
       on_attach = function(bufnr) ---@param bufnr? integer
-        local desc = require('user_api.maps').desc
-        require('user_api.config.keymaps').set({
+        local desc = require('user_api').maps.desc
+        require('user_api').config.keymaps.set({
           n = {
             ['<leader>G'] = { group = '+Git' },
             ['<leader>Gh'] = { group = '+GitSigns Hunks' },

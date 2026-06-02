@@ -3,15 +3,15 @@ return { ---@type LazySpec
   'saghen/blink.nvim',
   lazy = false,
   version = false,
-  build = require('user_api.check').executable('cargo') and 'cargo build --release' or false,
+  build = require('user_api').check.executable('cargo') and 'cargo build --release' or false,
   config = function()
     require('blink').setup({
       chartoggle = { enabled = true },
       tree = { enabled = true },
     })
 
-    local desc = require('user_api.maps').desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.desc
+    require('user_api').config.keymaps.set({
       n = {
         ['<C-;>'] = {
           function()

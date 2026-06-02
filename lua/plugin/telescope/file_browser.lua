@@ -12,8 +12,8 @@ FileBrowser.file_browser = {
   auto_depth = true,
   select_buffer = false,
   hidden = { file_browser = false, folder_browser = false },
-  respect_gitignore = require('user_api.check.exists').executable('fd'),
-  use_fd = require('user_api.check.exists').executable('fd'),
+  respect_gitignore = require('user_api').check.executable('fd'),
+  use_fd = require('user_api').check.executable('fd'),
   display_stat = { date = true, size = true, mode = true },
   git_status = true,
   quiet = false,
@@ -65,17 +65,11 @@ FileBrowser.file_browser = {
 }
 
 function FileBrowser.loadkeys()
-  local desc = require('user_api.maps').desc
-  require('user_api.config.keymaps').set({
+  local desc = require('user_api').maps.desc
+  require('user_api').config.keymaps.set({
     n = {
-      ['<leader><C-T>eb'] = {
-        require('telescope').extensions.file_browser.file_browser,
-        desc('File Browser'),
-      },
-      ['<leader>ff'] = {
-        require('telescope').extensions.file_browser.file_browser,
-        desc('Telescope File Browser'),
-      },
+      ['<leader><C-T>eb'] = { require('telescope').extensions.file_browser.file_browser, desc('File Browser') },
+      ['<leader>ff'] = { require('telescope').extensions.file_browser.file_browser, desc('Telescope File Browser') },
     },
   })
 end

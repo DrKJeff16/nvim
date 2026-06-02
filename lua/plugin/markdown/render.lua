@@ -3,7 +3,7 @@
 return { ---@type LazySpec
   'MeanderingProgrammer/render-markdown.nvim',
   dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },
-  cond = not require('user_api.check').in_console(),
+  cond = not require('user_api').check.in_console(),
   opts = { ---@type render.md.UserConfig
     enabled = true,
     completions = { lsp = { enabled = true } },

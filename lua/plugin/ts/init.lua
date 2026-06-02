@@ -94,7 +94,7 @@ local patterns = { ---@type string[]
   'zsh',
 }
 
-if not require('user_api.distro.termux').is_distro() then
+if not require('user_api').distro.termux.is_distro() then
   table.insert(ensure_langs, 'desktop')
   table.insert(ensure_langs, 'gitcommit')
   table.insert(ensure_langs, 'latex')

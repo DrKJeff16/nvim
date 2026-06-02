@@ -17,8 +17,8 @@ return { ---@type LazySpec
       },
     })
 
-    local desc = require('user_api.maps').desc
-    require('user_api.config.keymaps').set({
+    local desc = require('user_api').maps.desc
+    require('user_api').config.keymaps.set({
       n = { ['<leader>gd'] = { IDiff.toggle, desc('Toggle Inline Diff') } },
     })
   end,
