@@ -63,3 +63,4 @@
 (extends_clause
   (generic_type
     (type_identifier) @name)) @reference.class
+
