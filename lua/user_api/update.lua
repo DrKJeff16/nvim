@@ -5,6 +5,14 @@ local INFO = vim.log.levels.INFO
 ---@class User.Update
 local M = {}
 
+function M.update_parsers()
+  if not require('user_api.check').executable('bash') then
+    return true
+  end
+
+  return vim.system({ 'bash', 'gen-parsers.sh' }, { cwd = vim.fn.stdpath('config') }):wait(900000).code == 0
+end
+
 ---@param verbose? boolean
 function M.update(verbose)
   require('user_api.check').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
@@ -12,13 +20,16 @@ function M.update(verbose)
     verbose = false
   end
 
-  local spinner = require('user_api.util.spinner').new('user', { kind = 'cursor' })
+  local spinner = require('user_api.util').spinner.new('user', { kind = 'cursor' })
   if spinner then
     spinner:start()
   end
 
   local command = { 'git', 'pull', '--rebase' }
   vim.system(command, { text = true, cwd = vim.fn.stdpath('config') }, function(obj)
+    if obj.code == 0 and not M.update_parsers() then
+      vim.notify('User API - Failed to update Tree-sitter parsers!', ERROR)
+    end
     if spinner then
       spinner:stop()
     end
@@ -70,7 +81,7 @@ end
 
 function M.setup()
   local desc = require('user_api.maps').desc
-  require('user_api.config.keymaps').set({
+  require('user_api.config').keymaps.set({
     n = {
       ['<leader>U'] = { group = '+User API' },
       ['<leader>Uu'] = { M.update, desc('Update User Config') },

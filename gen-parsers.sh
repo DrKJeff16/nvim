@@ -5,7 +5,9 @@
 
 set -o pipefail
 
-! [[ -f ./.gitmodules ]] && exit 1
+if ! [[ -f ./.gitmodules ]] && ! [[ -d ./.git ]]; then
+    exit 1
+fi
 
 TARGET_DIR=".tree-sitter.d"
 
@@ -16,7 +18,7 @@ fi
 git config -f .gitmodules --get-regexp '^submodule\..*\.path$' \
                                                            | while read -r PATH_KEY LOCAL_PATH; do
         [[ -d "${LOCAL_PATH}" ]] && continue
-        URL_KEY=$(echo "$PATH_KEY" | sed 's/\.path/.url/')
+        URL_KEY="${PATH_KEY//\.path/.url}"
         URL=$(git config -f .gitmodules --get "$URL_KEY")
         git submodule add "$URL" "$LOCAL_PATH"
     done

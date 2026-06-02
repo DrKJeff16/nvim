@@ -3,6 +3,7 @@
 ---@field cb function
 
 local validate = require('user_api.check').validate
+local exists = require('user_api.check').module
 
 ---@class User.Pickers.Entry
 ---@field mod string
@@ -25,11 +26,10 @@ function P:new(spec)
   })
 end
 
----@class User.Pickers
----@field pickers table<string, User.Pickers.Entry|function>
-local M = {}
+local pickers = {} ---@type table<string, User.Pickers.Entry|function>
 
-M.pickers = {}
+---@class User.Pickers
+local M = {}
 
 ---@param mod string
 ---@param name string
@@ -43,18 +43,18 @@ function M.new_picker(mod, name, spec)
     ['spec.cb'] = { spec.cb, { 'function' } },
   })
 
-  if not require('user_api.check').module(mod) then
+  if not exists(mod) then
     return
   end
 
-  M.pickers[name] = P:new(spec)
+  pickers[name] = P:new(spec)
 end
 
 function M.setup()
-  -- M.new_picker('telescope', 'telescope', {
-  --   mod = 'telescope._extensions.picker_list',
-  --   cb = require('telescope._extensions.picker_list').exports.picker_list,
-  -- })
+  M.new_picker('telescope', 'telescope', {
+    mod = 'telescope._extensions.picker_list',
+    cb = require('telescope._extensions.picker_list').exports.picker_list,
+  })
   M.new_picker('snacks', 'snacks.nvim', {
     mod = 'snacks.picker',
     cb = require('snacks.picker').pickers,
@@ -72,20 +72,19 @@ function M.setup()
 end
 
 function M.run()
-  local exists = require('user_api.check').module
-  for name, picker in ipairs(M.pickers) do
+  for name, picker in ipairs(pickers) do
     if not exists(picker.mod) then
-      M.pickers[name] = nil
+      pickers[name] = nil
     end
   end
 
-  local keys = vim.tbl_keys(M.pickers) ---@type string[]
+  local keys = vim.tbl_keys(pickers) --[[@as string[]\]]
   vim.ui.select(keys, { prompt = 'Select The Desired Picker' }, function(item) ---@param item string
     if not (item and vim.list_contains(keys, item)) then
       return
     end
 
-    pcall(M.pickers[item])
+    pcall(pickers[item])
   end)
 end
 
