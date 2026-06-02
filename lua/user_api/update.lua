@@ -5,12 +5,50 @@ local INFO = vim.log.levels.INFO
 ---@class User.Update
 local M = {}
 
-function M.update_parsers()
+---@param verbose? boolean
+function M.update_parsers(verbose)
+  require('user_api.check').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
   if not require('user_api.check').executable('bash') then
-    return true
+    return
   end
 
-  return vim.system({ 'bash', 'gen-parsers.sh' }, { cwd = vim.fn.stdpath('config') }):wait(900000).code == 0
+  local spinner = require('user_api.util').spinner.new('ts-parsers', { kind = 'cursor' })
+  if spinner then
+    spinner:start()
+  end
+
+  vim.system({ 'bash', 'gen-parsers.sh' }, { text = true, cwd = vim.fn.stdpath('config') }, function(obj)
+    if spinner then
+      spinner:stop()
+    end
+
+    if verbose and obj.stdout and obj.stdout ~= '' then
+      vim.notify(obj.stdout, INFO, {
+        animate = true,
+        hide_from_history = false,
+        timeout = 2250,
+        title = 'User API - Update',
+      })
+    end
+
+    if obj.code == 0 then
+      return
+    end
+    vim.notify('Failed to Tree-sitter parsers!', ERROR, {
+      animate = true,
+      hide_from_history = false,
+      timeout = 5000,
+      title = 'User API - Update',
+    })
+    if verbose and obj.stderr and obj.stderr ~= '' then
+      vim.notify(obj.stderr, WARN, {
+        animate = true,
+        hide_from_history = false,
+        timeout = 2250,
+        title = 'User API - Update',
+      })
+    end
+  end)
 end
 
 ---@param verbose? boolean
@@ -25,58 +63,60 @@ function M.update(verbose)
     spinner:start()
   end
 
-  local command = { 'git', 'pull', '--rebase' }
-  vim.system(command, { text = true, cwd = vim.fn.stdpath('config') }, function(obj)
-    if obj.code == 0 and not M.update_parsers() then
-      vim.notify('User API - Failed to update Tree-sitter parsers!', ERROR)
-    end
-    if spinner then
-      spinner:stop()
-    end
+  vim.system(
+    { 'git', 'pull', '--rebase', '--recurse-submodules' },
+    { text = true, cwd = vim.fn.stdpath('config') },
+    function(obj)
+      if spinner then
+        spinner:stop()
+      end
 
-    if verbose and obj.stdout and obj.stdout ~= '' then
-      vim.notify(obj.stdout, INFO, {
-        animate = true,
-        hide_from_history = false,
-        timeout = 2250,
-        title = 'User API - Update',
-      })
-    end
-
-    if obj.code ~= 0 then
-      vim.notify('Failed to update Jnvim, try to do it manually', ERROR, {
-        animate = true,
-        hide_from_history = false,
-        timeout = 5000,
-        title = 'User API - Update',
-      })
-      if verbose and obj.stderr and obj.stderr ~= '' then
-        vim.notify(obj.stderr, WARN, {
+      if verbose and obj.stdout and obj.stdout ~= '' then
+        vim.notify(obj.stdout, INFO, {
           animate = true,
           hide_from_history = false,
           timeout = 2250,
           title = 'User API - Update',
         })
       end
-      return
-    end
 
-    if obj.stdout and obj.stdout:match('Already up to date') then
-      vim.notify('Jnvim is up to date!', INFO, {
+      if obj.code ~= 0 then
+        vim.notify('Failed to update Jnvim, try to do it manually', ERROR, {
+          animate = true,
+          hide_from_history = false,
+          timeout = 5000,
+          title = 'User API - Update',
+        })
+        if verbose and obj.stderr and obj.stderr ~= '' then
+          vim.notify(obj.stderr, WARN, {
+            animate = true,
+            hide_from_history = false,
+            timeout = 2250,
+            title = 'User API - Update',
+          })
+        end
+        return
+      end
+
+      if obj.stdout and obj.stdout:match('Already up to date') then
+        vim.notify('Jnvim is up to date!', INFO, {
+          animate = true,
+          hide_from_history = true,
+          timeout = 1750,
+          title = 'User API - Update',
+        })
+        return
+      end
+      vim.notify('You need to restart Nvim!', WARN, {
         animate = true,
-        hide_from_history = true,
-        timeout = 1750,
+        hide_from_history = false,
+        timeout = 5000,
         title = 'User API - Update',
       })
-      return
     end
-    vim.notify('You need to restart Nvim!', WARN, {
-      animate = true,
-      hide_from_history = false,
-      timeout = 5000,
-      title = 'User API - Update',
-    })
-  end)
+  )
+
+  M.update_parsers(verbose)
 end
 
 function M.setup()
