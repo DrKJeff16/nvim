@@ -22,7 +22,6 @@
 ---@field co_author? LazySpecImport
 ---@field code_runner? LazySpecImport
 ---@field codedocs? LazySpecImport
----@field codeowners? LazySpecImport
 ---@field color_skimer? LazySpecImport
 ---@field colorizer? LazySpecImport
 ---@field colorschemes? LazySpecImport
@@ -74,6 +73,7 @@
 ---@field mini_diff? LazySpecImport
 ---@field mini_extra? LazySpecImport
 ---@field mini_icons? LazySpecImport
+---@field mini_input? LazySpecImport
 ---@field mini_mini? LazySpecImport
 ---@field mini_move? LazySpecImport
 ---@field mini_pairs? LazySpecImport
@@ -118,6 +118,8 @@
 ---@field snacks? LazySpecImport
 ---@field startuptime? LazySpecImport
 ---@field stylua? LazySpecImport
+---@field syntax_codeowners? LazySpecImport
+---@field syntax_gentoo? LazySpecImport
 ---@field telescope? LazySpecImport
 ---@field tmux? LazySpecImport
 ---@field todo_comments? LazySpecImport
@@ -161,7 +163,6 @@
 ---@field co_author? boolean
 ---@field code_runner? boolean
 ---@field codedocs? boolean
----@field codeowners? boolean
 ---@field color_skimer? boolean
 ---@field colorizer? boolean
 ---@field colorschemes? boolean
@@ -213,6 +214,7 @@
 ---@field mini_diff? boolean
 ---@field mini_extra? boolean
 ---@field mini_icons? boolean
+---@field mini_input? boolean
 ---@field mini_mini? boolean
 ---@field mini_move? boolean
 ---@field mini_pairs? boolean
@@ -257,6 +259,8 @@
 ---@field snacks? boolean
 ---@field startuptime? boolean
 ---@field stylua? boolean
+---@field syntax_codeowners? boolean
+---@field syntax_gentoo? boolean
 ---@field telescope? boolean
 ---@field tmux? boolean
 ---@field todo_comments? boolean

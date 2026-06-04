@@ -7,6 +7,78 @@ return { ---@type LazySpec
   config = function()
     local Snacks = require('snacks')
     Snacks.setup({
+      dashboard = {
+        enabled = true,
+        width = 60,
+        row = nil, -- dashboard position. nil for center
+        col = nil, -- dashboard position. nil for center
+        pane_gap = 4, -- empty columns between vertical panes
+        autokeys = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', -- autokey sequence
+        -- These settings are used by some built-in sections
+        preset = {
+          -- Defaults to a picker that supports `fzf-lua`, `telescope.nvim` and `mini.pick`
+          ---@type fun(cmd:string, opts:table)|nil
+          pick = nil,
+          -- Used by the `keys` section to show keymaps.
+          -- Set your custom keymaps here.
+          -- When using a function, the `items` argument are the default keymaps.
+          ---@type snacks.dashboard.Item[]
+          keys = {
+            { icon = ' ', key = 'f', desc = 'Find File', action = ":lua Snacks.dashboard.pick('files')" },
+            { icon = ' ', key = 'n', desc = 'New File', action = ':ene | startinsert' },
+            { icon = ' ', key = 'g', desc = 'Find Text', action = ":lua Snacks.dashboard.pick('live_grep')" },
+            { icon = ' ', key = 'r', desc = 'Recent Files', action = ":lua Snacks.dashboard.pick('oldfiles')" },
+            {
+              icon = ' ',
+              key = 'c',
+              desc = 'Config',
+              action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})",
+            },
+            { icon = ' ', key = 's', desc = 'Restore Session', section = 'session' },
+            { icon = '󰒲 ', key = 'L', desc = 'Lazy', action = ':Lazy', enabled = package.loaded.lazy ~= nil },
+            { icon = ' ', key = 'q', desc = 'Quit', action = ':qa' },
+          },
+          -- Used by the `header` section
+          header = [[
+███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗
+████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║
+██╔██╗ ██║█████╗  ██║   ██║██║   ██║██║██╔████╔██║
+██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║
+██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║
+╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝]],
+        },
+        -- item field formatters
+        formats = {
+          icon = function(item)
+            if item.file and item.icon == 'file' or item.icon == 'directory' then
+              return Snacks.dashboard.icon(item.file, item.icon)
+            end
+            return { item.icon, width = 2, hl = 'icon' }
+          end,
+          footer = { '%s', align = 'center' },
+          header = { '%s', align = 'center' },
+          file = function(item, ctx)
+            local fname = vim.fn.fnamemodify(item.file, ':~')
+            fname = ctx.width and #fname > ctx.width and vim.fn.pathshorten(fname) or fname
+            if #fname > ctx.width then
+              local width = ctx.width --[[@as integer]]
+              local dir = vim.fn.fnamemodify(fname, ':h') --[[@as string]]
+              local file = vim.fn.fnamemodify(fname, ':t')
+              if dir and file then
+                file = file:sub(-(width - dir:len() - 2))
+                fname = dir .. '/…' .. file
+              end
+            end
+            local dir, file = fname:match('^(.*)/(.+)$')
+            return dir and { { dir .. '/', hl = 'dir' }, { file, hl = 'file' } } or { { fname, hl = 'file' } }
+          end,
+        },
+        sections = {
+          { section = 'header' },
+          { section = 'keys', gap = 1, padding = 1 },
+          { section = 'startup' },
+        },
+      },
       statuscolumn = {
         left = { 'mark', 'sign' },
         enabled = true,
@@ -134,7 +206,7 @@ return { ---@type LazySpec
               ['<C-t>'] = { 'tab', mode = { 'n', 'i' } },
               ['<C-u>'] = { 'list_scroll_up', mode = { 'i', 'n' } },
               ['<C-v>'] = { 'edit_vsplit', mode = { 'i', 'n' } },
-              ['<C-w>'] = { '<c-s-w>', mode = { 'i' }, expr = true, desc = 'delete word' },
+              ['<C-w>'] = { '<C-s-w>', mode = { 'i' }, expr = true, desc = 'delete word' },
               ['<C-w>H'] = 'layout_left',
               ['<C-w>J'] = 'layout_bottom',
               ['<C-w>K'] = 'layout_top',
@@ -302,6 +374,33 @@ return { ---@type LazySpec
           footer_keys = true,
           border = true,
         },
+        input = {
+          backdrop = true,
+          position = 'float',
+          border = true,
+          title_pos = 'center',
+          height = 1,
+          width = 60,
+          relative = 'editor',
+          noautocmd = true,
+          row = 2,
+          wo = {
+            winhighlight = 'NormalFloat:SnacksInputNormal,FloatBorder:SnacksInputBorder,FloatTitle:SnacksInputTitle',
+            cursorline = false,
+          },
+          bo = { filetype = 'snacks_input', buftype = 'prompt' },
+          b = { completion = false },
+          keys = {
+            n_esc = { '<Esc>', { 'cmp_close', 'cancel' }, mode = 'n', expr = true },
+            i_esc = { '<Esc>', { 'cmp_close', 'stopinsert' }, mode = 'i', expr = true },
+            i_cr = { '<CR>', { 'cmp_accept', 'confirm' }, mode = { 'i', 'n' }, expr = true },
+            i_tab = { '<Tab>', { 'cmp_select_next', 'cmp' }, mode = 'i', expr = true },
+            i_ctrl_w = { '<C-w>', '<C-s-w>', mode = 'i', expr = true },
+            i_up = { '<Up>', { 'hist_up' }, mode = { 'i', 'n' } },
+            i_down = { '<Down>', { 'hist_down' }, mode = { 'i', 'n' } },
+            q = 'cancel',
+          },
+        },
         notification = {
           border = true,
           zindex = 100,
@@ -311,7 +410,15 @@ return { ---@type LazySpec
         },
       },
       gh = {},
-      input = { enabled = true },
+      input = {
+        enable = true,
+        icon = ' ',
+        icon_hl = 'SnacksInputIcon',
+        icon_pos = 'left',
+        prompt_pos = 'title',
+        win = { style = 'input' },
+        expand = true,
+      },
       layout = { enabled = true },
       notify = { enabled = true },
     })

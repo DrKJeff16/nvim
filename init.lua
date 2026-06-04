@@ -85,7 +85,6 @@ User.opts.setup({
 User.disable_netrw()
 
 Config.lazy.setup({
-  { 'https://github.com/gentoo/gentoo-syntax' },
   Comment = true,
   alpha = false,
   autopairs = false,
@@ -105,7 +104,6 @@ Config.lazy.setup({
   co_author = true,
   code_runner = false,
   codedocs = true,
-  codeowners = true,
   color_skimer = false,
   colorizer = true,
   conform = true,
@@ -196,6 +194,8 @@ Config.lazy.setup({
   snacks = true,
   startuptime = true,
   stylua = false,
+  syntax_codeowners = true,
+  syntax_gentoo = true,
   telescope = true,
   todo_comments = true,
   toggleterm = true,
