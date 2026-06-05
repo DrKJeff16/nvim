@@ -3,12 +3,21 @@ return { ---@type LazySpec
   'nvim-neorg/neorg',
   lazy = false,
   version = false,
+  build = not require('user_api').check.executable('luarocks') and false or function()
+    for _, pkg in ipairs({
+      'luarocks-build-treesitter-parser',
+      'luarocks-build-treesitter-parser-cpp',
+      'tree-sitter-norg',
+      'tree-sitter-norg-meta',
+    }) do
+      vim.system({ 'luarocks', 'install', '--local', pkg }):wait(60000)
+    end
+  end,
   dependencies = { 'nvim-neorg/lua-utils.nvim', '3rd/image.nvim' },
   config = function()
     require('neorg').setup({
       load = {
         ['core.autocommands'] = {},
-        ['core.completion'] = { config = { engine = 'nvim-cmp' } },
         ['core.concealer'] = {},
         ['core.defaults'] = {},
         ['core.dirman'] = {},
