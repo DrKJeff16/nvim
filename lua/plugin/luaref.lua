@@ -1,6 +1,7 @@
 ---@module 'lazy'
 return { ---@type LazySpec
-  'emiasims/nvim-luaref',
+  'DrKJeff16/nvim-luaref',
+  dev = true,
   lazy = false,
   version = false,
 }
