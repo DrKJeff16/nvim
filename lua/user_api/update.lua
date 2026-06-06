@@ -136,8 +136,36 @@ function M.setup()
   })
 
   vim.api.nvim_create_user_command('UserUpdate', function(ctx)
-    M.update(ctx.bang)
-  end, { bang = true, desc = 'Update Jnvim' })
+    if vim.tbl_isempty(ctx.fargs) then
+      M.update(ctx.bang)
+      return
+    end
+    if ctx.fargs[1] ~= 'parsers' then
+      vim.notify(('User API - Invalid subcommand `%s`'):format(ctx.fargs[1]), WARN)
+      return
+    end
+
+    M.update_parsers(ctx.bang)
+  end, {
+    bang = true,
+    nargs = '*',
+    complete = function(_, line)
+      local args = vim.split(line, '%s+', { trimempty = false })
+      if (args[1]:sub(-1, -1) == '!' and #args == 1) or #args > 2 then
+        return {}
+      end
+
+      local items = { 'parsers' } ---@type string[]
+      for _, item in ipairs(items) do
+        if vim.startswith(item, args[2]) then
+          return { item }
+        end
+      end
+
+      return {}
+    end,
+    desc = 'Update Jnvim',
+  })
 end
 
 return M
