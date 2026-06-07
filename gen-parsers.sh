@@ -11,11 +11,9 @@ fi
 
 TARGET_DIR=".tree-sitter.d"
 
-if ! [[ -d ./"${TARGET_DIR}" ]]; then
-    mkdir -p ./"${TARGET_DIR}"
-fi
+! [[ -d ./"${TARGET_DIR}" ]] && mkdir -p ./"${TARGET_DIR}"
 
-git config -f .gitmodules --get-regexp '^submodule\..*\.path$' \
+git config -f ./.gitmodules --get-regexp '^submodule\..*\.path$' \
                                                            | while read -r PATH_KEY LOCAL_PATH; do
         [[ -d "${LOCAL_PATH}" ]] && continue
         URL_KEY="${PATH_KEY//\.path/.url}"
@@ -32,7 +30,6 @@ for F in ./"$TARGET_DIR"/*; do
     pushd "$F" || exit 1
 
     tree-sitter generate &> /dev/null || true
-
     if tree-sitter build -o "${PARSER}.so" &> /dev/null; then
         mv "${PARSER}.so" ../../parser
 
