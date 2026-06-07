@@ -1,6 +1,7 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'VonHeikemen/ts-enable.nvim',
+  lazy = false,
   version = false,
   config = function()
     vim.g.ts_enable = {
