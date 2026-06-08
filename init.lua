@@ -115,6 +115,7 @@ Config.lazy.setup({
   doxygen_previewer = true,
   drop = true,
   echo = false,
+  flash = false,
   fff = false,
   focus = true,
   fzf_lua = true,

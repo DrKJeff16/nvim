@@ -1,6 +1,6 @@
 ---@module 'user_api.maps._meta'
 
-local MODES = { 'n', 'i', 'v', 't', 'o', 'x' }
+local MODES = { 'n', 'i', 'v', 't', 'o', 'x', 'c' }
 local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
 local in_list = vim.list_contains

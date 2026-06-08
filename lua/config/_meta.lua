@@ -32,6 +32,7 @@
 ---@field doxygen_previewer? LazySpecImport
 ---@field drop? LazySpecImport
 ---@field echo? LazySpecImport
+---@field flash? LazySpecImport
 ---@field fff? LazySpecImport
 ---@field focus? LazySpecImport
 ---@field fzf_lua? LazySpecImport
@@ -117,6 +118,7 @@
 ---@field smoothcursor? LazySpecImport
 ---@field snacks? LazySpecImport
 ---@field startuptime? LazySpecImport
+---@field styler? LazySpecImport
 ---@field stylua? LazySpecImport
 ---@field syntax_codeowners? LazySpecImport
 ---@field syntax_gentoo? LazySpecImport
@@ -173,6 +175,7 @@
 ---@field doxygen_previewer? boolean
 ---@field drop? boolean
 ---@field echo? boolean
+---@field flash? boolean
 ---@field fff? boolean
 ---@field focus? boolean
 ---@field fzf_lua? boolean
@@ -258,6 +261,7 @@
 ---@field smoothcursor? boolean
 ---@field snacks? boolean
 ---@field startuptime? boolean
+---@field styler? boolean
 ---@field stylua? boolean
 ---@field syntax_codeowners? boolean
 ---@field syntax_gentoo? boolean
