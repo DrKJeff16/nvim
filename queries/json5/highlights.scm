@@ -1,15 +1,11 @@
-[
-  (true)
-  (false)
-] @boolean
-
-(null) @constant
-
 (string) @string
 
-(number) @number
+(identifier) @constant
 
-(comment) @comment @spell
+(number) @constant.numeric
 
-(member
-  name: (_) @keyword)
+(null) @constant.builtin
+
+[(true) (false)] @constant.builtin.boolean
+
+(comment) @comment

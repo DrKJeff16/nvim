@@ -43,21 +43,39 @@
 [submodule ".tree-sitter.d/doxygen"]
     path = .tree-sitter.d/doxygen
     url = https://github.com/tree-sitter-grammars/tree-sitter-doxygen
+[submodule ".tree-sitter.d/editorconfig"]
+	path = .tree-sitter.d/editorconfig
+	url = https://github.com/ValdezFOmar/tree-sitter-editorconfig
 [submodule ".tree-sitter.d/elixir"]
 	path = .tree-sitter.d/elixir
 	url = https://github.com/elixir-lang/tree-sitter-elixir
 [submodule ".tree-sitter.d/elm"]
 	path = .tree-sitter.d/elm
 	url = https://github.com/elm-tooling/tree-sitter-elm
+[submodule ".tree-sitter.d/fennel"]
+	path = .tree-sitter.d/fennel
+	url = https://github.com/alexmozaidze/tree-sitter-fennel
 [submodule ".tree-sitter.d/fsharp"]
 	path = .tree-sitter.d/fsharp
 	url = https://github.com/ionide/tree-sitter-fsharp
 [submodule ".tree-sitter.d/gdscript"]
 	path = .tree-sitter.d/gdscript
 	url = https://github.com/PrestonKnopp/tree-sitter-gdscript
+[submodule ".tree-sitter.d/git_config"]
+	path = .tree-sitter.d/git_config
+	url = https://github.com/the-mikedavis/tree-sitter-git-config
+[submodule ".tree-sitter.d/git_rebase"]
+	path = .tree-sitter.d/git_rebase
+	url = https://github.com/the-mikedavis/tree-sitter-git-rebase
 [submodule ".tree-sitter.d/gitattributes"]
     path = .tree-sitter.d/gitattributes
     url = https://github.com/tree-sitter-grammars/tree-sitter-gitattributes
+[submodule ".tree-sitter.d/gitcommit"]
+	path = .tree-sitter.d/gitcommit
+	url = https://github.com/gbprod/tree-sitter-gitcommit
+[submodule ".tree-sitter.d/gitignore"]
+	path = .tree-sitter.d/gitignore
+	url = https://github.com/shunsambongi/tree-sitter-gitignore
 [submodule ".tree-sitter.d/gleam"]
 	path = .tree-sitter.d/gleam
 	url = https://github.com/gleam-lang/tree-sitter-gleam
@@ -85,6 +103,9 @@
 [submodule ".tree-sitter.d/json"]
 	path = .tree-sitter.d/json
 	url = https://github.com/tree-sitter/tree-sitter-json
+[submodule ".tree-sitter.d/json5"]
+	path = .tree-sitter.d/json5
+	url = https://github.com/Joakker/tree-sitter-json5
 [submodule ".tree-sitter.d/julia"]
     path = .tree-sitter.d/julia
     url = https://github.com/tree-sitter/tree-sitter-julia
@@ -124,6 +145,9 @@
 [submodule ".tree-sitter.d/php"]
 	path = .tree-sitter.d/php
 	url = https://github.com/tree-sitter/tree-sitter-php
+[submodule ".tree-sitter.d/powershell"]
+	path = .tree-sitter.d/powershell
+	url = https://github.com/airbus-cert/tree-sitter-powershell
 [submodule ".tree-sitter.d/printf"]
     path = .tree-sitter.d/printf
     url = https://github.com/tree-sitter-grammars/tree-sitter-printf

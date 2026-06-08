@@ -4,11 +4,15 @@ return { ---@type LazySpec
   dev = true,
   version = false,
   config = function()
-    require('project').setup({
+    local Project = require('project')
+    Project.setup({
       custom_projects = {
-        { path = vim.fn.expand('~/Documents'), name = 'Documents' },
-        { path = vim.fn.expand('~/.bin'), name = 'Custom Scripts' },
-        { path = vim.fn.expand('~/.env.d') },
+        { path = Project.util.strip_slash('~/Documents'), name = 'Documents' },
+        { path = Project.util.strip_slash('~/.bin'), name = 'Custom Scripts' },
+        { path = Project.util.strip_slash('~/.env.d') },
+        { path = Project.util.strip_slash('~/.config/bat'), name = 'bat Config' },
+        { path = Project.util.strip_slash('~/.config/fastfetch'), name = 'fastfetch Config' },
+        { path = Project.util.strip_slash('~/.config/ghostty'), name = 'ghostty Config' },
       },
       log = { enabled = true, logpath = vim.fn.stdpath('state'), max_size = 0.5 },
       snacks = { enabled = true, opts = { sort = 'newest', show = 'names' } },
@@ -16,7 +20,7 @@ return { ---@type LazySpec
       telescope = { prefer_file_browser = true, sort = 'newest', tilde = true },
       fzf_lua = { enabled = true, sort = 'newest', show = 'names' },
       picker = { enabled = true, sort = 'newest', show = 'names' },
-      lsp = { enabled = true },
+      lsp = { enabled = true, use_pattern_matching = true },
       scope_chdir = 'tab',
       show_by_name = true,
       enable_autochdir = false,
@@ -26,9 +30,7 @@ return { ---@type LazySpec
       show_hidden = false,
       silent_chdir = true,
       exclude_dirs = {
-        '/tmp',
         '/tmp/*',
-        '/usr',
         '/usr/*',
         '~/.build/*',
         '~/.cache/*',
@@ -39,6 +41,7 @@ return { ---@type LazySpec
         '~/.luarocks/*',
         '~/.rustup/*',
         '~/.ssh/*',
+        '~/.steam/*',
         '~/.tmux/*',
         '~/.wine64/*',
         '~/Desktop/*',
