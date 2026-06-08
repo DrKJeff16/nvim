@@ -169,6 +169,9 @@
 [submodule ".tree-sitter.d/requirements"]
     path = .tree-sitter.d/requirements
     url = https://github.com/tree-sitter-grammars/tree-sitter-requirements
+[submodule ".tree-sitter.d/rst"]
+	path = .tree-sitter.d/rst
+	url = https://github.com/stsewd/tree-sitter-rst
 [submodule ".tree-sitter.d/ruby"]
 	path = .tree-sitter.d/ruby
 	url = https://github.com/tree-sitter/tree-sitter-ruby
@@ -187,6 +190,12 @@
 [submodule ".tree-sitter.d/templ"]
 	path = .tree-sitter.d/templ
 	url = https://github.com/vrischmann/tree-sitter-templ
+[submodule ".tree-sitter.d/tmux"]
+	path = .tree-sitter.d/tmux
+	url = https://github.com/Freed-Wu/tree-sitter-tmux
+[submodule ".tree-sitter.d/todotxt"]
+	path = .tree-sitter.d/todotxt
+	url = https://github.com/arnarg/tree-sitter-todotxt
 [submodule ".tree-sitter.d/toml"]
     path = .tree-sitter.d/toml
     url = https://github.com/tree-sitter-grammars/tree-sitter-toml
@@ -205,6 +214,9 @@
 [submodule ".tree-sitter.d/yaml"]
     path = .tree-sitter.d/yaml
     url = https://github.com/ikatyang/tree-sitter-yaml
+[submodule ".tree-sitter.d/zathurarc"]
+	path = .tree-sitter.d/zathurarc
+	url = https://github.com/Freed-Wu/tree-sitter-zathurarc
 [submodule ".tree-sitter.d/zig"]
     path = .tree-sitter.d/zig
     url = https://github.com/tree-sitter-grammars/tree-sitter-zig
