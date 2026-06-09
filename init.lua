@@ -228,7 +228,7 @@ Config.lazy.setup({
 })
 
 User.config.keymaps.set({
-  n = { ['<C-/>'] = { 'silent! :normal gcc<CR><Up>', desc('Toggle Comment') } },
+  n = { ['<C-/>'] = { ':silent! normal gcc<CR><Up>', desc('Toggle Comment') } },
   v = { ['<C-/>'] = { ":'<,'>normal gcc<CR><Up>", desc('Toggle Comment') } },
 }, nil, true)
 
