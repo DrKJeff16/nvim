@@ -2,8 +2,8 @@
 /lazy-lock.json
 
 # Tree-sitter
-# /queries/
-# /parser/
+/queries/
+/parser/
 /treesitter-parsers.json
 
 # Fallback Init (for bug reporting)

@@ -11,6 +11,7 @@ fi
 
 TARGET_DIR=".tree-sitter.d"
 
+! [[ -d ./queries ]] && mkdir -p queries
 ! [[ -d ./"${TARGET_DIR}" ]] && mkdir -p ./"${TARGET_DIR}"
 
 git config -f ./.gitmodules --get-regexp '^submodule\..*\.path$' \
