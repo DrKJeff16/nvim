@@ -258,6 +258,7 @@ Config.colorschemes('tokyonight')
 
 if vim.fn.has('nvim-0.11') == 1 then
   vim.cmd.packadd('nohlsearch')
+  vim.cmd.packadd('nvim.difftool')
 end
 
 if vim.fn.has('nvim-0.12') == 1 then
