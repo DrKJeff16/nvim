@@ -7,12 +7,7 @@ local function print_workspace_folders()
   for _, v in ipairs(vim.lsp.buf.list_workspace_folders()) do
     msg = ('%s\n - %s'):format(msg, v)
   end
-  vim.notify(msg, INFO, {
-    title = 'LSP',
-    animate = true,
-    hide_from_history = false,
-    timeout = 5000,
-  })
+  vim.notify(msg, INFO, { title = 'LSP', animate = true, hide_from_history = false, timeout = 5000 })
 end
 
 ---@return vim.lsp.Client|nil client
@@ -76,11 +71,11 @@ local function server_info()
 end
 
 ---@class Lsp.SubMods.Autocmd
+---@field autocommands AuRepeat
 local M = {}
 
 local Keys = { ---@type AllModeMaps
   n = {
-    K = { vim.lsp.buf.hover, desc('Hover') },
     ['<leader>lS'] = { group = '+Server' },
     ['<leader>lf'] = { group = '+File Operations' },
     ['<leader>lw'] = { group = '+Workspace' },
@@ -106,8 +101,23 @@ local Keys = { ---@type AllModeMaps
   v = { ['<leader>lc'] = { vim.lsp.buf.code_action, desc('LSP Code Action') } },
 }
 
----@type AuRepeat
 M.autocommands = {
+  LspAttach = {
+    group = vim.api.nvim_create_augroup('UserLsp', { clear = false }),
+    callback = function(ev)
+      local client = vim.lsp.get_client_by_id(ev.data.client_id)
+      if not client then
+        return
+      end
+
+      if client:supports_method('textDocument/hover', ev.buf) then
+        require('user_api').config.keymaps.set(
+          { n = { K = { vim.lsp.buf.hover, desc('Hover', { buf = ev.buf }) } } },
+          ev.buf
+        )
+      end
+    end,
+  },
   LspProgress = {
     {
       group = vim.api.nvim_create_augroup('UserLsp', { clear = false }),
