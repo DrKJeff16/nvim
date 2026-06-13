@@ -7,7 +7,7 @@ local ft_get = require('user_api').util.ft_get
 local executable = require('user_api').check.executable
 
 ---@param idx integer
----@return fun(cmp: blink.cmp.API): boolean|nil
+---@return fun(cmp: blink.cmp.API): result: boolean|nil
 local function accept_nth(idx)
   validate({ idx = { idx, { 'number' } } })
   if not require('user_api').check.is_int(idx) then
@@ -20,17 +20,17 @@ local function accept_nth(idx)
 end
 
 ---@class BUtil
----@field Sources string[]
 ---@field Providers table<string, blink.cmp.SourceProviderConfigPartial>
+---@field Sources string[]
 ---@field curr_ft string
 local BUtil = {}
 
-BUtil.Sources = {}
 BUtil.Providers = {}
+BUtil.Sources = {}
 BUtil.curr_ft = ''
 
 function BUtil.reset_sources()
-  BUtil.Sources = { 'lazydev', 'lsp', 'path', 'buffer' } --[[@as string[]\]]
+  BUtil.Sources = { 'lazydev', 'lsp', 'path', 'buffer', 'snippets' } --[[@as string[]\]]
 
   local ft = ft_get(vim.api.nvim_get_current_buf())
   if ft == 'sshconfig' then
@@ -60,6 +60,11 @@ end
 function BUtil.reset_providers()
   BUtil.Providers = {
     cmdline = { module = 'blink.cmp.sources.cmdline' },
+    snippets = {
+      score_offset = -75,
+      module = 'blink.cmp.sources.snippets',
+      opts = { friendly_snippets = true },
+    },
     buffer = {
       score_offset = -70,
       max_items = 5,
@@ -118,7 +123,7 @@ function BUtil.reset_providers()
       opts = {
         trailing_slash = false,
         label_trailing_slash = true,
-        ignore_root_slash = false,
+        ignore_root_slash = true,
         show_hidden_files_by_default = true,
         get_cwd = function()
           return vim.fn.getcwd()
@@ -126,16 +131,7 @@ function BUtil.reset_providers()
       },
     },
     lazydev = { name = 'LazyDev', module = 'lazydev.integrations.blink', score_offset = 100 },
-    lsp = {
-      name = 'LSP',
-      module = 'blink.cmp.sources.lsp',
-      score_offset = 70,
-      transform_items = function(_, items)
-        return vim.tbl_filter(function(value)
-          return value.kind ~= require('blink.cmp.types').CompletionItemKind.Keyword
-        end, items)
-      end,
-    },
+    lsp = { name = 'LSP', module = 'blink.cmp.sources.lsp', score_offset = 80 },
   }
 
   if exists('css-vars.blink') then
@@ -182,7 +178,7 @@ function BUtil.reset_providers()
   end
 end
 
----@param P table<string, blink.cmp.SourceProviderConfigPartial>|nil
+---@param P? table<string, blink.cmp.SourceProviderConfigPartial>
 ---@return table<string, blink.cmp.SourceProviderConfigPartial> providers
 function BUtil.gen_providers(P)
   validate({ P = { P, { 'table', 'nil' }, true } })
@@ -200,6 +196,7 @@ return { ---@type LazySpec
     'saghen/blink.lib',
     'onsails/lspkind.nvim',
     'folke/lazydev.nvim',
+    'rafamadriz/friendly-snippets',
     'jdrupal-dev/css-vars.nvim',
     'Kaiser-Yang/blink-cmp-git',
     'disrupted/blink-cmp-conventional-commits',
@@ -207,7 +204,7 @@ return { ---@type LazySpec
     { 'bydlw98/blink-cmp-sshconfig', build = executable('uv') and 'make' or false, version = false },
   },
   build = function()
-    require('blink.cmp').build():pwait(60000)
+    require('blink.cmp').build():pwait()
   end,
   config = function()
     require('blink.cmp').setup({
@@ -226,14 +223,58 @@ return { ---@type LazySpec
         ['<A-7>'] = { accept_nth(7), 'fallback' },
         ['<A-8>'] = { accept_nth(8), 'fallback' },
         ['<A-9>'] = { accept_nth(9), 'fallback' },
-        ['<C-Space>'] = { 'show', 'hide', 'fallback' },
+        ['<C-Space>'] = {
+          function(cmp)
+            if cmp.is_visible() then
+              return cmp.hide()
+            end
+            return cmp.show({ providers = BUtil.gen_sources() })
+          end,
+          'fallback',
+        },
         ['<C-b>'] = { 'scroll_documentation_up', 'fallback' },
         ['<C-e>'] = { 'cancel', 'fallback' },
         ['<C-f>'] = { 'scroll_documentation_down', 'fallback' },
         ['<C-k>'] = { 'show_signature', 'hide_signature', 'fallback' },
-        ['<CR>'] = { 'accept', 'fallback' },
-        ['<S-Tab>'] = { 'accept', 'select_prev', 'fallback' },
-        ['<Tab>'] = { 'accept', 'select_next', 'fallback' },
+        ['<CR>'] = {
+          function(cmp)
+            if cmp.is_active() then
+              return cmp.accept()
+            end
+            return false
+          end,
+          'fallback',
+        },
+        ['<S-Tab>'] = {
+          function(cmp)
+            if cmp.snippet_active() then
+              return cmp.snippet_backward()
+            end
+            if not cmp.is_menu_visible() and require('user_api').util.has_words_before() then
+              return cmp.show({ providers = BUtil.gen_sources() })
+            end
+            if cmp.is_menu_visible() then
+              return cmp.select_prev()
+            end
+            return false
+          end,
+          'fallback',
+        },
+        ['<Tab>'] = {
+          function(cmp)
+            if cmp.snippet_active() then
+              return cmp.snippet_forward()
+            end
+            if not cmp.is_menu_visible() and require('user_api').util.has_words_before() then
+              return cmp.show({ providers = BUtil.gen_sources() })
+            end
+            if cmp.is_menu_visible() then
+              return cmp.select_next()
+            end
+            return false
+          end,
+          'fallback',
+        },
         ['<C-n>'] = false,
         ['<C-p>'] = false,
         ['<Down>'] = false,

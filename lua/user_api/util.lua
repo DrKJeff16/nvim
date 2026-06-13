@@ -171,7 +171,7 @@ end
 function M.has_words_before()
   local col = vim.api.nvim_win_get_cursor(vim.api.nvim_get_current_win())[2]
   if col == 0 then
-    return true
+    return false
   end
   return vim.api.nvim_get_current_line():sub(col, col):match('%s') == nil
 end

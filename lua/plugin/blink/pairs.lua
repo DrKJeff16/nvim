@@ -5,7 +5,7 @@ return { ---@type LazySpec
   version = false,
   dependencies = { 'saghen/blink.lib' },
   build = function()
-    require('blink.pairs').build():pwait(60000)
+    require('blink.pairs').build({ force = true }):pwait(60000)
   end,
   config = function()
     require('blink.pairs').setup({
