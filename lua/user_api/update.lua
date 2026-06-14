@@ -17,7 +17,7 @@ function M.update_parsers(verbose)
     spinner:start()
   end
 
-  vim.system({ 'bash', 'gen-parsers.sh' }, { text = true, cwd = vim.fn.stdpath('config') }, function(obj)
+  vim.system({ 'bash', 'scripts/gen-parsers.sh' }, { text = true, cwd = vim.fn.stdpath('config') }, function(obj)
     if spinner then
       spinner:stop()
     end
