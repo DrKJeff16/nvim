@@ -38,6 +38,7 @@ local M = {
   docker_compose_language_service = server_load('docker_compose_language_service', 'docker-compose-langserver'),
   docker_language_server = server_load('docker_language_server', 'docker-language-server'),
   dockerls = server_load('dockerls', 'docker-langserver'),
+  eslint = server_load('eslint', 'eslint-language-server'),
   gh_actions_ls = server_load('gh_actions_ls', 'gh-action-language-server'),
   html = server_load('html', 'vscode-html-language-server'),
   hyprls = server_load('hyprls'),
