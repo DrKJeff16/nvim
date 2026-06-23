@@ -172,7 +172,6 @@ Config.lazy.setup({
   neorg = false,
   noice = true,
   notify = true,
-  nvim_file_operations = true,
   nvim_test = false,
   nvim_tree = false,
   oil = true,

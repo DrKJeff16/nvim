@@ -9,10 +9,10 @@ return { ---@type LazySpec
     'nvim-tree/nvim-web-devicons',
     'saifulapm/neotree-file-nesting-config',
     {
-      'DrKJeff16/nvim-lsp-file-operations',
+      'Crysthamus/nvim-file-operations',
       dev = true,
       config = function()
-        require('lsp-file-operations').setup()
+        require('nvim-file-operations').setup()
       end,
     },
     { 'mrbjarksen/neo-tree-diagnostics.nvim', main = 'neo-tree.sources.diagnostics' },
@@ -122,6 +122,7 @@ return { ---@type LazySpec
           expander_highlight = 'NeoTreeExpander',
         },
         icon = {
+          selected = '*',
           use_filtered_colors = true,
           folder_closed = '',
           folder_open = '',
@@ -188,14 +189,7 @@ return { ---@type LazySpec
           end,
           ['<CR>'] = 'open',
           ['<Esc>'] = 'cancel',
-          P = {
-            'toggle_preview',
-            config = {
-              use_float = true,
-              use_snacks_image = false,
-              use_image_nvim = false,
-            },
-          },
+          P = { 'toggle_preview', config = { use_float = true, use_snacks_image = false, use_image_nvim = false } },
           l = 'focus_preview',
           S = 'open_split',
           s = 'open_vsplit',
@@ -254,18 +248,13 @@ return { ---@type LazySpec
             ['.'] = 'set_root',
             H = 'toggle_hidden',
             ['/'] = 'fuzzy_finder',
-            ---@type 'fuzzy_sorter_directory'|'fuzzy_finder_directory'
-            D = 'fuzzy_finder_directory',
+            D = 'fuzzy_finder_directory', ---@type 'fuzzy_sorter_directory'|'fuzzy_finder_directory'
             ['#'] = 'fuzzy_sorter',
             f = 'filter_on_submit',
             ['<c-x>'] = 'clear_filter',
             ['[g'] = 'prev_git_modified',
             [']g'] = 'next_git_modified',
-            o = {
-              'show_help',
-              nowait = false,
-              config = { title = 'Order by', prefix_key = 'o' },
-            },
+            o = { 'show_help', nowait = false, config = { title = 'Order by', prefix_key = 'o' } },
             oc = { 'order_by_created', nowait = false },
             od = { 'order_by_diagnostics', nowait = false },
             og = { 'order_by_git_status', nowait = false },
@@ -306,11 +295,7 @@ return { ---@type LazySpec
             bd = 'buffer_delete',
             ['<BS>'] = 'navigate_up',
             ['.'] = 'set_root',
-            o = {
-              'show_help',
-              nowait = false,
-              config = { title = 'Order by', prefix_key = 'o' },
-            },
+            o = { 'show_help', nowait = false, config = { title = 'Order by', prefix_key = 'o' } },
             oc = { 'order_by_created', nowait = false },
             od = { 'order_by_diagnostics', nowait = false },
             om = { 'order_by_modified', nowait = false },
@@ -332,11 +317,7 @@ return { ---@type LazySpec
             gc = 'git_commit',
             gp = 'git_push',
             gg = 'git_commit_and_push',
-            o = {
-              'show_help',
-              nowait = false,
-              config = { title = 'Order by', prefix_key = 'o' },
-            },
+            o = { 'show_help', nowait = false, config = { title = 'Order by', prefix_key = 'o' } },
             oc = { 'order_by_created', nowait = false },
             od = { 'order_by_diagnostics', nowait = false },
             om = { 'order_by_modified', nowait = false },
@@ -352,47 +333,76 @@ return { ---@type LazySpec
     require('user_api').config.keymaps.set({
       n = {
         ['<leader>ft'] = { group = '+NeoTree' },
-        ['<leader>ftd'] = { ':Neotree close<CR>', desc('Close Neo Tree') },
-        ['<leader>ftb'] = { ':Neotree buffers toggle<CR>', desc('Neo Tree Open Buffers') },
-        ['<leader>ftf'] = { ':Neotree focus<CR>', desc('Focus Neo Tree') },
+        ['<leader>ftd'] = {
+          function()
+            vim.cmd.Neotree('close')
+          end,
+          desc('Close Neo Tree'),
+        },
+        ['<leader>ftb'] = {
+          function()
+            vim.cmd.Neotree({ args = { 'buffers', 'toggle' } })
+          end,
+          desc('Neo Tree Open Buffers'),
+        },
+        ['<leader>ftf'] = {
+          function()
+            vim.cmd.Neotree('focus')
+          end,
+          desc('Focus Neo Tree'),
+        },
         ['<leader>fto'] = {
-          ':Neotree filesystem show reveal_force_cwd<CR>',
+          function()
+            vim.cmd.Neotree({ args = { 'filesystem', 'show', 'reveal_force_cwd' } })
+          end,
           desc('Show Neo Tree'),
         },
         ['<leader>ftt'] = {
-          ':Neotree filesystem toggle reveal_force_cwd<CR>',
+          function()
+            vim.cmd.Neotree({ args = { 'filesystem', 'toggle', 'reveal_force_cwd' } })
+          end,
           desc('Toggle Neo Tree'),
         },
         ['<leader>ft<Up>'] = {
-          ':Neotree filesystem top reveal_force_cwd<CR>',
+          function()
+            vim.cmd.Neotree({ args = { 'filesystem', 'top', 'reveal_force_cwd' } })
+          end,
           desc('Open Neo Tree At The Top'),
         },
         ['<leader>ft<Down>'] = {
-          ':Neotree filesystem bottom reveal_force_cwd<CR>',
+          function()
+            vim.cmd.Neotree({ args = { 'filesystem', 'bottom', 'reveal_force_cwd' } })
+          end,
           desc('Open Neo Tree At The Bottom'),
         },
         ['<leader>ft<Left>'] = {
+          function()
+            vim.cmd.Neotree({ args = { 'filesystem', 'left', 'reveal_force_cwd' } })
+          end,
           ':Neotree filesystem left reveal_force_cwd<CR>',
           desc('Open Neo Tree To The Left'),
         },
         ['<leader>ft<Right>'] = {
-          ':Neotree filesystem right reveal_force_cwd<CR>',
+          function()
+            vim.cmd.Neotree({ args = { 'filesystem', 'right', 'reveal_force_cwd' } })
+          end,
           desc('Open Neo Tree To The Right'),
         },
         ['<leader>ftF'] = {
-          ':Neotree filesystem float reveal_force_cwd<CR>',
+          function()
+            vim.cmd.Neotree({ args = { 'filesystem', 'float', 'reveal_force_cwd' } })
+          end,
           desc('Neo Tree Float'),
         },
       },
     })
-    vim.cmd([[
-            hi! link NeoTreeDirectoryIcon NvimTreeFolderIcon
-            hi! link NeoTreeDirectoryName NvimTreeFolderName
-            hi! link NeoTreeSymbolicLinkTarget NvimTreeSymlink
-            hi! link NeoTreeRootName NvimTreeRootFolder
-            hi! link NeoTreeDirectoryName NvimTreeOpenedFolderName
-            hi! link NeoTreeFileNameOpened NvimTreeOpenedFile
-        ]])
+    require('user_api').highlight.hl_from_dict({
+      NeoTreeDirectoryIcon = { link = 'NvimTreeFolderIcon' },
+      NeoTreeDirectoryName = { link = 'NvimTreeFolderName' },
+      NeoTreeSymbolicLinkTarget = { link = 'NvimTreeSymlink' },
+      NeoTreeRootName = { link = 'NvimTreeRootFolder' },
+      NeoTreeFileNameOpened = { link = 'NvimTreeOpenedFile' },
+    })
   end,
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

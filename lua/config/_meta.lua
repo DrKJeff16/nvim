@@ -57,6 +57,7 @@
 ---@field lsp? LazySpecImport
 ---@field lsp_better_diagnostic? LazySpecImport
 ---@field lsp_clangd? LazySpecImport
+---@field lsp_custom_diagnostic_highlight? LazySpecImport
 ---@field lsp_toggle? LazySpecImport
 ---@field lspkind? LazySpecImport
 ---@field lualine? LazySpecImport
@@ -89,7 +90,6 @@
 ---@field neorg? LazySpecImport
 ---@field noice? LazySpecImport
 ---@field notify? LazySpecImport
----@field nvim_file_operations? LazySpecImport
 ---@field nvim_test? LazySpecImport
 ---@field nvim_tree? LazySpecImport
 ---@field oil? LazySpecImport
@@ -201,6 +201,7 @@
 ---@field lsp? boolean
 ---@field lsp_better_diagnostic? boolean
 ---@field lsp_clangd? boolean
+---@field lsp_custom_diagnostic_highlight? boolean
 ---@field lsp_toggle? boolean
 ---@field lspkind? boolean
 ---@field lualine? boolean
@@ -233,7 +234,6 @@
 ---@field neorg? boolean
 ---@field noice? boolean
 ---@field notify? boolean
----@field nvim_file_operations? boolean
 ---@field nvim_test? boolean
 ---@field nvim_tree? boolean
 ---@field oil? boolean
