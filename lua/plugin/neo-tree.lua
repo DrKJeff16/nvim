@@ -12,7 +12,18 @@ return { ---@type LazySpec
       'Crysthamus/nvim-file-operations',
       dev = true,
       config = function()
-        require('nvim-file-operations').setup()
+        require('nvim-file-operations').setup({
+          operations = {
+            willRenameFiles = true,
+            didRenameFiles = true,
+            willCreateFiles = true,
+            didCreateFiles = true,
+            willDeleteFiles = true,
+            didDeleteFiles = true,
+          },
+          timeout_ms = 10000,
+          auto_save = false,
+        })
       end,
     },
     { 'mrbjarksen/neo-tree-diagnostics.nvim', main = 'neo-tree.sources.diagnostics' },
@@ -134,9 +145,8 @@ return { ---@type LazySpec
           ---@param node table
           provider = function(icon, node)
             if node.type == 'file' or node.type == 'terminal' then
-              local web_devicons = require('nvim-web-devicons')
               local name = node.type == 'terminal' and 'terminal' or node.name
-              local devicon, hl = web_devicons.get_icon(name)
+              local devicon, hl = require('nvim-web-devicons').get_icon(name)
               icon.text = devicon or icon.text
               icon.highlight = hl or icon.highlight
             end
