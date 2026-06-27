@@ -8,7 +8,7 @@ return { ---@type LazySpec
     local Snacks = require('snacks')
     Snacks.setup({
       dashboard = {
-        enabled = true,
+        enabled = false,
         width = 60,
         row = nil, -- dashboard position. nil for center
         col = nil, -- dashboard position. nil for center
