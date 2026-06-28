@@ -1,43 +1,79 @@
 ---@module 'lazy'
 local ensure_langs = { ---@type string[]
+  'arduino',
+  'asm',
+  'awk',
   'bash',
+  'bibtex',
   'c',
+  'c_sharp',
+  'cmake',
   'comment',
   'commonlisp',
   'cpp',
   'css',
   'csv',
+  'desktop',
   'diff',
+  'dockerfile',
+  'doxygen',
+  'dtd',
   'editorconfig',
+  'fennel',
+  'ghostty',
   'git_config',
   'git_rebase',
   'gitattributes',
   'gitignore',
+  'go',
+  'gpg',
+  'haskell',
+  'haskell_persistent',
+  'hcl',
   'html',
+  'html_tags',
   'hyprlang',
   'ini',
+  'java',
+  'javadoc',
   'javascript',
   'jsdoc',
   'json',
+  'json5',
+  'julia',
   'kconfig',
   'kitty',
   'lua',
   'luadoc',
   'luap',
+  'luau',
   'make',
   'markdown',
   'markdown_inline',
+  'meson',
+  'nginx',
+  'ninja',
+  'nix',
   'passwd',
+  'perl',
+  'php',
+  'php_only',
+  'powershell',
   'printf',
+  'properties',
   'python',
   'query',
   'readline',
   'regex',
   'requirements',
+  'rst',
+  'ruby',
   'rust',
+  'scheme',
   'scss',
+  'sql',
   'ssh_config',
-  'sway',
+  'templ',
   'tmux',
   'todotxt',
   'toml',
@@ -46,33 +82,51 @@ local ensure_langs = { ---@type string[]
   'vim',
   'vimdoc',
   'xcompose',
+  'xml',
   'xresources',
   'yaml',
   'zathurarc',
+  'zig',
   'zsh',
 }
 local patterns = { ---@type string[]
+  'arduino',
+  'asm',
+  'awk',
   'bash',
+  'bib',
   'c',
+  'cmake',
   'cpp',
+  'cs',
   'css',
+  'csv',
   'diff',
   'dosini',
   'editorconfig',
+  'ghostty',
   'gitattributes',
   'gitconfig',
   'gitignore',
   'gitrebase',
   'gpg',
+  'haskell',
+  'hcl',
   'html',
   'hyprlang',
+  'java',
   'javascript',
+  'javascriptreact',
   'json',
+  'json5',
+  'julia',
   'kitty',
   'lua',
+  'luau',
   'markdown',
   'meson',
   'ninja',
+  'nginx',
   'passwd',
   'python',
   'query',
@@ -82,39 +136,49 @@ local patterns = { ---@type string[]
   'rust',
   'scss',
   'sh',
+  'sql',
   'sshconfig',
+  'template',
   'tmux',
   'toml',
   'typescript',
   'udevconf',
   'udevrules',
   'vim',
+  'xml',
   'yaml',
   'zathurarc',
+  'zig',
   'zsh',
 }
 
 if not require('user_api').distro.termux.is_distro() then
-  table.insert(ensure_langs, 'desktop')
   table.insert(ensure_langs, 'gitcommit')
   table.insert(ensure_langs, 'latex')
-
-  table.insert(patterns, 'desktop')
   table.insert(patterns, 'gitcommit')
   table.insert(patterns, 'tex')
 end
 
 return { ---@type LazySpec
-  'nvim-treesitter/nvim-treesitter',
-  branch = 'main',
-  build = ':TSUpdate',
-  version = false,
+  'romus204/tree-sitter-manager.nvim',
   config = function()
-    local TS = require('nvim-treesitter')
-    TS.setup({ install_dir = vim.fs.joinpath(vim.fn.stdpath('data'), 'site') })
-    TS.install(ensure_langs)
+    require('tree-sitter-manager').setup({
+      parser_dir = vim.fs.joinpath(vim.fn.stdpath('data'), 'site/parser'),
+      query_dir = vim.fs.joinpath(vim.fn.stdpath('data'), 'site/queries'),
+      assume_installed = {},
+      ensure_installed = ensure_langs,
+      border = 'rounded',
+      auto_install = true,
+      noauto_install = {},
+      highlight = true,
+      nohighlight = {},
+      languages = {},
+      nerdfont = true,
+    })
 
+    local group = vim.api.nvim_create_augroup('TSPlugin', { clear = true })
     vim.api.nvim_create_autocmd('FileType', {
+      group = group,
       pattern = patterns,
       callback = function(ev)
         if not vim.api.nvim_buf_is_loaded(ev.buf) then
@@ -126,15 +190,6 @@ return { ---@type LazySpec
         end
         vim.treesitter.language.register('bash', { 'sh' })
         vim.treesitter.start(ev.buf)
-
-        vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-
-        vim.api.nvim_create_autocmd('User', {
-          pattern = 'TSUpdate',
-          callback = function()
-            require('nvim-treesitter.parsers').lua.install_info.generate = true
-          end,
-        })
       end,
     })
   end,
