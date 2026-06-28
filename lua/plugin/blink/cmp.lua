@@ -1,15 +1,12 @@
 ---@module 'lazy'
 ---@module 'blink.lib'
 
-local validate = require('user_api').check.validate
-local exists = require('user_api').check.module
-local ft_get = require('user_api').util.ft_get
-local executable = require('user_api').check.executable
+local User = require('user_api')
 
 ---@param idx integer
 ---@return fun(cmp: blink.cmp.API): result: boolean|nil
 local function accept_nth(idx)
-  validate({ idx = { idx, { 'number' } } })
+  User.check.validate({ idx = { idx, { 'number' } } })
   if not require('user_api').check.is_int(idx) then
     error(('Bad index `%d`'):format(idx), vim.log.levels.ERROR)
   end
@@ -32,7 +29,7 @@ BUtil.curr_ft = ''
 function BUtil.reset_sources()
   BUtil.Sources = { 'lazydev', 'lsp', 'path', 'buffer', 'snippets' } --[[@as string[]\]]
 
-  local ft = ft_get(vim.api.nvim_get_current_buf())
+  local ft = User.util.ft_get(vim.api.nvim_get_current_buf())
   if ft == 'sshconfig' then
     table.insert(BUtil.Sources, 1, 'sshconfig')
     return
@@ -60,16 +57,12 @@ end
 function BUtil.reset_providers()
   BUtil.Providers = {
     cmdline = { module = 'blink.cmp.sources.cmdline' },
-    snippets = {
-      score_offset = -75,
-      module = 'blink.cmp.sources.snippets',
-      opts = { friendly_snippets = true },
-    },
+    snippets = { score_offset = -75, module = 'blink.cmp.sources.snippets', opts = { friendly_snippets = true } },
     buffer = {
       score_offset = -70,
       max_items = 5,
       opts = {
-        get_bufnrs = function()
+        get_bufnrs = function() ---@return table
           return vim
             .iter(vim.api.nvim_list_wins())
             :map(function(win) ---@param win integer
@@ -134,57 +127,55 @@ function BUtil.reset_providers()
     lsp = { name = 'LSP', module = 'blink.cmp.sources.lsp', score_offset = 80 },
   }
 
-  if exists('css-vars.blink') then
+  if User.check.module('css-vars.blink') then
     BUtil.Providers.css_vars = {
       name = 'css-vars',
       module = 'css-vars.blink',
       opts = { search_extensions = { '.js', '.ts', '.jsx', '.tsx' } },
     }
   end
-  if exists('blink-cmp-sshconfig') then
+  if User.check.module('blink-cmp-sshconfig') then
     BUtil.Providers.sshconfig = { name = 'SshConfig', module = 'blink-cmp-sshconfig' }
   end
-  if exists('blink-cmp-git') then
+  if User.check.module('blink-cmp-git') then
     BUtil.Providers.git = {
       name = 'Git',
       module = 'blink-cmp-git',
       enabled = function()
         local git_fts = { 'git', 'gitcommit', 'gitattributes', 'gitrebase' }
-        return vim.list_contains(git_fts, ft_get(vim.api.nvim_get_current_buf()))
+        return vim.list_contains(git_fts, User.util.ft_get(vim.api.nvim_get_current_buf()))
       end,
-      opts = {},
     }
   end
-  if exists('blink-cmp-conventional-commits') then
+  if User.check.module('blink-cmp-conventional-commits') then
     BUtil.Providers.conventional_commits = {
       name = 'CC',
       module = 'blink-cmp-conventional-commits',
       score_offset = 100,
       enabled = function()
-        return ft_get(vim.api.nvim_get_current_buf()) == 'gitcommit'
+        return User.util.ft_get(vim.api.nvim_get_current_buf()) == 'gitcommit'
       end,
-      opts = {},
     }
   end
-  if exists('blink-cmp-latex') then
+  if User.check.module('blink-cmp-latex') then
     BUtil.Providers.latex = {
       name = 'Latex',
       module = 'blink-cmp-latex',
       opts = { insert_command = false },
     }
   end
-  if exists('orgmode') then
-    BUtil.Providers.orgmode = { name = 'Orgmode', module = 'orgmode.org.autocompletion.blink' }
+  if User.check.module('orgmode') then
+    BUtil.Providers.orgmode = { name = 'Org', module = 'orgmode.org.autocompletion.blink' }
   end
 end
 
 ---@param P? table<string, blink.cmp.SourceProviderConfigPartial>
 ---@return table<string, blink.cmp.SourceProviderConfigPartial> providers
 function BUtil.gen_providers(P)
-  validate({ P = { P, { 'table', 'nil' }, true } })
+  User.check.validate({ P = { P, { 'table', 'nil' }, true } })
 
   BUtil.reset_providers()
-  BUtil.Providers = vim.tbl_deep_extend('keep', P or {}, vim.deepcopy(BUtil.Providers))
+  BUtil.Providers = vim.tbl_deep_extend('keep', P or {}, BUtil.Providers)
   return BUtil.Providers
 end
 
@@ -201,7 +192,7 @@ return { ---@type LazySpec
     'Kaiser-Yang/blink-cmp-git',
     'disrupted/blink-cmp-conventional-commits',
     { 'bydlw98/blink-cmp-env', dev = true, version = false },
-    { 'bydlw98/blink-cmp-sshconfig', build = executable('uv') and 'make' or false, version = false },
+    { 'bydlw98/blink-cmp-sshconfig', build = User.check.executable('uv') and 'make' or false, version = false },
   },
   build = function()
     require('blink.cmp').build():pwait()
@@ -300,18 +291,11 @@ return { ---@type LazySpec
             winblend = 0,
             winhighlight = 'Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,EndOfBuffer:BlinkCmpDoc',
             scrollbar = true,
-            direction_priority = {
-              menu_north = { 'e', 'w', 'n', 's' },
-              menu_south = { 'e', 'w', 's', 'n' },
-            },
+            direction_priority = { menu_north = { 'e', 'w', 'n', 's' }, menu_south = { 'e', 'w', 's', 'n' } },
           },
         },
         keyword = { range = 'full' },
-        accept = {
-          auto_brackets = { enabled = false },
-          create_undo_point = true,
-          dot_repeat = true,
-        },
+        accept = { auto_brackets = { enabled = false }, create_undo_point = true, dot_repeat = true },
         list = {
           max_items = 300,
           cycle = { from_top = true, from_bottom = true },
@@ -331,12 +315,10 @@ return { ---@type LazySpec
           direction_priority = { 's', 'n' },
           auto_show_delay_ms = 0,
           cmdline_position = function()
-            if vim.g.ui_cmdline_pos ~= nil then
-              local pos = vim.g.ui_cmdline_pos -- (1, 0)-indexed
-              return { pos[1] - 1, pos[2] }
+            if vim.g.ui_cmdline_pos then
+              return { vim.g.ui_cmdline_pos[1] - 1, vim.g.ui_cmdline_pos[2] }
             end
-            local height = (vim.o.cmdheight == 0) and 1 or vim.o.cmdheight
-            return { vim.o.lines - height, 0 }
+            return { vim.o.lines - ((vim.o.cmdheight == 0) and 1 or vim.o.cmdheight), 0 }
           end,
           draw = {
             align_to = 'cursor',
