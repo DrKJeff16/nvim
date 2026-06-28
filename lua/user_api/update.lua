@@ -6,52 +6,6 @@ local INFO = vim.log.levels.INFO
 local M = {}
 
 ---@param verbose? boolean
-function M.update_parsers(verbose)
-  require('user_api.check').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
-  if not require('user_api.check').executable('bash') then
-    return
-  end
-
-  local spinner = require('user_api.util').spinner.new('ts-parsers', { kind = 'cursor' })
-  if spinner then
-    spinner:start()
-  end
-
-  vim.system({ 'bash', 'scripts/gen-parsers.sh' }, { text = true, cwd = vim.fn.stdpath('config') }, function(obj)
-    if spinner then
-      spinner:stop()
-    end
-
-    if verbose and obj.stdout and obj.stdout ~= '' then
-      vim.notify(obj.stdout, INFO, {
-        animate = true,
-        hide_from_history = false,
-        timeout = 2250,
-        title = 'User API - Update',
-      })
-    end
-
-    if obj.code == 0 then
-      return
-    end
-    vim.notify('Failed to Tree-sitter parsers!', ERROR, {
-      animate = true,
-      hide_from_history = false,
-      timeout = 5000,
-      title = 'User API - Update',
-    })
-    if verbose and obj.stderr and obj.stderr ~= '' then
-      vim.notify(obj.stderr, WARN, {
-        animate = true,
-        hide_from_history = false,
-        timeout = 2250,
-        title = 'User API - Update',
-      })
-    end
-  end)
-end
-
----@param verbose? boolean
 function M.update(verbose)
   require('user_api.check').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
   if verbose == nil then
@@ -118,54 +72,19 @@ function M.setup()
   require('user_api.config').keymaps.set({
     n = {
       ['<leader>U'] = { group = '+User API' },
-      ['<leader>UP'] = {
-        function()
-          M.update_parsers(true)
-        end,
-        desc('Update Tree-sitter Parsers (Verbose)'),
-      },
       ['<leader>UU'] = {
         function()
           M.update(true)
         end,
         desc('Update User Config (Verbose)'),
       },
-      ['<leader>Up'] = { M.update_parsers, desc('Update Tree-sitter Parsers') },
       ['<leader>Uu'] = { M.update, desc('Update User Config') },
     },
   })
 
   vim.api.nvim_create_user_command('UserUpdate', function(ctx)
-    if vim.tbl_isempty(ctx.fargs) then
-      M.update(ctx.bang)
-      return
-    end
-    if ctx.fargs[1] ~= 'parsers' then
-      vim.notify(('User API - Invalid subcommand `%s`'):format(ctx.fargs[1]), WARN)
-      return
-    end
-
-    M.update_parsers(ctx.bang)
-  end, {
-    bang = true,
-    nargs = '*',
-    complete = function(_, line)
-      local args = vim.split(line, '%s+', { trimempty = false })
-      if (args[1]:sub(-1, -1) == '!' and #args == 1) or #args > 2 then
-        return {}
-      end
-
-      local items = { 'parsers' } ---@type string[]
-      for _, item in ipairs(items) do
-        if vim.startswith(item, args[2]) then
-          return { item }
-        end
-      end
-
-      return {}
-    end,
-    desc = 'Update Jnvim',
-  })
+    M.update(ctx.bang)
+  end, { bang = true, desc = 'Update Jnvim' })
 end
 
 return M
