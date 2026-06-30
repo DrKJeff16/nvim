@@ -26,6 +26,7 @@
 ---@field colorizer? LazySpecImport
 ---@field colorschemes? LazySpecImport
 ---@field conform? LazySpecImport
+---@field copy_python_path? LazySpecImport
 ---@field diffview? LazySpecImport
 ---@field dooku? LazySpecImport
 ---@field doxygen_init? LazySpecImport
@@ -64,6 +65,7 @@
 ---@field luaref? LazySpecImport
 ---@field markdoc? LazySpecImport
 ---@field markdown_outline? LazySpecImport
+---@field markdown_pipetable? LazySpecImport
 ---@field markdown_render? LazySpecImport
 ---@field mason? LazySpecImport
 ---@field match? LazySpecImport
@@ -170,6 +172,7 @@
 ---@field colorizer? boolean
 ---@field colorschemes? boolean
 ---@field conform? boolean
+---@field copy_python_path? boolean
 ---@field diffview? boolean
 ---@field dooku? boolean
 ---@field doxygen_init? boolean
@@ -208,6 +211,7 @@
 ---@field luaref? boolean
 ---@field markdoc? boolean
 ---@field markdown_outline? boolean
+---@field markdown_pipetable? boolean
 ---@field markdown_render? boolean
 ---@field mason? boolean
 ---@field match? boolean
