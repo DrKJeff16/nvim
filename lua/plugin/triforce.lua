@@ -11,7 +11,6 @@ return { ---@type LazySpec
       gamification_enabled = true,
       icon_engine = 'mini',
       notifications = { enabled = true, level_up = true, achievements = true },
-      keymap = { show_profile = '<leader>Tp' },
       auto_save_interval = 300,
       override_levels = false,
       achievements = {
@@ -52,6 +51,7 @@ return { ---@type LazySpec
     require('user_api').config.keymaps.set({
       n = {
         ['<leader>T'] = { group = '+Triforce' },
+        ['<leader>Tp'] = { require('triforce').show_profile, desc('Show Profile') },
         ['<leader>TC'] = {
           function()
             vim.cmd.Triforce('config')
