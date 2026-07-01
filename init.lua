@@ -145,6 +145,7 @@ Config.lazy.setup({
   lualine = true,
   luaref = true,
   markdoc = false,
+  markdown_pipetable = false,
   markdown_outline = false,
   markdown_render = true,
   mason = false,

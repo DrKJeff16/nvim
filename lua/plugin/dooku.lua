@@ -4,7 +4,7 @@ return { ---@type LazySpec
   version = false,
   cond = not require('user_api').check.in_console(),
   opts = {
-    project_root = { '.git', '.hg', '.svn', '.bzr', '_darcs', '_FOSSIL_', '.fslckout' },
+    project_root = { '.git', '.hg', '.svn', '.bzr', '_darcs', '_FOSSIL_', '.fslckout', '.github' },
     browser_cmd = 'xdg-open',
     on_bufwrite_generate = false,
     on_generate_open = true,
