@@ -5,8 +5,8 @@ return { ---@type LazySpec[]
     version = false,
     config = function()
       require('mason').setup({
-        install_root_dir = vim.fn.stdpath('data') .. '/mason',
-        PATH = 'prepend', ---@type 'prepend'|'append'|'skip'
+        install_root_dir = vim.fs.joinpath(vim.fn.stdpath('data'), 'mason'),
+        PATH = 'append', ---@type 'prepend'|'append'|'skip'
         log_level = vim.log.levels.INFO,
         max_concurrent_installers = 4,
         registries = { 'github:mason-org/mason-registry' },
@@ -15,15 +15,10 @@ return { ---@type LazySpec[]
         pip = { upgrade_pip = false, install_args = {} },
         ui = {
           check_outdated_packages_on_open = true,
-          border = nil,
           backdrop = 60,
           width = 0.8,
           height = 0.9,
-          icons = {
-            package_installed = '✓',
-            package_pending = '➜',
-            package_uninstalled = '✗',
-          },
+          icons = { package_installed = '✓', package_pending = '➜', package_uninstalled = '✗' },
           keymaps = {
             toggle_package_expand = '<CR>',
             install_package = 'i',
