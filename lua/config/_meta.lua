@@ -29,7 +29,7 @@
 ---@field copy_python_path? LazySpecImport
 ---@field diffview? LazySpecImport
 ---@field dooku? LazySpecImport
----@field doxygen_init? LazySpecImport
+---@field doxygen? LazySpecImport
 ---@field doxygen_previewer? LazySpecImport
 ---@field drop? LazySpecImport
 ---@field echo? LazySpecImport
@@ -64,6 +64,7 @@
 ---@field lualine? LazySpecImport
 ---@field luaref? LazySpecImport
 ---@field markdoc? LazySpecImport
+---@field markdown_follow_md_links? LazySpecImport
 ---@field markdown_outline? LazySpecImport
 ---@field markdown_pipetable? LazySpecImport
 ---@field markdown_render? LazySpecImport
@@ -136,7 +137,7 @@
 ---@field ts_context? LazySpecImport
 ---@field ts_enable? LazySpecImport
 ---@field ts_endwise? LazySpecImport
----@field ts_init? LazySpecImport
+---@field ts? LazySpecImport
 ---@field ts_vimdoc? LazySpecImport
 ---@field twilight? LazySpecImport
 ---@field web_devicons? LazySpecImport
@@ -175,7 +176,7 @@
 ---@field copy_python_path? boolean
 ---@field diffview? boolean
 ---@field dooku? boolean
----@field doxygen_init? boolean
+---@field doxygen? boolean
 ---@field doxygen_previewer? boolean
 ---@field drop? boolean
 ---@field echo? boolean
@@ -210,6 +211,7 @@
 ---@field lualine? boolean
 ---@field luaref? boolean
 ---@field markdoc? boolean
+---@field markdown_follow_md_links? boolean
 ---@field markdown_outline? boolean
 ---@field markdown_pipetable? boolean
 ---@field markdown_render? boolean
@@ -282,7 +284,7 @@
 ---@field ts_context? boolean
 ---@field ts_enable? boolean
 ---@field ts_endwise? boolean
----@field ts_init? boolean
+---@field ts? boolean
 ---@field ts_vimdoc? boolean
 ---@field twilight? boolean
 ---@field wezterm_config? boolean

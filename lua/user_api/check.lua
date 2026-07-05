@@ -36,7 +36,7 @@ end
 --- ---
 ---@return boolean is_windows
 function M.is_windows()
-  return vim.fn.has('win32') == 1
+  return require('user_api.check.exists').vim_has('win32')
 end
 
 ---@param path string
@@ -65,6 +65,7 @@ end
 local Check = setmetatable(M, { ---@type User.Check
   ---@param self User.Check
   ---@param k integer|string
+  ---@return any value
   __index = function(self, k)
     if require('user_api.check.exists').module('user_api.check.' .. k) then
       return require('user_api.check.' .. k)
@@ -75,7 +76,12 @@ local Check = setmetatable(M, { ---@type User.Check
     if require('user_api.check.exists')[k] then
       return require('user_api.check.exists')[k]
     end
-    return rawget(self, k) or nil
+    local res = rawget(self, k)
+    if res then
+      return res
+    end
+
+    require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
   end,
 })
 

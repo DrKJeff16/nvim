@@ -4,7 +4,7 @@ return { ---@type LazySpec
   lazy = false,
   version = false,
   dependencies = {
-    'nvim-lua/plenary.nvim',
+    { 'DrKJeff16/plenary.nvim', dev = true },
     'MunifTanjim/nui.nvim',
     'nvim-tree/nvim-web-devicons',
     'saifulapm/neotree-file-nesting-config',

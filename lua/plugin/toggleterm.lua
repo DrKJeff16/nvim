@@ -1,7 +1,7 @@
 ---@module 'lazy'
 
 ---@param arg string
----@return function
+---@return function cmd
 local function wincmd(arg)
   require('user_api').check.validate({ arg = { arg, { 'string' } } })
 
@@ -10,7 +10,8 @@ local function wincmd(arg)
   end
 end
 
-local function set_terminal_keys(ev) ---@param ev vim.api.keyset.create_autocmd.callback_args
+---@param ev vim.api.keyset.create_autocmd.callback_args
+local function set_terminal_keys(ev)
   if not ev then
     return
   end
@@ -30,7 +31,8 @@ local function set_terminal_keys(ev) ---@param ev vim.api.keyset.create_autocmd.
 end
 
 return { ---@type LazySpec
-  'akinsho/toggleterm.nvim',
+  'DrKJeff16/toggleterm.nvim',
+  dev = true,
   version = false,
   enabled = not require('user_api').check.in_console(),
   config = function()

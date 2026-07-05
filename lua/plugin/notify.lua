@@ -3,7 +3,7 @@ return { ---@type LazySpec
   'rcarriga/nvim-notify',
   priority = 1000,
   version = false,
-  dependencies = { 'nvim-lua/plenary.nvim' },
+  dependencies = { { 'DrKJeff16/plenary.nvim', dev = true } },
   cond = not require('user_api').check.in_console(),
   config = function()
     local Notify = require('notify')

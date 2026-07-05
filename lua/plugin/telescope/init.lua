@@ -14,7 +14,7 @@ return { ---@type LazySpec
   'nvim-telescope/telescope.nvim',
   version = false,
   dependencies = {
-    'nvim-lua/plenary.nvim',
+    { 'DrKJeff16/plenary.nvim', dev = true },
     'OliverChao/telescope-picker-list.nvim',
     'nvim-telescope/telescope-file-browser.nvim',
   },

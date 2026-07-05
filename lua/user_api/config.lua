@@ -6,6 +6,7 @@ local M = setmetatable({}, {
     if require('user_api.check').module('user_api.config.' .. k) then
       return require('user_api.config.' .. k)
     end
+    require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
   end,
 })
 

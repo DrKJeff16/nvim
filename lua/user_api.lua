@@ -47,6 +47,7 @@ local function make_timer()
 end
 
 ---@class UserAPI
+---@field backtrace fun(lvl: 0|1|2|3|4, ...: any)
 ---@field check User.Check
 ---@field commands User.Commands
 ---@field config User.Config
@@ -95,7 +96,7 @@ function M.setup(commands, verbose)
   make_timer()
 
   vim.filetype.add({
-    extension = { el = 'lisp', h = 'c' },
+    extension = { el = 'lisp', h = 'c', sh = 'bash' },
     filename = {
       [vim.fn.expand('~/.spacemacs')] = 'lisp',
       ['.clangd'] = 'yaml',
