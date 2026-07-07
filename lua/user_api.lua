@@ -1,25 +1,6 @@
 local uv = vim.uv or vim.loop
 
 local timer = nil ---@type uv.uv_timer_t|nil
-local timer_cb = vim.schedule_wrap(function()
-  local logfile = vim.fs.joinpath(vim.fn.stdpath('state'), 'nvim.log')
-  local stat = uv.fs_stat(logfile)
-  if not stat or stat.size < 1048576 then -- 1GiB
-    return
-  end
-
-  local fd = uv.fs_open(logfile, 'w', tonumber('644', 8))
-  if not fd then
-    return
-  end
-
-  local ok = uv.fs_ftruncate(fd, 0)
-  uv.fs_close(fd)
-
-  if ok then
-    vim.notify(('`%s` has been cleared!'):format(logfile), vim.log.levels.INFO)
-  end
-end)
 
 local function make_timer()
   if timer and timer:is_active() then
@@ -31,7 +12,29 @@ local function make_timer()
     return
   end
 
-  timer:start(1000, 900000, timer_cb)
+  timer:start(
+    1000,
+    900000,
+    vim.schedule_wrap(function()
+      local logfile = vim.fs.joinpath(vim.fn.stdpath('state'), 'nvim.log')
+      local stat = uv.fs_stat(logfile)
+      if not stat or stat.size < 1048576 then -- 1GiB
+        return
+      end
+
+      local fd = uv.fs_open(logfile, 'w', tonumber('644', 8))
+      if not fd then
+        return
+      end
+
+      local ok = uv.fs_ftruncate(fd, 0)
+      uv.fs_close(fd)
+
+      if ok then
+        vim.notify(('`%s` has been cleared!'):format(logfile), vim.log.levels.INFO)
+      end
+    end)
+  )
 
   vim.api.nvim_create_autocmd({ 'VimLeavePre' }, {
     group = vim.api.nvim_create_augroup('log_autoclear', { clear = true }),
@@ -97,11 +100,7 @@ function M.setup(commands, verbose)
 
   vim.filetype.add({
     extension = { el = 'lisp', h = 'c', sh = 'bash' },
-    filename = {
-      [vim.fn.expand('~/.spacemacs')] = 'lisp',
-      ['.clangd'] = 'yaml',
-      ['.github/CODEOWNERS'] = 'codeowners',
-    },
+    filename = { [vim.fn.expand('~/.spacemacs')] = 'lisp', ['.clangd'] = 'yaml', ['.github/CODEOWNERS'] = 'codeowners' },
   })
 end
 
