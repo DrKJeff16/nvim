@@ -46,3 +46,4 @@ return function(lvl, ...)
 
   pcall(_G.Snacks.debug.backtrace, msg, { history = true, style = 'fancy', title = 'User API' })
 end
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:
