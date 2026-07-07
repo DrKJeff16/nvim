@@ -13,7 +13,7 @@ return { ---@type vim.lsp.ClientConfig
     pylsp = {
       configurationSources = { 'flake8' }, ---@type { [1]: 'pycodestyle'|'flake8' }
       plugins = {
-        autopep8 = { enabled = true },
+        autopep8 = { enabled = false },
         flake8 = {
           enabled = true,
           executable = 'flake8',
@@ -40,7 +40,7 @@ return { ---@type vim.lsp.ClientConfig
         pylint = { enabled = false },
         rope_autoimport = { completions = { enabled = false } },
         rope_completion = { enabled = false },
-        yapf = { enabled = false },
+        yapf = { enabled = true },
       },
     },
   },
