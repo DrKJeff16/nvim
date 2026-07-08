@@ -1,6 +1,7 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'epwalsh/pomo.nvim',
+  dev = true,
   version = false,
   dependencies = { 'rcarriga/nvim-notify' },
   config = function()
