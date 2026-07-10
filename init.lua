@@ -185,6 +185,7 @@ Config.lazy.setup({
   picker = true,
   pipenv = true,
   pomo = false,
+  pomodoro = true,
   possession = false,
   precognition = false,
   project = true,

@@ -104,6 +104,7 @@
 ---@field picker? LazySpecImport
 ---@field pipenv? LazySpecImport
 ---@field pomo? LazySpecImport
+---@field pomodoro? LazySpecImport
 ---@field possession? LazySpecImport
 ---@field precognition? LazySpecImport
 ---@field project? LazySpecImport
@@ -251,6 +252,7 @@
 ---@field picker? boolean
 ---@field pipenv? boolean
 ---@field pomo? boolean
+---@field pomodoro? boolean
 ---@field possession? boolean
 ---@field precognition? boolean
 ---@field project? boolean
