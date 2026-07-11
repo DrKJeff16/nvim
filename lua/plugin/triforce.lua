@@ -7,6 +7,7 @@ return { ---@type LazySpec
   config = function()
     require('triforce').setup({
       enabled = true,
+      items = { enabled = true },
       backdrop = { enabled = false, backdrop = 20 },
       gamification_enabled = true,
       icon_engine = 'mini',
