@@ -17,47 +17,66 @@ local function accept_nth(idx)
 end
 
 ---@class BUtil
----@field Providers table<string, blink.cmp.SourceProviderConfigPartial>
----@field Sources string[]
----@field curr_ft string
 local BUtil = {}
 
-BUtil.Providers = {}
-BUtil.Sources = {}
-BUtil.curr_ft = ''
+local Providers = {} ---@type table<string, blink.cmp.SourceProviderConfigPartial>
+local Sources = {} ---@type string[]
 
-function BUtil.reset_sources()
-  BUtil.Sources = { 'lazydev', 'lsp', 'path', 'buffer', 'snippets' } --[[@as string[]\]]
+---@param opts? { cmdline: boolean }| { terminal: boolean }
+function BUtil.reset_sources(opts)
+  opts = opts or {}
+
+  if opts.cmdline then
+    Sources = (function()
+      local type = vim.fn.getcmdtype()
+      -- Search forward and backward
+      if type == '/' or type == '?' then
+        return { 'buffer' }
+      end
+      -- Commands
+      if type == ':' or type == '@' then
+        return { 'cmdline', 'buffer' }
+      end
+      return {}
+    end)()
+    return
+  end
+  if opts.terminal then
+    Sources = {}
+    return
+  end
+  Sources = { 'lazydev', 'lsp', 'path', 'buffer', 'snippets' } --[[@as string[]\]]
 
   local ft = User.util.ft_get(vim.api.nvim_get_current_buf())
   if ft == 'sshconfig' then
-    table.insert(BUtil.Sources, 1, 'sshconfig')
+    table.insert(Sources, 1, 'sshconfig')
     return
   end
   if ft == 'tex' then
-    table.insert(BUtil.Sources, 1, 'latex')
+    table.insert(Sources, 1, 'latex')
     return
   end
 
   local git_fts = { 'git', 'gitcommit', 'gitattributes', 'gitrebase' }
   if vim.list_contains(git_fts, ft) then
-    table.insert(BUtil.Sources, 1, 'git')
+    table.insert(Sources, 1, 'git')
     if ft == 'gitcommit' then
-      table.insert(BUtil.Sources, 1, 'conventional_commits')
+      table.insert(Sources, 1, 'conventional_commits')
     end
   end
 end
 
+---@param opts? { cmdline: boolean }| { terminal: boolean }
 ---@return string[] sources
-function BUtil.gen_sources()
-  BUtil.reset_sources()
-  return BUtil.Sources
+function BUtil.gen_sources(opts)
+  BUtil.reset_sources(opts)
+  return Sources
 end
 
 function BUtil.reset_providers()
-  BUtil.Providers = {
+  Providers = {
     cmdline = { module = 'blink.cmp.sources.cmdline' },
-    snippets = { score_offset = -75, module = 'blink.cmp.sources.snippets', opts = { friendly_snippets = true } },
+    snippets = { score_offset = -75, max_items = 5, module = 'blink.cmp.sources.snippets' },
     buffer = {
       score_offset = -70,
       max_items = 5,
@@ -128,17 +147,17 @@ function BUtil.reset_providers()
   }
 
   if User.check.module('css-vars.blink') then
-    BUtil.Providers.css_vars = {
+    Providers.css_vars = {
       name = 'css-vars',
       module = 'css-vars.blink',
       opts = { search_extensions = { '.js', '.ts', '.jsx', '.tsx' } },
     }
   end
   if User.check.module('blink-cmp-sshconfig') then
-    BUtil.Providers.sshconfig = { name = 'SshConfig', module = 'blink-cmp-sshconfig' }
+    Providers.sshconfig = { name = 'SshConfig', module = 'blink-cmp-sshconfig' }
   end
   if User.check.module('blink-cmp-git') then
-    BUtil.Providers.git = {
+    Providers.git = {
       name = 'Git',
       module = 'blink-cmp-git',
       enabled = function()
@@ -148,7 +167,7 @@ function BUtil.reset_providers()
     }
   end
   if User.check.module('blink-cmp-conventional-commits') then
-    BUtil.Providers.conventional_commits = {
+    Providers.conventional_commits = {
       name = 'CC',
       module = 'blink-cmp-conventional-commits',
       score_offset = 100,
@@ -158,14 +177,14 @@ function BUtil.reset_providers()
     }
   end
   if User.check.module('blink-cmp-latex') then
-    BUtil.Providers.latex = {
+    Providers.latex = {
       name = 'Latex',
       module = 'blink-cmp-latex',
       opts = { insert_command = false },
     }
   end
   if User.check.module('orgmode') then
-    BUtil.Providers.orgmode = { name = 'Org', module = 'orgmode.org.autocompletion.blink' }
+    Providers.orgmode = { name = 'Org', module = 'orgmode.org.autocompletion.blink' }
   end
 end
 
@@ -175,8 +194,8 @@ function BUtil.gen_providers(P)
   User.check.validate({ P = { P, { 'table', 'nil' }, true } })
 
   BUtil.reset_providers()
-  BUtil.Providers = vim.tbl_deep_extend('keep', P or {}, BUtil.Providers)
-  return BUtil.Providers
+  Providers = vim.tbl_deep_extend('keep', P or {}, Providers)
+  return Providers
 end
 
 return { ---@type LazySpec
@@ -191,11 +210,20 @@ return { ---@type LazySpec
     'jdrupal-dev/css-vars.nvim',
     'Kaiser-Yang/blink-cmp-git',
     'disrupted/blink-cmp-conventional-commits',
+    {
+      'L3MON4D3/LuaSnip',
+      version = false,
+      build = User.check.executable('make') and 'make install_jsregexp' or false,
+      config = function()
+        require('luasnip').setup()
+        require('luasnip.loaders.from_vscode').lazy_load()
+      end,
+    },
     { 'bydlw98/blink-cmp-env', dev = true, version = false },
     { 'bydlw98/blink-cmp-sshconfig', build = User.check.executable('uv') and 'make' or false, version = false },
   },
   build = function()
-    require('blink.cmp').build():pwait()
+    require('blink.cmp').build():wait(60000)
   end,
   config = function()
     require('blink.cmp').setup({
@@ -364,7 +392,7 @@ return { ---@type LazySpec
         sorts = { 'exact', 'score', 'sort_text', 'label' },
         implementation = 'prefer_rust',
       },
-      snippets = { preset = 'default' },
+      snippets = { preset = 'luasnip' },
       signature = {
         enabled = true,
         trigger = {
@@ -383,7 +411,40 @@ return { ---@type LazySpec
           direction_priority = { 's', 'n' },
         },
       },
-      cmdline = { enabled = false },
+      cmdline = {
+        enabled = true,
+        keymap = {
+          preset = 'cmdline',
+          ['<S-Tab>'] = {
+            function(cmp)
+              if not cmp.is_menu_visible() and require('user_api').util.has_words_before() then
+                return cmp.show({ providers = BUtil.gen_sources({ cmdline = true }) })
+              end
+              if cmp.is_menu_visible() then
+                return cmp.select_prev()
+              end
+              return false
+            end,
+            'fallback',
+          },
+          ['<Tab>'] = {
+            function(cmp)
+              if not cmp.is_menu_visible() and require('user_api').util.has_words_before() then
+                return cmp.show({ providers = BUtil.gen_sources({ cmdline = true }) })
+              end
+              if cmp.is_menu_visible() then
+                return cmp.select_next()
+              end
+              return false
+            end,
+            'fallback',
+          },
+          ['<Left>'] = false,
+          ['<Right>'] = false,
+          ['<Up>'] = false,
+          ['<Down>'] = false,
+        },
+      },
       term = { enabled = false },
     })
   end,
