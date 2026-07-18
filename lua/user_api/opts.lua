@@ -1,7 +1,5 @@
 local ERROR = vim.log.levels.ERROR
 local INFO = vim.log.levels.INFO
-local in_list = vim.list_contains
-local curr_buf = vim.api.nvim_get_current_buf
 local validate = require('user_api.check').validate
 
 ---@class User.Opts
@@ -10,7 +8,8 @@ local validate = require('user_api.check').validate
 ---@field options User.Opts.Spec
 local M = {}
 
-M.options = {}
+local options = {} ---@type User.Opts.Spec
+local toggleable = {} ---@type string[]
 
 ---@return User.Opts.AllOpts all_opts
 function M.get_all_opts()
@@ -29,11 +28,11 @@ local function toggle_completer(lead, _, pos)
   local len = lead:len()
   local CMD_LEN = ('OptsToggle '):len() + 1
   if len == 0 or pos < CMD_LEN then
-    return M.toggleable
+    return toggleable
   end
 
   local valid = {} ---@type string[]
-  for _, o in ipairs(M.toggleable) do
+  for _, o in ipairs(toggleable) do
     if o:match(lead) ~= nil and o:find('^' .. lead) then
       table.insert(valid, o)
     end
@@ -53,13 +52,13 @@ function M.gen_toggleable(short)
   local T = M.get_all_opts()
   local o_long, o_short = vim.tbl_keys(T), vim.tbl_values(T) ---@type string[], string[]
   for _, opt in ipairs(o_long) do
-    if opt ~= '' and in_list({ 'no', 'yes', true, false }, vim.o[opt]) then
+    if opt ~= '' and vim.list_contains({ 'no', 'yes', true, false }, vim.o[opt]) then
       table.insert(valid, opt)
     end
   end
   if short then
     for _, opt in ipairs(o_short) do
-      if opt ~= '' and in_list({ 'no', 'yes', true, false }, vim.o[opt]) then
+      if opt ~= '' and vim.list_contains({ 'no', 'yes', true, false }, vim.o[opt]) then
         table.insert(valid, opt)
       end
     end
@@ -69,7 +68,7 @@ function M.gen_toggleable(short)
   return valid
 end
 
-M.toggleable = M.gen_toggleable(true)
+toggleable = M.gen_toggleable(true)
 
 ---@param T User.Opts.Spec
 ---@param verbose? boolean
@@ -96,7 +95,7 @@ function M.long_opts_convert(T, verbose)
   local keys = vim.tbl_keys(ALL_OPTIONS) ---@type string[]
   table.sort(keys)
   for opt, val in pairs(T) do
-    if in_list(keys, opt) then
+    if vim.list_contains(keys, opt) then
       parsed_opts[opt] = val
     elseif not require('user_api.check').tbl_values({ opt }, ALL_OPTIONS) then
       -- If neither long nor short (known) option, append to warning message
@@ -132,7 +131,7 @@ function M.optset(O, verbose)
   if verbose == nil then
     verbose = false
   end
-  if not vim.api.nvim_get_option_value('modifiable', { buf = curr_buf() }) then
+  if not vim.api.nvim_get_option_value('modifiable', { buf = vim.api.nvim_get_current_buf() }) then
     return
   end
 
@@ -140,8 +139,8 @@ function M.optset(O, verbose)
   local opts = M.long_opts_convert(O, verbose)
   for k, v in pairs(opts) do
     if type(vim.o[k]) == type(v) then
-      M.options[k] = v
-      vim.o[k] = M.options[k]
+      options[k] = v
+      vim.o[k] = options[k]
       verb_msg = ('%s- %s: %s\n'):format(verb_msg, k, vim.inspect(v))
     end
   end
@@ -169,7 +168,7 @@ function M.set_cursor_blink()
 end
 
 function M.print_set_opts()
-  local T = vim.deepcopy(M.options)
+  local T = vim.deepcopy(options)
   table.sort(T)
   vim.notify(vim.inspect(T), INFO)
 end
@@ -197,7 +196,7 @@ function M.toggle(O, verbose)
     return
   end
   for _, opt in ipairs(O) do
-    if in_list(M.toggleable, opt) then
+    if vim.list_contains(toggleable, opt) then
       local value = vim.o[opt]
       if Value.is_bool(value) then
         value = not value
@@ -211,28 +210,27 @@ end
 
 function M.setup_cmds()
   local Commands = require('user_api.commands')
-  local desc = require('user_api.commands').desc
   Commands.add_command('OptsToggle', function(ctx)
     local cmds = {}
     for _, v in ipairs(ctx.fargs) do
-      if not (in_list(M.toggleable, v) or ctx.bang) then
+      if not (vim.list_contains(toggleable, v) or ctx.bang) then
         vim.notify(('(OptsToggle): Cannot toggle option `%s`, aborting'):format(v), ERROR)
         return
       end
-      if in_list(M.toggleable, v) and not in_list(cmds, v) then
+      if vim.list_contains(toggleable, v) and not vim.list_contains(cmds, v) then
         table.insert(cmds, v)
       end
     end
     M.toggle(cmds, ctx.bang)
-  end, desc('Toggle Vim Options', true, '+', toggle_completer))
+  end, Commands.desc('Toggle Vim Options', true, '+', toggle_completer))
   Commands.add_command('OptsToggleable', function(ctx)
-    local toggleable = M.gen_toggleable(ctx.bang)
+    toggleable = M.gen_toggleable(ctx.bang)
     local msg = ''
     for i, v in ipairs(toggleable) do
       msg = ('%s%s%s'):format(msg, i == 1 and '' or '\n', v)
     end
     vim.notify(msg)
-  end, desc('Print all toggleable options', true))
+  end, Commands.desc('Print all toggleable options', true))
 end
 
 function M.setup_maps()
@@ -262,13 +260,13 @@ function M.setup(override, verbose, cursor_blink)
     cursor_blink = false
   end
 
-  if vim.tbl_isempty(M.options) then
-    M.options = M.long_opts_convert(M.get_defaults(), verbose)
+  if vim.tbl_isempty(options) then
+    options = M.long_opts_convert(M.get_defaults(), verbose)
   end
 
   local parsed_opts = M.long_opts_convert(override or {}, verbose)
-  M.options = vim.tbl_deep_extend('keep', parsed_opts, M.options) ---@type vim.bo|vim.wo
-  M.optset(M.options, verbose)
+  options = vim.tbl_deep_extend('keep', parsed_opts, options) --[[@as User.Opts.Spec]]
+  M.optset(options, verbose)
 
   if cursor_blink then
     M.set_cursor_blink()

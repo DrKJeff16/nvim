@@ -2,7 +2,7 @@
 
 ---Available modes.
 --- ---
----@alias MapModes 'n'|'i'|'v'|'t'|'o'|'x'
+---@alias MapModes 'n'|'i'|'v'|'t'|'o'|'x'|'V'
 
 ---Array for available modes.
 --- ---
@@ -34,6 +34,7 @@
 ---@field v? AllMaps
 ---@field t? AllMaps
 ---@field o? AllMaps
+---@field V? AllMaps
 ---@field x? AllMaps
 
 ---@class KeyMapTbl
@@ -58,11 +59,12 @@ end
 ---@class User.Maps.Keymap
 local M = {}
 
-M.n = variant('n')
+M.V = variant('V')
 M.i = variant('i')
-M.v = variant('v')
-M.t = variant('t')
+M.n = variant('n')
 M.o = variant('o')
+M.t = variant('t')
+M.v = variant('v')
 M.x = variant('x')
 
 return M

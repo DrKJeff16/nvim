@@ -316,7 +316,7 @@ function M.get_opts_tbl(s, bufnr)
   return res
 end
 
----@generic T
+---@generic T: table
 ---@param T T
 ---@param steps? integer
 ---@param direction? 'l'|'r'
@@ -330,8 +330,12 @@ function M.mv_tbl_values(T, steps, direction)
   steps = steps > 0 and steps or 1
   direction = (direction and in_list({ 'l', 'r' }, direction)) and direction or 'r'
 
-  local direction_funcs = { ---@class DirectionFuns
-    r = function(t) ---@param t table<string, any>
+  ---@class DirectionFuns
+  local direction_funcs = {
+    ---@generic T: table
+    ---@param t T
+    ---@return T res
+    r = function(t)
       local keys = vim.tbl_keys(t) ---@type string[]
       table.sort(keys)
 
@@ -342,7 +346,10 @@ function M.mv_tbl_values(T, steps, direction)
       end
       return res
     end,
-    l = function(t) ---@param t table<string, any>
+    ---@generic T: table
+    ---@param t T
+    ---@return T res
+    l = function(t)
       local keys = vim.tbl_keys(t) ---@type string[]
       table.sort(keys)
 
@@ -365,7 +372,7 @@ end
 
 ---@param x boolean
 ---@param y boolean
----@return boolean
+---@return boolean xor
 function M.xor(x, y)
   validate({ x = { x, { 'boolean' } }, y = { y, { 'boolean' } } })
 
@@ -475,10 +482,11 @@ function M.ft_get(bufnr)
   return vim.api.nvim_get_option_value('filetype', { buf = bufnr or curr_buf() })
 end
 
----@param T any[]
----@param V any
----@return table T
----@return any val
+---@generic T, V
+---@param T T
+---@param V V
+---@return T T
+---@return V|nil|? val
 function M.pop_values(T, V)
   validate({ T = { T, { 'table' } } })
 
@@ -492,7 +500,9 @@ function M.pop_values(T, V)
   if idx < 1 or idx > #T then
     return T
   end
-  return T, table.remove(T, idx)
+
+  local popped = table.remove(T, idx)
+  return T, popped
 end
 
 ---@param c string
@@ -541,8 +551,7 @@ function M.discard_dups(data)
     return data
   end
 
-  ---@cast data string
-  if require('user_api.check').is_str(data) then
+  if type(data) == 'string' then
     local res = data:sub(1, 1)
     local i = 2
     while i < data:len() do
@@ -555,9 +564,8 @@ function M.discard_dups(data)
     return res
   end
 
+  ---@cast data string[]
   local res = {} ---@type string[]
-
-  ---@cast data table
   for k, v in pairs(data) do
     if not vim.tbl_contains(res, v) then
       res[k] = v
@@ -575,9 +583,8 @@ function M.reverse_tbl(T)
     error('(user_api.util.reverse_tbl): Empty table!', ERROR)
   end
 
-  local len = #T
-  for i = 1, math.floor(len / 2), 1 do
-    T[i], T[len - i + 1] = T[len - i + 1], T[i]
+  for i = 1, math.floor(#T / 2), 1 do
+    T[i], T[#T - i + 1] = T[#T - i + 1], T[i]
   end
   return T
 end

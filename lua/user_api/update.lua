@@ -1,13 +1,14 @@
 local WARN = vim.log.levels.WARN
 local ERROR = vim.log.levels.ERROR
 local INFO = vim.log.levels.INFO
+local validate = require('user_api.check').validate
 
 ---@class User.Update
 local M = {}
 
 ---@param verbose? boolean
 function M.update(verbose)
-  require('user_api.check').validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
+  validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
   if verbose == nil then
     verbose = false
   end
@@ -67,24 +68,30 @@ function M.update(verbose)
   end)
 end
 
-function M.setup()
+---@param verbose? boolean
+function M.setup(verbose)
+  validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
+  if verbose == nil then
+    verbose = false
+  end
+
+  require('user_api.commands').add_command('UserUpdate', function(ctx)
+    M.update(ctx.bang)
+  end, { bang = true, desc = 'Update Jnvim' }, verbose)
+
   local desc = require('user_api.maps').desc
   require('user_api.config').keymaps.set({
     n = {
       ['<leader>U'] = { group = '+User API' },
       ['<leader>UU'] = {
         function()
-          M.update(true)
+          vim.cmd.UserUpdate({ bang = true })
         end,
         desc('Update User Config (Verbose)'),
       },
-      ['<leader>Uu'] = { M.update, desc('Update User Config') },
+      ['<leader>Uu'] = { vim.cmd.UserUpdate, desc('Update User Config') },
     },
   })
-
-  vim.api.nvim_create_user_command('UserUpdate', function(ctx)
-    M.update(ctx.bang)
-  end, { bang = true, desc = 'Update Jnvim' })
 end
 
 return M

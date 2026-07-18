@@ -11,7 +11,6 @@ local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
 local INFO = vim.log.levels.INFO
 local desc = require('user_api.maps').desc
-local ft_get = require('user_api.util').ft_get
 local optget = require('user_api.util').optget
 local validate = require('user_api.check').validate
 
@@ -55,7 +54,7 @@ local function delete_file(force)
 end
 
 ---@param cmd 'edit'|'ed'|'split'|'sp'|'vsplit'|'vs'|'tabnew'
----@return function|nil op
+---@return function|nil|? op
 local function rcfile(cmd)
   validate({ cmd = { cmd, { 'string' } } })
   if
@@ -74,7 +73,7 @@ local function rcfile(cmd)
 end
 
 local function new_file()
-  local ft = ft_get(vim.api.nvim_get_current_buf())
+  local ft = require('user_api.util').ft_get(vim.api.nvim_get_current_buf())
   vim.cmd.wincmd('n')
   vim.cmd.wincmd('o')
 
@@ -136,11 +135,11 @@ local function buf_del(force)
     force = false
   end
 
-  local ft_triggers = { 'NvimTree', 'noice', 'trouble' }
-  local pre_exc = { ft = { 'help', 'lazy', 'man', 'noice' }, bt = { 'help' } }
   return function()
+    local ft_triggers = { 'NvimTree', 'noice', 'trouble' }
+    local pre_exc = { ft = { 'help', 'lazy', 'man', 'noice' }, bt = { 'help' } }
     local buf = vim.api.nvim_get_current_buf()
-    local prev_ft, prev_bt = ft_get(buf), require('user_api.util').bt_get(buf)
+    local prev_ft, prev_bt = require('user_api.util').ft_get(buf), require('user_api.util').bt_get(buf)
     if not force then
       force = prev_bt == 'terminal'
     end
@@ -150,22 +149,17 @@ local function buf_del(force)
       return
     end
 
-    if vim.list_contains(ft_triggers, ft_get(vim.api.nvim_get_current_buf())) then
+    if vim.list_contains(ft_triggers, require('user_api.util').ft_get(vim.api.nvim_get_current_buf())) then
       vim.cmd.bprevious()
     end
   end
 end
 
 ---@class User.Config.Keymaps
----@field nop User.Config.Keymaps.NOP
 ---@field no_oped? boolean
 local M = {}
 
-function M.print_keys()
-  vim.notify(vim.inspect(M.Keys), INFO)
-end
-
-M.Keys = { ---@type AllModeMaps
+local Keys = { ---@type AllModeMaps
   n = {
     ['<C-w>W'] = { group = '+Move Window' },
     ['<C-w>s'] = { group = '+Split' },
@@ -322,6 +316,10 @@ M.Keys = { ---@type AllModeMaps
   t = { ['<Esc>'] = { '<C-\\><C-n>', desc('Escape Terminal') } },
 }
 
+function M.print_keys()
+  vim.notify(vim.inspect(Keys), INFO)
+end
+
 ---Set both the `<leader>` and `<localleader>` keys.
 --- ---
 ---@param leader string `<leader>` key string (defaults to `<Space>`)
@@ -411,14 +409,13 @@ function M.set(keys, bufnr, defaults)
     bufnr = { bufnr, { 'number', 'nil' }, true },
     defaults = { defaults, { 'boolean', 'nil' }, true },
   })
+  if vim.tbl_isempty(keys) then
+    return
+  end
   bufnr = bufnr or nil
   if defaults == nil then
     defaults = false
   end
-  if vim.tbl_isempty(keys) then
-    return
-  end
-
   if not vim.g.leader_set then
     vim.notify('`keymaps.set_leader()` not called!', WARN)
   end
@@ -448,9 +445,9 @@ function M.set(keys, bufnr, defaults)
   end
 
   M.no_oped = true
-  M.Keys = vim.tbl_deep_extend('keep', parsed_keys, M.Keys) ---@type AllModeMaps
+  Keys = vim.tbl_deep_extend('keep', parsed_keys, Keys) --[[@as AllModeMaps]]
 
-  local passed = defaults and M.Keys or parsed_keys
+  local passed = defaults and Keys or parsed_keys
   require('user_api.maps').map_dict(passed, 'wk.register', true, nil, bufnr)
 end
 

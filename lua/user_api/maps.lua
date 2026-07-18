@@ -1,15 +1,12 @@
 ---@module 'user_api.maps._meta'
 
-local MODES = { 'n', 'i', 'v', 't', 'o', 'x', 'c' }
+local MODES = { 'n', 'i', 'v', 't', 'o', 'x', 'c', 'V' }
 local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
-local in_list = vim.list_contains
 local validate = require('user_api.check').validate
 
 ---@diagnostic disable-next-line:missing-fields
 local M = {} ---@type User.Maps
-
-M.modes = MODES
 
 function M.desc(desc, opts)
   validate({
@@ -32,7 +29,7 @@ function M.nop(T, opts, mode, prefix)
   })
 
   local Value = require('user_api.check.value')
-  mode = (Value.is_str(mode) and in_list(MODES, mode)) and mode or 'n'
+  mode = (Value.is_str(mode) and vim.list_contains(MODES, mode)) and mode or 'n'
 
   if mode == 'i' then
     vim.notify('(user_api.maps.nop): Refusing to NO-OP these keys in Insert mode: ' .. vim.inspect(T), WARN)
@@ -74,11 +71,11 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
   end
 
   local map_choices = { 'keymap', 'wk.register' }
-  map_func = in_list(map_choices, map_func) and map_func or 'wk.register'
+  map_func = vim.list_contains(map_choices, map_func) and map_func or 'wk.register'
   if not require('user_api.maps.wk').available() then
     map_func = 'keymap'
   end
-  mode = (Value.is_str(mode) and in_list(MODES, mode)) and mode or 'n'
+  mode = (Value.is_str(mode) and vim.list_contains(MODES, mode)) and mode or 'n'
   has_modes = Value.is_bool(has_modes) and has_modes or false
   bufnr = Value.is_int(bufnr) and bufnr or nil
 
@@ -87,7 +84,7 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
     local keymap_ran = false
     ---@cast T AllModeMaps
     for mode_choice, t in pairs(T) do
-      if in_list(MODES, mode_choice) then
+      if vim.list_contains(MODES, mode_choice) then
         if map_func == 'keymap' then
           func = require('user_api.maps.keymap')[mode_choice]
           for lhs, v in pairs(t) do
@@ -216,6 +213,9 @@ local Maps = setmetatable(M, { ---@type User.Maps
   __index = function(self, k)
     if require('user_api.check').module('user_api.maps.' .. k) then
       return require('user_api.maps.' .. k)
+    end
+    if k == 'modes' then
+      return MODES
     end
     local res = rawget(self, k)
     if res then

@@ -18,7 +18,7 @@ local function make_timer()
     vim.schedule_wrap(function()
       local logfile = vim.fs.joinpath(vim.fn.stdpath('state'), 'nvim.log')
       local stat = uv.fs_stat(logfile)
-      if not stat or stat.size < 1048576 then -- 1GiB
+      if not stat or stat.size < math.floor(1048576 / 2) then -- 512MiB
         return
       end
 
@@ -36,15 +36,14 @@ local function make_timer()
     end)
   )
 
-  vim.api.nvim_create_autocmd({ 'VimLeavePre' }, {
+  vim.api.nvim_create_autocmd('VimLeavePre', {
     group = vim.api.nvim_create_augroup('log_autoclear', { clear = true }),
+    once = true,
     callback = function()
-      if not (timer and timer:is_active()) then
-        return
+      if timer and timer:is_active() then
+        timer:stop()
+        timer = nil
       end
-
-      timer:stop()
-      timer = nil
     end,
   })
 end
@@ -79,17 +78,15 @@ function M.setup(commands, verbose)
     verbose = false
   end
 
-  require('user_api.commands').setup(commands or {})
-  require('user_api.update').setup()
-
-  require('user_api.opts').setup()
+  require('user_api.commands').setup(commands or {}, verbose)
+  require('user_api.update').setup(verbose)
+  require('user_api.opts').setup(nil, verbose)
   require('user_api.distro').setup(verbose)
-
-  require('user_api.config').neovide.setup()
-  require('user_api.pickers').setup()
+  require('user_api.config.neovide').setup(nil, nil, verbose)
+  require('user_api.pickers').setup(verbose)
 
   local desc = require('user_api.maps').desc
-  require('user_api.config').keymaps.set({
+  require('user_api.config.keymaps').set({
     n = {
       ['<leader>U'] = { group = '+User API' },
       ['<leader><leader>'] = { require('user_api.pickers').run, desc('Select Picker') },

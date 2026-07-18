@@ -34,12 +34,15 @@ function M.validate(T)
   end
 
   if max == 3 then
+    ---@cast T table<string, UserValidateSpec>
     for name, spec in pairs(T) do
       table.insert(spec, 1, name)
       vim.validate(unpack(spec))
     end
     return
   end
+
+  ---@cast T table<string, vim.validate.Spec>
   vim.validate(T)
 end
 

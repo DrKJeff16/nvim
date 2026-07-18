@@ -34,23 +34,36 @@ local M = {}
 ---@param mod string
 ---@param name string
 ---@param spec User.Pickers.Spec
-function M.new_picker(mod, name, spec)
+---@param verbose? boolean
+function M.new_picker(mod, name, spec, verbose)
   validate({
     mod = { mod, { 'string' } },
     name = { name, { 'string' } },
     spec = { spec, { 'table' } },
     ['spec.mod'] = { spec.mod, { 'string' } },
     ['spec.cb'] = { spec.cb, { 'function' } },
+    verbose = { verbose, { 'boolean', 'nil' }, true },
   })
-
-  if not exists(mod) then
-    return
+  if verbose == nil then
+    verbose = false
   end
 
-  pickers[name] = P:new(spec)
+  if exists(mod) then
+    pickers[name] = P:new(spec)
+
+    if verbose then
+      vim.notify(('(User API): Added the `%s` picker'):format(name), vim.log.levels.INFO)
+    end
+  end
 end
 
-function M.setup()
+---@param verbose? boolean
+function M.setup(verbose)
+  validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
+  if verbose == nil then
+    verbose = false
+  end
+
   M.new_picker('telescope', 'telescope', {
     mod = 'telescope._extensions.picker_list',
     cb = require('telescope._extensions.picker_list').exports.picker_list,

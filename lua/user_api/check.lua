@@ -1,4 +1,3 @@
-local uv = vim.uv or vim.loop
 local validate = require('user_api.check.exists').validate
 
 ---@param path string
@@ -29,7 +28,7 @@ local M = {}
 --- ---
 ---@return boolean is_root
 function M.is_root()
-  return uv.getuid() == 0
+  return vim.uv.getuid() == 0
 end
 
 ---Check whether Neovim is running in a Windows environment.
@@ -58,7 +57,7 @@ end
 ---@return boolean in_console
 function M.in_console()
   --- FIXME: This is not a good enough check. Must find a better solution
-  local env = vim.fn.environ() ---@type table<string, string>
+  local env = vim.fn.environ() --[[@as table<string, string>]]
   return vim.list_contains({ 'linux' }, env.TERM) and not require('user_api.check.value').fields('DISPLAY', env)
 end
 
