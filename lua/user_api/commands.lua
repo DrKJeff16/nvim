@@ -46,6 +46,13 @@ function M.desc(txt, bang, nargs, complete)
 end
 
 local commands = { ---@type table<string, User.Commands.CmdSpec>
+  ErrQuit = {
+    function()
+      vim.api.nvim_exec_autocmds('VimLeavePre', {})
+      os.exit(1)
+    end,
+    M.desc('Exit with exit code of 1'),
+  },
   Redir = {
     function(ctx)
       local l =

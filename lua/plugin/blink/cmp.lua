@@ -4,7 +4,7 @@
 local User = require('user_api')
 
 ---@param idx integer
----@return fun(cmp: blink.cmp.API): result: boolean|nil
+---@return fun(cmp: blink.cmp.API): result: boolean|nil|?
 local function accept_nth(idx)
   User.check.validate({ idx = { idx, { 'number' } } })
   if not require('user_api').check.is_int(idx) then

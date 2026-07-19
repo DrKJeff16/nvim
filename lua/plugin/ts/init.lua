@@ -20,7 +20,6 @@ local ensure_langs = { ---@type string[]
   'dtd',
   'editorconfig',
   'fennel',
-  'ghostty',
   'git_config',
   'git_rebase',
   'gitattributes',
@@ -74,7 +73,6 @@ local ensure_langs = { ---@type string[]
   'sql',
   'ssh_config',
   'templ',
-  'tmux',
   'todotxt',
   'toml',
   'typescript',
@@ -85,7 +83,6 @@ local ensure_langs = { ---@type string[]
   'xml',
   'xresources',
   'yaml',
-  'zathurarc',
   'zig',
   'zsh',
 }
@@ -104,7 +101,6 @@ local patterns = { ---@type string[]
   'diff',
   'dosini',
   'editorconfig',
-  'ghostty',
   'gitattributes',
   'gitconfig',
   'gitignore',
@@ -139,7 +135,6 @@ local patterns = { ---@type string[]
   'sql',
   'sshconfig',
   'template',
-  'tmux',
   'toml',
   'typescript',
   'udevconf',
@@ -147,7 +142,6 @@ local patterns = { ---@type string[]
   'vim',
   'xml',
   'yaml',
-  'zathurarc',
   'zig',
   'zsh',
 }
@@ -160,36 +154,26 @@ if not require('user_api').distro.termux.is_distro() then
 end
 
 return { ---@type LazySpec
-  'romus204/tree-sitter-manager.nvim',
+  'nvim-treesitter/nvim-treesitter',
+  branch = 'main',
   config = function()
-    require('tree-sitter-manager').setup({
-      parser_dir = vim.fs.joinpath(vim.fn.stdpath('data'), 'site/parser'),
-      query_dir = vim.fs.joinpath(vim.fn.stdpath('data'), 'site/queries'),
-      assume_installed = {},
-      ensure_installed = ensure_langs,
-      border = 'rounded',
-      auto_install = true,
-      noauto_install = {},
-      highlight = true,
-      nohighlight = {},
-      languages = {},
-      nerdfont = true,
-    })
+    require('nvim-treesitter.config').setup({ install_dir = vim.fs.joinpath(vim.fn.stdpath('data'), 'site') })
+    require('nvim-treesitter.install').install(ensure_langs)
 
-    local group = vim.api.nvim_create_augroup('TSPlugin', { clear = true })
     vim.api.nvim_create_autocmd('FileType', {
-      group = group,
+      group = vim.api.nvim_create_augroup('TsInstall', { clear = true }),
       pattern = patterns,
       callback = function(ev)
-        if not vim.api.nvim_buf_is_loaded(ev.buf) then
-          return
-        end
-        local lang = vim.treesitter.language.get_lang(vim.api.nvim_get_option_value('filetype', { buf = ev.buf }))
-        if not (lang and vim.treesitter.language.add(lang)) then
-          return
-        end
-        vim.treesitter.language.register('bash', { 'sh' })
-        vim.treesitter.start(ev.buf)
+        vim.treesitter.start()
+
+        vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+      end,
+    })
+
+    vim.api.nvim_create_autocmd('User', {
+      pattern = 'TSUpdate',
+      callback = function()
+        require('nvim-treesitter.parsers').lua.install_info.generate = true
       end,
     })
   end,

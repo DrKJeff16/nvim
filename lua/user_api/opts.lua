@@ -3,9 +3,6 @@ local INFO = vim.log.levels.INFO
 local validate = require('user_api.check').validate
 
 ---@class User.Opts
----@field all_opts User.Opts.AllOpts
----@field config User.Opts.Spec
----@field options User.Opts.Spec
 local M = {}
 
 local options = {} ---@type User.Opts.Spec
@@ -154,17 +151,16 @@ end
 ---Set up `guicursor` so that cursor blinks.
 --- ---
 function M.set_cursor_blink()
-  if require('user_api.check').in_console() then
-    return
+  if not require('user_api.check').in_console() then
+    M.optset({
+      guicursor = 'n-v-c:block'
+        .. ',i-ci-ve:ver25'
+        .. ',r-cr:hor20'
+        .. ',o:hor50'
+        .. ',a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor'
+        .. ',sm:block-blinkwait175-blinkoff150-blinkon175',
+    })
   end
-  M.optset({
-    guicursor = 'n-v-c:block'
-      .. ',i-ci-ve:ver25'
-      .. ',r-cr:hor20'
-      .. ',o:hor50'
-      .. ',a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor'
-      .. ',sm:block-blinkwait175-blinkoff150-blinkon175',
-  })
 end
 
 function M.print_set_opts()
@@ -192,18 +188,17 @@ function M.toggle(O, verbose)
   end
 
   ---@cast O string[]
-  if vim.tbl_isempty(O) then
-    return
-  end
-  for _, opt in ipairs(O) do
-    if vim.list_contains(toggleable, opt) then
-      local value = vim.o[opt]
-      if Value.is_bool(value) then
-        value = not value
-      else
-        value = value == 'yes' and 'no' or 'yes'
+  if not vim.tbl_isempty(O) then
+    for _, opt in ipairs(O) do
+      if vim.list_contains(toggleable, opt) then
+        local value = vim.o[opt]
+        if Value.is_bool(value) then
+          value = not value
+        else
+          value = value == 'yes' and 'no' or 'yes'
+        end
+        M.optset({ [opt] = value }, verbose)
       end
-      M.optset({ [opt] = value }, verbose)
     end
   end
 end

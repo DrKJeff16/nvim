@@ -363,7 +363,7 @@ function M.get_default_toggles()
     ts_autotag = true,
     ts_commentstring = true,
     ts_context = true,
-    ts_enable = true,
+    ts_enable = false,
     ts_endwise = true,
     ts = true,
     ts_vimdoc = true,
