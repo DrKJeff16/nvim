@@ -156,6 +156,7 @@ end
 return { ---@type LazySpec
   'nvim-treesitter/nvim-treesitter',
   branch = 'main',
+  build = ':TSUpdate',
   config = function()
     require('nvim-treesitter.config').setup({ install_dir = vim.fs.joinpath(vim.fn.stdpath('data'), 'site') })
     require('nvim-treesitter.install').install(ensure_langs)
