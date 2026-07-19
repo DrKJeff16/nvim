@@ -412,7 +412,7 @@ return { ---@type LazySpec
         },
       },
       cmdline = {
-        enabled = true,
+        enabled = false,
         keymap = {
           preset = 'cmdline',
           ['<S-Tab>'] = {

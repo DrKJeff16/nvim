@@ -132,7 +132,6 @@ return { ---@type LazySpec[]
       require('catppuccin').setup({
         flavour = 'auto',
         background = { light = 'latte', dark = 'mocha' },
-        default_integrations = true,
         float = { solid = true, transparent = true },
         transparent_background = false,
         show_end_of_buffer = true,
