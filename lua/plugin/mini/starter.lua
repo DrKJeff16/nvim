@@ -15,7 +15,7 @@ return { ---@type LazySpec
       items = {
         {
           { name = 'Projects', action = 'Project', section = 'Projects' },
-          { name = 'Recent Projects', action = 'ProjectRecents', section = 'Projects' },
+          { name = 'Recent Projects', action = 'Project recents', section = 'Projects' },
         },
       },
       content_hooks = {
