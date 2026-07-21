@@ -129,6 +129,7 @@
 ---@field syntax_gentoo? LazySpecImport
 ---@field telescope? LazySpecImport
 ---@field tmux? LazySpecImport
+---@field tobira? LazySpecImport
 ---@field todo_comments? LazySpecImport
 ---@field toggleterm? LazySpecImport
 ---@field toml? LazySpecImport
@@ -277,6 +278,7 @@
 ---@field syntax_gentoo? boolean
 ---@field telescope? boolean
 ---@field tmux? boolean
+---@field tobira? boolean
 ---@field todo_comments? boolean
 ---@field toggleterm? boolean
 ---@field toml? boolean
