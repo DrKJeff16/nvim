@@ -356,7 +356,7 @@ function M.get_default_toggles()
     syntax_gentoo = true,
     telescope = false,
     tmux = true,
-    tobira = true,
+    tobira = false,
     todo_comments = true,
     toggleterm = true,
     toml = true,

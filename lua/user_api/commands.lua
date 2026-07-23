@@ -81,12 +81,12 @@ local commands = { ---@type table<string, User.Commands.CmdSpec>
         })
       end
 
-      local buf_opts, win_opts = { buf = bufnr }, { win = win } ---@type vim.api.keyset.option, vim.api.keyset.option
-      vim.api.nvim_set_option_value('filetype', 'Redir', buf_opts)
-      vim.api.nvim_set_option_value('modified', false, buf_opts)
-      vim.api.nvim_set_option_value('number', false, win_opts)
-      vim.api.nvim_set_option_value('signcolumn', 'no', win_opts)
-      vim.api.nvim_set_option_value('list', false, win_opts)
+      local optset = require('user_api.util').optset
+      optset('filetype', 'Redir', 'buf', bufnr)
+      optset('modified', false, 'buf', bufnr)
+      optset('number', false, 'win', win)
+      optset('signcolumn', 'no', 'win', win)
+      optset('list', false, 'win', win)
 
       vim.keymap.set('n', 'q', function()
         pcall(vim.api.nvim_buf_delete, bufnr, { force = true })
