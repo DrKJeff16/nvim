@@ -122,6 +122,7 @@ Config.lazy.setup({
   fzf_nerdfont = false,
   gh_co = false,
   git_gitsigns = true,
+  git_ghrelease = true,
   git_guh = false,
   git_inlinediff = false,
   git_lazygit = false,
