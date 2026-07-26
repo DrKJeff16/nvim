@@ -40,6 +40,7 @@
 ---@field fzf_nerdfont? LazySpecImport
 ---@field gh_co? LazySpecImport
 ---@field git_gitsigns? LazySpecImport
+---@field git_ghrelease? LazySpecImport
 ---@field git_guh? LazySpecImport
 ---@field git_inlinediff? LazySpecImport
 ---@field git_lazygit? LazySpecImport
@@ -189,6 +190,7 @@
 ---@field fzf_nerdfont? boolean
 ---@field gh_co? boolean
 ---@field git_gitsigns? boolean
+---@field git_ghrelease? boolean
 ---@field git_guh? boolean
 ---@field git_inlinediff? boolean
 ---@field git_lazygit? boolean
