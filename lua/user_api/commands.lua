@@ -194,9 +194,7 @@ function M.setup(cmds, verbose)
 
   commands = vim.tbl_deep_extend('force', commands, cmds or {}) --[[@as table<string, User.Commands.CmdSpec>]]
   for cmd, T in pairs(commands) do
-    local exec, opts = T[1], T[2] or {}
-    vim.api.nvim_create_user_command(cmd, exec, opts)
-
+    vim.api.nvim_create_user_command(cmd, T[1], T[2] or {})
     if verbose then
       vim.notify(('(User API): Created command `:%s`'):format(cmd), INFO)
     end

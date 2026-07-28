@@ -4,8 +4,6 @@
 
 ---@alias HlDict table<string, vim.api.keyset.highlight>
 
-local ERROR = vim.log.levels.ERROR
-
 ---A set of utilities to make Vim highlighting easier.
 --- ---
 ---@class User.Hl
@@ -15,13 +13,16 @@ local M = {}
 ---@param opts vim.api.keyset.highlight The highlight options
 ---@param ns? integer The highlighting namespace
 function M.hl(name, opts, ns)
-  local type_not_empty = require('user_api.check.value').type_not_empty
-  if not (type_not_empty('string', name) and type_not_empty('table', opts)) then
-    vim.notify('(user_api.highlight.hl): Bad argument', ERROR)
-    return
-  end
+  require('user_api.check').validate({
+    name = { name, { 'string' } },
+    opts = { opts, { 'table' } },
+    ns = { ns, { 'number', 'nil' }, true },
+  })
 
-  vim.api.nvim_set_hl(ns or 0, name, opts)
+  local type_not_empty = require('user_api.check').type_not_empty
+  if type_not_empty('string', name) and type_not_empty('table', opts) then
+    vim.api.nvim_set_hl(ns or 0, name, opts)
+  end
 end
 
 ---Set highlight groups based on an array of `HlPair` type highlight groups.
@@ -40,17 +41,15 @@ end
 ---@param A HlPair[] The array of `HlPair` objects
 ---@param ns? integer
 function M.hl_from_arr(A, ns)
-  local type_not_empty = require('user_api.check.value').type_not_empty
-  if not type_not_empty('table', A) then
-    vim.notify('(user_api.highlight.hl_from_arr): Bad argument', ERROR)
-    return
-  end
+  require('user_api.check').validate({
+    A = { A, { 'table' } },
+    ns = { ns, { 'number', 'nil' }, true },
+  })
 
+  local type_not_empty = require('user_api.check').type_not_empty
   for _, t in ipairs(A) do
     if type_not_empty('string', t.name) and type_not_empty('table', t.opts) then
       M.hl(t.name, t.opts, ns or nil)
-    else
-      vim.notify('(user_api.highlight.hl_from_arr): Skipping invalid table', ERROR)
     end
   end
 end
@@ -61,8 +60,8 @@ end
 ---```lua
 ------@type HlDict
 ---local T = {
----  ['HlGroup'] = { fg = '...' },
----  ['HlGroupAlt'] = { link = 'Normal' },
+---  HlGroup = { fg = '...' },
+---  HlGroupAlt = { link = 'Normal' },
 ---}
 ---```
 ---To know what options are valid try `:h nvim_set_hl`.
@@ -70,17 +69,15 @@ end
 ---@param D HlDict
 ---@param ns? integer
 function M.hl_from_dict(D, ns)
-  local Value = require('user_api.check.value')
-  if not Value.type_not_empty('table', D) then
-    vim.notify('(user_api.highlight.hl_from_dict): Unable to parse argument', ERROR)
-    return
-  end
+  require('user_api.check').validate({
+    D = { D, { 'table' } },
+    ns = { ns, { 'number', 'nil' }, true },
+  })
 
+  local type_not_empty = require('user_api.check').type_not_empty
   for k, v in pairs(D) do
-    if Value.type_not_empty('string', k) and Value.type_not_empty('table', v) then
+    if type_not_empty('string', k) and type_not_empty('table', v) then
       M.hl(k, v, ns or nil)
-    else
-      vim.notify('(user_api.highlight.hl_from_dict): Skipping bad highlight', ERROR)
     end
   end
 end

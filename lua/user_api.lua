@@ -1,6 +1,7 @@
 local uv = vim.uv or vim.loop
 
 local timer = nil ---@type uv.uv_timer_t|nil
+local group = vim.api.nvim_create_augroup('UserAPI', { clear = true })
 
 local function make_timer()
   if timer and timer:is_active() then
@@ -37,7 +38,7 @@ local function make_timer()
   )
 
   vim.api.nvim_create_autocmd('VimLeavePre', {
-    group = vim.api.nvim_create_augroup('log_autoclear', { clear = true }),
+    group = group,
     once = true,
     callback = function()
       if timer and timer:is_active() then

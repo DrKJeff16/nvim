@@ -32,10 +32,7 @@ function M.is_distro(distro)
   if not vim.list_contains({ 'termux', 'archlinux' }, distro) then
     return false
   end
-  if distro == 'termux' then
-    return require('user_api.distro.termux').is_distro()
-  end
-  return require('user_api.distro.termux').is_distro()
+  return require('user_api.distro.' .. distro).is_distro() --[[@as boolean]]
 end
 
 local Distro = setmetatable(M, { ---@type User.Distro

@@ -1,11 +1,8 @@
----@module 'lazy'
-
 local INFO = vim.log.levels.INFO
 local User = require('user_api')
 local Config = require('config')
-local is_distro = User.distro.is_distro
-local desc = User.maps.desc
 
+---@param ... any
 function _G.notify_inspect(...)
   local nargs, i, txt = select('#', ...), 1, '' ---@type integer, integer, string
   while i <= nargs do
@@ -31,9 +28,8 @@ User.opts.setup({
   backspace = 'indent,eol,start',
   backup = false,
   belloff = 'all',
-  cmdwinheight = is_distro('termux') and 15 or 25,
+  cmdwinheight = User.distro.is_distro('termux') and 15 or 25,
   colorcolumn = '101',
-  completeopt = 'menuone,noselect,preview',
   confirm = true,
   copyindent = true,
   encoding = 'utf-8',
@@ -51,7 +47,6 @@ User.opts.setup({
   ignorecase = false,
   inccommand = 'nosplit',
   incsearch = true,
-  list = true,
   matchtime = 30,
   menuitems = 50,
   mouse = '',
@@ -78,7 +73,7 @@ User.opts.setup({
   switchbuf = 'usetab',
   tabstop = 4,
   title = true,
-  wrap = is_distro('termux'),
+  wrap = User.distro.is_distro('termux'),
 }, false, true)
 
 ---Disable `netrw` regardless of whether `nvim_tree/neo_tree` exist or not.
@@ -233,8 +228,8 @@ Config.lazy.setup({
 })
 
 User.config.keymaps.set({
-  n = { ['<C-/>'] = { ':silent! normal gcc<CR><Up>', desc('Toggle Comment') } },
-  v = { ['<C-/>'] = { ":'<,'>normal gcc<CR><Up>", desc('Toggle Comment') } },
+  n = { ['<C-/>'] = { ':silent! normal gcc<CR><Up>', User.maps.desc('Toggle Comment') } },
+  v = { ['<C-/>'] = { ":'<,'>normal gcc<CR><Up>", User.maps.desc('Toggle Comment') } },
 }, nil, true)
 
 -- Initialize the User API
