@@ -128,6 +128,7 @@
 ---@field stylua? LazySpecImport
 ---@field syntax_codeowners? LazySpecImport
 ---@field syntax_gentoo? LazySpecImport
+---@field syntax_tridactyl? LazySpecImport
 ---@field telescope? LazySpecImport
 ---@field tmux? LazySpecImport
 ---@field tobira? LazySpecImport
@@ -278,6 +279,7 @@
 ---@field stylua? boolean
 ---@field syntax_codeowners? boolean
 ---@field syntax_gentoo? boolean
+---@field syntax_tridactyl? boolean
 ---@field telescope? boolean
 ---@field tmux? boolean
 ---@field tobira? boolean
