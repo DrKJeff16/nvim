@@ -1,7 +1,7 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'nvim-treesitter/nvim-treesitter-context',
-  cond = not require('user_api').check.in_console(),
+  cond = not require('user_api').check.in_console() and require('user_api').check.executable('tree-sitter'),
   config = function()
     local Context = require('treesitter-context')
     Context.setup({

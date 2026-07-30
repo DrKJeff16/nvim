@@ -4,6 +4,7 @@ return { ---@type LazySpec
   'saghen/blink.pairs',
   version = false,
   dependencies = { 'saghen/blink.lib' },
+  cond = require('user_api').check.executable('cargo'),
   build = function()
     require('blink.pairs').build({ force = true }):pwait(60000)
   end,

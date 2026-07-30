@@ -202,6 +202,7 @@ return { ---@type LazySpec
   'saghen/blink.cmp',
   event = 'InsertEnter',
   version = false,
+  cond = User.check.executable('cargo'),
   dependencies = {
     'saghen/blink.lib',
     'onsails/lspkind.nvim',

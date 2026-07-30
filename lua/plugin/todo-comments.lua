@@ -29,7 +29,7 @@ return { ---@type LazySpec
   'folke/todo-comments.nvim',
   version = false,
   dependencies = { 'nvim-treesitter/nvim-treesitter' },
-  cond = require('user_api').check.executable('rg') and not require('user_api').check.in_console(),
+  cond = require('user_api').check.executable({ 'rg', 'tree-sitter' }) and not require('user_api').check.in_console(),
   config = function()
     require('todo-comments').setup({
       signs = true,

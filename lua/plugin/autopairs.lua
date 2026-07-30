@@ -4,6 +4,7 @@ return { ---@type LazySpec
   event = 'InsertEnter',
   version = false,
   dependencies = { 'nvim-treesitter/nvim-treesitter', 'RRethy/nvim-treesitter-endwise' },
+  cond = require('user_api').check.executable('tree-sitter'),
   config = function()
     require('nvim-autopairs').setup({
       enabled = function(bufnr) ---@param bufnr integer
