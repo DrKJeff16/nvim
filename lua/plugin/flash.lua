@@ -25,35 +25,33 @@ return {
         max_length = false, ---@type integer|false
       },
       jump = {
-        jumplist = true,
-        pos = 'start', ---@type "start"|"end"|"range"
-        history = true,
-        register = true,
-        nohlsearch = true,
         autojump = false,
+        history = true,
+        jumplist = true,
+        nohlsearch = true,
+        pos = 'start', ---@type "start"|"end"|"range"
+        register = true,
       },
       label = {
-        uppercase = true,
-        exclude = '',
-        current = true,
         after = true, ---@type boolean|integer[]
         before = false, ---@type boolean|integer[]
-        style = 'overlay', ---@type "eol"|"overlay"|"right_align"|"inline"
-        reuse = 'lowercase', ---@type "lowercase"|"all"|"none"
+        current = true,
         distance = true,
-        min_pattern_length = 0,
-        rainbow = { enabled = true, shade = 5 },
-        ---@param opts Flash.Format
-        ---@return string[][] format
-        format = function(opts)
+        exclude = '',
+        format = function(opts) ---@param opts Flash.Format
           return { { opts.match.label, opts.hl_group } }
         end,
+        min_pattern_length = 0,
+        rainbow = { enabled = true, shade = 5 },
+        reuse = 'lowercase', ---@type "lowercase"|"all"|"none"
+        style = 'overlay', ---@type "eol"|"overlay"|"right_align"|"inline"
+        uppercase = true,
       },
       highlight = {
         backdrop = true,
+        groups = { match = 'FlashMatch', current = 'FlashCurrent', backdrop = 'FlashBackdrop', label = 'FlashLabel' },
         matches = true,
         priority = 5000,
-        groups = { match = 'FlashMatch', current = 'FlashCurrent', backdrop = 'FlashBackdrop', label = 'FlashLabel' },
       },
       pattern = '',
       continue = false,
@@ -68,10 +66,7 @@ return {
           enabled = true,
           config = function(opts)
             opts.autohide = opts.autohide or (vim.fn.mode(true):find('no') and vim.v.operator == 'y')
-            opts.jump_labels = opts.jump_labels
-              and vim.v.count == 0
-              and vim.fn.reg_executing() == ''
-              and vim.fn.reg_recording() == ''
+            opts.jump_labels = opts.jump_labels and vim.v.count == 0 and vim.fn.reg_executing() == ''
           end,
           autohide = false,
           jump_labels = false,
@@ -88,17 +83,17 @@ return {
           jump = { register = false, autojump = false },
         },
         treesitter = {
-          labels = 'abcdefghijklmnopqrstuvwxyz',
-          jump = { pos = 'range', autojump = true },
-          search = { incremental = true },
-          label = { before = true, after = true, style = 'inline' },
           highlight = { backdrop = true, matches = true },
+          jump = { pos = 'range', autojump = true },
+          label = { before = true, after = true, style = 'inline' },
+          labels = 'abcdefghijklmnopqrstuvwxyz',
+          search = { incremental = true },
         },
         treesitter_search = {
           jump = { pos = 'range' },
-          search = { multi_window = true, wrap = true, incremental = false },
-          remote_op = { restore = true },
           label = { before = true, after = true, style = 'inline' },
+          remote_op = { restore = true },
+          search = { multi_window = true, wrap = true, incremental = false },
         },
         remote = { remote_op = { restore = true, motion = true } },
       },
@@ -106,12 +101,12 @@ return {
         enabled = true,
         prefix = { { '⚡', 'FlashPromptIcon' } },
         win_config = {
-          relative = 'editor',
           border = 'none',
-          width = 1,
-          height = 1,
-          row = -1,
           col = 0,
+          height = 1,
+          relative = 'editor',
+          row = -1,
+          width = 1,
           zindex = 1000,
         },
       },

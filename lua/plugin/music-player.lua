@@ -2,6 +2,7 @@
 return { ---@type LazySpec
   'ricmonmol/nvim-music-player',
   version = false,
+  event = 'VeryLazy',
   build = ':UpdateRemotePlugins',
   enabled = not (require('user_api').check.in_console() or require('user_api').check.is_root()),
 }

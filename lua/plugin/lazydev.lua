@@ -2,10 +2,9 @@
 return { ---@type LazySpec
   'folke/lazydev.nvim',
   ft = { 'lua' },
+  event = 'LspAttach',
   version = false,
-  dependencies = {
-    { 'DrKJeff16/wezterm-types', lazy = true, dev = true, version = false },
-  },
+  dependencies = { { 'DrKJeff16/wezterm-types', lazy = true, dev = true, version = false } },
   cond = require('user_api').check.executable('lua-language-server'),
   config = function()
     local fs_stat = (vim.uv or vim.loop).fs_stat

@@ -12,13 +12,13 @@ local function reg(htype, func, opts)
 end
 
 local Hilite = { ---@type HlDict
-  RainbowRed = { fg = '#E06C75' },
-  RainbowYellow = { fg = '#E5C07B' },
   RainbowBlue = { fg = '#61AFEF' },
-  RainbowOrange = { fg = '#D19A66' },
-  RainbowGreen = { fg = '#98C379' },
-  RainbowViolet = { fg = '#C678DD' },
   RainbowCyan = { fg = '#56B6C2' },
+  RainbowGreen = { fg = '#98C379' },
+  RainbowOrange = { fg = '#D19A66' },
+  RainbowRed = { fg = '#E06C75' },
+  RainbowViolet = { fg = '#C678DD' },
+  RainbowYellow = { fg = '#E5C07B' },
 }
 local highlight = vim.tbl_keys(Hilite) ---@type string[]
 
@@ -33,8 +33,8 @@ return { ---@type LazySpec
       require('user_api').highlight.hl_from_dict(Hilite)
     end)
     require('ibl').setup({
-      enabled = true,
       debounce = 200,
+      enabled = true,
       indent = {
         highlight = highlight,
         repeat_linebreak = vim.o.bri and vim.o.briopt ~= '',
@@ -42,8 +42,8 @@ return { ---@type LazySpec
         char = { '╎', '╏', '┆', '┇', '┊', '┋' },
         tab_char = { '▏', '▎', '▍', '▌', '▋', '▊', '▉', '█' },
       },
-      whitespace = { highlight = { 'Whitespace', 'NonText' }, remove_blankline_trail = false },
       scope = { highlight = highlight },
+      whitespace = { highlight = { 'Whitespace', 'NonText' }, remove_blankline_trail = false },
     })
 
     local arg_tbl = { ---@type { [1]: string, [2]: function, [3]?: ibl.hooks.options }[]
@@ -72,12 +72,9 @@ return { ---@type LazySpec
       end
     end
 
-    if not vim.g.rainbow_delimiters or vim.tbl_isempty(vim.g.rainbow_delimiters) then
-      return
+    if vim.g.rainbow_delimiters and not vim.tbl_isempty(vim.g.rainbow_delimiters) then
+      vim.g.rainbow_delimiters = vim.tbl_deep_extend('force', vim.g.rainbow_delimiters, { highlight = highlight })
     end
-    vim.g.rainbow_delimiters = vim.tbl_deep_extend('force', vim.g.rainbow_delimiters, {
-      highlight = highlight,
-    })
   end,
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

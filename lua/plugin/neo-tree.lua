@@ -1,8 +1,8 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'nvim-neo-tree/neo-tree.nvim',
-  lazy = false,
   version = false,
+  event = 'VeryLazy',
   dependencies = {
     { 'DrKJeff16/plenary.nvim', dev = true },
     'MunifTanjim/nui.nvim',

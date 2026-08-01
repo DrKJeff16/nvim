@@ -2,6 +2,7 @@
 return { ---@type LazySpec
   'folke/ts-comments.nvim',
   version = false,
+  event = 'VeryLazy',
   cond = not require('user_api').check.in_console(),
   opts = {
     lang = {

@@ -5,6 +5,7 @@ local ORG_PFX = vim.fn.expand('~/.org')
 return { ---@type LazySpec
   'nvim-orgmode/orgmode',
   version = false,
+  event = 'VeryLazy',
   cond = not require('user_api').check.in_console(),
   config = function()
     require('orgmode').setup({

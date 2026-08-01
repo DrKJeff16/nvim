@@ -1,8 +1,8 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'OXY2DEV/helpview.nvim',
-  lazy = false,
   version = false,
+  event = 'VeryLazy',
   cond = not require('user_api').check.in_console(),
   opts = {
     renderers = {},

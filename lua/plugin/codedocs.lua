@@ -4,10 +4,7 @@ return { ---@type LazySpec
   version = false,
   config = function()
     require('codedocs').setup({
-      logging = {
-        level = vim.log.levels.INFO,
-        path = vim.fs.joinpath(vim.fn.stdpath('log'), 'codedocs.log'),
-      },
+      logging = { level = vim.log.levels.INFO, path = vim.fs.joinpath(vim.fn.stdpath('log'), 'codedocs.log') },
     })
   end,
 }

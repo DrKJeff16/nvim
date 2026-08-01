@@ -4,15 +4,15 @@ return { ---@type LazySpec
   version = false,
   config = function()
     require('buffer-sticks').setup({
-      position = 'right', ---@type 'right'|'left'
-      width = 3,
-      offset = { x = 1, y = 0 },
       active_char = '──',
+      filter = { filetypes = { 'terminal' } },
       inactive_char = ' ─',
       jump = { show = { 'filename', 'space', 'label' } },
       label = { show = 'always' },
+      offset = { x = 1, y = 0 },
+      position = 'right', ---@type 'right'|'left'
       transparent = true,
-      filter = { filetypes = { 'terminal' } },
+      width = 3,
       highlights = {
         active = { link = 'Statement' },
         inactive = { link = 'Whitespace' },

@@ -1,6 +1,7 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'rcarriga/nvim-notify',
+  lazy = false,
   priority = 1000,
   version = false,
   dependencies = { { 'DrKJeff16/plenary.nvim', dev = true } },

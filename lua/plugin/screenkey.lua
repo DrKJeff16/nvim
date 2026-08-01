@@ -2,12 +2,11 @@
 return { ---@type LazySpec
   'NStefan002/screenkey.nvim',
   dev = true,
+  event = 'VeryLazy',
   version = false,
-  cmd = 'Screenkey',
   cond = not require('user_api').check.in_console(),
   config = function()
-    local SK = require('screenkey')
-    SK.setup({
+    require('screenkey').setup({
       win_opts = {
         row = 0,
         col = math.floor((vim.o.columns - 60) / 2) - 1,
@@ -47,8 +46,7 @@ return { ---@type LazySpec
       display_behind = {},
       filter = function(keys)
         return vim.tbl_map(function(value) ---@param value screenkey.queued_key
-          value.key = (SK.statusline_component_is_active() and value.key == '%') and '%%' or value.key
-
+          value.key = (require('screenkey').statusline_component_is_active() and value.key == '%') and '%%' or value.key
           return value
         end, keys)
       end,
@@ -87,15 +85,12 @@ return { ---@type LazySpec
         ['<leader>'] = '<leader>',
       },
       notify_method = 'notify',
-      log = {
-        min_level = vim.log.levels.OFF,
-        filepath = vim.fs.joinpath(vim.fn.stdpath('state'), 'screenkey.log'),
-      },
+      log = { min_level = vim.log.levels.OFF, filepath = vim.fs.joinpath(vim.fn.stdpath('state'), 'screenkey.log') },
     })
 
     local desc = require('user_api').maps.desc
     require('user_api').config.keymaps.set({
-      n = { ['<leader><C-s>'] = { SK.toggle, desc('Toggle Screenkey') } },
+      n = { ['<leader><C-s>'] = { require('screenkey').toggle, desc('Toggle Screenkey') } },
     })
   end,
 }

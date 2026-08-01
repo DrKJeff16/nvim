@@ -5,22 +5,14 @@ return { ---@type LazySpec
   version = false,
   config = function()
     require('lastplace').setup({
-      ignore_filetypes = {
-        '',
-        'COMMIT_EDITMSG',
-        'gitcommit',
-        'gitrebase',
-        'hgcommit',
-        'svn',
-        'xxd',
-      },
-      ignore_buftypes = { 'quickfix', 'nofile', 'help', 'terminal' },
       center_on_jump = true,
-      jump_only_if_not_visible = false,
-      min_lines = 10,
-      max_line = 0,
-      open_folds = true,
       debug = false,
+      ignore_buftypes = { 'quickfix', 'nofile', 'help', 'terminal' },
+      ignore_filetypes = { '', 'COMMIT_EDITMSG', 'gitcommit', 'gitrebase', 'hgcommit', 'svn', 'xxd' },
+      jump_only_if_not_visible = false,
+      max_line = 0,
+      min_lines = 10,
+      open_folds = true,
     })
   end,
 }

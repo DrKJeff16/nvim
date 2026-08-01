@@ -3,6 +3,7 @@ return { ---@type LazySpec
   'DrKJeff16/pipenv.nvim',
   dev = true,
   version = false,
+  event = 'VeryLazy',
   dependencies = { 'wsdjeg/job.nvim', 'wsdjeg/picker.nvim', 'xieyonn/spinner.nvim' },
   cond = require('user_api').check.executable('pipenv'),
   config = function()

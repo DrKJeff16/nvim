@@ -5,7 +5,7 @@ return { ---@type LazySpec
     require('conform').setup({
       formatters_by_ft = {
         lua = { 'stylua', lsp_format = 'fallback' },
-        python = { 'isort', 'autopep8', lsp_format = 'fallback' },
+        python = { 'isort', 'yapf', lsp_format = 'fallback' },
         yaml = { 'yamlfmt' },
       },
       format_on_save = { timeout_ms = 500, lsp_format = 'fallback' },

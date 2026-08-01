@@ -26,16 +26,16 @@
 ---@field right string
 
 ---@class LuaLine.Components.Spec
----@field icons_enabled? boolean
----@field icon? string|nil
----@field separator? nil|string|SectionSeparator
----@field cond? nil|function
+---@field color? vim.api.keyset.highlight|string
+---@field cond? function
 ---@field draw_empty? boolean
----@field color? nil|vim.api.keyset.highlight|string
----@field type? any
+---@field fmt? fun(str: string, context?: any)
+---@field icon? string
+---@field icons_enabled? boolean
+---@field on_click? fun(clicks?: integer, button: string, mods: any)
 ---@field padding? integer
----@field fmt? nil|fun(str: string, context?: any)
----@field on_click? nil|fun(clicks?: integer, button: string, mods: any)
+---@field separator? string|SectionSeparator
+---@field type? any
 
 ---@class ComponentsColor
 ---@field active
@@ -54,21 +54,21 @@
 ---|'lualine_z_inactive'
 
 ---@class BuffersSymbols
----@field modified string
 ---@field alternate_file string
 ---@field directory string
+---@field modified string
 
 ---@class LuaLine.Components.Buffers: LuaLine.Components.Spec
 ---@field [1] 'buffers'
----@field show_filename_only? boolean
----@field hide_filename_extension? boolean
----@field show_modified_status? boolean
----@field mode? 0|1|2|3|4
----@field max_length? number
----@field filetype_names? table<string, string>
----@field use_mode_colors? boolean
 ---@field buffers_color? ComponentsColor
+---@field filetype_names? table<string, string>
+---@field hide_filename_extension? boolean
+---@field max_length? number
+---@field mode? 0|1|2|3|4
+---@field show_filename_only? boolean
+---@field show_modified_status? boolean
 ---@field symbols? BuffersSymbols
+---@field use_mode_colors? boolean
 
 ---@class LuaLine.Components.DateTime: LuaLine.Components.Spec
 ---@field [1] 'datetime'
@@ -76,15 +76,15 @@
 
 ---@class DiagnosticsInteger
 ---@field error? string|integer
----@field warn? string|integer
----@field info? string|integer
 ---@field hint? string|integer
+---@field info? string|integer
+---@field warn? string|integer
 
 ---@class DiagnosticsColor: DiagnosticsInteger
 ---@field error? string|integer
----@field warn? string|integer
----@field info? string|integer
 ---@field hint? string|integer
+---@field info? string|integer
+---@field warn? string|integer
 
 ---@class DiagnosticsSections
 ---@field [1]? 'error'
@@ -94,15 +94,13 @@
 
 ---@class LuaLine.Components.Diagnostics: LuaLine.Components.Spec
 ---@field [1] 'diagnostics'
----@field sources?
----|('nvim_lsp'|'nvim_diagnostic'|'nvim_workspace_diagnostic'|'coc'|'ale'|'vim_lsp')[]
----|fun(...): DiagnosticsInteger
----@field sections? ('error'|'warn'|'info'|'hint')[]|DiagnosticsSections
----@field diagnostics_color? DiagnosticsColor
----@field symbols? DiagnosticsColor
----@field colored? boolean
----@field update_in_insert? boolean
 ---@field always_visible? boolean
+---@field colored? boolean
+---@field diagnostics_color? DiagnosticsColor
+---@field sections? ('error'|'warn'|'info'|'hint')[]|DiagnosticsSections
+---@field sources? ('nvim_lsp'|'nvim_diagnostic'|'nvim_workspace_diagnostic'|'coc'|'ale'|'vim_lsp')[]|fun(...): DiagnosticsInteger
+---@field symbols? DiagnosticsColor
+---@field update_in_insert? boolean
 
 ---@class DiffColor
 ---@field added string
@@ -118,15 +116,13 @@
 ---@field [1] 'diff'
 ---@field colored? boolean
 ---@field diff_color? DiffColor
+---@field source? integer|fun(...): (nil|DiffSource)
 ---@field symbols? DiffColor
----@field source?
----|fun(...): (nil|DiffSource)
----|integer
 
 ---@class FileFormatSymbols
----@field unix string
 ---@field dos string
 ---@field mac string
+---@field unix string
 
 ---@class LuaLine.Components.Fileformat: LuaLine.Components.Spec
 ---@field [1] 'fileformat'
@@ -134,9 +130,9 @@
 
 ---@class FileNameSymbols
 ---@field modified string
+---@field newfile string
 ---@field readonly string
 ---@field unnamed string
----@field newfile string
 
 ---@class LuaLine.Components.Filename: LuaLine.Components.Spec
 ---@field [1] 'filename'
@@ -153,8 +149,8 @@
 ---@class LuaLine.Components.Filetype: LuaLine.Components.Spec
 ---@field [1] 'filetype'
 ---@field colored? boolean
----@field icon_only? boolean
 ---@field icon? FileTypeIcon
+---@field icon_only? boolean
 
 ---@class LuaLine.Components.Searchcount: LuaLine.Components.Spec
 ---@field [1] 'searchcount'
@@ -166,23 +162,23 @@
 
 ---@class LuaLine.Components.Tabs: LuaLine.Components.Spec
 ---@field [1] 'tabs'
----@field tab_max_length? integer
+---@field fmt? fun(name: string, context: table?): string
 ---@field max_length? number
 ---@field mode? 0|1|2
 ---@field path? 0|1|2|3
----@field use_mode_colors? boolean
----@field tabs_color? ComponentsColor
 ---@field show_modified_status? boolean
 ---@field symbols? TabsSymbols
----@field fmt? fun(name: string, context: table?): string
+---@field tab_max_length? integer
+---@field tabs_color? ComponentsColor
+---@field use_mode_colors? boolean
 
 ---@class LuaLine.Components.Windows: LuaLine.Components.Spec
+---@field diabled_buftypes? string[]
+---@field filetype_names? table<string, string>
+---@field max_length? number
+---@field mode? 0|1|2
 ---@field show_filename_only? boolean
 ---@field show_modified_status? boolean
----@field mode? 0|1|2
----@field max_length? number
----@field filetype_names? table<string, string>
----@field diabled_buftypes? string[]
 ---@field use_mode_colors? boolean
 ---@field windows_color? ComponentsColor
 
@@ -264,7 +260,6 @@
 
 local Termux = require('user_api').distro.termux
 local exists = require('user_api').check.module
-local in_list = vim.list_contains
 
 ---@param theme? ''|'auto'|string
 ---@param force_auto? boolean
@@ -275,12 +270,12 @@ local function theme_select(theme, force_auto)
     force_auto = { force_auto, { 'boolean', 'nil' } },
   })
   force_auto = force_auto ~= nil and force_auto or false
-  if in_list({ 'auto', '' }, theme) or force_auto then
+  if vim.list_contains({ 'auto', '' }, theme) or force_auto then
     return 'auto'
   end
 
   local themes = { 'tokyonight', 'catppuccin', 'nightfox', 'onedark' }
-  if not in_list(themes, theme) then
+  if not vim.list_contains(themes, theme) then
     return 'auto'
   end
 
@@ -325,12 +320,8 @@ return { ---@type LazySpec
     Presets.components.diff = {
       'diff',
       colored = true,
+      diff_color = { added = 'LuaLineDiffAdd', modified = 'LuaLineDiffChange', removed = 'LuaLineDiffDelete' },
       symbols = { added = '+', modified = '~', removed = '-' },
-      diff_color = {
-        added = 'LuaLineDiffAdd',
-        modified = 'LuaLineDiffChange',
-        removed = 'LuaLineDiffDelete',
-      },
     }
     Presets.components.branch = { 'branch' }
     Presets.components.encoding = { 'encoding' }
@@ -338,53 +329,37 @@ return { ---@type LazySpec
     Presets.components.location = { 'location' }
     Presets.components.selectioncount = { 'selectioncount' }
     Presets.components.filesize = { 'filesize' }
-    Presets.components.filename = {
-      'filename',
-      file_status = true,
-      newfile_status = true,
-      path = 4,
-    }
-    Presets.components.filetype = {
-      'filetype',
-      colored = false,
-      icon_only = false,
-      icon = { align = 'right' },
-    }
-    Presets.components.fileformat = {
-      'fileformat',
-      symbols = { unix = '', dos = '', mac = '' },
-    }
+    Presets.components.filename = { 'filename', file_status = true, newfile_status = true, path = 4 }
+    Presets.components.filetype = { 'filetype', colored = false, icon = { align = 'right' }, icon_only = false }
+    Presets.components.fileformat = { 'fileformat', symbols = { unix = '', dos = '', mac = '' } }
     Presets.components.searchcount = { 'searchcount', maxcount = 999, timeout = 500 }
     Presets.components.tabs = {
       'tabs',
-      tab_max_length = math.floor(vim.o.columns / 3),
       mode = 2,
       path = 1,
+      tab_max_length = math.floor(vim.o.columns / 3),
       tabs_color = { active = 'lualine_b_normal', inactive = 'lualine_b_inactive' },
     }
     Presets.components.windows = {
       'windows',
-      max_length = math.floor(vim.o.columns / 5),
       disabled_buftypes = { 'help', 'prompt', 'quickfix', 'terminal' },
-      windows_color = {
-        active = 'lualine_z_normal',
-        inactive = 'lualine_z_inactive',
-      },
+      max_length = math.floor(vim.o.columns / 5),
+      windows_color = { active = 'lualine_z_normal', inactive = 'lualine_z_inactive' },
     }
     Presets.components.diagnostics = {
       'diagnostics',
-      sources = { 'nvim_workspace_diagnostic' },
-      sections = { 'error', 'warn' },
+      always_visible = true,
+      colored = true,
       diagnostics_color = {
         error = 'DiagnosticError',
         warn = 'DiagnosticWarn',
         info = 'DiagnosticInfo',
         hint = 'DiagnosticHint',
       },
+      sections = { 'error', 'warn' },
+      sources = { 'nvim_workspace_diagnostic' },
       symbols = { error = '󰅚 ', hint = '󰌶 ', info = ' ', warn = '󰀪 ' },
-      colored = true,
       update_in_insert = false,
-      always_visible = true,
     }
     Presets.components.datetime = { 'datetime', style = 'uk' }
     Presets.components.mode = {
@@ -408,16 +383,16 @@ return { ---@type LazySpec
       Presets.components.triforce = { ---@type Triforce.LualineConfig
         'triforce',
         level = {
+          bar = { chars = { filled = '●', empty = '○' }, length = 6 },
           enabled = true,
           show = { bar = true, level = true, xp = not Termux.is_distro() },
-          bar = { chars = { filled = '●', empty = '○' }, length = 6 },
         },
         achievements = { enabled = false, index = 4, show_count = true },
         streak = { show_days = false },
         session_time = {
           enabled = true,
-          index = 1,
           format = Termux.is_distro() and 'short' or 'long',
+          index = 1,
           show_duration = true,
         },
       }
@@ -427,7 +402,7 @@ return { ---@type LazySpec
       Presets.components.pomo = {
         function()
           local ok, pomo = pcall(require, 'pomo')
-          if not ok then
+          if not (ok and pomo) then
             return ''
           end
 
@@ -448,51 +423,38 @@ return { ---@type LazySpec
     end
     if exists('lualine.components.lsp_progress') then
       local colors = {
-        red = '#ec5f67',
-        green = '#98be65',
         blue = '#51afef',
-        yellow = '#ECBE7B',
         cyan = '#008080',
-        magenta = '#c678dd',
-        violet = '#a9a1e1',
-        orange = '#FF8800',
         darkblue = '#081633',
+        green = '#98be65',
+        magenta = '#c678dd',
+        orange = '#FF8800',
+        red = '#ec5f67',
+        violet = '#a9a1e1',
+        yellow = '#ECBE7B',
       }
       Presets.components.lsp_progress = { ---@type LuaLine.Components.Spec
         'lsp_progress',
         colors = {
-          percentage = colors.cyan,
-          title = colors.cyan,
-          message = colors.cyan,
-          spinner = colors.cyan,
           lsp_client_name = colors.magenta,
+          message = colors.cyan,
+          percentage = colors.cyan,
+          spinner = colors.cyan,
+          title = colors.cyan,
           use = true,
         },
+        display_components = { 'lsp_client_name', 'spinner', { 'title', 'percentage', 'message' } },
         separators = {
           component = ' ',
-          progress = ' | ',
+          lsp_client_name = { pre = '[', post = ']' },
           message = { pre = '(', post = ')' },
           percentage = { pre = '', post = '%% ' },
-          title = { pre = '', post = ': ' },
-          lsp_client_name = { pre = '[', post = ']' },
+          progress = ' | ',
           spinner = { pre = '', post = '' },
+          title = { pre = '', post = ': ' },
         },
-        display_components = {
-          'lsp_client_name',
-          'spinner',
-          { 'title', 'percentage', 'message' },
-        },
+        spinner_symbols = { '🌑 ', '🌒 ', '🌓 ', '🌔 ', '🌕 ', '🌖 ', '🌗 ', '🌘 ' },
         timer = { progress_enddelay = 500, spinner = 1000, lsp_client_name_enddelay = 1000 },
-        spinner_symbols = {
-          '🌑 ',
-          '🌒 ',
-          '🌓 ',
-          '🌔 ',
-          '🌕 ',
-          '🌖 ',
-          '🌗 ',
-          '🌘 ',
-        },
       }
     end
 

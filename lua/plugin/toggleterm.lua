@@ -76,9 +76,7 @@ return { ---@type LazySpec
     })
 
     local group = vim.api.nvim_create_augroup('ToggleTerm.Hooks', { clear = true })
-    require('user_api').util.autocmd.au_from_dict({
-      TermOpen = { group = group, callback = set_terminal_keys },
-    })
+    require('user_api').util.autocmd.au_from_dict({ TermOpen = { group = group, callback = set_terminal_keys } })
 
     local desc = require('user_api').maps.desc
     local map = { ['<A-t>'] = { ':exe v:count1 . "ToggleTerm"<CR>', desc('Toggleterm') } }

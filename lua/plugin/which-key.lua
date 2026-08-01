@@ -5,10 +5,6 @@ return { ---@type LazySpec
   priority = 1000,
   version = false,
   cond = require('user_api').check.vim_has('nvim-0.10'),
-  init = function()
-    vim.o.timeout = true
-    vim.o.timeoutlen = 500
-  end,
   config = function()
     require('which-key').setup({
       delay = 50, ---@type integer|fun(ctx: { keys: string, mode: string, plugin?: string }): integer

@@ -2,10 +2,7 @@
 return { ---@type LazySpec
   'numToStr/Comment.nvim',
   version = false,
-  dependencies = {
-    'nvim-treesitter/nvim-treesitter',
-    'JoosepAlviste/nvim-ts-context-commentstring',
-  },
+  dependencies = { 'nvim-treesitter/nvim-treesitter', 'JoosepAlviste/nvim-ts-context-commentstring' },
   cond = require('user_api').check.executable('tree-sitter'),
   config = function()
     require('Comment').setup({
@@ -18,13 +15,13 @@ return { ---@type LazySpec
           vim.api.nvim_win_set_cursor(win, { r + 1, 0 })
         end
       end,
+      extra = { above = 'gcO', below = 'gco', eol = 'gcA' },
       ignore = 'nil',
+      mappings = { basic = true, extra = true },
+      opleader = { line = 'gc', block = 'gb' },
       padding = true,
       sticky = true,
       toggler = { line = 'gcc', block = 'gbc' },
-      opleader = { line = 'gc', block = 'gb' },
-      extra = { above = 'gcO', below = 'gco', eol = 'gcA' },
-      mappings = { basic = true, extra = true },
     })
   end,
 }

@@ -2,6 +2,7 @@
 return { ---@type LazySpec
   'folke/trouble.nvim',
   version = false,
+  event = 'LspAttach',
   config = function()
     require('trouble').setup({
       auto_close = false,

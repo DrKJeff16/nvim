@@ -1,8 +1,8 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'nvim-neorg/neorg',
-  lazy = false,
   version = false,
+  event = 'VeryLazy',
   build = not require('user_api').check.executable('luarocks') and false or function()
     for _, pkg in ipairs({
       'luarocks-build-treesitter-parser',

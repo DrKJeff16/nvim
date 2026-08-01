@@ -2,8 +2,13 @@
 return { ---@type LazySpec
   'folke/drop.nvim',
   version = false,
+  event = 'VeryLazy',
   config = function()
     require('drop').setup({
+      filetypes = { 'dashboard', 'alpha', 'ministarter' },
+      interval = 70,
+      max = 150,
+      screensaver = 1000 * 60 * 5,
       theme = 'auto', ---@type DropTheme|string
       themes = { ---@type ({ theme: string }|DropDate|{ from: DropDate, to: DropDate }|{ holiday: "us_thanksgiving"|"easter" })[]
         { theme = 'new_year', month = 1, day = 1 },
@@ -17,10 +22,6 @@ return { ---@type LazySpec
         { theme = 'spring', from = { month = 3, day = 20 }, to = { month = 6, day = 20 } },
         { theme = 'summer', from = { month = 6, day = 21 }, to = { month = 9, day = 21 } },
       },
-      max = 150,
-      interval = 70,
-      screensaver = 1000 * 60 * 5,
-      filetypes = { 'dashboard', 'alpha', 'ministarter' },
       winblend = 100,
     })
   end,

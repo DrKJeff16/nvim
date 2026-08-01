@@ -3,6 +3,7 @@ return { ---@type LazySpec
   'xieyonn/spinner.nvim',
   dev = true,
   version = false,
+  event = 'VeryLazy',
   dependencies = {},
   config = function()
     require('spinner').setup({

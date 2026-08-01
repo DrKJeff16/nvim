@@ -5,12 +5,7 @@ return { ---@type LazySpec
   ft = { 'c', 'cpp' },
   version = false,
   config = function()
-    require('classlayout').setup({
-      keymap = '<leader>lScl',
-      compiler = 'clang',
-      args = {},
-      compile_commands = true,
-    })
+    require('classlayout').setup({ args = {}, compile_commands = true, compiler = 'clang', keymap = '<leader>lScl' })
   end,
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

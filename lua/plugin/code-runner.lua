@@ -5,8 +5,8 @@ return { ---@type LazySpec
   dependencies = { 'wsdjeg/job.nvim', 'wsdjeg/notify.nvim' },
   config = function()
     require('code-runner').setup({
-      runners = { lua = { exe = 'lua', opt = { '-' }, usestdin = true } },
       enter_win = false,
+      runners = { lua = { exe = 'lua', opt = { '-' }, usestdin = true } },
     })
   end,
 }

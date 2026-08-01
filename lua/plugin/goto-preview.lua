@@ -8,18 +8,18 @@ return { ---@type LazySpec
     local GTP = require('goto-preview')
     GTP.setup({
       border = { '↖', '─', '┐', '│', '┘', '─', '└', '│' },
-      default_mappings = false,
-      resizing_mappings = false,
-      references = { provider = 'snacks' },
-      focus_on_open = true,
-      dismiss_on_move = false,
-      force_close = true,
       bufhidden = 'wipe',
-      stack_floating_preview_windows = true,
-      same_file_float_preview = true,
+      default_mappings = false,
+      dismiss_on_move = false,
+      focus_on_open = true,
+      force_close = true,
       preview_window_title = { enable = true, position = 'left' },
-      zindex = 5,
+      references = { provider = 'snacks' },
+      resizing_mappings = false,
+      same_file_float_preview = true,
+      stack_floating_preview_windows = true,
       vim_ui_input = true,
+      zindex = 5,
     })
 
     local desc = require('user_api').maps.desc

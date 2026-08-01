@@ -11,11 +11,7 @@ return { ---@type LazySpec
       files = { 'todo', 'TODO', 'todo.md', 'TODO.md', '*.todo', '*.todo.md' },
       log = { level = 'warn', use_file = true },
       keys = {
-        ['<leader><C-c>t'] = {
-          rhs = '<cmd>Checkmate toggle<CR>',
-          desc = 'Toggle todo item',
-          modes = { 'n', 'v' },
-        },
+        ['<leader><C-c>t'] = { rhs = '<cmd>Checkmate toggle<CR>', desc = 'Toggle todo item', modes = { 'n', 'v' } },
         ['<leader><C-c>c'] = {
           rhs = '<cmd>Checkmate check<CR>',
           desc = 'Set todo item as checked (done)',
@@ -68,18 +64,15 @@ return { ---@type LazySpec
         },
       },
       default_list_marker = '-',
-      todo_states = {
-        unchecked = { marker = '□', order = 1 },
-        checked = { marker = '✔', order = 2 },
-      },
+      todo_states = { unchecked = { marker = '□', order = 1 }, checked = { marker = '✔', order = 2 } },
       style = {},
       enter_insert_after_new = true,
       smart_toggle = {
+        check_down = 'direct_children',
+        check_up = 'direct_children',
         enabled = true,
         include_cycle = false,
-        check_down = 'direct_children',
         uncheck_down = 'none',
-        check_up = 'direct_children',
         uncheck_up = 'direct_children',
       },
       show_todo_count = true,
@@ -137,11 +130,7 @@ return { ---@type LazySpec
           sort_order = 30,
         },
       },
-      archive = {
-        heading = { title = 'Archive', level = 2 },
-        parent_spacing = 0,
-        newest_first = true,
-      },
+      archive = { heading = { title = 'Archive', level = 2 }, newest_first = true, parent_spacing = 0 },
       linter = { enabled = true },
     })
   end,

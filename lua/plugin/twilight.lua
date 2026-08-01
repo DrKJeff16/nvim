@@ -6,12 +6,7 @@ return { ---@type LazySpec
   config = function()
     local Twilight = require('twilight')
     Twilight.setup({
-      dimming = {
-        alpha = 0.4,
-        color = { 'Normal', '#ffffff' },
-        term_bg = '#000000',
-        inactive = true,
-      },
+      dimming = { alpha = 0.4, color = { 'Normal', '#ffffff' }, term_bg = '#000000', inactive = true },
       context = 10,
       treesitter = true,
       expand = { 'function', 'method', 'table', 'if_statement' },

@@ -3,11 +3,10 @@ return { ---@type LazySpec
   'DrKJeff16/boolean-toggle.nvim',
   dev = true,
   version = false,
+  event = 'VeryLazy',
   config = function()
     require('boolean-toggle').setup({
-      custom_spec = {
-        { yes = '1', no = '0', ft = { 'c', 'cpp' } },
-      },
+      custom_spec = { { yes = '1', no = '0', ft = { 'c', 'cpp' } } },
       keymaps = { toggle = '<CR>' },
     })
   end,

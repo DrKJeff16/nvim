@@ -1,6 +1,7 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'hedyhli/outline.nvim',
+  event = 'VeryLazy',
   version = false,
   config = function()
     require('outline').setup({

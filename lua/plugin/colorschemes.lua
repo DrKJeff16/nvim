@@ -6,11 +6,11 @@ return { ---@type LazySpec[]
     priority = 1000,
     config = function()
       require('cyberpunk').setup({
-        transparent = false,
-        italic_comments = false,
-        italic_keywords = false,
         bold_functions = true,
         bold_keywords = true,
+        italic_comments = false,
+        italic_keywords = false,
+        transparent = false,
       })
     end,
   },
@@ -26,11 +26,11 @@ return { ---@type LazySpec[]
         terminal_colors = true,
         styles = {
           comments = { italic = false },
-          keywords = { italic = false },
-          functions = { italic = false },
-          variables = { italic = false },
-          sidebars = 'dark',
           floats = 'dark',
+          functions = { italic = false },
+          keywords = { italic = false },
+          sidebars = 'dark',
+          variables = { italic = false },
         },
         light_brightness = 0.3,
         dim_inactive = false,
@@ -100,11 +100,11 @@ return { ---@type LazySpec[]
         gamma = 1.00,
         terminal_colors = vim.o.termguicolors,
         styles = {
-          comments = { italic = false }, -- style for comments
-          keywords = { italic = false }, -- style for keywords
-          identifiers = { bold = true, italic = false }, -- style for identifiers
-          functions = { bold = true }, -- style for functions
-          variables = {}, -- style for variables
+          comments = { italic = false },
+          functions = { bold = true },
+          identifiers = { bold = true, italic = false },
+          keywords = { italic = false },
+          variables = {},
         },
         custom_highlights = {},
         custom_palette = {},
