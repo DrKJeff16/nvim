@@ -1,9 +1,9 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'DrKJeff16/which-colorscheme.nvim',
-  event = 'VeryLazy',
   dev = true,
   version = false,
+  event = 'VeryLazy',
   config = function()
     require('which-colorscheme').setup({
       prefix = '<leader>uc',
@@ -21,22 +21,9 @@ return { ---@type LazySpec
         'tokyonight-day',
       },
       custom_groups = {
-        A = {
-          'tokyonight',
-          'tokyodark',
-          'catppuccin',
-          'kanagawa',
-          'nightfox',
-          'carbonfox',
-          'onedark',
-          'minicyan',
-        },
+        A = { 'tokyonight', 'tokyodark', 'catppuccin', 'kanagawa', 'nightfox', 'carbonfox', 'onedark', 'minicyan' },
       },
-      grouping = {
-        random = true,
-        uppercase_groups = true,
-        labels = { A = 'Favourites', B = 'Extra' },
-      },
+      grouping = { random = true, uppercase_groups = true, labels = { A = 'Favourites', B = 'Extra' } },
     })
 
     require('user_api').config.keymaps.set({ n = { ['<leader>u'] = { group = '+UI' } } })
