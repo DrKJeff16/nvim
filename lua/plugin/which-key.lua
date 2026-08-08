@@ -7,8 +7,8 @@ return { ---@type LazySpec
   cond = require('user_api').check.vim_has('nvim-0.10'),
   config = function()
     require('which-key').setup({
-      delay = 50, ---@type integer|fun(ctx: { keys: string, mode: string, plugin?: string }): integer
-      preset = 'classic', ---@type false|'classic'|'modern'|'helix'
+      delay = 10, ---@type integer|fun(ctx: { keys: string, mode: string, plugin?: string }): integer
+      preset = 'modern', ---@type false|'classic'|'modern'|'helix'
       notify = true,
       keys = { scroll_down = '<A-Down>', scroll_up = '<A-Up>' },
       show_help = true,
@@ -22,54 +22,49 @@ return { ---@type LazySpec
             require('which-key').show({ global = false })
           end,
           desc = 'Buffer Local Keymaps (which_key)',
+          mode = 'n',
+        },
+        {
+          '<leader>?',
+          function()
+            require('which-key').show({ global = false })
+          end,
+          desc = 'Buffer Local Keymaps (which-key)',
+          mode = 'n',
         },
       },
       defer = function(ctx) ---@param ctx { mode: string, operator: string }
-        local deferred_ops = { 'o', 'v', 'V', '<C-v>', '<C-V>' }
-        return not vim.list_contains(deferred_ops, ctx.operator)
+        return not vim.list_contains({ 'o', 'v', 'V', '<C-v>', '<C-V>' }, ctx.operator)
       end,
       filter = function(mapping) ---@param mapping wk.Mapping
         return (mapping.desc and mapping.desc ~= '')
       end,
       plugins = {
         marks = true,
-        registers = true,
-        spelling = { enabled = false },
         presets = {
-          operators = true,
+          g = true,
           motions = true,
+          nav = true,
+          operators = true,
           text_objects = true,
           windows = true,
-          nav = true,
           z = true,
-          g = true,
         },
+        registers = true,
+        spelling = { enabled = false },
       },
       ---@diagnostic disable-next-line:missing-fields
       win = { ---@type wk.Win
-        no_overlap = false,
+        bo = { modifiable = false },
         border = 'single',
+        no_overlap = false,
         padding = { 1, 2 },
         title = true,
         title_pos = 'center',
-        zindex = 1000,
-        bo = { modifiable = false },
         wo = { winblend = require('user_api').check.in_console() and 0 or 50 },
+        zindex = 1000,
       },
-      layout = {
-        width = { min = 20, max = math.floor(vim.o.columns / 2) },
-        spacing = 1,
-        align = 'center',
-      },
-      --- Mappings are sorted using configured sorters and natural sort of the keys
-      --- Available sorters:
-      --- * local: buffer-local mappings first
-      --- * order: order of the items (Used by plugins like marks / registers)
-      --- * group: groups last
-      --- * alphanum: alpha-numerical first
-      --- * mod: special modifier keys last
-      --- * manual: the order the mappings were added
-      --- * case: lower-case first
+      layout = { align = 'center', spacing = 1, width = { min = 20, max = math.floor(vim.o.columns / 2) } },
       sort = { 'alphanum', 'case', 'mod', 'order', 'group', 'local' }, ---@type (string|wk.Sorter)[]
       expand = function(node)
         return not node.desc
@@ -104,22 +99,15 @@ return { ---@type LazySpec
           { pattern = 'lsp', icon = ' ', color = 'purple' },
         },
         keys = {
-          Up = '',
-          Down = '',
-          Left = '',
-          Right = '',
-          C = 'CTRL-',
-          M = 'META-',
-          S = 'SHIFT-',
-          CR = '<CR>',
-          Esc = '<ESC>',
-          ScrollWheelDown = '󱕐 ',
-          ScrollWheelUp = '󱕑 ',
-          NL = '󰌑 ',
           BS = '⌫ ',
-          Space = '󱁐 ',
-          Tab = '󰌒 ',
+          C = 'CTRL-',
+          CR = '<CR>',
+          Down = '',
+          Esc = '<ESC>',
           F1 = '󱊫',
+          F10 = '󱊴',
+          F11 = '󱊵',
+          F12 = '󱊶',
           F2 = '󱊬',
           F3 = '󱊭',
           F4 = '󱊮',
@@ -128,16 +116,19 @@ return { ---@type LazySpec
           F7 = '󱊱',
           F8 = '󱊲',
           F9 = '󱊳',
-          F10 = '󱊴',
-          F11 = '󱊵',
-          F12 = '󱊶',
+          Left = '',
+          M = 'META-',
+          NL = '󰌑 ',
+          Right = '',
+          S = 'SHIFT-',
+          ScrollWheelDown = '󱕐 ',
+          ScrollWheelUp = '󱕑 ',
+          Space = '󱁐 ',
+          Tab = '󰌒 ',
+          Up = '',
         },
       },
-      triggers = {
-        { '<auto>', mode = 'nxso' },
-        { '<leader>', mode = { 'n', 'v' } },
-        { 'a', mode = { 'n', 'v' } },
-      },
+      triggers = { { '<auto>', mode = 'nxso' }, { '<leader>', mode = { 'n', 'v' } }, { 'a', mode = { 'n', 'v' } } },
     })
   end,
 }
