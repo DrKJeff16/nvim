@@ -7,10 +7,10 @@ return { ---@type LazySpec
     require('hoversplit').setup({
       conceallevel = 0,
       key_bindings = {
-        split_remain_focused = '<leader>hs',
-        vsplit_remain_focused = '<leader>hv',
         split = '<leader>hS',
+        split_remain_focused = '<leader>hs',
         vsplit = '<leader>hV',
+        vsplit_remain_focused = '<leader>hv',
       },
     })
     require('user_api').config.keymaps.set({ n = { ['<leader>h'] = { group = '+HoverSplit' } } })

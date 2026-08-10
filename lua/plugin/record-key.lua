@@ -4,17 +4,14 @@ return { ---@type LazySpec
   cmd = { 'RecordKeyToggle' },
   config = function()
     require('record-key').setup({
-      timeout = 3000,
       max_count = 5,
+      timeout = 3000,
       winhighlight = 'NormalFloat:Normal,FloatBorder:WinSeparator',
     })
 
     local desc = require('user_api').maps.desc
     require('user_api').config.keymaps.set({
-      n = {
-        ['<leader>r'] = { group = '+Record Keys' },
-        ['<leader>rk'] = { vim.cmd.RecordKeyToggle, desc('Toggle') },
-      },
+      n = { ['<leader>r'] = { group = '+Record Keys' }, ['<leader>rk'] = { vim.cmd.RecordKeyToggle, desc('Toggle') } },
     })
   end,
 }

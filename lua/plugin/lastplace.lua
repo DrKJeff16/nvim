@@ -7,7 +7,7 @@ return { ---@type LazySpec
     require('lastplace').setup({
       center_on_jump = true,
       debug = false,
-      ignore_buftypes = { 'quickfix', 'nofile', 'help', 'terminal' },
+      ignore_buftypes = { 'help', 'nofile', 'quickfix', 'terminal' },
       ignore_filetypes = { '', 'COMMIT_EDITMSG', 'gitcommit', 'gitrebase', 'hgcommit', 'svn', 'xxd' },
       jump_only_if_not_visible = false,
       max_line = 0,

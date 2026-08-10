@@ -4,20 +4,16 @@ return { ---@type LazySpec
   version = false,
   config = function()
     require('replua').setup({
-      open_command = 'enew',
-      intro_lines = { '-- Scratch buffer for Lua evaluation', '' },
-      keymaps = {
-        eval_line = '<leader>rl',
-        eval_block = '<leader>r<CR>',
-        eval_buffer = '<leader>rb',
-      },
-      print_prefix = '-- print: ',
-      result_prefix = '-- => ',
-      result_continuation_prefix = '--    ',
       error_prefix = '-- Error: ',
-      show_nil_results = true,
+      intro_lines = { '-- Scratch buffer for Lua evaluation', '' },
+      keymaps = { eval_block = '<leader>r<CR>', eval_buffer = '<leader>rb', eval_line = '<leader>rl' },
       newline_after_result = true,
+      open_command = 'enew',
       persist_env = true,
+      print_prefix = '-- print: ',
+      result_continuation_prefix = '--    ',
+      result_prefix = '-- => ',
+      show_nil_results = true,
     })
   end,
 }

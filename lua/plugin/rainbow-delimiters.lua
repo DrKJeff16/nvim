@@ -5,6 +5,17 @@ return { ---@type LazySpec
   cond = not require('user_api').check.in_console(),
   config = function()
     require('rainbow-delimiters.setup').setup({
+      highlight = {
+        'RainbowBlue',
+        'RainbowCyan',
+        'RainbowGreen',
+        'RainbowOrange',
+        'RainbowRed',
+        'RainbowViolet',
+        'RainbowYellow',
+      },
+      priority = { [''] = 110, lua = 210 },
+      query = { [''] = 'rainbow-delimiters', lua = 'rainbow-blocks', python = 'rainbow-blocks' },
       strategy = {
         [''] = 'rainbow-delimiters.strategy.global',
         bash = 'rainbow-delimiters.strategy.local',
@@ -14,21 +25,6 @@ return { ---@type LazySpec
         lua = 'rainbow-delimiters.strategy.local',
         python = 'rainbow-delimiters.strategy.local',
         vim = 'rainbow-delimiters.strategy.local',
-      },
-      query = {
-        [''] = 'rainbow-delimiters',
-        lua = 'rainbow-blocks',
-        python = 'rainbow-blocks',
-      },
-      priority = { [''] = 110, lua = 210 },
-      highlight = {
-        'RainbowRed',
-        'RainbowYellow',
-        'RainbowBlue',
-        'RainbowOrange',
-        'RainbowGreen',
-        'RainbowViolet',
-        'RainbowCyan',
       },
     })
   end,

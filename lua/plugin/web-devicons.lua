@@ -6,12 +6,12 @@ return { ---@type LazySpec
     require('nvim-web-devicons').setup({
       color_icons = true,
       default_icons = true,
+      override = {},
+      override_by_extension = {},
+      override_by_filename = { ['.gitignore'] = { color = '#f1502f', icon = '', name = 'Gitignore' } },
+      override_by_operating_system = {},
       strict = true,
       variant = 'dark',
-      override = {},
-      override_by_filename = { ['.gitignore'] = { icon = '', color = '#f1502f', name = 'Gitignore' } },
-      override_by_extension = {},
-      override_by_operating_system = {},
     })
     require('nvim-web-devicons').set_up_highlights()
   end,

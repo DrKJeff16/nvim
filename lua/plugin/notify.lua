@@ -10,10 +10,10 @@ return { ---@type LazySpec
     local Notify = require('notify')
     Notify.setup({
       background_colour = 'NotifyBackground',
-      merge_duplicates = true,
       fps = 144,
       icons = { DEBUG = '', ERROR = '', INFO = '', TRACE = '✎', WARN = '' },
       level = vim.log.levels.INFO,
+      merge_duplicates = true,
       minimum_width = 32,
       render = 'simple',
       stages = 'fade_in_slide_out',
@@ -30,8 +30,8 @@ return { ---@type LazySpec
       require('user_api').config.keymaps.set({
         n = {
           ['<leader>N'] = { group = '+Notify' },
-          ['<leader>NT'] = { ':Telescope notify<CR>', desc('Notify Telescope Picker') },
           ['<leader><C-t>eN'] = { ':Telescope notify<CR>', desc('Notify Picker') },
+          ['<leader>NT'] = { ':Telescope notify<CR>', desc('Notify Telescope Picker') },
         },
       })
     end

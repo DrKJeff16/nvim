@@ -7,6 +7,7 @@ return { ---@type LazySpec
   config = function()
     local Theta = require('alpha.themes.theta')
     Theta.header = {
+      opts = { hl = 'Type', position = 'center', wrap = 'overflow' },
       type = 'text',
       val = {
         [[      _            _ ]],
@@ -15,7 +16,6 @@ return { ---@type LazySpec
         [[ | | | | | | | V /| | | | | | | ]],
         [[  \___/|_| |_|\_/ |_|_| |_| |_| ]],
       },
-      opts = { position = 'center', hl = 'Type', wrap = 'overflow' },
     }
     Theta.config.layout[2] = Theta.header
     Theta.file_icons.provider = 'mini'

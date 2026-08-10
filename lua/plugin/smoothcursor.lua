@@ -5,13 +5,11 @@ return { ---@type LazySpec
   cond = not require('user_api').check.in_console(),
   config = function()
     require('smoothcursor').setup({
-      type = 'exp', ---@type 'default'|'exp'|'matrix'
+      always_redraw = true,
+      autostart = true,
       cursor = '',
-      max_threshold = 6,
-      texthl = 'SmoothCursor',
+      disable_float_win = true,
       fancy = {
-        enable = true,
-        head = { cursor = '▷', texthl = 'SmoothCursor', linehl = nil },
         body = {
           { cursor = '󰝥', texthl = 'SmoothCursorRed' },
           { cursor = '󰝥', texthl = 'SmoothCursorOrange' },
@@ -21,26 +19,24 @@ return { ---@type LazySpec
           { cursor = '.', texthl = 'SmoothCursorBlue' },
           { cursor = '.', texthl = 'SmoothCursorPurple' },
         },
-        tail = { cursor = nil, texthl = 'SmoothCursor' },
+        enable = true,
+        head = { cursor = '▷', texthl = 'SmoothCursor' },
+        tail = { texthl = 'SmoothCursor' },
       },
-      matrix = {
-        unstop = false,
-        tail = { texthl = { 'SmoothCursor' } },
-        head = { cursor = require('smoothcursor.matrix_chars'), texthl = { 'SmoothCursor' } },
-        body = {
-          length = 6,
-          cursor = require('smoothcursor.matrix_chars'),
-          texthl = { 'SmoothCursorGreen' },
-        },
-      },
-      autostart = true,
-      always_redraw = true,
-      speed = 25,
       intervals = 35,
+      matrix = {
+        body = { cursor = require('smoothcursor.matrix_chars'), length = 6, texthl = { 'SmoothCursorGreen' } },
+        head = { cursor = require('smoothcursor.matrix_chars'), texthl = { 'SmoothCursor' } },
+        tail = { texthl = { 'SmoothCursor' } },
+        unstop = false,
+      },
+      max_threshold = 6,
       priority = 10,
-      timeout = 3000,
+      speed = 25,
+      texthl = 'SmoothCursor',
       threshold = 3,
-      disable_float_win = true,
+      timeout = 3000,
+      type = 'exp',
     })
   end,
 }

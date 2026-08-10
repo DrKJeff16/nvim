@@ -1,14 +1,15 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'stevearc/conform.nvim',
+  version = false,
   config = function()
     require('conform').setup({
+      format_on_save = { timeout_ms = 500, lsp_format = 'fallback' },
       formatters_by_ft = {
         lua = { 'stylua', lsp_format = 'fallback' },
         python = { 'isort', 'yapf', lsp_format = 'fallback' },
         yaml = { 'yamlfmt' },
       },
-      format_on_save = { timeout_ms = 500, lsp_format = 'fallback' },
     })
   end,
 }

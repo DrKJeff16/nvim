@@ -8,34 +8,26 @@ return { ---@type LazySpec
   config = function()
     local FFF = require('fff')
     FFF.setup({
-      prompt = '> ',
-      title = 'FFFiles',
-      max_results = 100,
-      max_threads = 4,
-      lazy_sync = true,
-      prompt_vim_mode = false,
-      layout = {
-        height = 0.8,
-        width = 0.8,
-        prompt_position = 'bottom', ---@type 'bottom'|'top'
-        preview_position = 'right', ---@type 'left'|'right'|'top'|'bottom'
-        preview_size = 0.5,
-        flex = { size = 130, wrap = 'top' },
-        min_list_height = 10,
-        show_scrollbar = true,
-        path_shorten_strategy = 'middle_number', ---@type'middle_number'|'middle'|'end'|'start'
-        anchor = 'center',
+      debug = {
+        enabled = false,
+        show_file_info = { file_info = true, score_breakdown = true, timings = true, full_path = true },
+        show_scores = false,
       },
-      preview = {
+      frecency = { enabled = true, db_path = vim.fs.joinpath(vim.fn.stdpath('cache'), 'fff_nvim') },
+      git = { status_text_color = true },
+      grep = {
+        max_file_size = 10 * 1024 * 1024,
+        max_matches_per_file = 100,
+        modes = { 'plain', 'regex', 'fuzzy' },
+        smart_case = true,
+        time_budget_ms = 150,
+        trim_whitespace = false,
+      },
+      history = {
+        combo_boost_score_multiplier = 100,
+        db_path = vim.fs.joinpath(vim.fn.stdpath('data'), 'fff_queries'),
         enabled = true,
-        max_size = 10 * 1024 * 1024,
-        chunk_size = 8192,
-        binary_file_threshold = 1024,
-        imagemagick_info_format_str = '%m: %wx%h, %[colorspace], %q-bit',
-        line_numbers = false,
-        cursorlineopt = 'both',
-        wrap_lines = false,
-        filetypes = { svg = { wrap_lines = true }, markdown = { wrap_lines = true }, text = { wrap_lines = true } },
+        min_combo_count = 3,
       },
       keymaps = {
         close = '<Esc>',
@@ -55,28 +47,36 @@ return { ---@type LazySpec
         focus_list = '<leader>l',
         focus_preview = '<leader>p',
       },
-      frecency = { enabled = true, db_path = vim.fs.joinpath(vim.fn.stdpath('cache'), 'fff_nvim') },
-      history = {
-        enabled = true,
-        db_path = vim.fs.joinpath(vim.fn.stdpath('data'), 'fff_queries'),
-        min_combo_count = 3,
-        combo_boost_score_multiplier = 100,
+      layout = {
+        anchor = 'center',
+        flex = { size = 130, wrap = 'top' },
+        height = 0.8,
+        min_list_height = 10,
+        path_shorten_strategy = 'middle_number',
+        preview_position = 'right',
+        preview_size = 0.5,
+        prompt_position = 'bottom',
+        show_scrollbar = true,
+        width = 0.8,
       },
-      git = { status_text_color = true },
-      grep = {
-        max_file_size = 10 * 1024 * 1024,
-        max_matches_per_file = 100,
-        smart_case = true,
-        time_budget_ms = 150,
-        modes = { 'plain', 'regex', 'fuzzy' },
-        trim_whitespace = false,
-      },
-      debug = {
-        enabled = false,
-        show_scores = false,
-        show_file_info = { file_info = true, score_breakdown = true, timings = true, full_path = true },
-      },
+      lazy_sync = true,
       logging = { enabled = true, log_file = vim.fs.joinpath(vim.fn.stdpath('log'), 'fff.log'), log_level = 'info' },
+      max_results = 100,
+      max_threads = 4,
+      preview = {
+        enabled = true,
+        max_size = 10 * 1024 * 1024,
+        chunk_size = 8192,
+        binary_file_threshold = 1024,
+        imagemagick_info_format_str = '%m: %wx%h, %[colorspace], %q-bit',
+        line_numbers = false,
+        cursorlineopt = 'both',
+        wrap_lines = false,
+        filetypes = { svg = { wrap_lines = true }, markdown = { wrap_lines = true }, text = { wrap_lines = true } },
+      },
+      prompt = '> ',
+      prompt_vim_mode = false,
+      title = 'FFFiles',
     })
 
     local desc = require('user_api').maps.desc

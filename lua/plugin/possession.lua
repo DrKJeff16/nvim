@@ -9,6 +9,13 @@ return { ---@type LazySpec
       autosave = true,
       autoprompt = true,
       autoswitch = { enable = true, exclude_ft = { 'text', 'markdown' } },
+      fzf_hls = { border = 'Todo', normal = 'Normal', preview_border = 'Constant', preview_normal = 'Normal' },
+      fzf_winopts = { width = 0.5, preview = { vertical = 'right:30%' } },
+      post_hook = function()
+        vim.cmd.ScopeLoadState()
+        vim.lsp.buf.format()
+        pcall(require('nvim-tree.api').tree.toggle)
+      end,
       save_hook = function()
         vim.cmd.ScopeSaveState()
         local visible_buffers = {}
@@ -21,18 +28,6 @@ return { ---@type LazySpec
           end
         end
       end,
-      post_hook = function()
-        vim.cmd.ScopeLoadState()
-        vim.lsp.buf.format()
-        pcall(require('nvim-tree.api').tree.toggle)
-      end,
-      fzf_hls = {
-        normal = 'Normal',
-        preview_normal = 'Normal',
-        border = 'Todo',
-        preview_border = 'Constant',
-      },
-      fzf_winopts = { width = 0.5, preview = { vertical = 'right:30%' } },
       sort = require('nvim-possession.sorting').time_sort,
     })
 
@@ -40,10 +35,10 @@ return { ---@type LazySpec
     require('user_api').config.keymaps.set({
       n = {
         ['<leader>s'] = { group = '+Session' },
+        ['<leader>sd'] = { require('nvim-possession').delete, desc('📌 Delete Selected') },
         ['<leader>sl'] = { require('nvim-possession').list, desc('📌 List Sessions') },
         ['<leader>sn'] = { require('nvim-possession').new, desc('📌 Create New Session') },
         ['<leader>su'] = { require('nvim-possession').update, desc('📌 Update Current') },
-        ['<leader>sd'] = { require('nvim-possession').delete, desc('📌 Delete Selected') },
       },
     })
   end,

@@ -5,7 +5,7 @@ return { ---@type LazySpec
   version = false,
   config = function()
     require('styler').setup({
-      themes = { markdown = { colorscheme = 'tokyodark' }, help = { colorscheme = 'catppuccin-mocha' } },
+      themes = { help = { colorscheme = 'catppuccin-mocha' }, markdown = { colorscheme = 'tokyodark' } },
     })
   end,
 }

@@ -5,17 +5,12 @@ return { ---@type LazySpec
   version = false,
   config = function()
     local Persistence = require('persistence')
-    Persistence.setup({
-      dir = vim.fn.stdpath('state') .. '/sessions/',
-      need = 1,
-      branch = true,
-    })
+    Persistence.setup({ branch = true, dir = vim.fn.stdpath('state') .. '/sessions/', need = 1 })
 
     local desc = require('user_api').maps.desc
     require('user_api').config.keymaps.set({
       n = {
         ['<leader>s'] = { group = '+Session' },
-        ['<leader>ss'] = { Persistence.load, desc('Load Session') },
         ['<leader>sS'] = { Persistence.select, desc('Select Session') },
         ['<leader>sd'] = { Persistence.stop, desc('Stop Session') },
         ['<leader>sl'] = {
@@ -24,6 +19,7 @@ return { ---@type LazySpec
           end,
           desc('Load Last Session'),
         },
+        ['<leader>ss'] = { Persistence.load, desc('Load Session') },
       },
     })
   end,

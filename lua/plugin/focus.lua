@@ -6,8 +6,6 @@ return { ---@type LazySpec
   config = function()
     local Focus = require('focus')
     Focus.setup({
-      enable = true,
-      commands = true,
       autoresize = {
         enable = true,
         equalise_min_cols = 0,
@@ -20,6 +18,8 @@ return { ---@type LazySpec
         minwidth = 0,
         width = 0,
       },
+      commands = true,
+      enable = true,
       split = { bufnew = true, tmux = false },
       ui = {
         absolutenumber_unfocussed = false,
@@ -63,10 +63,7 @@ return { ---@type LazySpec
 
     local desc = require('user_api').maps.desc
     require('user_api').config.keymaps.set({
-      n = {
-        ['<C-l>'] = { Focus.split_nicely, desc('Split Nicely') },
-        ['<C-w>s'] = { group = '+Split' },
-      },
+      n = { ['<C-l>'] = { Focus.split_nicely, desc('Split Nicely') }, ['<C-w>s'] = { group = '+Split' } },
     })
   end,
 }

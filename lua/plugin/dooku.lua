@@ -10,7 +10,7 @@ return { ---@type LazySpec
     on_generate_notification = true,
     on_generate_open = true,
     on_open_notification = true,
-    project_root = { '.git', '.hg', '.svn', '.bzr', '_darcs', '_FOSSIL_', '.fslckout', '.github' },
+    project_root = { '.bzr', '.fslckout', '.git', '.github', '.hg', '.svn', '_FOSSIL_', '_darcs' },
   },
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

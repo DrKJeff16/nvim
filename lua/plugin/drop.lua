@@ -5,12 +5,12 @@ return { ---@type LazySpec
   event = 'VeryLazy',
   config = function()
     require('drop').setup({
-      filetypes = { 'dashboard', 'alpha', 'ministarter' },
+      filetypes = { 'alpha', 'dashboard', 'ministarter' },
       interval = 70,
       max = 150,
       screensaver = 1000 * 60 * 5,
-      theme = 'auto', ---@type DropTheme|string
-      themes = { ---@type ({ theme: string }|DropDate|{ from: DropDate, to: DropDate }|{ holiday: "us_thanksgiving"|"easter" })[]
+      theme = 'auto',
+      themes = {
         { theme = 'new_year', month = 1, day = 1 },
         { theme = 'valentines_day', month = 2, day = 14 },
         { theme = 'april_fools', month = 4, day = 1 },

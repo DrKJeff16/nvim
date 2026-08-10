@@ -7,45 +7,42 @@ return { ---@type LazySpec
   dependencies = { { 'nvzone/volt', dev = true } },
   config = function()
     require('triforce').setup({
-      enabled = true,
-      items = { enabled = true },
-      backdrop = { enabled = false, backdrop = 20 },
-      gamification_enabled = true,
-      icon_engine = 'mini',
-      notifications = { enabled = true, level_up = true, achievements = true },
-      auto_save_interval = 300,
-      override_levels = false,
       achievements = {
         {
-          id = 'first_session',
-          name = 'Starter',
-          desc = 'Open up your first session',
-          icon = '✨',
           check = function(stats)
             return stats.sessions >= 1
           end,
+          desc = 'Open up your first session',
+          icon = '✨',
+          id = 'first_session',
+          name = 'Starter',
         },
         {
-          id = 'first_300',
-          name = 'Newbie',
-          desc = 'Type 300 Characters',
-          icon = '✨',
           check = function(stats)
             return stats.chars_typed >= 300
           end,
+          desc = 'Type 300 Characters',
+          icon = '✨',
+          id = 'first_300',
+          name = 'Newbie',
         },
       },
+      auto_save_interval = 300,
+      backdrop = { backdrop = 20, enabled = false },
+      custom_languages = { gleam = { icon = '✨', name = 'Gleam' }, odin = { icon = '🔷', name = 'Odin' } },
+      enabled = true,
+      gamification_enabled = true,
+      icon_engine = 'mini',
       ignore_ft = { 'conf', 'config', 'dosini', 'hyprlang', 'json', 'make', 'markdown', 'toml', 'yaml' },
-      custom_languages = {
-        gleam = { icon = '✨', name = 'Gleam' },
-        odin = { icon = '🔷', name = 'Odin' },
-      },
+      items = { enabled = true },
       levels = {
         { level = 2, title = 'Newbie' },
         { level = 40, title = 'Sargeant' },
         { level = 80, title = 'Lieutenant' },
         { level = 100, title = 'Foo' },
       },
+      notifications = { achievements = true, enabled = true, level_up = true },
+      override_levels = false,
       xp_rewards = { char = 1, line = 2, save = 7.5 },
     })
 
@@ -53,13 +50,13 @@ return { ---@type LazySpec
     require('user_api').config.keymaps.set({
       n = {
         ['<leader>T'] = { group = '+Triforce' },
-        ['<leader>Tp'] = { require('triforce').show_profile, desc('Show Profile') },
         ['<leader>TC'] = {
           function()
             vim.cmd.Triforce('config')
           end,
           desc('Show Config'),
         },
+        ['<leader>Tp'] = { require('triforce').show_profile, desc('Show Profile') },
       },
     })
   end,

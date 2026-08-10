@@ -5,14 +5,27 @@ return { ---@type LazySpec
   event = 'BufReadPre',
   config = function()
     require('colorizer').setup({
-      filetypes = { '*' },
       buftypes = { '' },
-      user_commands = true,
+      filetypes = { '*' },
       lazy_load = true,
       options = {
+        always_update = false,
+        display = {
+          mode = 'background',
+          priority = { default = 150, lsp = 200 },
+          virtualtext = { char = '■', hl_mode = 'foreground', position = 'eol' },
+        },
+        hooks = {
+          should_highlight_line = function(line) ---@param line string
+            return line:sub(1, 2) ~= '--'
+          end,
+        },
         parsers = {
           css = true,
           css_fn = true,
+          custom = {},
+          hex = { aarrggbb = false, default = true, rgb = true, rgba = true, rrggbb = true, rrggbbaa = true },
+          hsl = { enable = true },
           names = {
             camelcase = true,
             custom = false,
@@ -21,31 +34,14 @@ return { ---@type LazySpec
             strip_digits = false,
             uppercase = true,
           },
-          hex = { aarrggbb = false, default = true, rgb = true, rgba = true, rrggbb = true, rrggbbaa = true },
-          rgb = { enable = true },
-          hsl = { enable = true },
           oklch = { enable = true },
-          tailwind = { enable = true, lsp = true, update_names = true },
+          rgb = { enable = true },
           sass = { enable = false, parsers = { css = true }, variable_pattern = '^%$([%w_-]+)' },
+          tailwind = { enable = true, lsp = true, update_names = true },
           xterm = { enable = false },
-          custom = {},
         },
-        display = {
-          mode = 'background', ---@type 'background'|'foreground'|'virtualtext'
-          virtualtext = {
-            char = '■',
-            position = 'eol', ---@type 'eol'|'before'|'after'
-            hl_mode = 'foreground',
-          },
-          priority = { default = 150, lsp = 200 },
-        },
-        hooks = {
-          should_highlight_line = function(line) ---@param line string
-            return line:sub(1, 2) ~= '--'
-          end,
-        },
-        always_update = false,
       },
+      user_commands = true,
     })
   end,
 }

@@ -7,16 +7,11 @@ return { ---@type LazySpec
   dependencies = {},
   config = function()
     require('spinner').setup({
-      pattern = 'dots',
-      ttl_ms = 0,
+      cursor_spinner = { col = 1, row = -1, winblend = 60, zindex = 50 },
       initial_delay_ms = 0,
+      pattern = 'dots',
       placeholder = false,
-      cursor_spinner = {
-        winblend = 60,
-        zindex = 50,
-        row = -1,
-        col = 1,
-      },
+      ttl_ms = 0,
     })
   end,
 }

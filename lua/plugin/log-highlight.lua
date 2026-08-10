@@ -5,14 +5,14 @@ return { ---@type LazySpec
   opts = {
     extension = 'log',
     filename = { 'syslog' },
-    pattern = { '%/var%/log%/.*', 'console%-ramoops.*', 'log.*%.txt', 'logcat.*', '.*%.log' },
     keyword = {
-      error = 'ERROR_MSG',
-      warning = { 'WARN_X', 'WARN_Y' },
-      info = { 'INFORMATION' },
       debug = {},
+      error = 'ERROR_MSG',
+      info = { 'INFORMATION' },
       pass = {},
+      warning = { 'WARN_X', 'WARN_Y' },
     },
+    pattern = { '%/var%/log%/.*', 'console%-ramoops.*', 'log.*%.txt', 'logcat.*', '.*%.log' },
   },
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

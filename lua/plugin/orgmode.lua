@@ -9,25 +9,25 @@ return { ---@type LazySpec
   cond = not require('user_api').check.in_console(),
   config = function()
     require('orgmode').setup({
-      org_startup_indented = true,
+      calendar_week_start_day = 0,
       org_adapt_indentation = true,
       org_agenda_files = ORG_PFX .. '/**/*',
+      org_babel_default_header_args = { [':tangle'] = 'no', [':noweb'] = 'no' },
       org_default_notes_file = ORG_PFX .. '/default.org',
+      org_ellipsis = '...',
+      org_hide_emphasis_markers = false,
+      org_hide_leading_stars = false,
       org_highlight_latex_and_related = 'native',
-      org_todo_keywords = { 'TODO', 'WAITING', '|', 'DONE', 'DELEGATED' },
-      org_todo_repeat_to_state = nil,
+      org_startup_folded = 'showeverything',
+      org_startup_indented = true,
       org_todo_keyword_faces = {
         WAITING = ':foreground blue :weight bold',
         DELEGATED = ':background #FFFFFF :underline on',
       },
-      org_hide_leading_stars = false,
-      org_hide_emphasis_markers = false,
-      org_ellipsis = '...',
-      win_split_mode = 'auto',
+      org_todo_keywords = { 'TODO', 'WAITING', '|', 'DONE', 'DELEGATED' },
+      org_todo_repeat_to_state = nil,
       win_border = 'single',
-      org_startup_folded = 'showeverything',
-      org_babel_default_header_args = { [':tangle'] = 'no', [':noweb'] = 'no' },
-      calendar_week_start_day = 0,
+      win_split_mode = 'auto',
     })
 
     require('user_api').config.keymaps.set({ n = { ['<leader>o'] = { group = '+Orgmode' } } })

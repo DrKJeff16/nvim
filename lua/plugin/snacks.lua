@@ -8,37 +8,11 @@ return { ---@type LazySpec
     local Snacks = require('snacks')
     Snacks.setup({
       dashboard = {
+        autokeys = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
         enabled = false,
+        pane_gap = 4,
         width = 60,
-        row = nil, -- dashboard position. nil for center
-        col = nil, -- dashboard position. nil for center
-        pane_gap = 4, -- empty columns between vertical panes
-        autokeys = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', -- autokey sequence
-        -- These settings are used by some built-in sections
         preset = {
-          -- Defaults to a picker that supports `fzf-lua`, `telescope.nvim` and `mini.pick`
-          ---@type fun(cmd:string, opts:table)|nil
-          pick = nil,
-          -- Used by the `keys` section to show keymaps.
-          -- Set your custom keymaps here.
-          -- When using a function, the `items` argument are the default keymaps.
-          ---@type snacks.dashboard.Item[]
-          keys = {
-            { icon = ' ', key = 'f', desc = 'Find File', action = ":lua Snacks.dashboard.pick('files')" },
-            { icon = ' ', key = 'n', desc = 'New File', action = ':ene | startinsert' },
-            { icon = ' ', key = 'g', desc = 'Find Text', action = ":lua Snacks.dashboard.pick('live_grep')" },
-            { icon = ' ', key = 'r', desc = 'Recent Files', action = ":lua Snacks.dashboard.pick('oldfiles')" },
-            {
-              icon = ' ',
-              key = 'c',
-              desc = 'Config',
-              action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})",
-            },
-            { icon = ' ', key = 's', desc = 'Restore Session', section = 'session' },
-            { icon = '󰒲 ', key = 'L', desc = 'Lazy', action = ':Lazy', enabled = package.loaded.lazy ~= nil },
-            { icon = ' ', key = 'q', desc = 'Quit', action = ':qa' },
-          },
-          -- Used by the `header` section
           header = [[
 ███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗
 ████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║
@@ -46,17 +20,23 @@ return { ---@type LazySpec
 ██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║
 ██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║
 ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝]],
+          keys = {
+            { action = ":lua Snacks.dashboard.pick('files')", desc = 'Find File', icon = ' ', key = 'f' },
+            { action = ':ene | startinsert', desc = 'New File', icon = ' ', key = 'n' },
+            { action = ":lua Snacks.dashboard.pick('live_grep')", desc = 'Find Text', icon = ' ', key = 'g' },
+            { action = ":lua Snacks.dashboard.pick('oldfiles')", desc = 'Recent Files', icon = ' ', key = 'r' },
+            {
+              action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})",
+              desc = 'Config',
+              icon = ' ',
+              key = 'c',
+            },
+            { desc = 'Restore Session', icon = ' ', key = 's', section = 'session' },
+            { action = ':Lazy', desc = 'Lazy', enabled = package.loaded.lazy ~= nil, icon = '󰒲 ', key = 'L' },
+            { action = ':qa', desc = 'Quit', icon = ' ', key = 'q' },
+          },
         },
-        -- item field formatters
         formats = {
-          icon = function(item)
-            if item.file and item.icon == 'file' or item.icon == 'directory' then
-              return Snacks.dashboard.icon(item.file, item.icon)
-            end
-            return { item.icon, width = 2, hl = 'icon' }
-          end,
-          footer = { '%s', align = 'center' },
-          header = { '%s', align = 'center' },
           file = function(item, ctx)
             local fname = vim.fn.fnamemodify(item.file, ':~')
             fname = ctx.width and #fname > ctx.width and vim.fn.pathshorten(fname) or fname
@@ -72,38 +52,41 @@ return { ---@type LazySpec
             local dir, file = fname:match('^(.*)/(.+)$')
             return dir and { { dir .. '/', hl = 'dir' }, { file, hl = 'file' } } or { { fname, hl = 'file' } }
           end,
+          footer = { '%s', align = 'center' },
+          header = { '%s', align = 'center' },
+          icon = function(item)
+            if item.file and item.icon == 'file' or item.icon == 'directory' then
+              return Snacks.dashboard.icon(item.file, item.icon)
+            end
+            return { item.icon, width = 2, hl = 'icon' }
+          end,
         },
-        sections = {
-          { section = 'header' },
-          { section = 'keys', gap = 1, padding = 1 },
-          { section = 'startup' },
-        },
+        sections = { { section = 'header' }, { section = 'keys', gap = 1, padding = 1 }, { section = 'startup' } },
       },
       statuscolumn = {
-        left = { 'mark', 'sign' },
         enabled = true,
-        right = { 'fold', 'git' },
         folds = { open = true, git_hl = true },
         git = { patterns = { 'GitSign', 'MiniDiffSign' } },
+        left = { 'mark', 'sign' },
         refresh = 50,
+        right = { 'fold', 'git' },
       },
       scratch = {
-        name = 'Scratch',
+        autowrite = true,
+        filekey = { branch = true, count = true, cwd = true },
         ft = function()
           if vim.bo.buftype == '' and vim.bo.filetype ~= '' then
             return vim.bo.filetype
           end
           return 'markdown'
         end,
+        name = 'Scratch',
         root = vim.fs.joinpath(vim.fn.stdpath('data'), 'scratch'),
-        autowrite = true,
-        filekey = { cwd = true, branch = true, count = true },
         win = { style = 'scratch' },
-        ---@type table<string, snacks.win.Config>
         win_by_ft = {
           lua = {
             keys = {
-              ['source'] = {
+              source = {
                 '<CR>',
                 function(self)
                   local buf = self.buf --[[@as integer]]
@@ -118,18 +101,23 @@ return { ---@type LazySpec
         },
       },
       picker = {
-        prompt = ' ',
         auto_close = false,
         auto_confirm = false,
-        show_delay = 5000,
-        limit_live = 10000,
         focus = 'input',
+        formatters = {
+          file = { filename_first = false, filename_only = false, git_status_hl = true, icon_width = 2, truncate = 40 },
+          selected = { show_always = true, unselected = true },
+          severity = { icons = true, level = true, pos = 'left' },
+          text = {},
+        },
+        jump = { jumplist = true, tagstack = true, reuse_win = false, close = true, match = false },
         layout = {
           cycle = true,
           preset = function()
             return vim.o.columns >= 100 and 'default' or 'vertical'
           end,
         },
+        limit_live = 10000,
         matcher = {
           cwd_bonus = true,
           file_pos = true,
@@ -141,34 +129,16 @@ return { ---@type LazySpec
           smartcase = true,
           sort_empty = false,
         },
-        sort = { fields = { 'score:desc', '#text', 'idx' } },
-        ui_select = true,
-        formatters = {
-          text = { ft = nil },
-          file = {
-            filename_first = false,
-            truncate = 40,
-            filename_only = false,
-            icon_width = 2,
-            git_status_hl = true,
-          },
-          selected = { show_always = true, unselected = true },
-          severity = { icons = true, level = true, pos = 'left' },
-        },
         previewers = {
           diff = { builtin = true, cmd = { 'delta' } },
-          git = { builtin = true, args = {} },
-          file = { max_size = 1024 * 1024, max_line_length = 500, ft = nil },
-          man_pager = nil,
+          git = { args = {}, builtin = true },
+          file = { max_size = 1024 * 1024, max_line_length = 500 },
         },
-        jump = { jumplist = true, tagstack = true, reuse_win = false, close = true, match = false },
-        toggles = {
-          follow = 'f',
-          hidden = 'h',
-          ignored = 'i',
-          modified = 'm',
-          regex = { icon = 'R', value = false },
-        },
+        prompt = ' ',
+        show_delay = 5000,
+        sort = { fields = { 'score:desc', '#text', 'idx' } },
+        toggles = { follow = 'f', hidden = 'h', ignored = 'i', modified = 'm', regex = { icon = 'R', value = false } },
+        ui_select = true,
         win = {
           input = {
             keys = {
@@ -362,7 +332,52 @@ return { ---@type LazySpec
             and vim.bo[bufnr].buftype ~= 'terminal'
         end,
       },
+      gh = {},
+      input = {
+        enable = true,
+        expand = true,
+        icon = ' ',
+        icon_hl = 'SnacksInputIcon',
+        icon_pos = 'left',
+        prompt_pos = 'title',
+        win = { style = 'input' },
+      },
+      layout = { enabled = true },
+      notify = { enabled = true },
       styles = {
+        input = {
+          b = { completion = false },
+          bo = { filetype = 'snacks_input', buftype = 'prompt' },
+          border = true,
+          height = 1,
+          keys = {
+            i_cr = { '<CR>', { 'cmp_accept', 'confirm' }, mode = { 'i', 'n' }, expr = true },
+            i_ctrl_w = { '<C-w>', '<C-s-w>', mode = 'i', expr = true },
+            i_down = { '<Down>', { 'hist_down' }, mode = { 'i', 'n' } },
+            i_esc = { '<Esc>', { 'cmp_close', 'stopinsert' }, mode = 'i', expr = true },
+            i_tab = { '<Tab>', { 'cmp_select_next', 'cmp' }, mode = 'i', expr = true },
+            i_up = { '<Up>', { 'hist_up' }, mode = { 'i', 'n' } },
+            n_esc = { '<Esc>', { 'cmp_close', 'cancel' }, mode = 'n', expr = true },
+            q = 'cancel',
+          },
+          noautocmd = true,
+          position = 'float',
+          relative = 'editor',
+          row = 2,
+          title_pos = 'center',
+          width = 60,
+          wo = {
+            cursorline = false,
+            winhighlight = 'NormalFloat:SnacksInputNormal,FloatBorder:SnacksInputBorder,FloatTitle:SnacksInputTitle',
+          },
+        },
+        notification = {
+          bo = { filetype = 'snacks_notif' },
+          border = true,
+          ft = 'markdown',
+          wo = { winblend = 5, wrap = false, conceallevel = 2, colorcolumn = '' },
+          zindex = 100,
+        },
         scratch = {
           width = 100,
           height = 30,
@@ -374,53 +389,7 @@ return { ---@type LazySpec
           footer_keys = true,
           border = true,
         },
-        input = {
-          backdrop = true,
-          position = 'float',
-          border = true,
-          title_pos = 'center',
-          height = 1,
-          width = 60,
-          relative = 'editor',
-          noautocmd = true,
-          row = 2,
-          wo = {
-            winhighlight = 'NormalFloat:SnacksInputNormal,FloatBorder:SnacksInputBorder,FloatTitle:SnacksInputTitle',
-            cursorline = false,
-          },
-          bo = { filetype = 'snacks_input', buftype = 'prompt' },
-          b = { completion = false },
-          keys = {
-            n_esc = { '<Esc>', { 'cmp_close', 'cancel' }, mode = 'n', expr = true },
-            i_esc = { '<Esc>', { 'cmp_close', 'stopinsert' }, mode = 'i', expr = true },
-            i_cr = { '<CR>', { 'cmp_accept', 'confirm' }, mode = { 'i', 'n' }, expr = true },
-            i_tab = { '<Tab>', { 'cmp_select_next', 'cmp' }, mode = 'i', expr = true },
-            i_ctrl_w = { '<C-w>', '<C-s-w>', mode = 'i', expr = true },
-            i_up = { '<Up>', { 'hist_up' }, mode = { 'i', 'n' } },
-            i_down = { '<Down>', { 'hist_down' }, mode = { 'i', 'n' } },
-            q = 'cancel',
-          },
-        },
-        notification = {
-          border = true,
-          zindex = 100,
-          ft = 'markdown',
-          wo = { winblend = 5, wrap = false, conceallevel = 2, colorcolumn = '' },
-          bo = { filetype = 'snacks_notif' },
-        },
       },
-      gh = {},
-      input = {
-        enable = true,
-        icon = ' ',
-        icon_hl = 'SnacksInputIcon',
-        icon_pos = 'left',
-        prompt_pos = 'title',
-        win = { style = 'input' },
-        expand = true,
-      },
-      layout = { enabled = true },
-      notify = { enabled = true },
     })
 
     Snacks.scroll.enable()

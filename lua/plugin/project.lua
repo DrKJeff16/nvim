@@ -35,18 +35,18 @@ return { ---@type LazySpec
         '~/Public/*',
         '~/Templates/*',
       },
-      fzf_lua = { enabled = true, sort = 'newest', show = 'names' },
+      fzf_lua = { enabled = true, show = 'names', sort = 'newest' },
       history = { size = 70 },
       log = { enabled = true, logpath = vim.fn.stdpath('state'), max_size = 0.5 },
       lsp = { enabled = true, use_pattern_matching = true },
       manual_mode = false,
-      picker = { enabled = true, sort = 'newest', show = 'names' },
+      picker = { enabled = true, show = 'names', sort = 'newest' },
       remove_missing_dirs = true,
       scope_chdir = 'tab',
       show_by_name = true,
       show_hidden = false,
       silent_chdir = true,
-      snacks = { enabled = true, opts = { sort = 'newest', show = 'names', layout = 'vscode' }, show = 'names' },
+      snacks = { enabled = true, opts = { layout = 'vscode', show = 'names', sort = 'newest' }, show = 'names' },
       telescope = { prefer_file_browser = true, sort = 'newest', tilde = true },
     })
 
@@ -56,19 +56,14 @@ return { ---@type LazySpec
     keyset({
       n = {
         ['<leader>p'] = { group = '+Project' },
-        ['<leader>pR'] = {
-          function()
-            vim.cmd.Project({ args = { 'history', 'rename' } })
-          end,
-          desc('Rename a Project'),
-        },
         ['<leader>pC'] = { ':Project config<CR>', desc('Toggle Config Window') },
         ['<leader>pH'] = { ':Project health<CR>', desc('Run `:checkhealth project`') },
+        ['<leader>pR'] = { ':Project history rename<CR>', desc('Rename a Project') },
         ['<leader>pa'] = { ':Project add<CR>', desc('Add New Project') },
         ['<leader>pd'] = { ':Project delete<CR>', desc('Delete Existing Project') },
         ['<leader>ph'] = { ':Project history<CR>', desc('Toggle History Window') },
         ['<leader>pl'] = { ':Project log<CR>', desc('Toggle Log Window') },
-        ['<leader>pp'] = { vim.cmd.Project, desc('Open Project UI') },
+        ['<leader>pp'] = { ':Project<CR>', desc('Open Project UI') },
         ['<leader>pr'] = { ':Project recents<CR>', desc('Recent Projects') },
         ['<leader>ps'] = { ':Project session<CR>', desc('Session') },
       },

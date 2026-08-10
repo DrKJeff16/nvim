@@ -5,82 +5,58 @@ return {
   config = function()
     local Flash = require('flash')
     Flash.setup({
-      labels = 'abcdefghijklmnopqrstuvwxyz',
-      search = {
-        multi_window = true,
-        forward = true,
-        wrap = vim.o.wrap,
-        mode = 'exact', ---@type Flash.Pattern.Mode
-        incremental = false,
-        exclude = { ---@type (string|fun(win: integer): focusable: boolean)[]
-          'notify',
-          'cmp_menu',
-          'noice',
-          'flash_prompt',
-          function(win)
-            return not vim.api.nvim_win_get_config(win).focusable
-          end,
-        },
-        trigger = '',
-        max_length = false, ---@type integer|false
-      },
-      jump = {
-        autojump = false,
-        history = true,
-        jumplist = true,
-        nohlsearch = true,
-        pos = 'start', ---@type "start"|"end"|"range"
-        register = true,
-      },
-      label = {
-        after = true, ---@type boolean|integer[]
-        before = false, ---@type boolean|integer[]
-        current = true,
-        distance = true,
-        exclude = '',
-        format = function(opts) ---@param opts Flash.Format
-          return { { opts.match.label, opts.hl_group } }
-        end,
-        min_pattern_length = 0,
-        rainbow = { enabled = true, shade = 5 },
-        reuse = 'lowercase', ---@type "lowercase"|"all"|"none"
-        style = 'overlay', ---@type "eol"|"overlay"|"right_align"|"inline"
-        uppercase = true,
-      },
+      continue = false,
       highlight = {
         backdrop = true,
         groups = { match = 'FlashMatch', current = 'FlashCurrent', backdrop = 'FlashBackdrop', label = 'FlashLabel' },
         matches = true,
         priority = 5000,
       },
+      jump = { autojump = false, history = true, jumplist = true, nohlsearch = true, pos = 'start', register = true },
+      labels = 'abcdefghijklmnopqrstuvwxyz',
+      label = {
+        after = true,
+        before = false,
+        current = true,
+        distance = true,
+        exclude = '',
+        format = function(opts)
+          return { { opts.match.label, opts.hl_group } }
+        end,
+        min_pattern_length = 0,
+        rainbow = { enabled = true, shade = 5 },
+        reuse = 'lowercase',
+        style = 'overlay',
+        uppercase = true,
+      },
       pattern = '',
-      continue = false,
-      modes = { ---@type table<string, Flash.Config>
-        search = {
-          enabled = true,
-          highlight = { backdrop = false },
-          jump = { history = true, register = true, nohlsearch = true },
-          search = {},
-        },
+      modes = {
         char = {
-          enabled = true,
-          config = function(opts)
-            opts.autohide = opts.autohide or (vim.fn.mode(true):find('no') and vim.v.operator == 'y')
-            opts.jump_labels = opts.jump_labels and vim.v.count == 0 and vim.fn.reg_executing() == ''
-          end,
           autohide = false,
-          jump_labels = false,
-          multi_line = true,
-          label = { exclude = 'hjkliardc' },
-          keys = { 'f', 'F', 't', 'T', ';', ',' },
           ---@param motion string
           ---@return table<string, "next"|"prev"|"right"|"left"> actions
           char_actions = function(motion)
             return { [';'] = 'next', [','] = 'prev', [motion:lower()] = 'next', [motion:upper()] = 'prev' }
           end,
-          search = { wrap = false },
+          config = function(opts)
+            opts.autohide = opts.autohide or (vim.fn.mode(true):find('no') and vim.v.operator == 'y')
+            opts.jump_labels = opts.jump_labels and vim.v.count == 0 and vim.fn.reg_executing() == ''
+          end,
+          enabled = true,
           highlight = { backdrop = true },
           jump = { register = false, autojump = false },
+          jump_labels = false,
+          keys = { 'f', 'F', 't', 'T', ';', ',' },
+          label = { exclude = 'hjkliardc' },
+          multi_line = true,
+          search = { wrap = false },
+        },
+        remote = { remote_op = { restore = true, motion = true } },
+        search = {
+          enabled = true,
+          highlight = { backdrop = false },
+          jump = { history = true, register = true, nohlsearch = true },
+          search = {},
         },
         treesitter = {
           highlight = { backdrop = true, matches = true },
@@ -95,22 +71,31 @@ return {
           remote_op = { restore = true },
           search = { multi_window = true, wrap = true, incremental = false },
         },
-        remote = { remote_op = { restore = true, motion = true } },
       },
       prompt = {
         enabled = true,
         prefix = { { '⚡', 'FlashPromptIcon' } },
-        win_config = {
-          border = 'none',
-          col = 0,
-          height = 1,
-          relative = 'editor',
-          row = -1,
-          width = 1,
-          zindex = 1000,
-        },
+        win_config = { border = 'none', col = 0, height = 1, relative = 'editor', row = -1, width = 1, zindex = 1000 },
       },
       remote_op = { restore = true, motion = false },
+      search = {
+        exclude = {
+          'cmp_menu',
+          'flash_prompt',
+          'noice',
+          'notify',
+          function(win)
+            return not vim.api.nvim_win_get_config(win).focusable
+          end,
+        },
+        forward = true,
+        incremental = false,
+        max_length = false,
+        mode = 'exact',
+        multi_window = true,
+        trigger = '',
+        wrap = vim.o.wrap,
+      },
     })
 
     local desc = require('user_api').maps.desc

@@ -6,20 +6,20 @@ return { ---@type LazySpec
   config = function()
     local Twilight = require('twilight')
     Twilight.setup({
-      dimming = { alpha = 0.4, color = { 'Normal', '#ffffff' }, term_bg = '#000000', inactive = true },
       context = 10,
-      treesitter = true,
-      expand = { 'function', 'method', 'table', 'if_statement' },
+      dimming = { alpha = 0.4, color = { 'Normal', '#ffffff' }, inactive = true, term_bg = '#000000' },
       exclude = {},
+      expand = { 'function', 'method', 'table', 'if_statement' },
+      treesitter = true,
     })
 
     local desc = require('user_api').maps.desc
     require('user_api').config.keymaps.set({
       n = {
         ['<leader>ut'] = { group = '+Twilight' },
-        ['<leader>utt'] = { Twilight.toggle, desc('Toggle Twilight') },
-        ['<leader>ute'] = { Twilight.enable, desc('Enable Twilight') },
         ['<leader>utd'] = { Twilight.disable, desc('Disable Twilight') },
+        ['<leader>ute'] = { Twilight.enable, desc('Enable Twilight') },
+        ['<leader>utt'] = { Twilight.toggle, desc('Toggle Twilight') },
       },
     })
   end,

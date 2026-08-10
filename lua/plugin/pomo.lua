@@ -6,12 +6,10 @@ return { ---@type LazySpec
   dependencies = { 'rcarriga/nvim-notify' },
   config = function()
     require('pomo').setup({
-      update_interval = 1000,
       notifiers = {
         { name = 'Default', opts = { sticky = true, title_icon = '⏳', text_icon = '⏱️' } },
         { name = 'System' },
       },
-      timers = { Break = { { name = 'System' } } },
       sessions = {
         pomodoro = {
           { name = 'Work', duration = '30m' },
@@ -22,14 +20,16 @@ return { ---@type LazySpec
           { name = 'Long Break', duration = '45m' },
         },
       },
+      timers = { Break = { { name = 'System' } } },
+      update_interval = 1000,
     })
 
     vim.api.nvim_create_autocmd('VimEnter', {
       group = vim.api.nvim_create_augroup('pomodoro', { clear = true }),
+      once = true,
       callback = function()
         vim.schedule(function()
           vim.cmd.TimerSession('pomodoro')
-
           for _, timer in ipairs(require('pomo').get_all_timers()) do
             timer:hide()
           end

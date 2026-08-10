@@ -53,15 +53,8 @@ return { ---@type LazySpec
           return vim.api.nvim_buf_line_count(bufnr) < 5000
         end,
       },
-      {
-        require('ibl.hooks').type.SCOPE_HIGHLIGHT,
-        require('ibl.hooks').builtin.scope_highlight_from_extmark,
-      },
-      {
-        require('ibl.hooks').type.SKIP_LINE,
-        require('ibl.hooks').builtin.skip_preproc_lines,
-        { bufnr = 0 },
-      },
+      { require('ibl.hooks').type.SCOPE_HIGHLIGHT, require('ibl.hooks').builtin.scope_highlight_from_extmark },
+      { require('ibl.hooks').type.SKIP_LINE, require('ibl.hooks').builtin.skip_preproc_lines, { bufnr = 0 } },
     }
     for _, t in ipairs(arg_tbl) do
       local htype, func, opts = t[1], t[2], t[3] or nil

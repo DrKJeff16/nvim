@@ -2,30 +2,12 @@
 return { ---@type LazySpec
   'klen/nvim-test',
   version = false,
-  cmd = {
-    'TestEdit',
-    'TestFile',
-    'TestInfo',
-    'TestLast',
-    'TestNearest',
-    'TestSuite',
-    'TestVisit',
-  },
+  cmd = { 'TestEdit', 'TestFile', 'TestInfo', 'TestLast', 'TestNearest', 'TestSuite', 'TestVisit' },
   config = function()
     require('nvim-test').setup({
-      run = true,
       commands_create = true,
       filename_modifier = ':.',
-      silent = false,
-      term = 'terminal',
-      termOpts = {
-        direction = 'vertical',
-        width = 96,
-        height = 24,
-        go_back = false,
-        stopinsert = 'auto',
-        keep_one = true,
-      },
+      run = true,
       runners = {
         cs = 'nvim-test.runners.dotnet',
         go = 'nvim-test.runners.go-test',
@@ -38,6 +20,16 @@ return { ---@type LazySpec
         rust = 'nvim-test.runners.cargo-test',
         typescript = 'nvim-test.runners.jest',
         typescriptreact = 'nvim-test.runners.jest',
+      },
+      silent = false,
+      term = 'terminal',
+      termOpts = {
+        direction = 'vertical',
+        width = 96,
+        height = 24,
+        go_back = false,
+        stopinsert = 'auto',
+        keep_one = true,
       },
     })
   end,

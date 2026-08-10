@@ -6,6 +6,11 @@ return { ---@type LazySpec
     require('buffer-sticks').setup({
       active_char = '──',
       filter = { filetypes = { 'terminal' } },
+      highlights = {
+        active = { link = 'Statement' },
+        inactive = { link = 'Whitespace' },
+        label = { link = 'Comment' },
+      },
       inactive_char = ' ─',
       jump = { show = { 'filename', 'space', 'label' } },
       label = { show = 'always' },
@@ -13,11 +18,6 @@ return { ---@type LazySpec
       position = 'right', ---@type 'right'|'left'
       transparent = true,
       width = 3,
-      highlights = {
-        active = { link = 'Statement' },
-        inactive = { link = 'Whitespace' },
-        label = { link = 'Comment' },
-      },
     })
   end,
 }

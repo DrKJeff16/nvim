@@ -6,9 +6,10 @@ return { ---@type LazySpec
   event = 'VeryLazy',
   config = function()
     require('which-colorscheme').setup({
-      prefix = '<leader>uc',
+      custom_groups = {
+        A = { 'tokyonight', 'tokyodark', 'catppuccin', 'kanagawa', 'nightfox', 'carbonfox', 'onedark', 'minicyan' },
+      },
       custom_only = false,
-      group_name = 'Colorschemes',
       excluded = {
         'blue',
         'catppuccin-latte',
@@ -20,10 +21,9 @@ return { ---@type LazySpec
         'teide-light',
         'tokyonight-day',
       },
-      custom_groups = {
-        A = { 'tokyonight', 'tokyodark', 'catppuccin', 'kanagawa', 'nightfox', 'carbonfox', 'onedark', 'minicyan' },
-      },
+      group_name = 'Colorschemes',
       grouping = { random = true, uppercase_groups = true, labels = { A = 'Favourites', B = 'Extra' } },
+      prefix = '<leader>uc',
     })
 
     require('user_api').config.keymaps.set({ n = { ['<leader>u'] = { group = '+UI' } } })

@@ -19,7 +19,6 @@ return { ---@type LazySpec
 
     if require('user_api').check.module('telescope') then
       require('telescope').load_extension('scope')
-
       local desc = require('user_api').maps.desc
       require('user_api').config.keymaps.set({
         n = {

@@ -13,35 +13,29 @@ return { ---@type LazySpec
       dev = true,
       config = function()
         require('nvim-file-operations').setup({
+          auto_save = false,
           operations = {
-            willRenameFiles = true,
+            didCreateFiles = true,
+            didDeleteFiles = true,
             didRenameFiles = true,
             willCreateFiles = true,
-            didCreateFiles = true,
             willDeleteFiles = true,
-            didDeleteFiles = true,
+            willRenameFiles = true,
           },
           timeout_ms = 10000,
-          auto_save = false,
         })
       end,
     },
     { 'mrbjarksen/neo-tree-diagnostics.nvim', main = 'neo-tree.sources.diagnostics' },
     {
       's1n7ax/nvim-window-picker',
-      version = '2.*',
+      version = false,
       config = function()
         require('window-picker').setup({
           filter_rules = {
-            include_current_win = false,
             autoselect_one = true,
-            -- filter using buffer options
-            bo = {
-              -- if the file type is one of following, the window will be ignored
-              filetype = { 'neo-tree', 'neo-tree-popup', 'notify' },
-              -- if the buffer type is one of following, the window will be ignored
-              buftype = { 'terminal', 'quickfix' },
-            },
+            bo = { buftype = { 'terminal', 'quickfix' }, filetype = { 'neo-tree', 'neo-tree-popup', 'notify' } },
+            include_current_win = false,
           },
         })
       end,
@@ -49,16 +43,16 @@ return { ---@type LazySpec
   },
   config = function()
     require('neo-tree').setup({
-      nesting_rules = require('neotree-file-nesting-config').nesting_rules,
-      hide_root_node = true,
-      retain_hidden_root_indent = true,
-      close_if_last_window = false,
-      popup_border_style = 'NC',
       clipboard = { sync = 'global' },
-      enable_git_status = true,
+      close_if_last_window = false,
       enable_diagnostics = true,
+      enable_git_status = true,
+      hide_root_node = true,
+      nesting_rules = require('neotree-file-nesting-config').nesting_rules,
       open_files_do_not_replace_types = { 'terminal', 'trouble', 'qf' },
       open_files_using_relative_paths = false,
+      popup_border_style = 'NC',
+      retain_hidden_root_indent = true,
       sort_case_insensitive = false,
       sources = { 'filesystem', 'buffers', 'git_status', 'diagnostics' },
       event_handlers = {
@@ -100,11 +94,7 @@ return { ---@type LazySpec
         },
       },
       diagnostics = {
-        auto_preview = {
-          enabled = true,
-          preview_config = { float = true },
-          event = 'neo_tree_window_after_open',
-        },
+        auto_preview = { enabled = true, preview_config = { float = true }, event = 'neo_tree_window_after_open' },
         bind_to_cwd = true,
         diag_sort_function = 'severity',
         follow_current_file = {
@@ -116,21 +106,19 @@ return { ---@type LazySpec
         },
         group_dirs_and_files = true,
         group_empty_dirs = true,
-        show_unloaded = true,
         refresh = { delay = 500, event = 'vim_diagnostic_changed', max_items = 10000 },
+        show_unloaded = true,
       },
       default_component_configs = {
         container = { enable_character_fade = true },
-        indent = {
-          expander_collapsed = '',
-          expander_expanded = '',
-          indent_size = 2,
-          padding = 1,
-          with_markers = true,
-          indent_marker = '│',
-          last_indent_marker = '└',
-          highlight = 'NeoTreeIndentMarker',
-          expander_highlight = 'NeoTreeExpander',
+        diagnostics = {
+          highlights = {
+            error = 'DiagnosticSignError',
+            hint = 'DiagnosticSignHint',
+            info = 'DiagnosticSignInfo',
+            warn = 'DiagnosticSignWarn',
+          },
+          symbols = { hint = 'H', info = 'I', warn = '!', error = 'X' },
         },
         icon = {
           selected = '*',
@@ -152,40 +140,42 @@ return { ---@type LazySpec
             end
           end,
         },
-        diagnostics = {
-          symbols = { hint = 'H', info = 'I', warn = '!', error = 'X' },
-          highlights = {
-            hint = 'DiagnosticSignHint',
-            info = 'DiagnosticSignInfo',
-            warn = 'DiagnosticSignWarn',
-            error = 'DiagnosticSignError',
-          },
+        indent = {
+          expander_collapsed = '',
+          expander_expanded = '',
+          expander_highlight = 'NeoTreeExpander',
+          highlight = 'NeoTreeIndentMarker',
+          indent_marker = '│',
+          indent_size = 2,
+          last_indent_marker = '└',
+          padding = 1,
+          with_markers = true,
         },
         modified = { symbol = '[+]', highlight = 'NeoTreeModified' },
         name = {
-          trailing_slash = true,
-          use_git_status_colors = true,
-          use_filtered_colors = true,
           highlight = 'NeoTreeFileName',
+          trailing_slash = true,
+          use_filtered_colors = true,
+          use_git_status_colors = true,
         },
         git_status = {
           symbols = {
             added = '✚',
-            modified = '',
-            deleted = '✖',
-            renamed = '󰁕',
-            untracked = '',
-            ignored = '',
-            unstaged = '󰄱',
-            staged = '',
             conflict = '',
+            deleted = '✖',
+            ignored = '',
+            modified = '',
+            renamed = '󰁕',
+            staged = '',
+            unstaged = '󰄱',
+            untracked = '',
           },
         },
-        file_size = { enabled = false, width = 12, required_width = 64 },
-        type = { enabled = true, width = 10, required_width = 122 },
-        last_modified = { enabled = false, width = 20, required_width = 88 }, ---@diagnostic disable-line:missing-fields
         created = { enabled = false, width = 20, required_width = 110 }, ---@diagnostic disable-line:missing-fields
+        file_size = { enabled = false, width = 12, required_width = 64 },
+        last_modified = { enabled = false, width = 20, required_width = 88 }, ---@diagnostic disable-line:missing-fields
         symlink_target = { enabled = true },
+        type = { enabled = true, width = 10, required_width = 122 },
       },
       commands = {},
       window = {
@@ -236,17 +226,17 @@ return { ---@type LazySpec
       },
       filesystem = {
         filtered_items = {
-          visible = false,
-          show_hidden_count = false,
+          always_show = {},
+          always_show_by_pattern = {},
+          hide_by_name = { 'node_modules' },
+          hide_by_pattern = {},
           hide_dotfiles = false,
           hide_gitignored = false,
           hide_hidden = false,
-          hide_by_name = { 'node_modules' },
-          hide_by_pattern = {},
-          always_show = {},
-          always_show_by_pattern = {},
           never_show = { '.DS_Store', 'thumbs.db' },
           never_show_by_pattern = {},
+          show_hidden_count = false,
+          visible = false,
         },
         follow_current_file = { enabled = true, leave_dirs_open = false },
         group_empty_dirs = true,
@@ -274,21 +264,21 @@ return { ---@type LazySpec
             ot = { 'order_by_type', nowait = false },
           },
           fuzzy_finder_mappings = {
-            ['<Down>'] = 'move_cursor_down',
+            ['<C-CR>'] = 'close_clear_filter',
             ['<C-n>'] = 'move_cursor_down',
-            ['<Up>'] = 'move_cursor_up',
             ['<C-p>'] = 'move_cursor_up',
+            ['<C-w>'] = { '<C-S-w>', raw = true },
+            ['<Down>'] = 'move_cursor_down',
             ['<Esc>'] = 'close',
             ['<S-CR>'] = 'close_keep_filter',
-            ['<C-CR>'] = 'close_clear_filter',
-            ['<C-w>'] = { '<C-S-w>', raw = true },
+            ['<Up>'] = 'move_cursor_up',
             {
               n = {
-                j = 'move_cursor_down',
-                k = 'move_cursor_up',
-                ['<S-CR>'] = 'close_keep_filter',
                 ['<C-CR>'] = 'close_clear_filter',
                 ['<Esc>'] = 'close',
+                ['<S-CR>'] = 'close_keep_filter',
+                j = 'move_cursor_down',
+                k = 'move_cursor_up',
               },
             },
           },
@@ -301,10 +291,10 @@ return { ---@type LazySpec
         show_unloaded = true,
         window = {
           mappings = {
-            d = 'buffer_delete',
-            bd = 'buffer_delete',
-            ['<BS>'] = 'navigate_up',
             ['.'] = 'set_root',
+            ['<BS>'] = 'navigate_up',
+            bd = 'buffer_delete',
+            d = 'buffer_delete',
             o = { 'show_help', nowait = false, config = { title = 'Order by', prefix_key = 'o' } },
             oc = { 'order_by_created', nowait = false },
             od = { 'order_by_diagnostics', nowait = false },
@@ -317,16 +307,15 @@ return { ---@type LazySpec
       },
       git_status = {
         window = {
-          position = 'float',
           mappings = {
             A = 'git_add_all',
-            gu = 'git_unstage_file',
             gU = 'git_undo_last_commit',
             ga = 'git_add_file',
-            gr = 'git_revert_file',
             gc = 'git_commit',
-            gp = 'git_push',
             gg = 'git_commit_and_push',
+            gp = 'git_push',
+            gr = 'git_revert_file',
+            gu = 'git_unstage_file',
             o = { 'show_help', nowait = false, config = { title = 'Order by', prefix_key = 'o' } },
             oc = { 'order_by_created', nowait = false },
             od = { 'order_by_diagnostics', nowait = false },
@@ -335,6 +324,7 @@ return { ---@type LazySpec
             os = { 'order_by_size', nowait = false },
             ot = { 'order_by_type', nowait = false },
           },
+          position = 'float',
         },
       },
     })
@@ -409,9 +399,9 @@ return { ---@type LazySpec
     require('user_api').highlight.hl_from_dict({
       NeoTreeDirectoryIcon = { link = 'NvimTreeFolderIcon' },
       NeoTreeDirectoryName = { link = 'NvimTreeFolderName' },
-      NeoTreeSymbolicLinkTarget = { link = 'NvimTreeSymlink' },
-      NeoTreeRootName = { link = 'NvimTreeRootFolder' },
       NeoTreeFileNameOpened = { link = 'NvimTreeOpenedFile' },
+      NeoTreeRootName = { link = 'NvimTreeRootFolder' },
+      NeoTreeSymbolicLinkTarget = { link = 'NvimTreeSymlink' },
     })
   end,
 }

@@ -3,7 +3,7 @@ return { ---@type LazySpec
   'folke/ts-comments.nvim',
   version = false,
   event = 'VeryLazy',
-  cond = not require('user_api').check.in_console(),
+  cond = not require('user_api').check.in_console() and vim.fn.has('nvim-0.10') == 1,
   opts = {
     lang = {
       astro = '<!-- %s -->',
@@ -62,6 +62,5 @@ return { ---@type LazySpec
       xaml = '<!-- %s -->',
     },
   },
-  enabled = vim.fn.has('nvim-0.10.0') == 1,
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:
