@@ -10,6 +10,20 @@ return { ---@type LazySpec
   end,
   config = function()
     require('blink.pairs').setup({
+      debug = false,
+      highlights = {
+        cmdline = true,
+        enabled = true,
+        groups = { 'BlinkPairsOrange', 'BlinkPairsPurple', 'BlinkPairsBlue' },
+        matchparen = {
+          cmdline = true,
+          enabled = true,
+          group = 'BlinkPairsMatchParen',
+          include_surrounding = false,
+          priority = 250,
+        },
+        unmatched_group = 'BlinkPairsUnmatched',
+      },
       mappings = {
         enabled = true,
         cmdline = true,
@@ -17,20 +31,6 @@ return { ---@type LazySpec
         wrap = { ['<C-b>'] = 'motion', ['<C-S-b>'] = 'motion_reverse' },
         pairs = {},
       },
-      highlights = {
-        enabled = true,
-        cmdline = true,
-        groups = { 'BlinkPairsOrange', 'BlinkPairsPurple', 'BlinkPairsBlue' },
-        unmatched_group = 'BlinkPairsUnmatched',
-        matchparen = {
-          enabled = true,
-          cmdline = true,
-          include_surrounding = false,
-          group = 'BlinkPairsMatchParen',
-          priority = 250,
-        },
-      },
-      debug = false,
     })
   end,
 }

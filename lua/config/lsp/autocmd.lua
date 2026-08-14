@@ -13,10 +13,9 @@ end
 ---@return vim.lsp.Client|nil client
 local function get_client()
   local client = vim.lsp.get_clients({ buf = vim.api.nvim_get_current_buf() })
-  if not client or vim.tbl_isempty(client) then
-    return
+  if client and not vim.tbl_isempty(client) then
+    return client
   end
-  return client
 end
 
 local function async_fmt()
@@ -34,15 +33,12 @@ local function server_stop()
 end
 
 local function server_restart()
-  local client = get_client()
-  if not client then
-    return
+  if get_client() then
+    server_stop()
+    vim.schedule(function()
+      vim.lsp.enable(_G.LAST_LSP.name, true)
+    end)
   end
-
-  server_stop()
-  vim.schedule(function()
-    vim.lsp.enable(_G.LAST_LSP.name, true)
-  end)
 end
 
 local function server_start()

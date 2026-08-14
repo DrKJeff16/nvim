@@ -2,23 +2,23 @@
 return { ---@type LazySpec
   'gbprod/yanky.nvim',
   version = false,
+  event = 'VeryLazy',
   dependencies = { 'kkharji/sqlite.lua', 'folke/snacks.nvim' },
   config = function()
     require('yanky').setup({
-      ring = {
-        history_length = 100,
-        storage = 'shada',
-        storage_path = vim.fn.stdpath('data') .. '/databases/yanky.db',
-        sync_with_numbered_registers = true,
-        cancel_event = 'update',
-        ignore_registers = { '_' },
-        update_register_on_cycle = false,
-        permanent_wrapper = nil,
-      },
-      picker = { select = { action = nil }, telescope = { use_default_mappings = true } },
-      system_clipboard = { sync_with_ring = true, clipboard_register = nil },
       highlight = { on_put = true, on_yank = true, timer = 500 },
+      picker = { select = {}, telescope = { use_default_mappings = true } },
       preserve_cursor_position = { enabled = true },
+      ring = {
+        cancel_event = 'update',
+        history_length = 100,
+        ignore_registers = { '_' },
+        storage = 'shada',
+        storage_path = vim.fs.joinpath(vim.fn.stdpath('data'), 'databases/yanky.db'),
+        sync_with_numbered_registers = true,
+        update_register_on_cycle = false,
+      },
+      system_clipboard = { sync_with_ring = true },
       textobj = { enabled = true },
     })
     if require('user_api').check.module('telescope') then

@@ -2,6 +2,7 @@
 return { ---@type LazySpec
   'folke/zen-mode.nvim',
   version = false,
+  event = 'VeryLazy',
   cond = not require('user_api').check.in_console(),
   config = function()
     require('zen-mode').setup({
