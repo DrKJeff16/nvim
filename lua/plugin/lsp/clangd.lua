@@ -1,6 +1,6 @@
 ---@module 'lazy'
 return { ---@type LazySpec
-  'dchinmay2/clangd_extensions.nvim',
+  url = 'https://git.sr.ht/~chinmay/clangd_extensions.nvim',
   dev = true,
   ft = { 'c', 'cpp' },
   version = false,
