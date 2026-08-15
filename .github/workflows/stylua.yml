@@ -2,23 +2,22 @@ name: Stylua
 on:
   push:
     paths:
-      - '**.lua'
+      - "**.lua"
   pull_request:
     types:
       - opened
     paths:
-      - '**.lua'
+      - "**.lua"
 jobs:
   stylua_check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.1
       - name: Run StyLua
         uses: JohnnyMorganz/stylua-action@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: latest
-          # CLI arguments
           args: --check .
 # vim: set ts=2 sts=2 sw=2 et ai si sta:

@@ -8,23 +8,23 @@ on:
       - opened
     branches:
       - main
+permissions:
+  contents: write
 jobs:
   vim_eof_comment:
     name: vim-eof-comment
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.1
         with:
           ref: ${{ github.head_ref }}
           persist-credentials: true
           token: ${{ secrets.PAT }}
       - name: Set up Python
-        uses: actions/setup-python@v6.2.0
+        uses: actions/setup-python@v7
         with:
-          python-version: '3.14'
+          python-version: "3.14"
       - name: Install vim-eof-comment
         run: |
           python -m pip install -U pip
@@ -34,7 +34,7 @@ jobs:
           vim-eof-comment -e lua,yaml,yml,toml -i lua:2:Y -v .
           vim-eof-comment -e md -nv .
       - name: Auto Commit Changes
-        uses: stefanzweifel/git-auto-commit-action@v7.1.0
+        uses: stefanzweifel/git-auto-commit-action@v7.2.0
         with:
           commit_message: "chore: format files with `vim-eof-comment`"
           commit_options: "--no-verify --signoff"

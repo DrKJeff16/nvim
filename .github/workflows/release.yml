@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.1
       - name: Build project assets
         id: checkout
         run: |
@@ -31,11 +31,11 @@ jobs:
           md5sum Jnvim.7z Jnvim.zip Jnvim.tar.xz Jnvim.tar.gz >| md5sums.txt
       - name: Get Release
         id: get_current_release
-        uses: joutvhu/get-release@v1.0.3
+        uses: joutvhu/get-release@v1.0.4
         with:
           latest: true
           prerelease: true
-          pattern: '^v.*'
+          pattern: "^v.*"
           debug: true
           throwing: true
         env:
@@ -45,7 +45,7 @@ jobs:
           echo ${{ github.sha }} >| Release.txt
           cat Release.txt
       - name: Release
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@v3.0.2
         if: github.ref_type == 'tag'
         with:
           files: |
@@ -56,4 +56,5 @@ jobs:
             Jnvim.tar.gz
             Jnvim.tar.xz
             Jnvim.zip
+
 # vim: set ts=2 sts=2 sw=2 et ai si sta:

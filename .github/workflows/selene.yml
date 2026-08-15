@@ -2,18 +2,18 @@ name: Selene Lint
 on:
   push:
     paths:
-      - '**.lua'
+      - "**.lua"
   pull_request:
     types:
       - opened
     paths:
-      - '**.lua'
+      - "**.lua"
 jobs:
   selene_check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.1
       - name: Lint Lua code with Selene
         uses: AlejandroSuero/selene-linter-action@v1.0.0
         with:

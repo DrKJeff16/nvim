@@ -4,6 +4,7 @@ return { ---@type LazySpec
   event = 'VeryLazy',
   version = false,
   dependencies = { 'nvim-treesitter/nvim-treesitter' },
+  cond = require('user_api').check.executable('tree-sitter'),
   config = function()
     require('gh-actions.tree-sitter').setup()
     require('nvim-treesitter').install({ 'gh_actions_expressions' })
