@@ -92,7 +92,7 @@ end
 ---@param config vim.lsp.Config
 ---@return vim.lsp.Config config
 function Server.populate(name, config)
-  if require('user_api').check.type_not_empty('table', config.capabilities) then
+  if config.capabilities then
     config.capabilities = insert_client(config.capabilities, Server.make_capabilities(config.capabilities or {}))
   else
     config.capabilities = Server.make_capabilities()
