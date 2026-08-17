@@ -28,8 +28,8 @@ return { ---@type LazySpec
         },
       },
       auto_save_interval = 300,
-      backdrop = { backdrop = 20, enabled = false },
-      custom_languages = { gleam = { icon = '✨', name = 'Gleam' }, odin = { icon = '🔷', name = 'Odin' } },
+      backdrop = { backdrop = 20, enabled = true },
+      custom_languages = {},
       enabled = true,
       gamification_enabled = true,
       icon_engine = 'mini',
@@ -37,9 +37,8 @@ return { ---@type LazySpec
       items = { enabled = true },
       levels = {
         { level = 2, title = 'Newbie' },
-        { level = 40, title = 'Sargeant' },
+        { level = 40, title = 'Sergeant' },
         { level = 80, title = 'Lieutenant' },
-        { level = 100, title = 'Foo' },
       },
       notifications = { achievements = true, enabled = true, level_up = true },
       override_levels = false,
@@ -56,7 +55,12 @@ return { ---@type LazySpec
           end,
           desc('Show Config'),
         },
-        ['<leader>Tp'] = { require('triforce').show_profile, desc('Show Profile') },
+        ['<leader>Tp'] = {
+          function()
+            vim.cmd.Triforce('profile')
+          end,
+          desc('Show Profile'),
+        },
       },
     })
   end,

@@ -1,6 +1,6 @@
 local uv = vim.uv or vim.loop
 
-local timer = nil ---@type uv.uv_timer_t|nil
+local timer = nil ---@type uv.uv_timer_t|nil|?
 local group = vim.api.nvim_create_augroup('UserAPI', { clear = true })
 
 local function make_timer()

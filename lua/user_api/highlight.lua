@@ -19,8 +19,7 @@ function M.hl(name, opts, ns)
     ns = { ns, { 'number', 'nil' }, true },
   })
 
-  local type_not_empty = require('user_api.check').type_not_empty
-  if type_not_empty('string', name) and type_not_empty('table', opts) then
+  if name and opts and type(name) == 'string' and type(opts) == 'table' then
     vim.api.nvim_set_hl(ns or 0, name, opts)
   end
 end
