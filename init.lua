@@ -244,11 +244,6 @@ User.opts.setup_maps()
 
 Config.autocmds.setup()
 
-vim.cmd([[
-set t_8f=[38;2;%lu;%lu;%lum
-set t_8b=[48;2;%lu;%lu;%lum
-]])
-
 Config.colorschemes('tokyonight')
 -- Config.colorschemes('catppuccin')
 -- Config.colorschemes('everblush')
