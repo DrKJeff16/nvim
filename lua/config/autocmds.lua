@@ -1,9 +1,6 @@
 local ERROR = vim.log.levels.ERROR
 local INFO = vim.log.levels.INFO
 local User = require('user_api')
-local executable = User.check.exists.executable
-local desc = User.maps.desc
-local keyset = User.config.keymaps.set
 local validate = User.check.validate
 
 ---@param bufnr integer
@@ -15,12 +12,11 @@ local function run_formatter(formatter, bufnr)
   })
 
   return function()
-    if User.util.optget('modified', 'buf', bufnr) or not executable(formatter) then
+    if User.util.optget('modified', 'buf', bufnr) or not User.check.exists.executable(formatter) then
       return
     end
 
-    local path = vim.api.nvim_buf_get_name(bufnr)
-    path = User.util.rstrip('/', vim.fn.fnamemodify(path, ':p'))
+    local path = User.util.rstrip('/', vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ':p'))
     if vim.fn.filereadable(path) ~= 1 or vim.fn.filewritable(path) ~= 1 then
       return
     end
@@ -47,6 +43,7 @@ local M = {}
 local augroup = -1 ---@type integer
 
 function M.setup()
+  local desc = User.maps.desc
   augroup = User.util.autocmd.gen_augroups('User_AU', true)['User_AU']
   User.util.autocmd.au_repeated_events({
     events = { 'FileType' },
@@ -67,7 +64,7 @@ function M.setup()
             User.util.optset({ ts = 2, sw = 2, sts = 2, et = true }, nil, 'buf', ev.buf)
           end
 
-          keyset({
+          User.config.keymaps.set({
             n = {
               ['<leader><C-l>'] = {
                 run_formatter(is_lua and 'stylua' or 'isort', ev.buf),
@@ -81,21 +78,19 @@ function M.setup()
         pattern = { 'help' },
         group = augroup,
         callback = function(ev)
-          if User.util.optget('ft', 'buf', ev.buf) == 'help' and User.util.optget('bt', 'buf', ev.buf) ~= 'help' then
-            return
+          if User.util.optget('ft', 'buf', ev.buf) ~= 'help' or User.util.optget('bt', 'buf', ev.buf) == 'help' then
+            User.util.optset(
+              { signcolumn = 'no', number = false, colorcolumn = '', list = false },
+              nil,
+              'win',
+              vim.api.nvim_get_current_win()
+            )
+
+            vim.cmd.noh()
+            vim.cmd.wincmd('=')
+
+            User.config.keymaps.set({ n = { q = { vim.cmd.helpclose, desc('Quit Help', { buf = ev.buf }) } } }, ev.buf)
           end
-
-          User.util.optset(
-            { signcolumn = 'no', number = false, colorcolumn = '', list = false },
-            nil,
-            'win',
-            vim.api.nvim_get_current_win()
-          )
-
-          vim.cmd.noh()
-          vim.cmd.wincmd('=')
-
-          keyset({ n = { q = { vim.cmd.helpclose, desc('Quit Help', { buf = ev.buf }) } } }, ev.buf)
         end,
       },
       {
@@ -111,7 +106,7 @@ function M.setup()
             )
           end
 
-          keyset({
+          User.config.keymaps.set({
             n = {
               q = {
                 function()
