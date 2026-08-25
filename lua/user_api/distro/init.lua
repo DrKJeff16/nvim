@@ -12,13 +12,15 @@ function M.setup(verbose)
     verbose = false
   end
 
-  if require('user_api.distro.termux').is_distro() then
-    require('user_api.distro.termux').setup()
+  local Termux = require('user_api.distro.termux')
+  local Archlinux = require('user_api.distro.archlinux')
+  if Termux.is_distro() then
+    Termux.setup()
     if verbose then
       vim.notify('Termux distribution detected...', vim.log.levels.INFO)
     end
-  elseif require('user_api.distro.archlinux').is_distro() then
-    require('user_api.distro.archlinux').setup()
+  elseif Archlinux.is_distro() then
+    Archlinux.setup()
     if verbose then
       vim.notify('Arch Linux distribution detected...', vim.log.levels.INFO)
     end

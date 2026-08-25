@@ -17,7 +17,7 @@ end
 local g_opts = {
   confirm_quit = vim.o.confirm,
   cursor = {
-    animate = { in_insert_mode = true, command_line = false },
+    animate = { command_line = false, in_insert_mode = true },
     animation_length = 0.05,
     antialiasing = false,
     hack = true,
@@ -26,25 +26,19 @@ local g_opts = {
     trail_size = 1.0,
   },
   experimental = { layer_grouping = false },
-  floating = {
-    blur_amount_x = 3.0,
-    blur_amount_y = 3.0,
-    corner_radius = 0.5,
-    shadow = true,
-    z_height = 50,
-  },
+  floating = { blur_amount_x = 3.0, blur_amount_y = 3.0, corner_radius = 0.5, shadow = true, z_height = 50 },
   fullscreen = false,
   hide_mouse_when_typing = false,
   light = { angle_degrees = 45, radius = 5 },
   no_idle = true,
-  padding = { top = 0, bottom = 0, left = 0, right = 0 },
+  padding = { bottom = 0, left = 0, right = 0, top = 0 },
   position = { animation = { length = 0.1 } },
   profiler = false,
   refresh_rate = 60,
   refresh_rate_idle = 30,
   remember = { window_size = true },
   scale_factor = 1.0,
-  scroll = { animation = { length = 0.07, far_lines = 0 } },
+  scroll = { animation = { far_lines = 0, length = 0.07 } },
   show_border = true,
   text = { contrast = 0.5, gamma = 0.0 },
   theme = 'auto',
@@ -52,7 +46,7 @@ local g_opts = {
 }
 
 ---@class Config.Neovide.Opts.O
-local o_opts = { linespace = 0, guifont = 'FiraCode Nerd Font Mono:h19' }
+local o_opts = { guifont = 'FiraCode Nerd Font Mono:h19', linespace = 0 }
 
 ---@class User.Config.Neovide
 ---@field g_opts table<string, any>
@@ -124,22 +118,19 @@ function M.parse_g_opts(O, pfx)
 end
 
 function M.setup_maps()
-  if not M.check() then
-    return
-  end
-
-  local desc = require('user_api.maps').desc
-  require('user_api.config.keymaps').set({
-    n = {
-      ['<leader>n'] = { group = '+Neovide' },
-      ['<leader>nV'] = {
-        function()
-          vim.notify(('Neovide v%s'):format(vim.g.neovide_version), INFO)
-        end,
-        desc('Show Neovide Version'),
+  if M.check() then
+    require('user_api.config.keymaps').set({
+      n = {
+        ['<leader>n'] = { group = '+Neovide' },
+        ['<leader>nV'] = {
+          function()
+            vim.notify(('Neovide v%s'):format(vim.g.neovide_version), INFO)
+          end,
+          require('user_api.maps').desc('Show Neovide Version'),
+        },
       },
-    },
-  })
+    })
+  end
 end
 
 ---@param T? table
@@ -151,10 +142,10 @@ function M.setup(T, transparent, verbose)
     transparent = { transparent, { 'boolean', 'nil' }, true },
     verbose = { verbose, { 'boolean', 'nil' }, true },
   })
-
   if not M.check() then
     return
   end
+
   T = T or {}
   if transparent == nil then
     transparent = false

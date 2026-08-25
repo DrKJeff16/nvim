@@ -1,15 +1,7 @@
 ---Modify runtimepath to also search the system-wide Vim directory
 ---(e.g. for Vim runtime files from Arch Linux packages)
 
-local function is_dir(dir) ---@param dir string
-  return vim.fn.isdirectory(dir) == 1
-end
-
----@class User.Distro.Archlinux
----@field rtpaths string[]
-local M = {}
-
-M.rtpaths = {
+local RTPATHS = {
   '/usr/share/vim/vimfiles/after',
   '/usr/share/vim/vimfiles',
   '/usr/share/nvim/runtime',
@@ -18,10 +10,13 @@ M.rtpaths = {
   '/usr/local/share/nvim/runtime',
 }
 
+---@class User.Distro.Archlinux
+local M = {}
+
 function M.is_distro()
   -- First check for each dir's existance
   local new_rtpaths = {} ---@type string[]
-  for _, p in ipairs(M.rtpaths) do
+  for _, p in ipairs(RTPATHS) do
     if vim.fn.isdirectory(p) == 1 and not vim.list_contains(new_rtpaths, p) then
       table.insert(new_rtpaths, p)
     end
@@ -30,20 +25,19 @@ function M.is_distro()
     return false
   end
 
-  M.rtpaths = vim.deepcopy(new_rtpaths)
+  RTPATHS = vim.deepcopy(new_rtpaths)
   return true
 end
 
 function M.setup()
-  if not M.is_distro() then
-    return
-  end
-  for _, path in ipairs(M.rtpaths) do
-    if is_dir(path) then
-      vim.o.runtimepath = vim.o.runtimepath .. ',' .. path
+  if M.is_distro() then
+    for _, path in ipairs(RTPATHS) do
+      if vim.fn.isdirectory(path) == 1 then
+        vim.o.runtimepath = vim.o.runtimepath .. ',' .. path
+      end
     end
+    pcall(vim.cmd.runtime, { args = { 'archlinux.vim' }, bang = true })
   end
-  pcall(vim.cmd.runtime, { 'archlinux.vim', bang = true })
 end
 
 return M

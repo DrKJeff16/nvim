@@ -1,49 +1,41 @@
 --- Modify runtimepath to also search the system-wide Vim directory
 -- (eg. for Vim runtime files from Termux packages)
 
-local function is_dir(dir) ---@param dir string
-  return vim.fn.isdirectory(dir) == 1
-end
-
----@class User.Distro.Termux
----@field PREFIX string
----@field rtpaths string[]
-local M = {}
-
-M.PREFIX = vim.fn.has_key(vim.fn.environ(), 'PREFIX') and vim.fn.environ().PREFIX or ''
-
-M.RTPATHS = {
-  vim.fs.joinpath(M.PREFIX, 'share/vim/vimfiles/after'),
-  vim.fs.joinpath(M.PREFIX, 'share/vim/vimfiles'),
-  vim.fs.joinpath(M.PREFIX, 'share/nvim/runtime'),
-  vim.fs.joinpath(M.PREFIX, 'local/share/vim/vimfiles/after'),
-  vim.fs.joinpath(M.PREFIX, 'local/share/vim/vimfiles'),
-  vim.fs.joinpath(M.PREFIX, 'local/share/nvim/runtime'),
+local PREFIX = vim.fn.has_key(vim.fn.environ(), 'PREFIX') and vim.fn.environ().PREFIX or ''
+local RTPATHS = {
+  vim.fs.joinpath(PREFIX, 'share/vim/vimfiles/after'),
+  vim.fs.joinpath(PREFIX, 'share/vim/vimfiles'),
+  vim.fs.joinpath(PREFIX, 'share/nvim/runtime'),
+  vim.fs.joinpath(PREFIX, 'local/share/vim/vimfiles/after'),
+  vim.fs.joinpath(PREFIX, 'local/share/vim/vimfiles'),
+  vim.fs.joinpath(PREFIX, 'local/share/nvim/runtime'),
 }
 
+---@class User.Distro.Termux
+local M = {}
+
 function M.is_distro()
-  if M.PREFIX == '' or not is_dir(M.PREFIX) then
+  if PREFIX == '' or not vim.fn.isdirectory(PREFIX) == 1 then
     return false
   end
 
-  for i, path in ipairs(M.rtpaths) do
-    if not is_dir(path) then
-      table.remove(M.rtpaths, i)
+  for i, path in ipairs(RTPATHS) do
+    if not vim.fn.isdirectory(path) == 1 then
+      table.remove(RTPATHS, i)
     end
   end
-  return not require('user_api.check.value').empty(M.rtpaths)
+  return not require('user_api.check.value').empty(RTPATHS)
 end
 
 function M.setup()
-  if not (M.is_distro() and is_dir(M.PREFIX)) then
-    return
-  end
-  for _, path in ipairs(M.rtpaths) do
-    if is_dir(path) == 1 then
-      vim.o.rtp = vim.o.rtp .. ',' .. path
+  if M.is_distro() and vim.fn.isdirectory(PREFIX) == 1 then
+    for _, path in ipairs(RTPATHS) do
+      if vim.fn.isdirectory(path) == 1 then
+        vim.o.rtp = vim.o.rtp .. ',' .. path
+      end
     end
+    vim.api.nvim_set_option_value('wrap', true, { scope = 'global' })
   end
-  vim.api.nvim_set_option_value('wrap', true, { scope = 'global' })
 end
 
 return M
