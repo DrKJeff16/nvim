@@ -263,6 +263,14 @@ end
 
 if vim.fn.has('nvim-0.12') == 1 then
   vim.cmd.packadd('nvim.undotree')
+
+  -- require('vim._core.ui2').enable({
+  --   dialog = { height = 0.5 },
+  --   enable = true,
+  --   msg = { height = 0.5 },
+  --   pager = { height = 0.999 },
+  --   targets = 'pager',
+  -- })
 end
 
 Config.lsp.setup()
