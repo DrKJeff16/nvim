@@ -19,7 +19,6 @@
 ---@field cheaty? LazySpecImport
 ---@field checkmate? LazySpecImport
 ---@field classlayout? LazySpecImport
----@field co_author? LazySpecImport
 ---@field code_runner? LazySpecImport
 ---@field codedocs? LazySpecImport
 ---@field color_skimer? LazySpecImport
@@ -38,7 +37,8 @@
 ---@field focus? LazySpecImport
 ---@field fzf_lua? LazySpecImport
 ---@field fzf_nerdfont? LazySpecImport
----@field gh_co? LazySpecImport
+---@field git_co_author? LazySpecImport
+---@field git_gh_co? LazySpecImport
 ---@field git_ghactions? LazySpecImport
 ---@field git_ghrelease? LazySpecImport
 ---@field git_gitsigns? LazySpecImport
@@ -175,7 +175,6 @@
 ---@field cheaty? boolean
 ---@field checkmate? boolean
 ---@field classlayout? boolean
----@field co_author? boolean
 ---@field code_runner? boolean
 ---@field codedocs? boolean
 ---@field color_skimer? boolean
@@ -194,7 +193,8 @@
 ---@field focus? boolean
 ---@field fzf_lua? boolean
 ---@field fzf_nerdfont? boolean
----@field gh_co? boolean
+---@field git_co_author? boolean
+---@field git_gh_co? boolean
 ---@field git_ghactions? boolean
 ---@field git_ghrelease? boolean
 ---@field git_gitsigns? boolean

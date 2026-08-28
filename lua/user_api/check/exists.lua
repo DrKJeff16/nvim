@@ -5,14 +5,6 @@
 ---@field [3]? boolean
 ---@field [4]? string
 
-local MODSTR = 'user_api.check.exists'
-local ERROR = vim.log.levels.ERROR
-
----@return User.Check.Value value
-local function get_value()
-  return require('user_api.check.value')
-end
-
 ---Exitstance checks.
 ---
 ---This contains many checkers for environment, modules, namespaces, etc.
@@ -39,24 +31,28 @@ function M.validate(T)
       table.insert(spec, 1, name)
       vim.validate(unpack(spec))
     end
-    return
+  else
+    ---@cast T table<string, vim.validate.Spec>
+    vim.validate(T)
   end
-
-  ---@cast T table<string, vim.validate.Spec>
-  vim.validate(T)
 end
 
----@param mod string
+---@param mod string[]|string
 ---@return boolean exists
 function M.module(mod)
-  M.validate({ mod = { mod, { 'string' } } })
+  M.validate({ mod = { mod, { 'string', 'table' } } })
 
-  if not get_value().type_not_empty('string', mod) then
-    error(('`(%s.module)`: Input is not valid'):format(MODSTR), ERROR)
+  if type(mod) == 'string' then
+    return (pcall(require, mod))
   end
 
-  local res = pcall(require, mod)
-  return res
+  for i, v in ipairs(mod) do
+    M.validate({ ['mod_' .. i] = { v, { 'string' } } })
+    if not M.module(v) then
+      return false
+    end
+  end
+  return true
 end
 
 ---@param expr string[]|string
@@ -64,13 +60,12 @@ end
 function M.vim_has(expr)
   M.validate({ expr = { expr, { 'string', 'table' } } })
 
-  ---@cast expr string
-  if get_value().type_not_empty('string', expr) then
+  if type(expr) == 'string' then
     return vim.fn.has(expr) == 1
   end
 
-  ---@cast expr string[]
-  for _, v in ipairs(expr) do
+  for i, v in ipairs(expr) do
+    M.validate({ ['expr_' .. i] = { v, { 'string' } } })
     if not M.vim_has(v) then
       return false
     end
@@ -83,21 +78,17 @@ end
 function M.vim_exists(expr)
   M.validate({ expr = { expr, { 'string', 'table' } } })
 
-  ---@cast expr string
-  if get_value().type_not_empty('string', expr) then
+  if type(expr) == 'string' then
     return vim.fn.exists(expr) == 1
   end
 
-  local res = false
-
-  ---@cast expr string[]
-  for _, v in ipairs(expr) do
-    res = M.vim_exists(v)
-    if not res then
-      break
+  for i, v in ipairs(expr) do
+    M.validate({ ['expr_' .. i] = { v, { 'string' } } })
+    if not M.vim_exists(v) then
+      return false
     end
   end
-  return res
+  return true
 end
 
 ---@param vars string[]|string
@@ -112,11 +103,9 @@ function M.env_vars(vars, callback)
   local environment = vim.fn.environ()
   local res = false
 
-  ---@cast vars string
-  if get_value().is_str(vars) then
+  if type(vars) == 'string' then
     res = vim.fn.has_key(environment, vars) == 1
-  elseif get_value().is_tbl(vars) then
-    ---@cast vars string[]
+  else
     for _, v in ipairs(vars) do
       res = M.env_vars(v)
       if not res then
@@ -135,18 +124,16 @@ end
 function M.executable(exe)
   M.validate({ exe = { exe, { 'string', 'table' } } })
 
-  local res = false
+  if type(exe) == 'string' then
+    return vim.fn.executable(exe) == 1
+  end
 
-  ---@cast exe string
-  if get_value().is_str(exe) then
-    res = vim.fn.executable(exe) == 1
-  elseif get_value().is_tbl(exe) then
-    ---@cast exe string[]
-    for _, v in ipairs(exe) do
-      res = M.executable(v)
-      if not res then
-        break
-      end
+  local res = false
+  for i, v in ipairs(exe) do
+    M.validate({ ['exe.' .. i] = { v, { 'string' } } })
+    res = M.executable(v)
+    if not res then
+      break
     end
   end
   return res
@@ -157,7 +144,7 @@ end
 function M.vim_isdir(path)
   M.validate({ path = { path, { 'string' } } })
 
-  return get_value().type_not_empty('string', path) and (vim.fn.isdirectory(path) == 1) or false
+  return vim.fn.isdirectory(path) == 1
 end
 
 return M

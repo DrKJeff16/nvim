@@ -1,26 +1,18 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'kdheepak/lazygit.nvim',
-  cmd = { 'LazyGit' },
+  cmd = { 'LazyGit', 'LazyGitConfig', 'LazyGitCurrentFile', 'LazyGitFilter', 'LazyGitFilterCurrentFile' },
   version = false,
+  dependencies = { { 'DrKJeff16/plenary.nvim', dev = true } },
   cond = require('user_api').check.executable({ 'git', 'lazygit' }),
   config = function()
     local g_vars = {
+      floating_window_border_chars = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' },
+      floating_window_scaling_factor = 0.9,
+      floating_window_use_plenary = 1,
       floating_window_winblend = 0,
-      floating_window_scaling_factor = 1.0,
-      floating_window_use_plenary = 0,
-      use_neovim_remote = 0,
       use_custom_config_file_path = 0,
-      floating_window_border_chars = {
-        '╭',
-        '─',
-        '╮',
-        '│',
-        '╯',
-        '─',
-        '╰',
-        '│',
-      },
+      use_neovim_remote = 0,
     }
     for k, v in pairs(g_vars) do
       vim.g['lazygit_' .. k] = v
@@ -29,32 +21,13 @@ return { ---@type LazySpec
     local desc = require('user_api').maps.desc
     require('user_api').config.keymaps.set({
       n = {
-        ['<leader>G'] = { group = '+Git' },
         ['<leader>Gl'] = { group = '+LazyGit' },
-        ['<leader>GlC'] = { vim.cmd.LazyGitConfig, desc("LazyGit's Config") },
-        ['<leader>GlF'] = { vim.cmdLazyGitFilter, desc('Open Project Commits In Float') },
-        ['<leader>Glc'] = { vim.cmd.LazyGitCurrentFile, desc('LazyGit On Current File') },
-        ['<leader>Glf'] = { vim.cmd.LazyGitFilterCurrentFile, desc("LazyGit's Config") },
+        ['<leader>GlC'] = { vim.cmd.LazyGitConfig, desc('Config') },
+        ['<leader>GlF'] = { vim.cmdLazyGitFilter, desc('Open Project Commits on a Floating Window') },
+        ['<leader>Glc'] = { vim.cmd.LazyGitCurrentFile, desc('Run on Current File') },
+        ['<leader>Glf'] = { vim.cmd.LazyGitFilterCurrentFile, desc('Filter Current File') },
         ['<leader>Glg'] = { vim.cmd.LazyGit, desc('Run LazyGit') },
       },
-    })
-
-    local group = vim.api.nvim_create_augroup('User.LazyGit', { clear = true })
-    vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter' }, {
-      pattern = '*',
-      group = group,
-      callback = function()
-        require('lazygit.utils').project_root_dir()
-      end,
-    })
-    vim.api.nvim_create_autocmd('TermClose', {
-      pattern = '*',
-      group = group,
-      callback = function()
-        if require('user_api').util.ft_get() ~= 'lazygit' and not vim.v.event.status then
-          vim.fn.execute('bdelete! ' .. vim.fn.expand('<abuf>'), 'silent!')
-        end
-      end,
     })
   end,
 }
