@@ -62,6 +62,7 @@
 ---@field lsp_better_diagnostic? LazySpecImport
 ---@field lsp_clangd? LazySpecImport
 ---@field lsp_custom_diagnostic_highlight? LazySpecImport
+---@field lsp_fidget? LazySpecImport
 ---@field lsp_lspsaga? LazySpecImport
 ---@field lsp_toggle? LazySpecImport
 ---@field lspkind? LazySpecImport
@@ -218,6 +219,7 @@
 ---@field lsp_better_diagnostic? boolean
 ---@field lsp_clangd? boolean
 ---@field lsp_custom_diagnostic_highlight? boolean
+---@field lsp_fidget? boolean
 ---@field lsp_lspsaga? boolean
 ---@field lsp_toggle? boolean
 ---@field lspkind? boolean
