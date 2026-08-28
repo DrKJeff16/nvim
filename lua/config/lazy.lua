@@ -1,16 +1,47 @@
 ---@module 'config._meta'
 
-local MODSTR = 'config.lazy'
 local LAZY_DATA = vim.fs.joinpath(vim.fn.stdpath('data'), 'lazy')
 local LAZY_STATE = vim.fs.joinpath(vim.fn.stdpath('state'), 'lazy')
 local LAZYPATH = vim.fs.joinpath(LAZY_DATA, 'lazy.nvim')
 local README_PATH = vim.fs.joinpath(LAZY_STATE, 'readme')
-local key_variant = require('config.util').key_variant
+
+local function setup_keys()
+  local key_variant = require('config.util').key_variant
+  local desc = require('user_api').maps.desc
+  local Lazy = require('lazy')
+  require('user_api').config.keymaps.set({
+    n = {
+      ['<leader>L'] = { group = '+Lazy' },
+      ['<leader>Le'] = { group = '+Edit Lazy File' },
+      ['<leader>Lp'] = { group = '+Prompts' },
+      ['<leader>L<CR>'] = { ':Lazy ', desc('Prompt for `Lazy` Operation', { silent = false }) },
+      ['<leader>LC'] = { Lazy.clean, desc('Clean Lazy Plugins') },
+      ['<leader>LL'] = { Lazy.log, desc('Show Lazy Log') },
+      ['<leader>LP'] = { Lazy.profile, desc('Show Lazy Profile') },
+      ['<leader>Lc'] = { Lazy.check, desc('Check Lazy Plugins') },
+      ['<leader>Ld'] = { Lazy.debug, desc('Debug Lazy Plugins') },
+      ['<leader>Lee'] = { key_variant('edit'), desc('Open `Lazy` File') },
+      ['<leader>Les'] = { key_variant('split'), desc('Open `Lazy` File Horizontal Window') },
+      ['<leader>Let'] = { key_variant('tabnew'), desc('Open `Lazy` File Tab') },
+      ['<leader>Lev'] = { key_variant('vsplit'), desc('Open `Lazy`File Vertical Window') },
+      ['<leader>Lh'] = { Lazy.health, desc('Run Lazy checkhealth') },
+      ['<leader>Li'] = { Lazy.install, desc('Install Lazy Plugins') },
+      ['<leader>Ll'] = { Lazy.show, desc('Show Lazy Home') },
+      ['<leader>Lpb'] = { ':Lazy build ', desc('Prompt To Build', { silent = false }) },
+      ['<leader>Lpl'] = { ':Lazy load ', desc('Prompt To Load', { silent = false }) },
+      ['<leader>Lpr'] = { ':Lazy reload ', desc('Prompt To Reload', { silent = false }) },
+      ['<leader>Ls'] = { Lazy.sync, desc('Sync Lazy Plugins') },
+      ['<leader>Lu'] = { Lazy.update, desc('Update Lazy Plugins') },
+      ['<leader>Lx'] = { Lazy.clear, desc('Clear Lazy Plugins') },
+      ['<leader>vhL'] = { Lazy.health, desc('Run Lazy checkhealth') },
+    },
+  })
+end
 
 ---@class Config.Lazy
 local M = {}
 
----@return LazyPlugins spec
+---@return LazyPlugins specs
 function M.get_default_specs()
   return { ---@type LazyPlugins
     Comment = { import = 'plugin.Comment' },
@@ -30,7 +61,6 @@ function M.get_default_specs()
     cheaty = { import = 'plugin.cheaty' },
     checkmate = { import = 'plugin.checkmate' },
     classlayout = { import = 'plugin.classlayout' },
-    co_author = { import = 'plugin.co-author' },
     code_runner = { import = 'plugin.code-runner' },
     codedocs = { import = 'plugin.codedocs' },
     syntax_codeowners = { import = 'plugin.syntax.codeowners' },
@@ -52,6 +82,7 @@ function M.get_default_specs()
     focus = { import = 'plugin.focus' },
     fzf_lua = { import = 'plugin.fzf-lua' },
     fzf_nerdfont = { import = 'plugin.fzf-nerdfont' },
+    git_co_author = { import = 'plugin.git.co-author' },
     git_gh_co = { import = 'plugin.git.gh-co' },
     git_ghactions = { import = 'plugin.git.gh-actions' },
     git_ghrelease = { import = 'plugin.git.ghrelease' },
@@ -183,7 +214,7 @@ function M.bootstrap()
     local out = vim.fn.system({ 'git', 'clone', '--filter=blob:none', lazyrepo, LAZYPATH })
     if vim.v.shell_error ~= 0 then
       vim.api.nvim_echo({
-        { ('(%s): Failed to clone lazy.nvim:\n'):format(MODSTR), 'ErrorMsg' },
+        { '(config.lazy): Failed to clone lazy.nvim:\n', 'ErrorMsg' },
         { out, 'WarningMsg' },
         { '\nPress any key to exit...' },
       }, true, {})
@@ -198,42 +229,9 @@ function M.bootstrap()
   vim.g.lazy_bootstrapped = 1
 end
 
-function M.setup_keys()
-  local desc = require('user_api').maps.desc
-  local lazy = require('lazy')
-  require('user_api').config.keymaps.set({
-    n = {
-      ['<leader>L'] = { group = '+Lazy' },
-      ['<leader>Le'] = { group = '+Edit Lazy File' },
-      ['<leader>Lp'] = { group = '+Prompts' },
-      ['<leader>L<CR>'] = { ':Lazy ', desc('Prompt for `Lazy` Operation', { silent = false }) },
-      ['<leader>LC'] = { lazy.clean, desc('Clean Lazy Plugins') },
-      ['<leader>LL'] = { lazy.log, desc('Show Lazy Log') },
-      ['<leader>LP'] = { lazy.profile, desc('Show Lazy Profile') },
-      ['<leader>Lc'] = { lazy.check, desc('Check Lazy Plugins') },
-      ['<leader>Ld'] = { lazy.debug, desc('Debug Lazy Plugins') },
-      ['<leader>Lee'] = { key_variant('edit'), desc('Open `Lazy` File') },
-      ['<leader>Les'] = { key_variant('split'), desc('Open `Lazy` File Horizontal Window') },
-      ['<leader>Let'] = { key_variant('tabnew'), desc('Open `Lazy` File Tab') },
-      ['<leader>Lev'] = { key_variant('vsplit'), desc('Open `Lazy`File Vertical Window') },
-      ['<leader>Lh'] = { lazy.health, desc('Run Lazy checkhealth') },
-      ['<leader>Li'] = { lazy.install, desc('Install Lazy Plugins') },
-      ['<leader>Ll'] = { lazy.show, desc('Show Lazy Home') },
-      ['<leader>Lpb'] = { ':Lazy build ', desc('Prompt To Build', { silent = false }) },
-      ['<leader>Lpl'] = { ':Lazy load ', desc('Prompt To Load', { silent = false }) },
-      ['<leader>Lpr'] = { ':Lazy reload ', desc('Prompt To Reload', { silent = false }) },
-      ['<leader>Ls'] = { lazy.sync, desc('Sync Lazy Plugins') },
-      ['<leader>Lu'] = { lazy.update, desc('Update Lazy Plugins') },
-      ['<leader>Lx'] = { lazy.clear, desc('Clear Lazy Plugins') },
-      ['<leader>vhL'] = { lazy.health, desc('Run Lazy checkhealth') },
-    },
-  })
-end
-
----@return LazyToggles
+---@return LazyToggles toggles
 function M.get_default_toggles()
-  ---@type LazyToggles
-  return {
+  return { ---@type LazyToggles
     Comment = true,
     alpha = false,
     autopairs = true,
@@ -251,7 +249,6 @@ function M.get_default_toggles()
     cheaty = false,
     checkmate = false,
     classlayout = true,
-    co_author = false,
     code_runner = false,
     codedocs = false,
     color_skimer = false,
@@ -270,6 +267,7 @@ function M.get_default_toggles()
     focus = true,
     fzf_lua = true,
     fzf_nerdfont = false,
+    git_co_author = false,
     git_gh_co = false,
     git_gitsigns = true,
     git_ghactions = true,
@@ -413,16 +411,12 @@ function M.setup(toggles)
   local err = ''
   for name, val in pairs(toggles) do
     if type(val) == 'boolean' then
-      ---@cast val boolean
-      if vim.list_contains(dict_keys, name) then
-        if val then
-          table.insert(specs, dict[name])
-        end
-      else
+      if vim.list_contains(dict_keys, name) and val then
+        table.insert(specs, dict[name])
+      elseif not vim.list_contains(dict_keys, name) then
         err = ('%s`%s` is not a valid toggle! Try adding the spec manually.\n'):format(err, name)
       end
-    elseif vim.list_contains({ 'string', 'table' }, type(val)) then
-      ---@cast val LazyPluginSpec|LazySpecImport|string
+    elseif type(val) == 'string' or type(val) == 'table' then
       table.insert(specs, val)
     else
       err = ('%sInvalid toggle/spec: `%s`'):format(err, vim.inspect(val))
@@ -436,69 +430,54 @@ function M.setup(toggles)
   end
 
   require('lazy').setup({
-    spec = specs,
-    root = LAZY_DATA,
-    defaults = { lazy = false, version = false },
-    install = { colorscheme = { 'habamax' }, missing = true },
-    dev = { path = '~/Projects/nvim', patterns = {}, fallback = true },
-    change_detection = {
-      enabled = true,
-      notify = require('user_api').distro.archlinux.is_distro(),
+    change_detection = { enabled = true, notify = require('user_api').distro.archlinux.is_distro() },
+    checker = {
+      check_pinned = false,
+      enabled = not require('user_api').distro.termux.is_distro(),
+      frequency = 600,
+      notify = not require('user_api').distro.termux.is_distro(),
     },
+    debug = false,
+    defaults = { lazy = false, version = false },
+    dev = { path = '~/Projects/nvim', patterns = {}, fallback = true },
+    headless = { colors = true, log = true, process = true, task = true },
+    install = { colorscheme = { 'habamax' }, missing = true },
     performance = {
       reset_packpath = true,
-      rtp = {
-        reset = true,
-        disabled_plugins = {
-          -- 'gzip',
-          -- 'matchit',
-          -- 'matchparen',
-          'netrwPlugin',
-          -- 'tarPlugin',
-          'tohtml',
-          'tutor',
-          -- 'zipPlugin',
-        },
-      },
+      rtp = { disabled_plugins = { 'netrwPlugin', 'tohtml', 'tutor' }, reset = true },
+    },
+    pkg = {
+      cache = vim.fs.joinpath(LAZY_STATE, 'pkg-cache.lua'),
+      enabled = true,
+      sources = require('config.util').luarocks_check() and { 'lazy', 'packspec' }
+        or { 'lazy', 'packspec', 'rockspec' },
+      versions = true,
+    },
+    profiling = { loader = true, require = true },
+    readme = {
+      enabled = false,
+      files = { 'README.md', 'lua/**/README.md' },
+      root = README_PATH,
+      skip_if_doc_exists = true,
     },
     rocks = {
       enabled = require('config.util').luarocks_check(),
       root = vim.fs.joinpath(vim.fn.stdpath('data'), 'lazy-rocks'),
     },
-    pkg = {
-      enabled = true,
-      cache = vim.fs.joinpath(LAZY_STATE, 'pkg-cache.lua'),
-      versions = true,
-      sources = require('config.util').luarocks_check() and { 'lazy', 'packspec' }
-        or { 'lazy', 'packspec', 'rockspec' },
-    },
-    checker = {
-      enabled = not require('user_api').distro.termux.is_distro(),
-      notify = not require('user_api').distro.termux.is_distro(),
-      frequency = 600,
-      check_pinned = false,
-    },
+    root = LAZY_DATA,
+    spec = specs,
+    state = vim.fs.joinpath(LAZY_STATE, 'state.json'),
     ui = {
-      backdrop = not require('user_api').check.in_console() and 60 or 100,
+      backdrop = not require('user_api').check.in_console() and 70 or 100,
       border = 'double',
+      pills = true,
       title = ('L%sA%sZ%sY'):format((' '):rep(12), (' '):rep(12), (' '):rep(12)),
       title_pos = 'center',
       wrap = true,
-      pills = true,
     },
-    readme = {
-      enabled = false,
-      root = README_PATH,
-      files = { 'README.md', 'lua/**/README.md' },
-      skip_if_doc_exists = true,
-    },
-    state = vim.fs.joinpath(LAZY_STATE, 'state.json'),
-    profiling = { loader = true, require = true },
-    debug = false,
-    headless = { colors = true, log = true, process = true, task = true },
   })
 
-  M.setup_keys()
+  setup_keys()
 end
 
 return M

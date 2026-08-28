@@ -22,7 +22,7 @@ function M.key_variant(cmd)
   cmd = (cmd and vim.list_contains({ 'edit', 'tabnew', 'split', 'vsplit' }, cmd)) and cmd or 'edit'
 
   return function()
-    vim.cmd[cmd](vim.fs.joinpath(vim.fn.stdpath('config'), 'lua/config/lazy.lua'))
+    vim.cmd[cmd]({ args = { vim.fs.joinpath(vim.fn.stdpath('config'), 'lua/config/lazy.lua') } })
   end
 end
 
@@ -34,7 +34,9 @@ end
 ---@param force? boolean
 function M.set_tgc(force)
   validate({ force = { force, { 'boolean', 'nil' }, true } })
-  force = force ~= nil and force or false
+  if force == nil then
+    force = false
+  end
 
   vim.o.termguicolors = not force and (vim.fn.exists('+termguicolors') == 1 and not in_console()) or true
 end
@@ -53,24 +55,21 @@ function M.flag_installed(name, callback)
 
   return function()
     vim.g[(name:sub(1, 10) == 'installed_') and name or ('installed_' .. name)] = 1
-    if not (callback and vim.is_callable(callback)) then
-      return
+    if callback and vim.is_callable(callback) then
+      callback()
     end
-    callback()
   end
 end
 
 ---A `config` function to call your plugin from a `lazy` spec.
 --- ---
 ---@param mod_str string
----@return function
+---@return function module_call
 function M.require(mod_str)
   validate({ mod_str = { mod_str, { 'string' } } })
 
   return function()
-    if require('user_api').check.module(mod_str) then
-      require(mod_str)
-    end
+    pcall(require, mod_str)
   end
 end
 
