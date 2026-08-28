@@ -20,11 +20,9 @@ return { ---@type LazySpec
   },
   config = function()
     local Actions = require('telescope.actions')
-    local ActionsLayout = require('telescope.actions.layout')
-    local Config = require('telescope.config')
     local exists = require('user_api').check.module
 
-    local vimgrep_arguments = vim.deepcopy(Config.values.vimgrep_arguments)
+    local vimgrep_arguments = vim.deepcopy(require('telescope.config').values.vimgrep_arguments or {})
     local extra_args = { '--hidden', '--glob', '!**/.git/*', '!**/.ropeproject/*', '!**/.mypy_cache/*' }
 
     for _, arg in ipairs(extra_args) do
@@ -40,16 +38,16 @@ return { ---@type LazySpec
         mappings = {
           i = {
             ['<C-?>'] = 'which_key',
-            ['<C-u>'] = false,
+            ['<C-a>'] = Actions.cycle_previewers_prev,
             ['<C-d>'] = Actions.delete_buffer + Actions.move_to_top,
-            ['<Esc>'] = Actions.close,
             ['<C-e>'] = Actions.close,
             ['<C-q>'] = Actions.close,
             ['<C-s>'] = Actions.cycle_previewers_next,
-            ['<C-a>'] = Actions.cycle_previewers_prev,
-            ['<M-p>'] = ActionsLayout.toggle_preview,
+            ['<C-u>'] = false,
+            ['<Esc>'] = Actions.close,
+            ['<M-p>'] = require('telescope.actions.layout').toggle_preview,
           },
-          n = { ['<M-p>'] = ActionsLayout.toggle_preview },
+          n = { ['<M-p>'] = require('telescope.actions.layout').toggle_preview },
         },
         vimgrep_arguments = vimgrep_arguments,
         preview = { filesize_limit = 0.75 },
@@ -62,13 +60,10 @@ return { ---@type LazySpec
         commands = { theme = 'dropdown' },
         current_buffer_fuzzy_find = { theme = 'dropdown' },
         fd = { theme = 'dropdown' },
-        find_files = {
-          theme = 'dropdown',
-          find_command = { 'rg', '--files', '--hidden', '--glob', '!**/.git/*' },
-        },
+        find_files = { theme = 'dropdown', find_command = { 'rg', '--files', '--hidden', '--glob', '!**/.git/*' } },
         git_branches = { theme = 'dropdown' },
-        git_status = { theme = 'dropdown' },
         git_stash = { theme = 'dropdown' },
+        git_status = { theme = 'dropdown' },
         highlights = { theme = 'dropdown' },
         lsp_definitions = { theme = 'cursor' },
         lsp_document_symbols = { theme = 'cursor' },
@@ -99,10 +94,8 @@ return { ---@type LazySpec
       -- Make sure `picker_list` doesn't load itself
       if name == 'picker_list' then
         vim.g.telescope_picker_list_loaded = 1
-        return
-      end
-      -- If `picker_list` is loaded, also register extension with it
-      if exists('telescope._extensions.picker_list.main') then
+      elseif exists('telescope._extensions.picker_list.main') then
+        -- If `picker_list` is loaded, also register extension with it
         require('telescope._extensions.picker_list.main').register(name)
       end
     end
@@ -112,34 +105,27 @@ return { ---@type LazySpec
       ['<leader><C-t>'] = { group = '+Telescope' },
       ['<leader><C-t>b'] = { group = '+Builtins' },
       ['<leader><C-t>e'] = { group = '+Extensions' },
-      ['<leader>HH'] = { run_map('help_tags'), desc('Telescope Help Tags') },
-      ['<leader>HM'] = { run_map('man_pages'), desc('Telescope Man Pages') },
-      ['<leader>GB'] = { run_map('git_branches'), desc('Telescope Git Branches') },
-      ['<leader>GS'] = { run_map('git_stash'), desc('Telescope Git Stash') },
-      ['<leader>Gs'] = { run_map('git_status'), desc('Telescope Git Status') },
-      ['<leader>bB'] = { run_map('buffers'), desc('Telescope Buffers') },
-      ['<leader>fD'] = { run_map('diagnostics'), desc('Telescope Diagnostics') },
-      ['<leader>ff'] = { run_map('find_files'), desc('Telescope File Picker') },
-      ['<leader>vK'] = { run_map('keymaps'), desc('Telescope Keymaps') },
-      ['<leader>vO'] = { run_map('vim_options'), desc('Telescope Vim Options') },
-      ['<leader>uC'] = { run_map('colorscheme'), desc('Telescope Colorschemes') },
       ['<leader><C-t>bA'] = { run_map('autocommands'), desc('Autocommands') },
       ['<leader><C-t>bC'] = { run_map('commands'), desc('Commands') },
       ['<leader><C-t>bg'] = { run_map('live_grep'), desc('Live Grep') },
       ['<leader><C-t>bh'] = { run_map('highlights'), desc('Highlights') },
       ['<leader><C-t>bp'] = { run_map('pickers'), desc('Pickers') },
+      ['<leader>GB'] = { run_map('git_branches'), desc('Telescope Git Branches') },
+      ['<leader>GS'] = { run_map('git_stash'), desc('Telescope Git Stash') },
+      ['<leader>Gs'] = { run_map('git_status'), desc('Telescope Git Status') },
+      ['<leader>HH'] = { run_map('help_tags'), desc('Telescope Help Tags') },
+      ['<leader>HM'] = { run_map('man_pages'), desc('Telescope Man Pages') },
+      ['<leader>bB'] = { run_map('buffers'), desc('Telescope Buffers') },
+      ['<leader>fD'] = { run_map('diagnostics'), desc('Telescope Diagnostics') },
+      ['<leader>ff'] = { run_map('find_files'), desc('Telescope File Picker') },
+      ['<leader>uC'] = { run_map('colorscheme'), desc('Telescope Colorschemes') },
+      ['<leader>vK'] = { run_map('keymaps'), desc('Telescope Keymaps') },
+      ['<leader>vO'] = { run_map('vim_options'), desc('Telescope Vim Options') },
     }
 
     local known_exts = { ---@type table<string, { [1]: string, keys?: AllMaps }>
       ['telescope._extensions.file_browser'] = { 'file_browser' },
       ['telescope._extensions.lazy_plugins'] = { 'lazy_plugins' },
-      ['lazygit.utils'] = {
-        'lazygit',
-        keys = {
-          ['<leader><C-t>eG'] = { run_map('lazygit'), desc('LazyGit Picker') },
-          ['<leader>GlT'] = { run_map('lazygit'), desc('LazyGit Telescope Picker') },
-        },
-      },
       ['telescope._extensions.picker_list'] = {
         'picker_list',
         keys = { ['<leader><C-t>eP'] = { run_map('picker_list'), desc('Picker List') } },
