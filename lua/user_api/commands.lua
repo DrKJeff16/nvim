@@ -122,10 +122,14 @@ local commands = { ---@type table<string, User.Commands.CmdSpec>
   },
   Redir = {
     function(ctx)
-      local l =
-        vim.split(vim.api.nvim_exec2(ctx.args, { output = true }).output, '\n', { plain = true, trimempty = false })
       local bufnr = vim.api.nvim_create_buf(true, true)
-      vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, l)
+      vim.api.nvim_buf_set_lines(
+        bufnr,
+        0,
+        -1,
+        false,
+        vim.split(vim.api.nvim_exec2(ctx.args, { output = true }).output, '\n', { plain = true, trimempty = false })
+      )
 
       local win
       if ctx.bang then

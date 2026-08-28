@@ -1,7 +1,6 @@
 local uv = vim.uv or vim.loop
 
 local timer = nil ---@type uv.uv_timer_t|nil|?
-local group = vim.api.nvim_create_augroup('UserAPI', { clear = true })
 
 local function make_timer()
   if timer and timer:is_active() then
@@ -38,7 +37,7 @@ local function make_timer()
   )
 
   vim.api.nvim_create_autocmd('VimLeavePre', {
-    group = group,
+    group = vim.api.nvim_create_augroup('UserAPI', { clear = false }),
     once = true,
     callback = function()
       if timer and timer:is_active() then
@@ -107,7 +106,7 @@ local User = setmetatable(M, { ---@type UserAPI
     if require('user_api.check').module('user_api.' .. k) then
       return require('user_api.' .. k)
     end
-    return rawget(self, k) or nil
+    return rawget(self, k)
   end,
 })
 

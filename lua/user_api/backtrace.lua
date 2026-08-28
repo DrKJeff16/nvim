@@ -25,6 +25,8 @@ local function format_sel(msg, sel, space)
     elseif type(sel) ~= 'string' then
       sel = vim.inspect(sel)
     end
+
+    ---@cast sel string
     msg = ('%s%s%s'):format(msg, space and ' ' or '', sel)
   end
   return msg
@@ -35,15 +37,13 @@ end
 return function(lvl, ...)
   require('user_api.check').validate({ lvl = { lvl, { 'number' } } })
   lvl = vim.list_contains({ DEBUG, INFO, WARN, TRACE, ERROR }, lvl) and lvl or INFO
-  if not (require('user_api.check').module('snacks') and _G.Snacks) then
-    return
-  end
+  if require('user_api.check').module('snacks') then
+    local msg = ''
+    for i = 1, select('#', ...) do
+      msg = format_sel(msg, select(i, ...), i ~= 1)
+    end
 
-  local msg = ''
-  for i = 1, select('#', ...) do
-    msg = format_sel(msg, select(i, ...), i ~= 1)
+    pcall(require('snacks').debug.backtrace, msg, { history = true, style = 'fancy', title = 'User API' })
   end
-
-  pcall(_G.Snacks.debug.backtrace, msg, { history = true, style = 'fancy', title = 'User API' })
 end
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

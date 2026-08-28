@@ -4,6 +4,7 @@
 local MODSTR = 'user_api.check.value'
 local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
+local validate = require('user_api.check.exists').validate
 
 ---@param t Types
 ---@return fun(var: any, multiple?: boolean): boolean
@@ -32,9 +33,7 @@ local function type_fun(t)
   ---@param var any
   ---@param multiple? boolean
   return function(var, multiple)
-    require('user_api.check.exists').validate({
-      multiple = { multiple, { 'boolean', 'nil' }, true },
-    })
+    validate({ multiple = { multiple, { 'boolean', 'nil' }, true } })
     if multiple == nil then
       multiple = false
     end
@@ -42,7 +41,6 @@ local function type_fun(t)
     if not multiple then
       return var ~= nil and type(var) == t
     end
-
     if var == nil or type(var) ~= 'table' then
       return false
     end
@@ -92,7 +90,7 @@ M.is_tbl = type_fun('table')
 ---@param multiple? boolean Tell the integer you're checking for multiple values. (Default: `false`)
 ---@return boolean is_int
 function M.is_int(var, multiple)
-  require('user_api.check.exists').validate({ multiple = { multiple, { 'boolean', 'nil' }, true } })
+  validate({ multiple = { multiple, { 'boolean', 'nil' }, true } })
   if multiple == nil then
     multiple = false
   end
@@ -129,7 +127,7 @@ end
 ---@param multiple? boolean
 ---@return boolean is_empty
 function M.empty(data, multiple)
-  require('user_api.check.exists').validate({
+  validate({
     data = { data, { 'string', 'table', 'number' } },
     multiple = { multiple, { 'boolean', 'nil' }, true },
   })
@@ -152,7 +150,7 @@ function M.empty(data, multiple)
   end
 
   for _, val in ipairs(data) do
-    ---NOTE: NO RECURSIVE CHECKING
+    ---NOTE: PASSING `false` TO AVOID RECURSIVE CHECKING
     if M.empty(val, false) then
       return true
     end
@@ -168,56 +166,46 @@ end
 ---@param eq? { low: boolean, high: boolean } A table that defines how equalities will be made
 ---@return boolean in_range
 function M.num_range(num, low, high, eq)
-  require('user_api.check.exists').validate({
+  validate({
     num = { num, { 'number' } },
     low = { low, { 'number' } },
     high = { high, { 'number' } },
     eq = { eq, { 'table', 'nil' }, true },
   })
 
-  eq = M.type_not_empty('table', eq) and eq or { low = true, high = true }
-  eq.high = M.is_bool(eq.high) and eq.high or true
-  eq.low = M.is_bool(eq.low) and eq.low or true
+  eq = eq or { low = true, high = true }
+  if not M.is_bool(eq.high) then
+    eq.high = true
+  end
+  if not M.is_bool(eq.low) then
+    eq.low = true
+  end
   if low > high then
     low, high = high, low
   end
 
-  local Comps = {
-    low_no_high = function()
-      return num >= low and num < high
-    end,
-    high_no_low = function()
-      return num > low and num <= high
-    end,
-    high_low = function()
-      return num >= low and num <= high
-    end,
-    none = function()
-      return num > low and num < high
-    end,
-  }
   if eq.high and eq.low then
-    return Comps.high_low()
+    return num >= low and num <= high
   end
   if eq.high and not eq.low then
-    return Comps.high_no_low()
+    return num > low and num <= high
   end
   if not eq.high and eq.low then
-    return Comps.low_no_high()
+    return num >= low and num < high
   end
-  return Comps.none()
+  return num > low and num < high
 end
 
 ---@param field (string|integer)[]|string|integer
 ---@param T table<string|integer, any>
 ---@return boolean found
 function M.fields(field, T)
-  require('user_api.check.exists').validate({
+  validate({
     field = { field, { 'string', 'number', 'table', 'nil' }, true },
     T = { T, { 'table' } },
   })
 
-  if not M.is_tbl(field) then
+  if type(field) ~= 'table' then
     return T[field] ~= nil
   end
   for _, v in ipairs(field) do
@@ -228,10 +216,9 @@ function M.fields(field, T)
   return true
 end
 
----@param values any[]|table<string, any>
----@param T table
----@param return_keys? boolean
----@return boolean|string|integer|(string|integer)[] res
+---@overload fun(values: any[]|table<string, any>, T: table): res: boolean
+---@overload fun(values: any[]|table<string, any>, T: table, return_keys: false): res: boolean
+---@overload fun(values: any[]|table<string, any>, T: table, return_keys: true): res: (string|integer)[]|string|integer
 function M.tbl_values(values, T, return_keys)
   require('user_api.check.exists').validate({
     values = { values, { 'table' } },
@@ -245,11 +232,13 @@ function M.tbl_values(values, T, return_keys)
   local res = return_keys and {} or false ---@type boolean|string|integer|(string|integer)[]
   for _, val in pairs(values) do
     for k, v in pairs(T) do
-      if return_keys and v == val then
-        table.insert(res, k)
-      elseif not return_keys and v == val then
-        res = true
-        break
+      if v == val then
+        if return_keys then
+          table.insert(res, k)
+        else
+          res = true
+          break
+        end
       end
     end
 

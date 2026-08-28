@@ -64,24 +64,60 @@ function M.setup(verbose)
     verbose = false
   end
 
-  M.new_picker('telescope', 'telescope', {
-    mod = 'telescope._extensions.picker_list',
-    cb = require('telescope._extensions.picker_list').exports.picker_list,
-  })
-  M.new_picker('snacks', 'snacks.nvim', {
-    mod = 'snacks.picker',
-    cb = require('snacks.picker').pickers,
-  })
-  M.new_picker('fzf-lua', 'fzf-lua', {
-    mod = 'fzf-lua.cmd',
-    cb = require('fzf-lua.cmd').run_command,
-  })
-  M.new_picker('picker', 'picker.nvim', {
-    mod = 'picker',
-    cb = function()
-      require('picker').open({})
-    end,
-  })
+  local Pickers = { ---@type table<string, { [1]: string , [2]: User.Pickers.Spec, [3]?: boolean }>
+    ['telescope.init'] = {
+      'telescope',
+      {
+        mod = 'telescope._extensions.picker_list',
+        cb = function()
+          require('telescope._extensions.picker_list').exports.picker_list()
+        end,
+      },
+    },
+    snacks = {
+      'snacks.nvim',
+      {
+        mod = 'snacks.picker',
+        cb = function()
+          require('snacks.picker').pickers({
+            auto_close = true,
+            auto_confirm = false,
+            cwd = vim.uv.cwd() or vim.fn.getcwd(),
+            enter = true,
+            focus = 'list',
+            show_empty = false,
+            ui_select = true,
+          })
+        end,
+      },
+    },
+    ['fzf-lua'] = {
+      'fzf-lua',
+      {
+        mod = 'fzf-lua.cmd',
+        cb = function()
+          require('fzf-lua.cmd').run_command('builtin')
+        end,
+      },
+    },
+    picker = {
+      'picker.nvim',
+      {
+        mod = 'picker',
+        cb = function()
+          require('picker').open({})
+        end,
+      },
+    },
+  }
+
+  table.sort(Pickers, function(a, b)
+    return a[1] < b[1]
+  end)
+
+  for mod, args in pairs(Pickers) do
+    M.new_picker(mod, args[1], args[2], args[3])
+  end
 end
 
 function M.run()

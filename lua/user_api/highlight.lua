@@ -1,8 +1,8 @@
+---@alias HlDict table<string, vim.api.keyset.highlight>
+
 ---@class HlPair
 ---@field name string
 ---@field opts vim.api.keyset.highlight
-
----@alias HlDict table<string, vim.api.keyset.highlight>
 
 ---A set of utilities to make Vim highlighting easier.
 --- ---
