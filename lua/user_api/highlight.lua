@@ -45,9 +45,8 @@ function M.hl_from_arr(A, ns)
     ns = { ns, { 'number', 'nil' }, true },
   })
 
-  local type_not_empty = require('user_api.check').type_not_empty
   for _, t in ipairs(A) do
-    if type_not_empty('string', t.name) and type_not_empty('table', t.opts) then
+    if type(t.name) == 'string' and type(t.opts) == 'table' then
       M.hl(t.name, t.opts, ns or nil)
     end
   end
@@ -73,9 +72,8 @@ function M.hl_from_dict(D, ns)
     ns = { ns, { 'number', 'nil' }, true },
   })
 
-  local type_not_empty = require('user_api.check').type_not_empty
   for k, v in pairs(D) do
-    if type_not_empty('string', k) and type_not_empty('table', v) then
+    if type(k) == 'string' and type(v) == 'table' then
       M.hl(k, v, ns or nil)
     end
   end
