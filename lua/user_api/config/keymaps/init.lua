@@ -1,9 +1,10 @@
 ---@class User.Keymaps.Delete
----@field n? string[]
+---@field V? string[]
 ---@field i? string[]
----@field v? string[]
----@field t? string[]
+---@field n? string[]
 ---@field o? string[]
+---@field t? string[]
+---@field v? string[]
 ---@field x? string[]
 
 local ERROR = vim.log.levels.ERROR
@@ -29,7 +30,10 @@ local function delete_file(force)
   return function()
     local optget = require('user_api.util').optget
     local bufnr = vim.api.nvim_get_current_buf()
-    if not optget('modifiable', 'buf', bufnr) or optget('buftype', 'buf', bufnr) == 'nowrite' then
+    if
+      not optget('modifiable', 'buf', bufnr)
+      or vim.list_contains({ 'nowrite', 'nofile' }, optget('buftype', 'buf', bufnr))
+    then
       vim.notify('Buffer is not modifiable!', ERROR)
       return
     end
@@ -65,13 +69,13 @@ end
 local function new_file()
   local bufnr = vim.api.nvim_get_current_buf()
   local ft = require('user_api.util').ft_get(bufnr)
+  local optset = require('user_api.util').optset
   vim.cmd.wincmd('n')
   vim.cmd.wincmd('o')
 
-  local opts = { buf = bufnr } ---@type vim.api.keyset.option
-  vim.api.nvim_set_option_value('ft', ft, opts)
-  vim.api.nvim_set_option_value('modifiable', true, opts)
-  vim.api.nvim_set_option_value('modified', false, opts)
+  optset('ft', ft, 'buf', bufnr)
+  optset('modifiable', true, 'buf', bufnr)
+  optset('modified', false, 'buf', bufnr)
 end
 
 local function indent_file()
@@ -114,11 +118,11 @@ local function gen_fun_blank(vertical)
     local win = vim.api.nvim_open_win(buf, true, { vertical = vertical })
     vim.api.nvim_set_current_win(win)
 
-    local set_opts = { buf = buf } ---@type vim.api.keyset.option
-    vim.api.nvim_set_option_value('filetype', '', set_opts)
-    vim.api.nvim_set_option_value('buftype', '', set_opts)
-    vim.api.nvim_set_option_value('modifiable', true, set_opts)
-    vim.api.nvim_set_option_value('modified', false, set_opts)
+    local optset = require('user_api.util').optset
+    optset('filetype', '', 'buf', buf)
+    optset('buftype', '', 'buf', buf)
+    optset('modifiable', true, 'buf', buf)
+    optset('modified', false, 'buf', buf)
   end
 end
 

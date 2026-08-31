@@ -16,6 +16,7 @@
 ---@field boolean_toggle? LazySpecImport
 ---@field buffer_sticks? LazySpecImport
 ---@field bufferline? LazySpecImport
+---@field ccc? LazySpecImport
 ---@field cheaty? LazySpecImport
 ---@field checkmate? LazySpecImport
 ---@field classlayout? LazySpecImport
@@ -173,6 +174,7 @@
 ---@field bookmarks? boolean
 ---@field buffer_sticks? boolean
 ---@field bufferline? boolean
+---@field ccc? boolean
 ---@field cheaty? boolean
 ---@field checkmate? boolean
 ---@field classlayout? boolean

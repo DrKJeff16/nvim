@@ -9,8 +9,8 @@ set -o pipefail
 
 TARGET_DIR="lua/plugin"
 TEMPLATE="template.lua"
-F_EXT="$(echo "${TARGET}" | rev | cut -d '.' -f1 | rev)"
 TARGET="$1"
+F_EXT="$(echo "${TARGET}" | rev | cut -d '.' -f1 | rev)"
 
 [[ "$F_EXT" != "lua" ]] && TARGET+=".lua"
 
