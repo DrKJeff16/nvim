@@ -11,6 +11,9 @@ local ERROR = vim.log.levels.ERROR
 local desc = require('user_api.maps').desc
 local validate = require('user_api.check').validate
 
+local leader_set = false
+local defaults_mapped = false
+
 ---@param cmd string
 ---@return function command
 local function wincmd(cmd)
@@ -329,7 +332,7 @@ function M.set_leader(leader, local_leader, force)
   if force == nil then
     force = false
   end
-  if vim.g.leader_set and not force then
+  if leader_set and not force then
     return
   end
 
@@ -367,7 +370,7 @@ function M.set_leader(leader, local_leader, force)
 
   vim.g.mapleader = vim_vars.leader
   vim.g.maplocalleader = vim_vars.localleader
-  vim.g.leader_set = true
+  leader_set = true
 end
 
 ---@param K User.Keymaps.Delete
@@ -409,7 +412,7 @@ function M.set(new_keys, bufnr, defaults)
   if defaults == nil then
     defaults = false
   end
-  if not vim.g.leader_set then
+  if not leader_set then
     vim.notify('`keymaps.set_leader()` not called!', vim.log.levels.WARN)
   end
 
@@ -440,7 +443,12 @@ function M.set(new_keys, bufnr, defaults)
   no_oped = true
   keys = vim.tbl_deep_extend('keep', parsed_keys, keys) --[[@as AllModeMaps]]
 
-  require('user_api.maps').map_dict(defaults and keys or parsed_keys, 'wk.register', true, nil, bufnr)
+  local keymaps = vim.deepcopy(parsed_keys)
+  if defaults and not defaults_mapped then
+    keymaps = vim.deepcopy(keys)
+    defaults_mapped = true
+  end
+  require('user_api.maps').map_dict(keymaps, 'wk.register', true, nil, bufnr)
 end
 
 return setmetatable(M, { ---@type User.Config.Keymaps
