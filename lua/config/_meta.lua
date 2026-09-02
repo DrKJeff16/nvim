@@ -70,6 +70,7 @@
 ---@field lualine? LazySpecImport
 ---@field luaref? LazySpecImport
 ---@field markdoc? LazySpecImport
+---@field markdown? LazySpecImport
 ---@field markdown_follow_md_links? LazySpecImport
 ---@field markdown_outline? LazySpecImport
 ---@field markdown_pipetable? LazySpecImport
@@ -228,6 +229,7 @@
 ---@field lualine? boolean
 ---@field luaref? boolean
 ---@field markdoc? boolean
+---@field markdown? boolean
 ---@field markdown_follow_md_links? boolean
 ---@field markdown_outline? boolean
 ---@field markdown_pipetable? boolean
