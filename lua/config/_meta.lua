@@ -72,11 +72,13 @@
 ---@field markdoc? LazySpecImport
 ---@field markdown? LazySpecImport
 ---@field markdown_follow_md_links? LazySpecImport
+---@field markdown_mdview? LazySpecImport
 ---@field markdown_outline? LazySpecImport
 ---@field markdown_pipetable? LazySpecImport
 ---@field markdown_render? LazySpecImport
 ---@field mason? LazySpecImport
 ---@field match? LazySpecImport
+---@field migrate? LazySpecImport
 ---@field mini_animate? LazySpecImport
 ---@field mini_base16? LazySpecImport
 ---@field mini_basics? LazySpecImport
@@ -231,11 +233,13 @@
 ---@field markdoc? boolean
 ---@field markdown? boolean
 ---@field markdown_follow_md_links? boolean
+---@field markdown_mdview? boolean
 ---@field markdown_outline? boolean
 ---@field markdown_pipetable? boolean
 ---@field markdown_render? boolean
 ---@field mason? boolean
 ---@field match? boolean
+---@field migrate? boolean
 ---@field mini_animate? boolean
 ---@field mini_basics? boolean
 ---@field mini_base16? boolean
