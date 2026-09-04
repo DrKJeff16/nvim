@@ -7,6 +7,8 @@ local HINT = vim.diagnostic.severity.HINT
 local mk_caps = vim.lsp.protocol.make_client_capabilities
 local uv = vim.uv or vim.loop
 
+local timer = nil ---@type uv.uv_timer_t|nil|?
+
 ---@param original lsp.ClientCapabilities
 ---@param inserts? lsp.ClientCapabilities
 ---@return lsp.ClientCapabilities client_caps
@@ -17,10 +19,9 @@ end
 ---@class Lsp.Server
 ---@field autocmd Lsp.SubMods.Autocmd
 ---@field kinds Lsp.SubMods.Kinds
----@field servers Lsp.Server.Clients
 local Server = {}
 
-function Server.timer_cb()
+local function timer_cb()
   local logfile = vim.lsp.log.get_filename()
   local stat = uv.fs_stat(logfile)
   if not stat or stat.size < 2097152 then
@@ -38,16 +39,16 @@ function Server.timer_cb()
   vim.notify('LSP Log has been cleared!', vim.log.levels.INFO)
 end
 
-Server.client_names = {} ---@type string[]
-Server.Clients = require('config.lsp.servers')
+local client_names = {} ---@type string[]
+local Clients = require('config.lsp.servers')
 
-function Server.make_timer()
-  if Server.timer and Server.timer:is_active() then
+local function make_timer()
+  if timer and timer:is_active() then
     return
   end
 
-  Server.timer = uv.new_timer()
-  if not Server.timer then
+  timer = uv.new_timer()
+  if not timer then
     return
   end
 
@@ -55,22 +56,18 @@ function Server.make_timer()
   vim.api.nvim_create_autocmd({ 'VimLeavePre' }, {
     group = group,
     callback = function()
-      if not (Server.timer and Server.timer:is_active()) then
-        return
+      if timer and timer:is_active() then
+        timer:stop()
+        timer = nil
       end
-
-      Server.timer:stop()
-      Server.timer = nil
     end,
   })
   vim.api.nvim_create_autocmd('VimEnter', {
     group = group,
     callback = function()
-      if not Server.timer or Server.timer:is_active() then
-        return
+      if timer and not timer:is_active() then
+        timer:start(10000, 900000, vim.schedule_wrap(timer_cb))
       end
-
-      Server.timer:start(10000, 900000, vim.schedule_wrap(Server.timer_cb))
     end,
   })
 end
@@ -83,7 +80,7 @@ function Server.make_capabilities(old_caps)
     caps = vim.tbl_deep_extend('force', caps, require('blink.cmp').get_lsp_capabilities({}, true), mk_caps())
   end
   if require('user_api').check.module('nvim-file-operations.config') then
-    caps = vim.tbl_deep_extend('force', caps, require('nvim-file-operations.config').default_capabilities())
+    caps = vim.tbl_deep_extend('keep', caps, require('nvim-file-operations.config').default_capabilities())
   end
   return caps
 end
@@ -151,32 +148,30 @@ end
 function Server.setup()
   vim.lsp.protocol.TextDocumentSyncKind.Full = 1
   vim.lsp.protocol.TextDocumentSyncKind[1] = 'Full'
-  vim.lsp.config('*', {
-    capabilities = Server.make_capabilities(),
-  })
+  vim.lsp.config('*', { capabilities = Server.make_capabilities() })
   vim.diagnostic.config({
-    signs = { text = { [ERROR] = '', [WARN] = '', [INFO] = '', [HINT] = '󰌵' } },
     float = true,
+    severity_sort = false,
+    signs = { text = { [ERROR] = '', [HINT] = '󰌵', [INFO] = '', [WARN] = '' } },
     underline = true,
     virtual_lines = false,
     virtual_text = true,
-    severity_sort = false,
   })
 
   vim.lsp.log.set_level(vim.log.levels.ERROR)
-  for name, client in pairs(Server.Clients) do
+  for name, client in pairs(Clients) do
     if client then
       vim.lsp.config(name, Server.populate(name, client))
-      if not vim.list_contains(Server.client_names, name) then
-        table.insert(Server.client_names, name)
+      if not vim.list_contains(client_names, name) then
+        table.insert(client_names, name)
       end
     end
   end
-  table.sort(Server.client_names)
+  table.sort(client_names)
 
-  Server.make_timer()
+  make_timer()
 
-  vim.lsp.enable(Server.client_names)
+  vim.lsp.enable(client_names)
 
   local desc = require('user_api').maps.desc
   require('user_api').config.keymaps.set({
@@ -184,7 +179,7 @@ function Server.setup()
       ['<leader>l'] = { group = '+LSP' },
       ['<leader>lC'] = {
         function()
-          vim.notify(vim.inspect(Server.client_names))
+          vim.notify(vim.inspect(client_names))
         end,
         desc('List Clients'),
       },
@@ -211,10 +206,10 @@ function Server.add(config, name, exe)
     return
   end
 
-  local cfg = Server.Clients[name]
+  local cfg = Clients[name]
 
-  Server.Clients[name] = cfg and vim.tbl_deep_extend('force', cfg, config) or config
-  Server.Clients[name] = Server.populate(name, vim.deepcopy(Server.Clients[name]))
+  Clients[name] = cfg and vim.tbl_deep_extend('force', cfg, config) or config
+  Clients[name] = Server.populate(name, vim.deepcopy(Clients[name]))
   Server.setup()
 end
 

@@ -32,6 +32,7 @@
 ---@field doxygen? LazySpecImport
 ---@field doxygen_previewer? LazySpecImport
 ---@field drop? LazySpecImport
+---@field dropbar? LazySpecImport
 ---@field echo? LazySpecImport
 ---@field flash? LazySpecImport
 ---@field fff? LazySpecImport
@@ -56,7 +57,6 @@
 ---@field ibl? LazySpecImport
 ---@field image? LazySpecImport
 ---@field lastplace? LazySpecImport
----@field lazydev? LazySpecImport
 ---@field local_session? LazySpecImport
 ---@field log_highlight? LazySpecImport
 ---@field lsp? LazySpecImport
@@ -64,6 +64,7 @@
 ---@field lsp_clangd? LazySpecImport
 ---@field lsp_custom_diagnostic_highlight? LazySpecImport
 ---@field lsp_fidget? LazySpecImport
+---@field lsp_lazydev? LazySpecImport
 ---@field lsp_lspsaga? LazySpecImport
 ---@field lsp_toggle? LazySpecImport
 ---@field lspkind? LazySpecImport
@@ -193,6 +194,7 @@
 ---@field doxygen? boolean
 ---@field doxygen_previewer? boolean
 ---@field drop? boolean
+---@field dropbar? boolean
 ---@field echo? boolean
 ---@field flash? boolean
 ---@field fff? boolean
@@ -217,7 +219,6 @@
 ---@field ibl? boolean
 ---@field image? boolean
 ---@field lastplace? boolean
----@field lazydev? boolean
 ---@field local_session? boolean
 ---@field log_highlight? boolean
 ---@field lsp? boolean
@@ -225,6 +226,7 @@
 ---@field lsp_clangd? boolean
 ---@field lsp_custom_diagnostic_highlight? boolean
 ---@field lsp_fidget? boolean
+---@field lsp_lazydev? boolean
 ---@field lsp_lspsaga? boolean
 ---@field lsp_toggle? boolean
 ---@field lspkind? boolean

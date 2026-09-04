@@ -2,22 +2,25 @@
 return { ---@type LazySpec
   'folke/lazydev.nvim',
   ft = 'lua',
-  event = 'LspAttach',
   version = false,
   dependencies = { { 'DrKJeff16/wezterm-types', lazy = true, dev = true, version = false } },
   cond = require('user_api').check.executable('lua-language-server'),
   config = function()
-    local fs_stat = vim.uv.fs_stat
     require('lazydev').setup({
-      enabled = function(root_dir) ---@type boolean|(fun(root_dir: string): boolean)
+      enabled = function(root_dir) ---@param root_dir string
         return not (
-          fs_stat(vim.fs.joinpath(root_dir, '.luarc.json')) or fs_stat(vim.fs.joinpath(root_dir, 'luarc.json'))
+          vim.uv.fs_stat(vim.fs.joinpath(root_dir, '.luarc.json'))
+          or vim.uv.fs_stat(vim.fs.joinpath(root_dir, 'luarc.json'))
         )
       end,
       integrations = { lspconfig = true, cmp = true, coq = false },
       library = {
+        { path = vim.fs.joinpath(vim.env.VIMRUNTIME, 'lua', 'vim'), words = { 'vim' } },
         { path = '${3rd}/luv/library', words = { 'vim%.uv', 'vim%.loop' } },
         { path = 'project.nvim', mods = { 'project' } },
+        { path = 'which-colorscheme.nvim', mods = { 'which-colorscheme' } },
+        { path = 'shebang.nvim', mods = { 'shebang' } },
+        { path = 'boolean-toggle.nvim', mods = { 'boolean-toggle' } },
         { path = 'snacks.nvim', mods = { 'snacks' } },
         { path = 'wezterm-types', mods = { 'wezterm' } },
       },
