@@ -32,6 +32,7 @@
 ---@field doxygen? LazySpecImport
 ---@field doxygen_previewer? LazySpecImport
 ---@field drop? LazySpecImport
+---@field dropbar? LazySpecImport
 ---@field echo? LazySpecImport
 ---@field flash? LazySpecImport
 ---@field fff? LazySpecImport
@@ -193,6 +194,7 @@
 ---@field doxygen? boolean
 ---@field doxygen_previewer? boolean
 ---@field drop? boolean
+---@field dropbar? boolean
 ---@field echo? boolean
 ---@field flash? boolean
 ---@field fff? boolean
