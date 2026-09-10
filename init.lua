@@ -110,7 +110,7 @@ Config.lazy.setup({
   doxygen = false,
   doxygen_previewer = false,
   drop = true,
-  dropbar = true,
+  dropbar = false,
   echo = false,
   fff = false,
   flash = false,

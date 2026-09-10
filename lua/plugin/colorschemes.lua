@@ -1,6 +1,34 @@
 ---@module 'lazy'
 return { ---@type LazySpec[]
   {
+    'rezniqov/soviet.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require('soviet').setup({
+        cache = true,
+        dim_inactive = false,
+        integrations = {},
+        lualine_bold = false,
+        on_colors = function() end,
+        on_highlights = function() end,
+        palette = {},
+        plugins = { all = package.loaded.lazy == nil, auto = true },
+        styles = {
+          comments = { italic = false },
+          floats = 'dark',
+          functions = { bold = true, italic = false },
+          keywords = { bold = true, italic = false },
+          sidebars = 'dark',
+          strings = { italic = false },
+          variables = { italic = false },
+        },
+        terminal_colors = vim.o.termguicolors,
+        transparent = false,
+      })
+    end,
+  },
+  {
     'rose-pine/neovim',
     lazy = false,
     priority = 1000,
