@@ -14,17 +14,20 @@ local RTPATHS = {
 ---@class User.Distro.Termux
 local M = {}
 
+---@return boolean is_termux
 function M.is_distro()
+  local res ---@type boolean
   if PREFIX == '' or not vim.fn.isdirectory(PREFIX) == 1 then
-    return false
-  end
-
-  for i, path in ipairs(RTPATHS) do
-    if not vim.fn.isdirectory(path) == 1 then
-      table.remove(RTPATHS, i)
+    res = false
+  else
+    for i, path in ipairs(RTPATHS) do
+      if not vim.fn.isdirectory(path) == 1 then
+        table.remove(RTPATHS, i)
+      end
     end
+    res = #RTPATHS > 0
   end
-  return not require('user_api.check.value').empty(RTPATHS)
+  return res
 end
 
 function M.setup()

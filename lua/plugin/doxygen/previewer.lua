@@ -11,6 +11,22 @@ return { ---@type LazySpec
       version = false,
       config = function()
         require('prelive').setup({
+          http = {
+            keep_alive_timeout = 60 * 1000,
+            max_body_size = 1024 * 1024 * 1,
+            max_chunk_ext_size = 1024 * 1,
+            max_header_field_size = 1024 * 4,
+            max_header_num = 100,
+            max_request_line_size = 1024 * 4,
+            tcp_max_backlog = 16,
+            tcp_recv_buffer_size = 1024,
+          },
+          log = {
+            file_level = vim.log.levels.DEBUG,
+            max_backups = 3,
+            max_file_size = 1 * 1024 * 1024,
+            print_level = vim.log.levels.WARN,
+          },
           server = {
             host = '127.0.0.1',
             port = (function()
@@ -21,30 +37,12 @@ return { ---@type LazySpec
               return port
             end)(),
           },
-          http = {
-            tcp_max_backlog = 16,
-            tcp_recv_buffer_size = 1024,
-            keep_alive_timeout = 60 * 1000,
-            max_body_size = 1024 * 1024 * 1,
-            max_request_line_size = 1024 * 4,
-            max_header_field_size = 1024 * 4,
-            max_header_num = 100,
-            max_chunk_ext_size = 1024 * 1,
-          },
-          log = {
-            print_level = vim.log.levels.WARN,
-            file_level = vim.log.levels.DEBUG,
-            max_file_size = 1 * 1024 * 1024,
-            max_backups = 3,
-          },
         })
       end,
     },
   },
   config = function()
     require('doxygen-previewer').setup({
-      tempdir = vim.fn.stdpath('cache'),
-      update_on_save = true,
       doxygen = {
         cmd = 'doxygen',
         doxyfile_patterns = { 'Doxyfile', 'doc/Doxyfile' },
@@ -53,6 +51,8 @@ return { ---@type LazySpec
         end,
         override_options = {}, ---@type table<string, string|fun(): string>
       },
+      tempdir = vim.fn.stdpath('cache'),
+      update_on_save = true,
     })
   end,
 }

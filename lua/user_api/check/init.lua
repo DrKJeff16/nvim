@@ -55,8 +55,8 @@ end
 --- ---
 ---@return boolean in_console
 function M.in_console()
-  --- FIXME: This is not a good enough check. Must find a better solution
   local env = vim.fn.environ() --[[@as table<string, string>]]
+  -- FIXME: This is not a good enough check. Must find a better solution
   return vim.list_contains({ 'linux' }, env.TERM) and not require('user_api.check.value').fields('DISPLAY', env)
 end
 
@@ -69,6 +69,7 @@ local Check = setmetatable(M, { ---@type User.Check
     if raw then
       return raw
     end
+
     if require('user_api.check.exists').module('user_api.check.' .. k) then
       rawset(self, k, require('user_api.check.' .. k))
       return require('user_api.check.' .. k)

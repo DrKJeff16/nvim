@@ -1,8 +1,8 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'Mirsmog/real-icons.nvim',
+  dev = true,
   version = false,
-  event = 'VeryLazy',
   build = ':RealIcons install',
   config = function()
     require('real-icons').setup({

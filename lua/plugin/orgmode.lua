@@ -25,7 +25,6 @@ return { ---@type LazySpec
         DELEGATED = ':background #FFFFFF :underline on',
       },
       org_todo_keywords = { 'TODO', 'WAITING', '|', 'DONE', 'DELEGATED' },
-      org_todo_repeat_to_state = nil,
       win_border = 'single',
       win_split_mode = 'auto',
     })

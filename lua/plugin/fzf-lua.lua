@@ -38,7 +38,6 @@ return { ---@type LazySpec
       buffers = {
         actions = { ['ctrl-x'] = { fn = actions.buf_del, reload = true } },
         color_icons = true,
-        cwd = nil,
         cwd_only = false,
         file_icons = 'mini',
         prompt = 'Buffers❯ ',
@@ -435,7 +434,6 @@ return { ---@type LazySpec
       tags = {
         actions = { ['ctrl-g'] = { actions.grep_lgrep } },
         color_icons = true,
-        ctags_file = nil,
         file_icons = true,
         fzf_opts = { ['--tiebreak'] = 'begin' },
         grep_opts = '--color=auto --perl-regexp',

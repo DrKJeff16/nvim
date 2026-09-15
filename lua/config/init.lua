@@ -5,8 +5,14 @@
 ---@field lsp Lsp.Server
 ---@field util Config.Util
 local M = setmetatable({}, {
-  __index = function(_, k)
+  __index = function(self, k)
+    local raw = rawget(self, k) or nil
+    if raw then
+      return raw
+    end
+
     if require('user_api').check.module('config.' .. k) then
+      rawset(self, k, require('config.' .. k))
       return require('config.' .. k)
     end
   end,

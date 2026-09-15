@@ -3,16 +3,12 @@ return { ---@type LazySpec
   'BibekBhusal0/nvim-git-utils',
   dev = true,
   version = false,
-  dependencies = {
-    'MunifTanjim/nui.nvim',
-    'nvim-telescope/telescope.nvim',
-    'sindrets/diffview.nvim',
-  },
+  dependencies = { 'MunifTanjim/nui.nvim', 'nvim-telescope/telescope.nvim', 'sindrets/diffview.nvim' },
   cond = require('user_api').check.executable('git'),
   config = function()
     require('nvim-git-utils').setup({
+      commit_input = { hints = true, max_length = 72 },
       log = { enabled = true, icon = '' },
-      commit_input = { max_length = 72, format_message = nil, hints = true },
     })
 
     local desc = require('user_api').maps.desc

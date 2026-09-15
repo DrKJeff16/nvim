@@ -151,7 +151,7 @@ function Server.setup()
   vim.lsp.config('*', { capabilities = Server.make_capabilities() })
   vim.diagnostic.config({
     float = true,
-    severity_sort = false,
+    severity_sort = true,
     signs = { text = { [ERROR] = '', [HINT] = '󰌵', [INFO] = '', [WARN] = '' } },
     underline = true,
     virtual_lines = false,
@@ -202,23 +202,26 @@ function Server.add(config, name, exe)
   })
   exe = (exe and exe ~= '') and exe or name
 
-  if not require('user_api').check.executable(exe) then
-    return
+  if require('user_api').check.executable(exe) then
+    local cfg = vim.deepcopy(Clients[name])
+
+    Clients[name] = cfg and vim.tbl_deep_extend('force', cfg, config) or config
+    Clients[name] = Server.populate(name, Clients[name])
+    Server.setup()
   end
-
-  local cfg = Clients[name]
-
-  Clients[name] = cfg and vim.tbl_deep_extend('force', cfg, config) or config
-  Clients[name] = Server.populate(name, vim.deepcopy(Clients[name]))
-  Server.setup()
 end
 
 local M = setmetatable(Server, { ---@type Lsp.Server
   __index = function(self, k)
+    local raw = rawget(self, k) or nil
+    if raw then
+      return raw
+    end
+
     if require('user_api').check.module('config.lsp.' .. k) then
+      rawset(self, k, require('config.lsp.' .. k))
       return require('config.lsp.' .. k)
     end
-    return rawget(self, k) or nil
   end,
 })
 

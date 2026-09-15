@@ -1,31 +1,26 @@
 ---@param name string
 ---@param exe? string
----@return vim.lsp.Config|nil config
+---@return vim.lsp.Config|nil|? config
 local function server_load(name, exe)
   require('user_api').check.validate({
     name = { name, 'string' },
     exe = { exe, { 'string', 'nil' }, true },
   })
-  exe = exe or name
-  exe = exe ~= '' and exe or name
-  if not require('user_api').check.executable(exe) then
-    return
-  end
+  exe = (exe and exe ~= '') and exe or name
 
-  ---@type boolean, vim.lsp.Config|nil
-  local ok, mod = pcall(require, 'config.lsp.servers.' .. name)
-  if ok and mod then
-    return mod
+  if require('user_api').check.executable(exe) then
+    local ok, mod = pcall(require, 'config.lsp.servers.' .. name) ---@type boolean, vim.lsp.Config|nil|?
+    if ok and mod then
+      return mod
+    end
   end
 end
 
 ---@class Lsp.Server.Clients
 local M = {
+  -- emmylua_ls = server_load('emmylua_ls'),
   -- julials = server_load('julials', 'julia'),
   -- stylua = server_load('stylua'),
-  -- emmylua_ls = server_load('emmylua_ls'),
-  lua_ls = server_load('lua_ls', 'lua-language-server'),
-
   asm_lsp = server_load('asm_lsp', 'asm-lsp'),
   autotools_ls = server_load('autotools_ls', 'autotools-language-server'),
   bashls = server_load('bashls', 'bash-language-server'),
@@ -44,6 +39,7 @@ local M = {
   hyprls = server_load('hyprls'),
   jdtls = server_load('jdtls'),
   jsonls = server_load('jsonls', 'vscode-json-language-server'),
+  lua_ls = server_load('lua_ls', 'lua-language-server'),
   marksman = server_load('marksman'),
   pylsp = server_load('pylsp'),
   ruby_lsp = server_load('ruby_lsp', 'ruby-lsp'),
