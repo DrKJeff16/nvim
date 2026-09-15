@@ -7,10 +7,7 @@ return { ---@type LazySpec
     local MS = require('mini.starter')
     MS.setup({
       autoopen = true,
-      header = nil,
-      footer = nil,
-      query_updaters = 'abcdefghijklmnopqrstuvwxyz0123456789_-.',
-      silent = false,
+      content_hooks = { MS.gen_hook.adding_bullet(), MS.gen_hook.aligning('center', 'center') },
       evaluate_single = true,
       items = {
         {
@@ -18,10 +15,8 @@ return { ---@type LazySpec
           { name = 'Recent Projects', action = 'Project recents', section = 'Projects' },
         },
       },
-      content_hooks = {
-        MS.gen_hook.adding_bullet(),
-        MS.gen_hook.aligning('center', 'center'),
-      },
+      query_updaters = 'abcdefghijklmnopqrstuvwxyz0123456789_-.',
+      silent = false,
     })
   end,
 }
