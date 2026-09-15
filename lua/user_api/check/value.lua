@@ -2,8 +2,6 @@
 ---@alias EmptyTypes 'string'|'number'|'integer'|'table'
 
 local MODSTR = 'user_api.check.value'
-local ERROR = vim.log.levels.ERROR
-local WARN = vim.log.levels.WARN
 local validate = require('user_api.check.exists').validate
 
 ---@param t Types
@@ -17,21 +15,20 @@ local function type_fun(t)
     is_tbl = 'table',
   }
 
-  local ret = true
-  local name = ''
+  local ret, name = true, ''
   for k, _type in pairs(ALLOWED_TYPES) do
     if _type == t then
-      ret = false
-      name = k
+      ret, name = false, k
       break
     end
   end
   if ret then
-    error(('(%s.type_fun): Invalid type `%s`'):format(MODSTR, t), ERROR)
+    error(('(%s.type_fun): Invalid type `%s`'):format(MODSTR, t), vim.log.levels.ERROR)
   end
 
   ---@param var any
   ---@param multiple? boolean
+  ---@return boolean res
   return function(var, multiple)
     validate({ multiple = { multiple, { 'boolean', 'nil' }, true } })
     if multiple == nil then
@@ -47,7 +44,7 @@ local function type_fun(t)
 
     for _, v in ipairs(var) do
       if t == nil or type(v) ~= t then
-        vim.notify(('(%s.%s): Input is not a table (`multiple` is true)'):format(MODSTR, name), WARN)
+        vim.notify(('(%s.%s): Input is not a table (`multiple` is true)'):format(MODSTR, name), vim.log.levels.WARN)
         return false
       end
     end
@@ -96,15 +93,15 @@ function M.is_int(var, multiple)
   end
 
   if not multiple then
-    return M.is_num(var) and var == math.floor(var) and var == math.ceil(var)
+    return type(var) == 'number' and var == math.floor(var) and var == math.ceil(var)
   end
-  if not M.is_tbl(var) then
-    vim.notify(('(%s.is_int): Input is not a table (`multiple` is true)'):format(MODSTR), WARN)
+  if type(var) ~= 'table' then
+    vim.notify(('(%s.is_int): Input is not a table (`multiple` is true)'):format(MODSTR), vim.log.levels.WARN)
     return false
   end
 
   for _, v in ipairs(var) do
-    if not (M.is_num(v) and v == math.floor(v) and v == math.ceil(v)) then
+    if not (type(v) == 'number' and v == math.floor(v) and v == math.ceil(v)) then
       return false
     end
   end
@@ -135,23 +132,22 @@ function M.empty(data, multiple)
     multiple = false
   end
 
-  if M.is_str(data) then
+  if type(data) == 'string' then
     return data == ''
   end
-  if M.is_num(data) then
+  if type(data) == 'number' then
     return data == 0
   end
   if not multiple then
     return vim.tbl_isempty(data)
   end
   if vim.tbl_isempty(data) then
-    vim.notify(('(%s.empty): No values to check!'):format(MODSTR), WARN)
+    vim.notify(('(%s.empty): No values to check!'):format(MODSTR), vim.log.levels.WARN)
     return true
   end
 
   for _, val in ipairs(data) do
-    ---NOTE: PASSING `false` TO AVOID RECURSIVE CHECKING
-    if M.empty(val, false) then
+    if M.empty(val, false) then -- HACK: PASSING `false` TO AVOID RECURSIVE CHECKING
       return true
     end
   end
@@ -208,6 +204,7 @@ function M.fields(field, T)
   if type(field) ~= 'table' then
     return T[field] ~= nil
   end
+
   for _, v in ipairs(field) do
     if not M.fields(v, T) then
       return false
@@ -247,10 +244,7 @@ function M.tbl_values(values, T, return_keys)
       break
     end
   end
-  if return_keys then
-    res = #res == 1 and res[1] or (M.empty(res) and false or res)
-  end
-  return res
+  return return_keys and (#res == 1 and res[1] or (M.empty(res) and false or res)) or res
 end
 
 ---@param type_str Types
@@ -266,7 +260,7 @@ function M.single_type_tbl(type_str, T)
     error(('(%s.single_type_tbl): Wrong type `%s`.'):format(MODSTR, type_str))
   end
   if vim.tbl_isempty(T) then
-    vim.notify(('(%s.single_type_tbl): Expected a non-empty table!'):format(MODSTR), ERROR)
+    vim.notify(('(%s.single_type_tbl): Expected a non-empty table!'):format(MODSTR), vim.log.levels.ERROR)
     return false
   end
 
@@ -278,44 +272,13 @@ function M.single_type_tbl(type_str, T)
   return true
 end
 
----Check if given data is a string/table/integer/number and whether it's empty or not.
----
----Specifies what data type should the given value be
----and this function will check both if it's that type
----and if so, whether it's empty (for numbers this means a value of `0`).
---- ---
----@param type_str EmptyTypes
----@param data any
----@return boolean result
-function M.type_not_empty(type_str, data)
-  require('user_api.check.exists').validate({ type_str = { type_str, { 'string' } } })
-
-  if not vim.list_contains({ 'integer', 'number', 'string', 'table' }, type_str) then
-    error(('(%s.type_not_empty): Invalid type `%s`!'):format(MODSTR, type_str))
-  end
-  if data == nil then
-    return false
-  end
-
-  local valid_types = {
-    string = M.is_str,
-    integer = M.is_int,
-    number = M.is_num,
-    table = M.is_tbl,
-  }
-  if not vim.list_contains(vim.tbl_keys(valid_types), type_str) then
-    return false
-  end
-  return valid_types[type_str](data) and not M.empty(data)
-end
-
 ---Checks whether a certain `num` does not exceed table index range
 ---_i.e._ `num >= 1 and num <= #T`.
 ---
 ---If the table is empty, then it'll return `false`.
 --- ---
 ---@param index integer
----@param T any[]
+---@param T table
 ---@return boolean found
 function M.in_tbl_range(index, T)
   require('user_api.check.exists').validate({

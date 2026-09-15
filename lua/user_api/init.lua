@@ -1,5 +1,3 @@
-local uv = vim.uv or vim.loop
-
 local timer = nil ---@type uv.uv_timer_t|nil|?
 
 local function make_timer()
@@ -7,6 +5,7 @@ local function make_timer()
     return
   end
 
+  local uv = vim.uv or vim.loop
   timer = uv.new_timer()
   if not timer then
     return
@@ -97,7 +96,11 @@ function M.setup(commands, verbose)
 
   vim.filetype.add({
     extension = { el = 'lisp', h = 'c', sh = 'bash' },
-    filename = { [vim.fn.expand('~/.spacemacs')] = 'lisp', ['.clangd'] = 'yaml', ['.github/CODEOWNERS'] = 'codeowners' },
+    filename = {
+      ['.clangd'] = 'yaml',
+      ['.github/CODEOWNERS'] = 'codeowners',
+      [vim.fn.expand('~/.spacemacs')] = 'lisp',
+    },
   })
 end
 

@@ -28,8 +28,7 @@ function M.nop(T, opts, mode, prefix)
     prefix = { prefix, { 'string', 'nil' }, true },
   })
 
-  local Value = require('user_api.check.value')
-  mode = (Value.is_str(mode) and vim.list_contains(MODES, mode)) and mode or 'n'
+  mode = (mode and type(mode) == 'string' and vim.list_contains(MODES, mode)) and mode or 'n'
 
   if mode == 'i' then
     vim.notify('(user_api.maps.nop): Refusing to NO-OP these keys in Insert mode: ' .. vim.inspect(T), WARN)
@@ -37,22 +36,19 @@ function M.nop(T, opts, mode, prefix)
   end
 
   opts = opts or {}
-  opts.silent = Value.is_bool(opts.silent) and opts.silent or true
-  if Value.is_int(opts.buffer) then
-    opts = require('user_api.util').strip_fields(opts, 'buffer') ---@type User.Maps.Opts
+  opts.silent = type(opts.silent) == 'boolean' and opts.silent or true
+  if type(opts.buffer) == 'number' then
+    opts = require('user_api.util').strip_fields(opts, 'buffer')
   end
   prefix = prefix or ''
 
   local func = require('user_api.maps.keymap')[mode]
-  if Value.is_str(T) then
-    ---@cast T string
+  if type(T) == 'string' then
     func(prefix .. T, '<Nop>', opts)
-    return
-  end
-
-  ---@cast T string[]
-  for _, v in ipairs(T) do
-    func(prefix .. v, '<Nop>', opts)
+  else
+    for _, v in ipairs(T) do
+      func(prefix .. v, '<Nop>', opts)
+    end
   end
 end
 
@@ -65,8 +61,7 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
     bufnr = { bufnr, { 'number', 'nil' }, true },
   })
 
-  local Value = require('user_api.check.value')
-  if not Value.type_not_empty('table', T) then
+  if type(T) ~= 'table' then
     error("(user_api.maps.map_dict): Keys either aren't table or table is empty", ERROR)
   end
 
@@ -75,14 +70,14 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
   if not require('user_api.maps.wk').available() then
     map_func = 'keymap'
   end
-  mode = (Value.is_str(mode) and vim.list_contains(MODES, mode)) and mode or 'n'
-  has_modes = Value.is_bool(has_modes) and has_modes or false
-  bufnr = Value.is_int(bufnr) and bufnr or nil
+  mode = (mode and type(mode) == 'string' and vim.list_contains(MODES, mode)) and mode or 'n'
+  has_modes = type(has_modes) == 'boolean' and has_modes or false
+  bufnr = (bufnr and type(bufnr) == 'number') and bufnr or nil
 
   local func
   if has_modes then
-    local keymap_ran = false
     ---@cast T AllModeMaps
+    local keymap_ran = false
     for mode_choice, t in pairs(T) do
       if vim.list_contains(MODES, mode_choice) then
         if map_func == 'keymap' then
@@ -101,7 +96,7 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
           if keymap_ran then
             break
           end
-          if Value.is_str(lhs) then
+          if type(lhs) == 'string' then
             local tbl = {}
             table.insert(tbl, lhs)
             if v[1] ~= nil then
@@ -113,31 +108,31 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
             if bufnr ~= nil then
               tbl.buffer = bufnr
             end
-            if Value.is_str(v.proxy) then
+            if type(v.proxy) == 'string' then
               tbl.proxy = v.proxy
             end
-            if Value.is_str(v.group) then
+            if type(v.group) == 'string' then
               tbl.group = v.group
             end
-            if Value.is_bool(v.hidden) then
+            if type(v.hidden) == 'boolean' then
               tbl.hidden = v.hidden
             end
-            if not Value.is_tbl(v[2]) then
+            if type(v[2]) ~= 'table' then
               v[2] = {}
             end
-            if Value.is_str(v[2].desc) then
+            if type(v[2].desc) == 'string' then
               tbl.desc = v[2].desc
             end
-            if Value.is_bool(v[2].expr) then
+            if type(v[2].expr) == 'boolean' then
               tbl.expr = v[2].expr
             end
-            if Value.is_bool(v[2].noremap) then
+            if type(v[2].noremap) == 'boolean' then
               tbl.noremap = v[2].noremap
             end
-            if Value.is_bool(v[2].nowait) then
+            if type(v[2].nowait) == 'boolean' then
               tbl.nowait = v[2].nowait
             end
-            if Value.is_bool(v[2].silent) then
+            if type(v[2].silent) == 'boolean' then
               tbl.silent = v[2].silent
             end
 
@@ -149,9 +144,9 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
     return
   end
 
+  ---@cast T AllMaps
   if map_func == 'keymap' and require('user_api.maps.keymap')[mode] then
     func = require('user_api.maps.keymap')[mode] --[[@as fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)]]
-    ---@cast T AllMaps
     for lhs, v in pairs(T) do
       if v[2] and v[3] then
         func(lhs, v[2], v[3])
@@ -162,10 +157,9 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
     return
   end
 
-  ---@cast T AllMaps
   for lhs, v in pairs(T) do
     local tbl = {}
-    if Value.is_str(lhs) then
+    if type(lhs) == 'string' then
       table.insert(tbl, lhs)
       if v[1] ~= nil then
         table.insert(tbl, v[1])
@@ -176,30 +170,30 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
       if bufnr ~= nil then
         tbl.buffer = bufnr
       end
-      if Value.is_str(v.proxy) then
+      if type(v.proxy) == 'string' then
         tbl.proxy = v.proxy
       end
-      if Value.is_str(v.group) then
+      if type(v.group) == 'string' then
         tbl.group = v.group
       end
-      if Value.is_bool(v.hidden) then
+      if type(v.hidden) == 'string' then
         tbl.hidden = v.hidden
       end
 
-      if Value.is_tbl(v[2]) then
-        if Value.is_str(v[2].desc) then
+      if v[2] and type(v[2]) == 'table' then
+        if type(v[2].desc) == 'string' then
           tbl.desc = v[2].desc
         end
-        if Value.is_bool(v[2].expr) then
+        if type(v[2].expr) == 'boolean' then
           tbl.expr = v[2].expr
         end
-        if Value.is_bool(v[2].noremap) then
+        if type(v[2].noremap) == 'boolean' then
           tbl.noremap = v[2].noremap
         end
-        if Value.is_bool(v[2].nowait) then
+        if type(v[2].nowait) == 'boolean' then
           tbl.nowait = v[2].nowait
         end
-        if Value.is_bool(v[2].silent) then
+        if type(v[2].silent) == 'boolean' then
           tbl.silent = v[2].silent
         end
       end

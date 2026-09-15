@@ -16,7 +16,7 @@ return { ---@type LazySpec
       integrations = { lspconfig = true, cmp = true, coq = false },
       library = {
         { path = vim.fs.joinpath(vim.env.VIMRUNTIME, 'lua', 'vim'), words = { 'vim' } },
-        { path = '${3rd}/luv/library', words = { 'vim%.uv', 'vim%.loop' } },
+        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
         { path = 'project.nvim', mods = { 'project' } },
         { path = 'which-colorscheme.nvim', mods = { 'which-colorscheme' } },
         { path = 'shebang.nvim', mods = { 'shebang' } },
