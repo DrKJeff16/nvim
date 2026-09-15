@@ -2,19 +2,18 @@ local ERROR = vim.log.levels.ERROR
 local INFO = vim.log.levels.INFO
 local validate = require('user_api.check').validate
 
+local options, toggleable = {}, {} ---@type User.Opts.Spec, string[]
+
 ---@class User.Opts
 local M = {}
 
-local options = {} ---@type User.Opts.Spec
-local toggleable = {} ---@type string[]
-
 ---@return User.Opts.AllOpts all_opts
-function M.get_all_opts()
+local function get_all_opts()
   return require('user_api.opts.all_opts')
 end
 
 ---@return User.Opts.Spec defaults
-function M.get_defaults()
+local function get_defaults()
   return require('user_api.opts.config')
 end
 
@@ -22,9 +21,7 @@ end
 ---@param pos integer
 ---@return string[] items
 local function toggle_completer(lead, _, pos)
-  local len = lead:len()
-  local CMD_LEN = ('OptsToggle '):len() + 1
-  if len == 0 or pos < CMD_LEN then
+  if lead:len() == 0 or pos < ('OptsToggle '):len() + 1 then
     return toggleable
   end
 
@@ -39,22 +36,20 @@ end
 
 ---@param short? boolean
 ---@return string[] valid
-function M.gen_toggleable(short)
+local function gen_toggleable(short)
   validate({ short = { short, { 'boolean', 'nil' }, true } })
   if short == nil then
     short = false
   end
 
-  local valid = {} ---@type string[]
-  local T = M.get_all_opts()
-  local o_long, o_short = vim.tbl_keys(T), vim.tbl_values(T) ---@type string[], string[]
-  for _, opt in ipairs(o_long) do
+  local valid, T = {}, get_all_opts() ---@type string[], User.Opts.AllOpts
+  for _, opt in ipairs(vim.tbl_keys(T)) do
     if opt ~= '' and vim.list_contains({ 'no', 'yes', true, false }, vim.o[opt]) then
       table.insert(valid, opt)
     end
   end
   if short then
-    for _, opt in ipairs(o_short) do
+    for _, opt in ipairs(vim.tbl_values(T)) do
       if opt ~= '' and vim.list_contains({ 'no', 'yes', true, false }, vim.o[opt]) then
         table.insert(valid, opt)
       end
@@ -65,12 +60,12 @@ function M.gen_toggleable(short)
   return valid
 end
 
-toggleable = M.gen_toggleable(true)
+toggleable = gen_toggleable(true)
 
 ---@param T User.Opts.Spec
 ---@param verbose? boolean
 ---@return User.Opts.Spec parsed_opts
-function M.long_opts_convert(T, verbose)
+local function long_opts_convert(T, verbose)
   validate({
     T = { T, { 'table' } },
     verbose = { verbose, { 'boolean', 'nil' }, true },
@@ -79,27 +74,25 @@ function M.long_opts_convert(T, verbose)
     verbose = false
   end
 
-  local parsed_opts = {} ---@type User.Opts.Spec
-  local msg, verb_msg = '', ''
-  if not require('user_api.check').type_not_empty('table', T) then
+  local parsed_opts, msg, verb_msg = {}, '', '' ---@type User.Opts.Spec, string, string
+  if type(T) ~= 'table' or vim.tbl_isempty(T) then
     if verbose then
       vim.notify('(user.opts.long_opts_convert): All seems good', INFO)
     end
     return parsed_opts
   end
 
-  local ALL_OPTIONS = M.get_all_opts()
+  local ALL_OPTIONS = get_all_opts()
   local keys = vim.tbl_keys(ALL_OPTIONS) ---@type string[]
   table.sort(keys)
   for opt, val in pairs(T) do
     if vim.list_contains(keys, opt) then
       parsed_opts[opt] = val
     elseif not require('user_api.check').tbl_values({ opt }, ALL_OPTIONS) then
-      -- If neither long nor short (known) option, append to warning message
-      msg = ('%s- Option `%s` not valid!\n'):format(msg, opt)
+      msg = ('%s- Option `%s` not valid!\n'):format(msg, opt) -- If neither long nor short (known) option, append to warning message
     else
       local new_opt = require('user_api.check').tbl_values({ opt }, ALL_OPTIONS, true)
-      if require('user_api.check').is_str(new_opt) and new_opt ~= '' then
+      if type(new_opt) == 'string' and new_opt ~= '' then
         parsed_opts[new_opt] = val
         verb_msg = ('%s%s ==> %s\n'):format(verb_msg, opt, new_opt)
       else
@@ -128,23 +121,21 @@ function M.optset(O, verbose)
   if verbose == nil then
     verbose = false
   end
-  if not vim.api.nvim_get_option_value('modifiable', { buf = vim.api.nvim_get_current_buf() }) then
-    return
-  end
 
-  local msg, verb_msg = '', ''
-  local opts = M.long_opts_convert(O, verbose)
-  for k, v in pairs(opts) do
-    if type(vim.o[k]) == type(v) then
-      options[k] = v
-      vim.o[k] = options[k]
-      verb_msg = ('%s- %s: %s\n'):format(verb_msg, k, vim.inspect(v))
+  if vim.api.nvim_get_option_value('modifiable', { buf = vim.api.nvim_get_current_buf() }) then
+    local msg, verb_msg, opts = '', '', long_opts_convert(O, verbose)
+    for k, v in pairs(opts) do
+      if type(vim.o[k]) == type(v) then
+        options[k] = v
+        vim.o[k] = options[k]
+        verb_msg = ('%s- %s: %s\n'):format(verb_msg, k, vim.inspect(v))
+      end
     end
-  end
-  if msg ~= '' then
-    vim.notify(msg, ERROR)
-  elseif verbose then
-    vim.notify(verb_msg, INFO)
+    if msg ~= '' then
+      vim.notify(msg, ERROR)
+    elseif verbose then
+      vim.notify(verb_msg, INFO)
+    end
   end
 end
 
@@ -163,7 +154,7 @@ function M.set_cursor_blink()
   end
 end
 
-function M.print_set_opts()
+local function print_set_opts()
   local T = vim.deepcopy(options)
   table.sort(T)
   vim.notify(vim.inspect(T), INFO)
@@ -180,25 +171,19 @@ function M.toggle(O, verbose)
     verbose = false
   end
 
-  local Value = require('user_api.check.value')
-
-  ---@cast O string
-  if Value.is_str(O) then
-    O = { O }
+  if type(O) == 'string' then
+    O = { O } --[[@as string[]\]]
   end
 
-  ---@cast O string[]
-  if not vim.tbl_isempty(O) then
-    for _, opt in ipairs(O) do
-      if vim.list_contains(toggleable, opt) then
-        local value = vim.o[opt]
-        if Value.is_bool(value) then
-          value = not value
-        else
-          value = value == 'yes' and 'no' or 'yes'
-        end
-        M.optset({ [opt] = value }, verbose)
+  for _, opt in ipairs(O) do
+    if vim.list_contains(toggleable, opt) then
+      local value = vim.o[opt]
+      if type(value) == 'boolean' then
+        value = not value
+      else
+        value = value == 'yes' and 'no' or 'yes'
       end
+      M.optset({ [opt] = value }, verbose)
     end
   end
 end
@@ -219,7 +204,7 @@ function M.setup_cmds()
     M.toggle(cmds, ctx.bang)
   end, Commands.desc('Toggle Vim Options', true, '+', toggle_completer))
   Commands.add_command('OptsToggleable', function(ctx)
-    toggleable = M.gen_toggleable(ctx.bang)
+    toggleable = gen_toggleable(ctx.bang)
     local msg = ''
     for i, v in ipairs(toggleable) do
       msg = ('%s%s%s'):format(msg, i == 1 and '' or '\n', v)
@@ -233,7 +218,7 @@ function M.setup_maps()
   require('user_api.config.keymaps').set({
     n = {
       ['<leader>UO'] = { group = '+Options' },
-      ['<leader>UOl'] = { M.print_set_opts, desc('Print options set by `user.opts`') },
+      ['<leader>UOl'] = { print_set_opts, desc('Print options set by `user.opts`') },
       ['<leader>UOT'] = { ':OptsToggle ', desc('Prompt To Toggle Opts', { silent = false }) },
     },
   })
@@ -255,13 +240,14 @@ function M.setup(override, verbose, cursor_blink)
     cursor_blink = false
   end
 
-  if vim.tbl_isempty(options) then
-    options = M.long_opts_convert(M.get_defaults(), verbose)
-  end
-
-  local parsed_opts = M.long_opts_convert(override or {}, verbose)
-  options = vim.tbl_deep_extend('keep', parsed_opts, options) --[[@as User.Opts.Spec]]
-  M.optset(options, verbose)
+  M.optset(
+    vim.tbl_deep_extend(
+      'keep',
+      long_opts_convert(override or {}, verbose),
+      vim.tbl_isempty(options) and long_opts_convert(get_defaults(), verbose) or options
+    ),
+    verbose
+  )
 
   if cursor_blink then
     M.set_cursor_blink()
@@ -270,12 +256,14 @@ end
 
 local Opts = setmetatable(M, { ---@type User.Opts
   __index = function(self, k)
-    if require('user_api.check').module('user_api.opts.' .. k) then
-      return require('user_api.opts.' .. k)
+    local raw = rawget(self, k) or nil
+    if raw then
+      return raw
     end
-    local res = rawget(self, k)
-    if res then
-      return res
+
+    if require('user_api.check').module('user_api.opts.' .. k) then
+      rawset(self, k, require('user_api.opts.' .. k))
+      return require('user_api.opts.' .. k)
     end
     require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
   end,

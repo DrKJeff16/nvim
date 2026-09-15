@@ -211,15 +211,18 @@ end
 
 local Maps = setmetatable(M, { ---@type User.Maps
   __index = function(self, k)
+    local raw = rawget(self, k) or nil
+    if raw then
+      return raw
+    end
+
     if require('user_api.check').module('user_api.maps.' .. k) then
+      rawset(self, k, require('user_api.maps.' .. k))
       return require('user_api.maps.' .. k)
     end
     if k == 'modes' then
+      rawset(self, k, MODES)
       return MODES
-    end
-    local res = rawget(self, k)
-    if res then
-      return res
     end
     require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
   end,
