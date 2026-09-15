@@ -453,11 +453,15 @@ end
 
 return setmetatable(M, { ---@type User.Config.Keymaps
   __index = function(self, k)
-    if require('user_api.check').module('user_api.config.keymaps.' .. k) then
-      return require('user_api.config.keymaps.' .. k)
+    local raw = rawget(self, k) or nil
+    if raw then
+      return raw
     end
 
-    return rawget(self, k) or nil
+    if require('user_api.check').module('user_api.config.keymaps.' .. k) then
+      rawset(self, k, require('user_api.config.keymaps.' .. k))
+      return require('user_api.config.keymaps.' .. k)
+    end
   end,
 })
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

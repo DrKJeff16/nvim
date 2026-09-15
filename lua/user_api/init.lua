@@ -103,10 +103,15 @@ end
 
 local User = setmetatable(M, { ---@type UserAPI
   __index = function(self, k)
+    local raw = rawget(self, k) or nil
+    if raw then
+      return raw
+    end
+
     if require('user_api.check').module('user_api.' .. k) then
+      rawset(self, k, require('user_api.' .. k))
       return require('user_api.' .. k)
     end
-    return rawget(self, k)
   end,
 })
 

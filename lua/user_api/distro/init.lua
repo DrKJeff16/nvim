@@ -39,12 +39,14 @@ end
 
 local Distro = setmetatable(M, { ---@type User.Distro
   __index = function(self, k)
-    if require('user_api.check').module('user_api.distro.' .. k) then
-      return require('user_api.distro.' .. k)
+    local raw = rawget(self, k) or nil
+    if raw then
+      return raw
     end
-    local res = rawget(self, k)
-    if res then
-      return res
+
+    if require('user_api.check').module('user_api.distro.' .. k) then
+      rawset(self, k, require('user_api.distro.' .. k))
+      return require('user_api.distro.' .. k)
     end
     require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
   end,

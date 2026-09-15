@@ -552,12 +552,14 @@ end
 
 local Util = setmetatable(M, { ---@type User.Util
   __index = function(self, k)
-    if require('user_api.check').module('user_api.util.' .. k) then
-      return require('user_api.util.' .. k)
+    local raw = rawget(self, k) or nil
+    if raw then
+      return raw
     end
-    local res = rawget(self, k)
-    if res then
-      return res
+
+    if require('user_api.check').module('user_api.util.' .. k) then
+      rawset(self, k, require('user_api.util.' .. k))
+      return require('user_api.util.' .. k)
     end
     require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
   end,

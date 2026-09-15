@@ -8,9 +8,8 @@ local function strip_slash(path, mod)
     path = { path, { 'string' } },
     mod = { mod, { 'string', 'nil' }, true },
   })
-  mod = mod or ':p'
 
-  path = vim.fn.fnamemodify(path, mod)
+  path = vim.fn.fnamemodify(path, mod or ':p')
   while vim.startswith(path:reverse(), '/') do
     path = path:sub(1, path:len() - 1)
   end
@@ -66,20 +65,22 @@ local Check = setmetatable(M, { ---@type User.Check
   ---@param k integer|string
   ---@return any value
   __index = function(self, k)
+    local raw = rawget(self, k) or nil
+    if raw then
+      return raw
+    end
     if require('user_api.check.exists').module('user_api.check.' .. k) then
+      rawset(self, k, require('user_api.check.' .. k))
       return require('user_api.check.' .. k)
     end
     if require('user_api.check.value')[k] then
+      rawset(self, k, require('user_api.check.value')[k])
       return require('user_api.check.value')[k]
     end
     if require('user_api.check.exists')[k] then
+      rawset(self, k, require('user_api.check.exists')[k])
       return require('user_api.check.exists')[k]
     end
-    local res = rawget(self, k)
-    if res then
-      return res
-    end
-
     require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
   end,
 })
