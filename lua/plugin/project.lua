@@ -47,6 +47,7 @@ return { ---@type LazySpec
       show_hidden = false,
       silent_chdir = true,
       snacks = { enabled = true, opts = { layout = 'vscode', show = 'names', sort = 'newest' }, show = 'names' },
+      spinner = { enabled = true },
       telescope = { prefer_file_browser = true, sort = 'newest', tilde = true },
     })
 
