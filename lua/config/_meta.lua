@@ -27,6 +27,7 @@
 ---@field colorschemes? LazySpecImport
 ---@field conform? LazySpecImport
 ---@field copy_python_path? LazySpecImport
+---@field csvview? LazySpecImport
 ---@field data? LazySpecImport
 ---@field diffview? LazySpecImport
 ---@field dooku? LazySpecImport
@@ -190,6 +191,7 @@
 ---@field colorschemes? boolean
 ---@field conform? boolean
 ---@field copy_python_path? boolean
+---@field csvview? boolean
 ---@field data? boolean
 ---@field diffview? boolean
 ---@field dooku? boolean
