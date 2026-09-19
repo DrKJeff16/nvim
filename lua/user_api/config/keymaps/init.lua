@@ -397,20 +397,24 @@ function M.delete(K, bufnr)
 end
 
 ---@param new_keys AllModeMaps
----@param bufnr? integer
----@param defaults? boolean
-function M.set(new_keys, bufnr, defaults)
+---@param opts? { bufnr?: integer, defaults?: boolean }
+function M.set(new_keys, opts)
   validate({
     new_keys = { new_keys, { 'table' } },
-    bufnr = { bufnr, { 'number', 'nil' }, true },
-    defaults = { defaults, { 'boolean', 'nil' }, true },
+    opts = { opts, { 'table', 'nil' }, true },
   })
   if vim.tbl_isempty(new_keys) then
     return
   end
-  bufnr = bufnr or nil
-  if defaults == nil then
-    defaults = false
+
+  opts = opts or {}
+  validate({
+    ['opts.bufnr'] = { opts.bufnr, { 'number', 'nil' }, true },
+    ['opts.defaults'] = { opts.defaults, { 'boolean', 'nil' }, true },
+  })
+  opts.bufnr = opts.bufnr or nil
+  if opts.defaults == nil then
+    opts.defaults = false
   end
   if not leader_set then
     vim.notify('`keymaps.set_leader()` not called!', vim.log.levels.WARN)
@@ -440,15 +444,12 @@ function M.set(new_keys, bufnr, defaults)
     end
   end
 
-  no_oped = true
-  keys = vim.tbl_deep_extend('keep', parsed_keys, keys) --[[@as AllModeMaps]]
+  no_oped, keys = true, vim.tbl_deep_extend('keep', parsed_keys, keys)
 
-  local keymaps = vim.deepcopy(parsed_keys)
-  if defaults and not defaults_mapped then
-    keymaps = vim.deepcopy(keys)
-    defaults_mapped = true
+  if opts.defaults and not defaults_mapped then
+    parsed_keys, defaults_mapped = vim.deepcopy(keys), true
   end
-  require('user_api.maps').map_dict(keymaps, 'wk.register', true, nil, bufnr)
+  require('user_api.maps').map_dict(parsed_keys, 'wk.register', true, nil, opts.bufnr)
 end
 
 return setmetatable(M, { ---@type User.Config.Keymaps

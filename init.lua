@@ -4,8 +4,8 @@ local Config = require('config')
 
 ---@param ... any
 function _G.notify_inspect(...)
-  local nargs, i, txt = select('#', ...), 1, '' ---@type integer, integer, string
-  while i <= nargs do
+  local i, txt = 1, '' ---@type integer, string
+  while i <= select('#', ...) do
     local selection = select(i, ...)
     if not vim.list_contains({ 'string', 'number', 'boolean', 'nil' }, type(selection)) then
       selection = vim.inspect(selection)
@@ -245,7 +245,7 @@ Config.lazy.setup({
 User.config.keymaps.set({
   n = { ['<C-/>'] = { ':silent! normal gcc<CR><Up>', User.maps.desc('Toggle Comment') } },
   v = { ['<C-/>'] = { ":'<,'>normal gcc<CR><Up>", User.maps.desc('Toggle Comment') } },
-}, nil, true)
+}, { defaults = true })
 
 -- Initialize the User API
 User.setup()
