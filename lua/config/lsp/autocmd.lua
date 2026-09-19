@@ -55,15 +55,13 @@ end
 
 local function server_info()
   local client = get_client()
-  if not client then
-    return
+  if client then
+    local config = vim.deepcopy(client[1].config)
+    config.capabilities = nil
+
+    table.sort(config)
+    vim.notify(vim.inspect(config))
   end
-
-  local config = vim.deepcopy(client[1].config)
-  config.capabilities = nil
-
-  table.sort(config)
-  vim.print(config)
 end
 
 ---@class Lsp.SubMods.Autocmd
