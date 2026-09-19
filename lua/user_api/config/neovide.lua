@@ -1,6 +1,3 @@
-local INFO = vim.log.levels.INFO
-local validate = require('user_api.check').validate
-
 ---Helper function for transparency formatting.
 --- ---
 ---@return string alpha_str
@@ -49,21 +46,15 @@ local g_opts = {
 local o_opts = { guifont = 'FiraCode Nerd Font Mono:h19', linespace = 0 }
 
 ---@class User.Config.Neovide
----@field g_opts table<string, any>
 ---@field active boolean
 local M = {}
-
-M.g_opts = {}
-M.active = false
 
 ---@return Config.Neovide.Opts defaults
 function M.get_defaults()
   ---@class Config.Neovide.Opts
   ---@field g Config.Neovide.Opts.G
   ---@field o Config.Neovide.Opts.O
-  local defaults = { g = g_opts, o = o_opts }
-
-  return defaults
+  return { g = g_opts, o = o_opts }
 end
 
 ---@return boolean active
@@ -74,8 +65,8 @@ end
 ---@param opacity? number
 ---@param transparency? number
 ---@param bg? string
-function M.set_transparency(opacity, transparency, bg)
-  validate({
+local function set_transparency(opacity, transparency, bg)
+  require('user_api.check').validate({
     opacity = { opacity, { 'number', 'nil' }, true },
     transparency = { transparency, { 'number', 'nil' }, true },
     bg = { bg, { 'string', 'nil' }, true },
@@ -93,15 +84,15 @@ function M.set_transparency(opacity, transparency, bg)
     bg = ((bg:len() ~= 7 and bg:len() ~= 9) and '#0f1117' or bg) .. alpha()
   end
 
-  M.g_opts.neovide_opacity = opacity
-  M.g_opts.transparency = transparency
-  M.g_opts.neovide_background_color = bg
+  g_opts.neovide_opacity = opacity
+  g_opts.transparency = transparency
+  g_opts.neovide_background_color = bg
 end
 
 ---@param O any[]
 ---@param pfx string
-function M.parse_g_opts(O, pfx)
-  validate({
+local function parse_g_opts(O, pfx)
+  require('user_api.check').validate({
     O = { O, { 'table' } },
     pfx = { pfx, { 'string' } },
   })
@@ -110,9 +101,9 @@ function M.parse_g_opts(O, pfx)
   for k, v in ipairs(O) do
     local key = pfx .. k
     if require('user_api.check.value').is_tbl(v) then
-      M.parse_g_opts(v, key .. '_')
+      parse_g_opts(v, key .. '_')
     else
-      M.g_opts[key] = v
+      g_opts[key] = v
     end
   end
 end
@@ -124,7 +115,7 @@ function M.setup_maps()
         ['<leader>n'] = { group = '+Neovide' },
         ['<leader>nV'] = {
           function()
-            vim.notify(('Neovide v%s'):format(vim.g.neovide_version), INFO)
+            vim.notify(('Neovide v%s'):format(vim.g.neovide_version), vim.log.levels.INFO)
           end,
           require('user_api.maps').desc('Show Neovide Version'),
         },
@@ -137,7 +128,7 @@ end
 ---@param transparent? boolean
 ---@param verbose? boolean
 function M.setup(T, transparent, verbose)
-  validate({
+  require('user_api.check').validate({
     T = { T, { 'table', 'nil' }, true },
     transparent = { transparent, { 'boolean', 'nil' }, true },
     verbose = { verbose, { 'boolean', 'nil' }, true },
@@ -159,11 +150,11 @@ function M.setup(T, transparent, verbose)
     vim.o[o] = v
   end
 
-  M.g_opts = {}
+  g_opts = {}
   T = vim.tbl_deep_extend('keep', T, Defaults.g)
-  M.parse_g_opts(T, 'neovide_')
+  parse_g_opts(T, 'neovide_')
   if transparent then
-    M.set_transparency()
+    set_transparency()
   end
 
   local ime_input = vim.api.nvim_create_augroup('ime_input', { clear = true })
@@ -177,12 +168,12 @@ function M.setup(T, transparent, verbose)
     pattern = '[/\\?]',
     callback = set_ime,
   })
-  for k, v in pairs(M.g_opts) do
+  for k, v in pairs(g_opts) do
     vim.g[k] = v
   end
 
   if verbose then
-    vim.notify(vim.inspect(M.g_opts), INFO)
+    vim.notify(vim.inspect(g_opts), vim.log.levels.INFO)
   end
   M.setup_maps()
 end
