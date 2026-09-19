@@ -67,7 +67,7 @@ return { ---@type LazySpec
           },
           o = { ih = { ':<C-U>Gitsigns select_hunk<CR>' } },
           x = { ih = { ':<C-U>Gitsigns select_hunk<CR>' } },
-        }, bufnr)
+        }, { bufnr = bufnr })
       end,
       signs = {
         add = { text = '+' },

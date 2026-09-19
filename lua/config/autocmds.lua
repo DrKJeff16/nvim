@@ -71,7 +71,7 @@ function M.setup()
                 desc(('Format With `%s`'):format(is_lua and 'stylua' or 'isort'), { buf = ev.buf }),
               },
             },
-          }, ev.buf)
+          }, { bufnr = ev.buf })
         end,
       },
       {
