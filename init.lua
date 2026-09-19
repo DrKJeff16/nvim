@@ -211,7 +211,7 @@ Config.lazy.setup({
   smart_paste = true,
   smoothcursor = false,
   snacks = true,
-  startuptime = false,
+  startuptime = true,
   styler = false,
   stylua = false,
   syntax_codeowners = true,
