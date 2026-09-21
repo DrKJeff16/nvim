@@ -262,8 +262,7 @@ local Opts = setmetatable(M, { ---@type User.Opts
     end
 
     if require('user_api.check').module('user_api.opts.' .. k) then
-      rawset(self, k, require('user_api.opts.' .. k))
-      return require('user_api.opts.' .. k)
+      return require('user_api.util').rawset(self, k, require('user_api.opts.' .. k))
     end
     require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
   end,

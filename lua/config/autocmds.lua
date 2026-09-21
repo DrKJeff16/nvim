@@ -89,7 +89,10 @@ function M.setup()
             vim.cmd.noh()
             vim.cmd.wincmd('=')
 
-            User.config.keymaps.set({ n = { q = { vim.cmd.helpclose, desc('Quit Help', { buf = ev.buf }) } } }, ev.buf)
+            User.config.keymaps.set(
+              { n = { q = { vim.cmd.helpclose, desc('Quit Help', { buf = ev.buf }) } } },
+              { bufnr = ev.buf }
+            )
           end
         end,
       },
@@ -110,12 +113,12 @@ function M.setup()
             n = {
               q = {
                 function()
-                  vim.api.nvim_cmd({ cmd = 'bdelete', range = { ev.buf }, bang = true }, { output = false })
+                  vim.cmd.bdelete({ range = { ev.buf }, bang = true })
                 end,
                 desc('Quit Buffer', { buf = ev.buf }),
               },
             },
-          }, ev.buf)
+          }, { bufnr = ev.buf })
         end,
       },
     },

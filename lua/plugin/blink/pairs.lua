@@ -4,7 +4,7 @@ return { ---@type LazySpec
   'saghen/blink.pairs',
   version = false,
   dependencies = { 'saghen/blink.lib' },
-  cond = require('user_api').check.executable('cargo'),
+  cond = require('user_api').check.executable('cargo') and vim.fn.has('nvim-0.12') == 1,
   build = function()
     require('blink.pairs').build({ force = true }):pwait(60000)
   end,

@@ -8,9 +8,10 @@ return { ---@type LazySpec
   config = function()
     require('lazydev').setup({
       enabled = function(root_dir) ---@param root_dir string
+        local uv = vim.uv or vim.loop
         return not (
-          vim.uv.fs_stat(vim.fs.joinpath(root_dir, '.luarc.json'))
-          or vim.uv.fs_stat(vim.fs.joinpath(root_dir, 'luarc.json'))
+          uv.fs_stat(vim.fs.joinpath(root_dir, '.luarc.json'))
+          or uv.fs_stat(vim.fs.joinpath(root_dir, 'luarc.json'))
         )
       end,
       integrations = { lspconfig = true, cmp = true, coq = false },

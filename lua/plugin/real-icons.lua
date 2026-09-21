@@ -4,6 +4,7 @@ return { ---@type LazySpec
   dev = true,
   version = false,
   build = ':RealIcons install',
+  cond = vim.fn.has('nvim-0.12') == 1,
   config = function()
     require('real-icons').setup({
       integrations = {

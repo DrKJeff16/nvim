@@ -18,6 +18,7 @@ return { ---@type LazySpec
     'OliverChao/telescope-picker-list.nvim',
     'nvim-telescope/telescope-file-browser.nvim',
   },
+  cond = vim.fn.has('nvim-0.12') == 1,
   config = function()
     local Actions = require('telescope.actions')
     local exists = require('user_api').check.module

@@ -202,7 +202,7 @@ return { ---@type LazySpec
   'saghen/blink.cmp',
   event = 'InsertEnter',
   version = false,
-  cond = User.check.executable('cargo'),
+  cond = User.check.executable('cargo') and vim.fn.has('nvim-0.12') == 1,
   dependencies = {
     'saghen/blink.lib',
     'onsails/lspkind.nvim',

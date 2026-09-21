@@ -9,8 +9,7 @@ local M = setmetatable({}, {
     end
 
     if require('user_api.check').module('user_api.config.' .. k) then
-      rawset(self, k, require('user_api.config.' .. k))
-      return require('user_api.config.' .. k)
+      return require('user_api.util').rawset(self, k, require('user_api.config.' .. k))
     end
     require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
   end,

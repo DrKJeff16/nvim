@@ -9,21 +9,12 @@ return { ---@type LazySpec
     'nvim-tree/nvim-web-devicons',
     'saifulapm/neotree-file-nesting-config',
     {
-      'Crysthamus/nvim-file-operations',
+      'antosha417/nvim-lsp-file-operations',
       dev = true,
+      version = false,
+      dependencies = { { 'DrKJeff16/plenary.nvim', dev = true } },
       config = function()
-        require('nvim-file-operations').setup({
-          auto_save = false,
-          operations = {
-            didCreateFiles = true,
-            didDeleteFiles = true,
-            didRenameFiles = true,
-            willCreateFiles = true,
-            willDeleteFiles = true,
-            willRenameFiles = true,
-          },
-          timeout_ms = 10000,
-        })
+        require('lsp-file-operations').setup()
       end,
     },
     { 'mrbjarksen/neo-tree-diagnostics.nvim', main = 'neo-tree.sources.diagnostics' },

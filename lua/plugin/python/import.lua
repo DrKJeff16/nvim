@@ -33,7 +33,7 @@ return { ---@type LazySpec
             },
             ['<M-\\>'] = { Api.add_import_current_selection_and_notify, desc('Add Python Import', { buf = ev.buf }) },
           },
-        }, ev.buf)
+        }, { bufnr = ev.buf })
       end,
     })
   end,

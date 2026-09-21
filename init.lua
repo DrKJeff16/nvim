@@ -20,7 +20,7 @@ end
 vim.g.loaded_perl_provider = 0
 
 User.config.keymaps.set_leader('<Space>')
-User.opts.setup({
+require('user_api.opts').setup({
   -- clipboard = 'unnamedplus', -- Uncomment to use system clipboard
   autoindent = true,
   autoread = true,
@@ -105,6 +105,7 @@ Config.lazy.setup({
   colorschemes = true,
   conform = true,
   copy_python_path = false,
+  data = false,
   diffview = false,
   dooku = false,
   doxygen = false,
@@ -149,7 +150,7 @@ Config.lazy.setup({
   lualine = true,
   luaref = true,
   markdoc = false,
-  markdown = true,
+  markdown = false,
   markdown_follow_md_links = false,
   markdown_mdview = false,
   markdown_outline = false,
@@ -266,12 +267,12 @@ Config.colorschemes('tokyonight')
 -- Config.colorschemes('tokyodark')
 -- Config.colorschemes('spaceduck')
 
-if vim.fn.has('nvim-0.11') == 1 then
+if vim.fn.has('nvim-0.12') == 1 then
   vim.cmd.packadd('nohlsearch')
-  vim.cmd.packadd('nvim.difftool')
 end
 
 if vim.fn.has('nvim-0.12') == 1 then
+  vim.cmd.packadd('nvim.difftool')
   vim.cmd.packadd('nvim.undotree')
 
   -- require('vim._core.ui2').enable({

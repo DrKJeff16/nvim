@@ -102,7 +102,7 @@ return { ---@type LazySpec
         ['<leader>cw'] = { group = "+'WARNING'" },
         ['<leader>cT'] = {
           function()
-            vim.cmd.TodoTelescope({ args = { 'keywords=TODO,FIX', ('cwd=%s'):format(vim.uv.cwd()) } })
+            vim.cmd.TodoTelescope({ args = { 'keywords=TODO,FIX', ('cwd=%s'):format((vim.uv or vim.loop).cwd()) } })
           end,
           desc('Open TODO Telescope'),
         },

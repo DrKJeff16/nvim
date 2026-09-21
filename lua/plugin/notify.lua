@@ -2,7 +2,7 @@
 return { ---@type LazySpec
   'rcarriga/nvim-notify',
   lazy = false,
-  priority = 1000,
+  event = 'VeryLazy',
   version = false,
   dependencies = { { 'DrKJeff16/plenary.nvim', dev = true } },
   cond = not require('user_api').check.in_console(),
@@ -23,7 +23,7 @@ return { ---@type LazySpec
     })
     vim.notify = Notify
 
-    if require('user_api').check.module('telescope') then
+    if require('user_api').check.module('telescope.init') then
       require('telescope').load_extension('notify')
 
       local desc = require('user_api').maps.desc

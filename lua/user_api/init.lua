@@ -112,8 +112,7 @@ local User = setmetatable(M, { ---@type UserAPI
     end
 
     if require('user_api.check').module('user_api.' .. k) then
-      rawset(self, k, require('user_api.' .. k))
-      return require('user_api.' .. k)
+      return require('user_api.util').rawset(self, k, require('user_api.' .. k))
     end
   end,
 })

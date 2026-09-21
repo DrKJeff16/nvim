@@ -45,8 +45,7 @@ local Distro = setmetatable(M, { ---@type User.Distro
     end
 
     if require('user_api.check').module('user_api.distro.' .. k) then
-      rawset(self, k, require('user_api.distro.' .. k))
-      return require('user_api.distro.' .. k)
+      return require('user_api.util').rawset(self, k, require('user_api.distro.' .. k))
     end
     require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
   end,

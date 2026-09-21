@@ -40,22 +40,9 @@ local function on_init(client)
       showWord = 'Fallback',
       workspaceWord = true,
     },
-    diagnostics = {
-      enable = true,
-      globals = { 'vim' },
-      libraryFiles = 'Disable',
-      workspaceEvent = 'OnChange',
-    },
-    runtime = {
-      version = 'LuaJIT',
-      path = {
-        'lua/?.lua',
-        'lua/?/init.lua',
-        vim.fs.joinpath(vim.env.VIMRUNTIME, 'lua/?.lua'),
-        vim.fs.joinpath(vim.env.VIMRUNTIME, 'lua/?/init.lua'),
-      },
-    },
-    workspace = { checkThirdParty = false, useGitIgnore = true, library = library },
+    diagnostics = { enable = true, globals = { 'vim' }, libraryFiles = 'Disable', workspaceEvent = 'OnChange' },
+    runtime = { path = { 'lua/?.lua', 'lua/?/init.lua' }, version = 'LuaJIT' },
+    workspace = { checkThirdParty = false, library = library, useGitIgnore = true },
   })
 end
 

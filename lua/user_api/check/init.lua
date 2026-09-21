@@ -27,7 +27,7 @@ local M = {}
 --- ---
 ---@return boolean is_root
 function M.is_root()
-  return vim.uv.getuid() == 0
+  return (vim.uv or vim.loop).getuid() == 0
 end
 
 ---Check whether Neovim is running in a Windows environment.
@@ -71,16 +71,13 @@ local Check = setmetatable(M, { ---@type User.Check
     end
 
     if require('user_api.check.exists').module('user_api.check.' .. k) then
-      rawset(self, k, require('user_api.check.' .. k))
-      return require('user_api.check.' .. k)
+      return require('user_api.util').rawset(self, k, require('user_api.check.' .. k))
     end
     if require('user_api.check.value')[k] then
-      rawset(self, k, require('user_api.check.value')[k])
-      return require('user_api.check.value')[k]
+      return require('user_api.util').rawset(self, k, require('user_api.check.value')[k])
     end
     if require('user_api.check.exists')[k] then
-      rawset(self, k, require('user_api.check.exists')[k])
-      return require('user_api.check.exists')[k]
+      return require('user_api.util').rawset(self, k, require('user_api.check.exists')[k])
     end
     require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
   end,

@@ -460,8 +460,7 @@ return setmetatable(M, { ---@type User.Config.Keymaps
     end
 
     if require('user_api.check').module('user_api.config.keymaps.' .. k) then
-      rawset(self, k, require('user_api.config.keymaps.' .. k))
-      return require('user_api.config.keymaps.' .. k)
+      return require('user_api.util').rawset(self, k, require('user_api.config.keymaps.' .. k))
     end
   end,
 })

@@ -26,7 +26,7 @@ local function set_terminal_keys(ev)
       ['<C-w>'] = { '<C-\\><C-n><C-w>w', desc('Switch Window', { buf = bufnr }) },
       ['<Esc>'] = { '<C-\\><C-n>', desc('Escape Terminal', { buf = bufnr }) },
     },
-  }, bufnr)
+  }, { bufnr = bufnr })
 end
 
 return { ---@type LazySpec

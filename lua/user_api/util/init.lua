@@ -1,6 +1,4 @@
-local ERROR = vim.log.levels.ERROR
-local curr_buf = vim.api.nvim_get_current_buf
-local validate = require('user_api.check').validate
+local validate = require('user_api.check.exists').validate
 
 ---@class User.Util
 ---@field autocmd User.Util.Autocmd
@@ -81,22 +79,22 @@ function M.optget(option, param, param_value)
   })
   param = param or 'buf'
   if not vim.list_contains({ 'scope', 'ft', 'buf', 'win' }, param) then
-    error(('Bad parameter: `%s`\nCan only accept `scope`, `ft`, `buf` or `win`!'):format(vim.inspect(param)), ERROR)
+    error(('Bad parameter: `%s`\nCan only accept `scope`, `ft`, `buf` or `win`!'):format(vim.inspect(param)))
   end
   if param == 'scope' then
     param_value = param_value or 'local'
     if not vim.list_contains({ 'global', 'local' }, param_value) then
-      error(('Bad param value `%s`\nCan only accept `global` or `local`!'):format(vim.inspect(param_value)), ERROR)
+      error(('Bad param value `%s`\nCan only accept `global` or `local`!'):format(vim.inspect(param_value)))
     end
   end
   if param == 'ft' and (not param_value or type(param_value) ~= 'string') then
-    error('Missing/bad value for `ft` parameter!', ERROR)
+    error('Missing/bad value for `ft` parameter!')
   end
   if
     vim.list_contains({ 'win', 'buf' }, param)
     and not (param_value and type(param_value) == 'number' and require('user_api.check').is_int(param_value))
   then
-    error('Missing/bad value for `win`/`buf` parameter!', ERROR)
+    error('Missing/bad value for `win`/`buf` parameter!')
   end
 
   if type(option) == 'string' then
@@ -107,7 +105,7 @@ function M.optget(option, param, param_value)
   for _, opt in ipairs(option) do
     local ok, res = pcall(vim.api.nvim_get_option_value, opt, { [param] = param_value })
     if not (ok and res) then
-      error(('Invalid option: `%s`'):format(opt), ERROR)
+      error(('Invalid option: `%s`'):format(opt))
     end
     values[opt] = res
   end
@@ -116,9 +114,13 @@ function M.optget(option, param, param_value)
 end
 
 ---@overload fun(option: string, value: any)
+---@overload fun(option: table<string, any>)
 ---@overload fun(option: string, value: any, param: 'scope', param_value: 'local'|'global')
 ---@overload fun(option: string, value: any, param: 'ft', param_value: string)
 ---@overload fun(option: string, value: any, param: 'buf'|'win', param_value: integer)
+---@overload fun(option: table<string, any>, value: nil, param: 'scope', param_value: 'local'|'global')
+---@overload fun(option: table<string, any>, value: nil, param: 'ft', param_value: string)
+---@overload fun(option: table<string, any>, value: nil, param: 'buf'|'win', param_value: integer)
 function M.optset(option, value, param, param_value)
   validate({
     option = { option, { 'string', 'table' } },
@@ -126,27 +128,27 @@ function M.optset(option, value, param, param_value)
     param_value = { param_value, { 'string', 'number', 'nil' }, true },
   })
   if type(option) == 'table' and value ~= nil then
-    error('Bad option value spec!', ERROR)
+    error('Bad option value spec!')
   end
   param = param or 'buf'
   if not vim.list_contains({ 'scope', 'ft', 'buf', 'win' }, param) then
-    error(('Bad parameter: `%s`\nCan only accept `scope`, `ft`, `buf` or `win`!'):format(vim.inspect(param)), ERROR)
+    error(('Bad parameter: `%s`\nCan only accept `scope`, `ft`, `buf` or `win`!'):format(vim.inspect(param)))
   end
   if param == 'scope' then
     ---@cast param_value 'global'|'local'
     param_value = param_value or 'local'
     if not vim.list_contains({ 'global', 'local' }, param_value) then
-      error(('Bad param value `%s`\nCan only accept `global` or `local`!'):format(vim.inspect(param_value)), ERROR)
+      error(('Bad param value `%s`\nCan only accept `global` or `local`!'):format(vim.inspect(param_value)))
     end
   end
   if param == 'ft' and (not param_value or type(param_value) ~= 'string') then
-    error('Missing/bad value for `ft` parameter!', ERROR)
+    error('Missing/bad value for `ft` parameter!')
   end
   if
     vim.list_contains({ 'win', 'buf' }, param)
     and not (param_value and type(param_value) == 'number' and require('user_api.check').is_int(param_value))
   then
-    error('Missing/bad value for `win`/`buf` parameter!', ERROR)
+    error('Missing/bad value for `win`/`buf` parameter!')
   end
 
   if type(option) == 'string' then
@@ -286,7 +288,7 @@ function M.get_opts_tbl(s, bufnr)
     s = { s, { 'string', 'table' } },
     bufnr = { bufnr, { 'number', 'nil' }, true },
   })
-  bufnr = bufnr or curr_buf()
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
 
   local res = {} ---@type table<string, any>
   if type(s) == 'string' then
@@ -401,7 +403,7 @@ function M.strip_values(T, values, max_instances)
   })
 
   if vim.tbl_isempty(T) or vim.tbl_isempty(values) then
-    error('(user_api.util.strip_values): Empty tables as args!', ERROR)
+    error('(user_api.util.strip_values): Empty tables as args!')
   end
 
   max_instances = max_instances or 0
@@ -435,7 +437,7 @@ function M.ft_set(s, bufnr)
   })
 
   return function()
-    vim.api.nvim_set_option_value('filetype', s or '', { buf = bufnr or curr_buf() })
+    vim.api.nvim_set_option_value('filetype', s or '', { buf = bufnr or vim.api.nvim_get_current_buf() })
   end
 end
 
@@ -444,7 +446,7 @@ end
 function M.bt_get(bufnr)
   validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
 
-  return vim.api.nvim_get_option_value('buftype', { buf = bufnr or curr_buf() })
+  return vim.api.nvim_get_option_value('buftype', { buf = bufnr or vim.api.nvim_get_current_buf() })
 end
 
 ---@param bufnr? integer
@@ -452,7 +454,7 @@ end
 function M.ft_get(bufnr)
   validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
 
-  return vim.api.nvim_get_option_value('filetype', { buf = bufnr or curr_buf() })
+  return vim.api.nvim_get_option_value('filetype', { buf = bufnr or vim.api.nvim_get_current_buf() })
 end
 
 ---@generic T, V
@@ -504,7 +506,7 @@ end
 ---@overload fun(data: string[]): res: string[]
 function M.discard_dups(data)
   if type(data) ~= 'string' and type(data) ~= 'table' then
-    vim.notify('Input is not valid!', ERROR, {
+    vim.notify('Input is not valid!', vim.log.levels.ERROR, {
       animate = true,
       hide_from_history = false,
       timeout = 2750,
@@ -541,13 +543,23 @@ end
 function M.reverse_tbl(T)
   validate({ T = { T, { 'table' } } })
   if vim.tbl_isempty(T) then
-    error('(user_api.util.reverse_tbl): Empty table!', ERROR)
+    error('(user_api.util.reverse_tbl): Empty table!')
   end
 
   for i = 1, math.floor(#T / 2), 1 do
     T[i], T[#T - i + 1] = T[#T - i + 1], T[i]
   end
   return T
+end
+
+---@generic T: table, V
+---@param t T
+---@param k string|integer
+---@param v V
+---@return V v
+function M.rawset(t, k, v)
+  rawset(t, k, v)
+  return v
 end
 
 local Util = setmetatable(M, { ---@type User.Util
@@ -557,9 +569,8 @@ local Util = setmetatable(M, { ---@type User.Util
       return raw
     end
 
-    if require('user_api.check').module('user_api.util.' .. k) then
-      rawset(self, k, require('user_api.util.' .. k))
-      return require('user_api.util.' .. k)
+    if require('user_api.check.exists').module('user_api.util.' .. k) then
+      return M.rawset(self, k, require('user_api.util.' .. k))
     end
     require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
   end,

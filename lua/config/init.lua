@@ -12,8 +12,7 @@ local M = setmetatable({}, {
     end
 
     if require('user_api').check.module('config.' .. k) then
-      rawset(self, k, require('config.' .. k))
-      return require('config.' .. k)
+      return require('user_api').util.rawset(self, k, require('config.' .. k))
     end
   end,
 })

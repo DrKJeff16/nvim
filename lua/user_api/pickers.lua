@@ -82,7 +82,7 @@ function M.setup(verbose)
           require('snacks.picker').pickers({
             auto_close = true,
             auto_confirm = false,
-            cwd = vim.uv.cwd() or vim.fn.getcwd(),
+            cwd = (vim.uv or vim.loop).cwd() or vim.fn.getcwd(),
             enter = true,
             focus = 'list',
             show_empty = false,
