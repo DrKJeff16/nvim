@@ -36,6 +36,7 @@
 ---@field drop? LazySpecImport
 ---@field dropbar? LazySpecImport
 ---@field echo? LazySpecImport
+---@field firenvim? LazySpecImport
 ---@field flash? LazySpecImport
 ---@field fff? LazySpecImport
 ---@field focus? LazySpecImport
@@ -200,6 +201,7 @@
 ---@field drop? boolean
 ---@field dropbar? boolean
 ---@field echo? boolean
+---@field firenvim? boolean
 ---@field flash? boolean
 ---@field fff? boolean
 ---@field focus? boolean

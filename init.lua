@@ -114,6 +114,7 @@ Config.lazy.setup({
   dropbar = false,
   echo = false,
   fff = false,
+  firenvim = true,
   flash = false,
   focus = true,
   fzf_lua = true,
@@ -285,4 +286,5 @@ if vim.fn.has('nvim-0.12') == 1 then
 end
 
 Config.lsp.setup()
+
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:
