@@ -12,7 +12,6 @@ return { ---@type LazySpec
       'antosha417/nvim-lsp-file-operations',
       dev = true,
       version = false,
-      dependencies = { { 'DrKJeff16/plenary.nvim', dev = true } },
       config = function()
         require('lsp-file-operations').setup()
       end,
