@@ -187,13 +187,12 @@ return { ---@type LazySpec[]
     end,
   },
   {
-    'darianmorat/gruvdark.nvim',
+    'darianmorat/shibumi.nvim',
     lazy = false,
     priority = 1000,
     version = false,
-    cond = not require('user_api').check.in_console(),
     config = function()
-      require('gruvdark').setup({ colors = {}, highlights = {}, transparent = false })
+      require('shibumi').setup({ colors = {}, highlights = {}, transparent = false })
     end,
   },
   {
