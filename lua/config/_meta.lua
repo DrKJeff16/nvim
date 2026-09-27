@@ -81,6 +81,7 @@
 ---@field markdown_outline? LazySpecImport
 ---@field markdown_pipetable? LazySpecImport
 ---@field markdown_render? LazySpecImport
+---@field markdown_toc? LazySpecImport
 ---@field mason? LazySpecImport
 ---@field match? LazySpecImport
 ---@field migrate? LazySpecImport
@@ -247,6 +248,7 @@
 ---@field markdown_outline? boolean
 ---@field markdown_pipetable? boolean
 ---@field markdown_render? boolean
+---@field markdown_toc? boolean
 ---@field mason? boolean
 ---@field match? boolean
 ---@field migrate? boolean
