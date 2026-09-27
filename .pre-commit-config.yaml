@@ -12,12 +12,14 @@ repos:
         name: StyLua
         language: system
         entry: stylua
-        types: [lua]
+        types:
+          - lua
         verbose: true
       - id: selene
         name: Selene
         language: system
         entry: selene
-        types: [lua]
+        types:
+          - lua
         verbose: true
 # vim: set ts=2 sts=2 sw=2 et ai si sta:
