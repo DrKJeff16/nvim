@@ -13,7 +13,7 @@ return { ---@type LazySpec
       dev = true,
       version = false,
       config = function()
-        require('lsp-file-operations').setup()
+        require('lsp-file-operations').setup({ auto_save = true })
       end,
     },
     { 'mrbjarksen/neo-tree-diagnostics.nvim', main = 'neo-tree.sources.diagnostics' },
