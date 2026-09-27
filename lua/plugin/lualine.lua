@@ -29,6 +29,7 @@
 ---@field right string
 
 ---@class LuaLine.Components.Spec
+---@field [1] string|fun(): component: string
 ---@field color? vim.api.keyset.highlight|string
 ---@field cond? function
 ---@field draw_empty? boolean
@@ -303,8 +304,13 @@ return { ---@type LazySpec
   config = function()
     ---@class LuaLine.Presets
     local Presets = {
-      components = { ---@type LuaLine.ComponentsDict|table<string, LuaLine.Components.Spec>
+      components = { ---@type LuaLine.ComponentsDict|table<string, LuaLine.Components.Spec|fun(): component: string>
         branch = { 'branch' },
+        battery = not exists('battery') and nil or {
+          function()
+            return require('battery').get_status_line()
+          end,
+        },
         buffers = {
           'buffers',
           buffers_color = { active = 'lualine_c_normal', inactive = 'lualine_c_inactive' },
@@ -431,7 +437,7 @@ return { ---@type LazySpec
       lualine_c = { Presets.components.diagnostics, Presets.components.diff },
       lualine_x = { Presets.components.triforce, Presets.components.fileformat, Presets.components.filetype },
       lualine_y = { Presets.components.progress },
-      lualine_z = { Presets.components.location },
+      lualine_z = { Presets.components.location, Presets.components.battery },
     }
     Presets.default_inactive = {
       lualine_a = {},
