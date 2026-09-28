@@ -4,6 +4,7 @@ return { ---@type LazySpec
   dev = true,
   versian = false,
   ft = { 'markdown' },
+  cmd = { 'GenerateTOC', 'DeleteTOC' },
   dependencies = { 'nvim-telescope/telescope.nvim' },
   config = function()
     require('markdown-toc').setup({
