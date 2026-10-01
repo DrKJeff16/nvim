@@ -4,15 +4,16 @@ local Config = require('config')
 
 ---@param ... any
 function _G.notify_inspect(...)
-  local i, txt = 1, '' ---@type integer, string
-  while i <= select('#', ...) do
+  local txt = '' ---@type string
+  for i = 1, select('#', ...) do
     local selection = select(i, ...)
-    if not vim.list_contains({ 'string', 'number', 'boolean', 'nil' }, type(selection)) then
-      selection = vim.inspect(selection)
+    if selection == nil then
+      selection = 'nil'
+    elseif not vim.list_contains({ 'string', 'number', 'boolean' }, type(selection)) then
+      selection = vim.inspect(selection, { indent = '', newline = ' ' })
     end
 
-    txt = ('%s' .. (i == 1 and '' or '\n') .. '%s'):format(txt, selection)
-    i = i + 1
+    txt = ('%s%s%s'):format(txt, i == 1 and '' or '\n', selection)
   end
   vim.notify(txt, INFO)
 end
@@ -28,7 +29,7 @@ require('user_api.opts').setup({
   backspace = 'indent,eol,start',
   backup = false,
   belloff = 'all',
-  cmdwinheight = User.distro.is_distro('termux') and 15 or 25,
+  cmdwinheight = 25,
   colorcolumn = '101',
   confirm = true,
   copyindent = true,
@@ -73,7 +74,7 @@ require('user_api.opts').setup({
   switchbuf = 'usetab',
   tabstop = 4,
   title = true,
-  wrap = User.distro.is_distro('termux'),
+  wrap = false,
 }, false, true)
 
 ---Disable `netrw` regardless of whether `nvim_tree/neo_tree` exist or not.
