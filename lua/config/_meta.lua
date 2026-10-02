@@ -52,6 +52,7 @@
 ---@field git_hunk? LazySpecImport
 ---@field git_inlinediff? LazySpecImport
 ---@field git_lazygit? LazySpecImport
+---@field git_neogit? LazySpecImport
 ---@field git_rehunk? LazySpecImport
 ---@field git_utils? LazySpecImport
 ---@field goto_preview? LazySpecImport
@@ -219,6 +220,7 @@
 ---@field git_hunk? boolean
 ---@field git_inlinediff? boolean
 ---@field git_lazygit? boolean
+---@field git_neogit? boolean
 ---@field git_rehunk? boolean
 ---@field git_utils? boolean
 ---@field goto_preview? boolean
