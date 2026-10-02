@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Create a new Neovim plugin install config file."""
+"""Create a new Neovim LSP server config file."""
 
 import os
 import sys
@@ -9,8 +9,8 @@ from os.path import expanduser, isdir, isfile, realpath
 from re import Pattern, compile
 from typing import Any
 
-TEMPLATE_PATH: str = "scripts/template.lua"
-PREFIX: str = "./lua/plugin"
+TEMPLATE_PATH: str = "scripts/lsp_template.lua"
+PREFIX: str = "./lua/config/lsp/servers"
 
 
 class ArgData:
@@ -47,6 +47,7 @@ def die(code: int = 0, *msg, **kwargs) -> None:
 def copy_file_to_path(path: str) -> bool:
     """Copy the template file to the specified path."""
     path = realpath(f"{PREFIX}/{path}").rstrip(".")
+
     pattern: Pattern[str] = compile(path)
 
     if not pattern.match(r".*\.lua$"):
@@ -58,11 +59,13 @@ def copy_file_to_path(path: str) -> bool:
     with open(path, "w") as file:
         file.write(data)
 
+    return True
+
 
 def make_args(spec: list[ArgData]) -> tuple[ArgumentParser, Namespace]:
     """Create the argparse parser."""
     parser = ArgumentParser(
-        prog="new-plugin.py", description="Create a new plugin configuration"
+        prog="new-lsp-servec.py", description="Create a new lsp server configuration"
     )
 
     for x in spec:
@@ -78,7 +81,7 @@ def main() -> int:
             ArgData(
                 args=["name"],
                 kwargs={
-                    "metavar": "plugin_name[.lua]",
+                    "metavar": "lsp_name[.lua]",
                     "nargs": 1,
                     "type": str,
                 },
