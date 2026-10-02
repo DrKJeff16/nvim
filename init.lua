@@ -115,7 +115,7 @@ Config.lazy.setup({
   dropbar = false,
   echo = false,
   fff = false,
-  firenvim = true,
+  firenvim = false,
   flash = false,
   focus = true,
   fzf_lua = true,

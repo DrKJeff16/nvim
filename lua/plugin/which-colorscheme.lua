@@ -7,7 +7,7 @@ return { ---@type LazySpec
   config = function()
     require('which-colorscheme').setup({
       custom_groups = {
-        A = { 'tokyonight', 'tokyodark', 'catppuccin', 'kanagawa', 'nightfox', 'carbonfox', 'onedark', 'minicyan' },
+        A = { 'tokyonight', 'dune-atreides', 'tokyodark', 'catppuccin', 'kanagawa', 'nightfox', 'carbonfox' },
       },
       custom_only = false,
       excluded = {
@@ -22,7 +22,7 @@ return { ---@type LazySpec
         'tokyonight-day',
       },
       group_name = 'Colorschemes',
-      grouping = { random = true, uppercase_groups = true, labels = { A = 'Favourites', B = 'Extra' } },
+      grouping = { labels = { A = 'Favourites', B = 'Extra' }, random = true, uppercase_groups = true },
       prefix = '<leader>uc',
     })
 

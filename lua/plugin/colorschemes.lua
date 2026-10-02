@@ -1,9 +1,16 @@
 ---@module 'lazy'
 return { ---@type LazySpec[]
   {
+    'jonestristand/dune.nvim',
+    lazy = false,
+    priority = 1000,
+    version = false,
+  },
+  {
     'rezniqov/soviet.nvim',
     lazy = false,
     priority = 1000,
+    version = false,
     config = function()
       require('soviet').setup({
         cache = true,
