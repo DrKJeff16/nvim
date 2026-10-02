@@ -3,6 +3,7 @@ return { ---@type LazySpec
   'DrKJeff16/project.nvim',
   dev = true,
   version = false,
+  event = 'VeryLazy',
   config = function()
     local Project = require('project')
     Project.setup({
@@ -40,6 +41,7 @@ return { ---@type LazySpec
       log = { enabled = true, logpath = vim.fn.stdpath('state'), max_size = 0.5 },
       lsp = { enabled = true, use_pattern_matching = true },
       manual_mode = false,
+      mini = { enabled = true, show = 'names' },
       picker = { enabled = true, show = 'names', sort = 'newest' },
       remove_missing_dirs = true,
       scope_chdir = 'tab',

@@ -174,7 +174,7 @@ Config.lazy.setup({
   mini_mini = true,
   mini_move = true,
   mini_pairs = false,
-  mini_pick = false,
+  mini_pick = true,
   mini_splitjoin = true,
   mini_starter = false,
   mini_test = false,
