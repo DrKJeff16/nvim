@@ -4,11 +4,7 @@
 ---@param func function
 ---@param opts? ibl.hooks.options
 local function reg(htype, func, opts)
-  if not opts or require('user_api').check.empty(opts) then
-    require('ibl.hooks').register(htype, func)
-    return
-  end
-  require('ibl.hooks').register(htype, func, opts)
+  require('ibl.hooks').register(htype, func, not opts or require('user_api').check.empty(opts) and nil or opts)
 end
 
 local Hilite = { ---@type HlDict
@@ -20,7 +16,7 @@ local Hilite = { ---@type HlDict
   RainbowViolet = { fg = '#C678DD' },
   RainbowYellow = { fg = '#E5C07B' },
 }
-local highlight = vim.tbl_keys(Hilite) ---@type string[]
+local highlight = vim.tbl_keys(Hilite) --[[@as string[]\]]
 
 return { ---@type LazySpec
   'lukas-reineke/indent-blankline.nvim',
@@ -57,12 +53,7 @@ return { ---@type LazySpec
       { require('ibl.hooks').type.SKIP_LINE, require('ibl.hooks').builtin.skip_preproc_lines, { bufnr = 0 } },
     }
     for _, t in ipairs(arg_tbl) do
-      local htype, func, opts = t[1], t[2], t[3] or nil
-      if opts then
-        reg(htype, func, opts)
-      else
-        reg(htype, func)
-      end
+      reg(t[1], t[2], t[3] or nil)
     end
 
     if vim.g.rainbow_delimiters and not vim.tbl_isempty(vim.g.rainbow_delimiters) then
