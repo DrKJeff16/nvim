@@ -30,50 +30,16 @@ local Maps = {}
 ---@return User.Maps.Opts opts
 function Maps.desc(desc, opts) end
 
----@param T AllMaps
----@param map_func 'keymap'|'wk.register'
+---@overload fun(T: AllMaps, map_func: 'keymap'|'wk.register')
+---@overload fun(T: AllMaps, map_func: 'keymap'|'wk.register', has_modes: true)
+---@overload fun(T: AllMaps, map_func: 'keymap'|'wk.register', has_modes: false, mode: (MapModes)[]|MapModes)
+---@overload fun(T: AllMaps, map_func: 'keymap'|'wk.register', has_modes: true, mode: nil, bufnr: integer)
+---@overload fun(T: AllMaps, map_func: 'keymap'|'wk.register', has_modes: false, mode: (MapModes)[]|MapModes, bufnr: integer)
 function Maps.map_dict(T, map_func) end
 
----@param T AllMaps
----@param map_func 'keymap'|'wk.register'
----@param has_modes true
-function Maps.map_dict(T, map_func, has_modes) end
-
----@param T AllMaps
----@param map_func 'keymap'|'wk.register'
----@param has_modes false
----@param mode (MapModes)[]|MapModes
-function Maps.map_dict(T, map_func, has_modes, mode) end
-
----@param T AllMaps
----@param map_func 'keymap'|'wk.register'
----@param has_modes true
----@param mode nil
----@param bufnr integer
-function Maps.map_dict(T, map_func, has_modes, mode, bufnr) end
-
----@param T AllModeMaps
----@param map_func 'keymap'|'wk.register'
----@param has_modes false
----@param mode (MapModes)[]|MapModes
----@param bufnr integer
-function Maps.map_dict(T, map_func, has_modes, mode, bufnr) end
-
----@param T string[]|string
+---@overload fun(T: string[]|string)
+---@overload fun(T: string[]|string, opts: User.Maps.Opts)
+---@overload fun(T: string[]|string, opts: User.Maps.Opts, mode: MapModes)
+---@overload fun(T: string[]|string, opts: User.Maps.Opts, mode?: MapModes, prefix: string)
 function Maps.nop(T) end
-
----@param T string[]|string
----@param opts User.Maps.Opts
-function Maps.nop(T, opts) end
-
----@param T string[]|string
----@param opts User.Maps.Opts
----@param mode MapModes
-function Maps.nop(T, opts, mode) end
-
----@param T string[]|string
----@param opts User.Maps.Opts
----@param mode MapModes|nil
----@param prefix string
-function Maps.nop(T, opts, mode, prefix) end
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

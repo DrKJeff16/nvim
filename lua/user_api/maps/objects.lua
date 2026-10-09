@@ -1,8 +1,21 @@
 ---@class User.Maps.Opts: User.Maps.DescOpts, vim.keymap.set.Opts
 ---@field buffer? integer
-local O = {}
+local M = {}
 
----@enum (key) User.Maps.ValidOpts
+---@alias User.Maps.ValidOpts
+---|'buf'
+---|'buffer'
+---|'callback'
+---|'desc'
+---|'expr'
+---|'noremap'
+---|'nowait'
+---|'remap'
+---|'replace_keycodes'
+---|'script'
+---|'silent'
+---|'unique'
+
 local valid = {
   buf = 1,
   buffer = 1,
@@ -19,11 +32,8 @@ local valid = {
 }
 
 ---@param T User.Maps.Opts|User.Maps.DescOpts
-function O:add(T)
+function M:add(T)
   require('user_api.check').validate({ T = { T, { 'table' } } })
-  if vim.tbl_isempty(T) then
-    return
-  end
 
   for k, v in pairs(T) do
     if vim.list_contains(vim.tbl_keys(valid), k) then
@@ -32,7 +42,7 @@ function O:add(T)
   end
 end
 
-O.__index = O
+M.__index = M
 
 ---@param T User.Maps.Opts|User.Maps.DescOpts
 ---@return User.Maps.Opts T
@@ -93,9 +103,9 @@ end
 
 ---@param T? User.Maps.Opts|User.Maps.DescOpts
 ---@return User.Maps.Opts new_object
-function O.new(T)
-  return setmetatable(validate_opts(T), O)
+function M.new(T)
+  return setmetatable(validate_opts(T), M)
 end
 
-return O
+return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

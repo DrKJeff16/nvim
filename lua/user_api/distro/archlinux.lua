@@ -21,7 +21,7 @@ function M.is_distro()
       table.insert(new_rtpaths, p)
     end
   end
-  if vim.tbl_isempty(new_rtpaths) then
+  if #new_rtpaths == 0 then
     return false
   end
 

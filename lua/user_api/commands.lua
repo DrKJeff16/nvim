@@ -57,7 +57,7 @@ local commands = { ---@type table<string, User.Commands.CmdSpec>
         window = vim.api.nvim_get_current_win(),
         tabpage = vim.api.nvim_get_current_tabpage(),
       }
-      if vim.tbl_isempty(ctx.fargs) then
+      if #ctx.fargs == 0 then
         vim.notify(('buffer: %s\nwindow: %s\ntabpage %s'):format(curr.buffer, curr.window, curr.tabpage), INFO)
         return
       end
@@ -102,9 +102,9 @@ local commands = { ---@type table<string, User.Commands.CmdSpec>
   DeleteInactiveBuffers = {
     function(ctx)
       for _, buf in ipairs(vim.fn.getbufinfo()) do
-        if vim.tbl_isempty(buf.windows) and buf.listed == 1 and buf.loaded == 1 then
+        if #buf.windows == 0 and buf.listed == 1 and buf.loaded == 1 then
           ctx.bang = true
-          vim.cmd.bdelete({ buf.bufnr, bang = true })
+          vim.cmd.bdelete({ args = { tostring(buf.bufnr) }, bang = true })
         end
       end
       if ctx.bang then

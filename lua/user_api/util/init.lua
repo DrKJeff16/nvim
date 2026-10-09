@@ -184,7 +184,7 @@ function M.lstrip(char, str)
   end
 
   if type(char) == 'table' then
-    if not vim.tbl_isempty(char) then
+    if #char > 0 then
       for _, c in ipairs(char) do
         if c:len() > str:len() then
           return str
@@ -228,7 +228,7 @@ function M.rstrip(char, str)
   end
 
   if type(char) == 'table' then
-    if not vim.tbl_isempty(char) then
+    if #char > 0 then
       for _, c in ipairs(char) do
         if c:len() > str:len() then
           return str
@@ -262,7 +262,7 @@ function M.strip(char, str)
   end
 
   if type(char) == 'table' then
-    if not vim.tbl_isempty(char) then
+    if #char > 0 then
       for _, c in ipairs(char) do
         if c:len() > str:len() then
           return str
@@ -390,7 +390,7 @@ function M.strip_fields(T, fields)
   return T
 end
 
----@generic T
+---@generic T: table
 ---@param T T
 ---@param values any[]
 ---@param max_instances? integer
@@ -402,7 +402,7 @@ function M.strip_values(T, values, max_instances)
     max_instances = { max_instances, { 'table', 'nil' }, true },
   })
 
-  if vim.tbl_isempty(T) or vim.tbl_isempty(values) then
+  if vim.tbl_isempty(T) or #values == 0 then
     error('(user_api.util.strip_values): Empty tables as args!')
   end
 
@@ -537,7 +537,7 @@ function M.discard_dups(data)
   return res
 end
 
----@generic T
+---@generic T: table
 ---@param T T
 ---@return T reversed
 function M.reverse_tbl(T)

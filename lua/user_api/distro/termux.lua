@@ -37,7 +37,7 @@ function M.setup()
         vim.o.rtp = vim.o.rtp .. ',' .. path
       end
     end
-    vim.api.nvim_set_option_value('wrap', true, { scope = 'global' })
+    vim.o.wrap = true
   end
 end
 

@@ -1,5 +1,5 @@
 ---The Vim modes used for `which-key` as a `string`
----@alias RegModes 'n'|'i'|'v'|'t'|'o'|'x'
+---@alias RegModes 'n'|'i'|'v'|'t'|'o'|'x'|'V'
 
 ---This is an abstraction of `vim.keymaps.set.Opts` (see `User.Maps.Opts`),
 ---with few extensions.
@@ -45,7 +45,7 @@
 ---        rhs()|'rhs',
 ---        { ... }, ---@see vim.keymap.set.Opts
 ---        hidden = false,
----        mode = 'n' | 'i' | 'v' | 't' | 'o' | 'x',
+---        mode = 'n' | 'i' | 'v' | 't' | 'o' | 'x' | 'V',
 ---    },
 ---}
 ---```
@@ -105,14 +105,14 @@
 ---@field notify? boolean
 ---@field version? number
 
-local MODES = { 'V', 'i', 'n', 'o', 't', 'v', 'x' }
 local validate = require('user_api.check').validate
+local MODES = { 'V', 'i', 'n', 'o', 't', 'v', 'x' }
 
 ---`which_key` API entrypoints.
 ---@class User.Maps.WK
 local M = {}
 
----@return boolean
+---@return boolean available
 function M.available()
   return require('user_api.check').module('which-key')
 end
@@ -135,19 +135,15 @@ function M.convert(lhs, rhs, opts)
   local res = { lhs, rhs } ---@type wk.Spec
   if type(opts.hidden) == 'boolean' then
     res.hidden = opts.hidden
-    opts.hidden = nil
   end
   if type(opts.proxy) == 'string' then
     res.proxy = opts.proxy
-    opts.proxy = nil
   end
   if type(opts.group) == 'string' then
     res.group = opts.group
-    opts.group = nil
   end
   if type(opts.desc) == 'string' then
     res.desc = opts.desc
-    opts.desc = nil
   end
   return res
 end

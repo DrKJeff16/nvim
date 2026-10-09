@@ -30,17 +30,16 @@ function M.gen_augroups(names, clear)
     clear = true
   end
 
-  if require('user_api.check.value').is_tbl(names) and not vim.tbl_isempty(names) then
-    ---@cast names string[]
-    local augroups = {} ---@type table<string, integer>
+  local augroups = {} ---@type table<string, integer>
+  if type(names) == 'table' and #names > 0 then
     for _, name in ipairs(names) do
       augroups[name] = vim.api.nvim_create_augroup(name, { clear = clear })
     end
     return augroups
+  elseif type(names) == 'string' then
+    augroups = { [names] = vim.api.nvim_create_augroup(names, { clear = clear }) }
   end
-
-  ---@cast names string
-  return { [names] = vim.api.nvim_create_augroup(names, { clear = clear }) }
+  return augroups
 end
 
 ---@param T AuPair
@@ -115,13 +114,13 @@ function M.au_repeated_events(T)
   end
 
   ---@cast T AuRepeatEvents
-  if vim.tbl_isempty(T.events) or vim.tbl_isempty(T.opts_tbl) then
+  if #T.events == 0 or #T.opts_tbl == 0 then
     vim.notify(('(%s.au_repeated_events): Invalid autocmd tables'):format(MODSTR), WARN)
     return
   end
 
   for _, opts in ipairs(T.opts_tbl) do
-    if not require('user_api.check.value').is_tbl(opts) or vim.tbl_isempty(opts) then
+    if type(opts) ~= 'table' or vim.tbl_isempty(opts) then
       vim.notify(('(%s.au_repeated_events): Options are not a vaild table'):format(MODSTR), ERROR)
       return
     end
