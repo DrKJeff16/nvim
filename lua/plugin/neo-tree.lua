@@ -2,20 +2,11 @@
 return { ---@type LazySpec
   'nvim-neo-tree/neo-tree.nvim',
   version = false,
-  event = 'VeryLazy',
   dependencies = {
     { 'DrKJeff16/plenary.nvim', dev = true },
     'MunifTanjim/nui.nvim',
     'nvim-tree/nvim-web-devicons',
     'saifulapm/neotree-file-nesting-config',
-    {
-      'antosha417/nvim-lsp-file-operations',
-      dev = true,
-      version = false,
-      config = function()
-        require('lsp-file-operations').setup({ auto_save = true })
-      end,
-    },
     { 'mrbjarksen/neo-tree-diagnostics.nvim', main = 'neo-tree.sources.diagnostics' },
     {
       's1n7ax/nvim-window-picker',
