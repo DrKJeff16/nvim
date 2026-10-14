@@ -41,7 +41,6 @@ return { ---@type LazySpec
       log = { enabled = true, logpath = vim.fn.stdpath('state'), max_size = 0.5 },
       lsp = { enabled = true, use_pattern_matching = true },
       manual_mode = false,
-      mini = { enabled = true, show = 'names' },
       picker = { enabled = true, show = 'names', sort = 'newest' },
       remove_missing_dirs = true,
       scope_chdir = 'tab',
@@ -53,7 +52,6 @@ return { ---@type LazySpec
       telescope = { prefer_file_browser = true, sort = 'newest', tilde = true },
     })
 
-    local exists = require('user_api').check.module
     local desc = require('user_api').maps.desc
     local keyset = require('user_api').config.keymaps.set
     keyset({
@@ -72,19 +70,19 @@ return { ---@type LazySpec
       },
     })
 
-    if exists('fzf-lua') and vim.g.project_fzf_lua_loaded == 1 then
+    if vim.g.project_fzf_lua_loaded == 1 then
       keyset({ n = { ['<leader>pf'] = { ':Project fzf-lua<CR>', desc('Fzf-Lua Picker') } } })
     end
-    if exists('telescope.init') then
+    if package.loaded['telescope'] ~= nil then
       require('telescope').load_extension('projects')
       if vim.g.project_telescope_loaded == 1 then
         keyset({ n = { ['<leader>pT'] = { ':Project telescope<CR>', desc('Telescope Picker') } } })
       end
     end
-    if exists('snacks') and vim.g.project_snacks_loaded == 1 then
+    if vim.g.project_snacks_loaded == 1 then
       keyset({ n = { ['<leader>pS'] = { ':Project snacks<CR>', desc('Snacks Picker') } } })
     end
-    if exists('picker') and vim.g.project_picker_loaded == 1 then
+    if vim.g.project_picker_loaded == 1 then
       keyset({ n = { ['<leader>pP'] = { ':Project picker<CR>', desc('picker.nvim Picker') } } })
     end
   end,
