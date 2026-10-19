@@ -159,7 +159,7 @@ Config.lazy.setup({
   markdown_pipetable = false,
   markdown_render = true,
   markdown_toc = false,
-  mason = false,
+  mason = true,
   match = false,
   migrate = false,
   mini_animate = false,

@@ -5,7 +5,7 @@ return { ---@type LazySpec[]
     version = false,
     config = function()
       require('mason').setup({
-        PATH = 'append', ---@type 'prepend'|'append'|'skip'
+        PATH = 'append',
         github = { download_url_template = 'https://github.com/%s/releases/download/%s/%s' },
         install_root_dir = vim.fs.joinpath(vim.fn.stdpath('data'), 'mason'),
         log_level = vim.log.levels.INFO,
@@ -49,7 +49,9 @@ return { ---@type LazySpec[]
     'mason-org/mason-lspconfig.nvim',
     version = false,
     dependencies = { 'neovim/nvim-lspconfig' },
-    opts = { automatic_enable = true, ensure_installed = {} },
+    config = function()
+      require('mason-lspconfig').setup({ automatic_enable = true, ensure_installed = {} })
+    end,
   },
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:
