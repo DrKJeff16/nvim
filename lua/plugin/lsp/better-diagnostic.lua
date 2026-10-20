@@ -5,17 +5,17 @@ return { ---@type LazySpec
   version = false,
   config = function()
     require('better-diagnostic-virtual-text').setup({
+      inline = true,
+      priority = 2003,
       ui = {
-        wrap_line_after = false,
+        above = false,
+        arrow = '  ',
+        down_arrow = '  ',
         left_kept_space = 3,
         right_kept_space = 3,
-        arrow = '  ',
         up_arrow = '  ',
-        down_arrow = '  ',
-        above = false,
+        wrap_line_after = false,
       },
-      priority = 2003,
-      inline = true,
     })
   end,
 }

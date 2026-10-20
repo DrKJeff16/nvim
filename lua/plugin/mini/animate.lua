@@ -1,6 +1,7 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'nvim-mini/mini.animate',
+  event = 'VeryLazy',
   version = false,
   cond = not require('user_api').check.in_console(),
   config = function()

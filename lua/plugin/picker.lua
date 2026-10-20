@@ -4,11 +4,19 @@ return { ---@type LazySpec
   dev = true,
   event = 'VeryLazy',
   version = false,
-  dependencies = { { 'wsdjeg/job.nvim', dev = true } },
+  dependencies = { 'wsdjeg/job.nvim' },
   config = function()
     require('picker').setup({
       filter = { ignorecase = false, matcher = 'fzy' },
       highlight = { matched = 'Tag', score = 'Comment' },
+      mappings = {
+        close = '<Esc>',
+        next_item = '<Tab>',
+        open_item = '<Enter>',
+        previous_item = '<S-Tab>',
+        toggle_preview = '<C-p>',
+      },
+      prompt = { icon = '>', icon_hl = 'Error', insert_timeout = 100, position = 'top', title = true },
       window = {
         col = 0.1,
         current_icon = '>',
@@ -19,14 +27,6 @@ return { ---@type LazySpec
         row = 0.1,
         show_score = true,
         width = 0.8,
-      },
-      prompt = { icon = '>', icon_hl = 'Error', insert_timeout = 100, position = 'top', title = true },
-      mappings = {
-        close = '<Esc>',
-        next_item = '<Tab>',
-        open_item = '<Enter>',
-        previous_item = '<S-Tab>',
-        toggle_preview = '<C-p>',
       },
     })
   end,

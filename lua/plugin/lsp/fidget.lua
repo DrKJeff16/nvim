@@ -18,9 +18,7 @@ return { ---@type LazySpec
         override_vim_notify = false,
         poll_rate = 10,
         redirect = function(msg, level, opts)
-          if opts and opts.on_open then
-            return require('fidget.integration.nvim-notify').delegate(msg, level, opts)
-          end
+          return (opts and opts.on_open) and require('fidget.integration.nvim-notify').delegate(msg, level, opts) or nil
         end,
         view = {
           align = 'message',

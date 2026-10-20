@@ -1,6 +1,7 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'NeoSahadeo/lsp-toggle.nvim',
+  event = 'LspAttach',
   version = false,
   config = function()
     require('lsp-toggle').setup({

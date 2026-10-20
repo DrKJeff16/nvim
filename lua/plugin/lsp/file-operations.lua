@@ -2,8 +2,8 @@
 return { ---@type LazySpec
   'antosha417/nvim-lsp-file-operations',
   dev = true,
-  version = false,
   event = 'VeryLazy',
+  version = false,
   dependencies = { 'nvim-neo-tree/neo-tree.nvim' },
   config = function()
     require('lsp-file-operations').setup({ auto_save = true })

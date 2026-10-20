@@ -2,9 +2,9 @@
 return { ---@type LazySpec
   'ChuufMaster/markdown-toc',
   dev = true,
-  versian = false,
-  ft = { 'markdown' },
   cmd = { 'GenerateTOC', 'DeleteTOC' },
+  ft = { 'markdown' },
+  versian = false,
   dependencies = { 'nvim-telescope/telescope.nvim' },
   config = function()
     require('markdown-toc').setup({

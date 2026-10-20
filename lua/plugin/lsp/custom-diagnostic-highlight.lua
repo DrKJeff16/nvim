@@ -5,7 +5,10 @@ return { ---@type LazySpec
   version = false,
   config = function()
     require('nvim-custom-diagnostic-highlight').setup({
-      register_handler = true,
+      defer_highlight_update_events = { 'CursorHold', 'CursorHoldI' },
+      defer_until_n_lines_away = false,
+      diagnostic_handler_namespace = 'unused_hl_ns',
+      extra_patterns = {},
       handler_name = 'Kasama/nvim-custom-diagnostic-highlight',
       highlight_group = 'Conceal',
       patterns_override = {
@@ -18,10 +21,7 @@ return { ---@type LazySpec
         'empty block',
         'not accessed',
       },
-      extra_patterns = {},
-      diagnostic_handler_namespace = 'unused_hl_ns',
-      defer_until_n_lines_away = false,
-      defer_highlight_update_events = { 'CursorHold', 'CursorHoldI' },
+      register_handler = true,
     })
   end,
 }
