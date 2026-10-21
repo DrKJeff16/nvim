@@ -10,6 +10,18 @@
 local ERROR = vim.log.levels.ERROR
 local desc = require('user_api.maps').desc
 local validate = require('user_api.check').validate
+local Util = require('user_api.util')
+
+---@generic T: table, F
+---@param t T
+---@param k any
+---@param fallback F
+---@return F fallback
+local function get(t, k, fallback)
+  return Util.get(t, k, function()
+    return Util.rawset(t, k, fallback)
+  end, true)
+end
 
 local leader_set = false
 local defaults_mapped = false
@@ -31,7 +43,7 @@ local function delete_file(force)
   end
 
   return function()
-    local optget = require('user_api.util').optget
+    local optget = Util.optget
     local bufnr = vim.api.nvim_get_current_buf()
     if
       not optget('modifiable', 'buf', bufnr)
@@ -71,8 +83,8 @@ end
 
 local function new_file()
   local bufnr = vim.api.nvim_get_current_buf()
-  local ft = require('user_api.util').ft_get(bufnr)
-  local optset = require('user_api.util').optset
+  local ft = Util.ft_get(bufnr)
+  local optset = Util.optset
   vim.cmd.wincmd('n')
   vim.cmd.wincmd('o')
 
@@ -82,7 +94,7 @@ local function new_file()
 end
 
 local function indent_file()
-  local optget = require('user_api.util').optget
+  local optget = Util.optget
   if not optget('modifiable', 'buf', vim.api.nvim_get_current_buf()) then
     vim.notify('Unable to indent. File is not modifiable!', ERROR)
     return
@@ -121,7 +133,7 @@ local function gen_fun_blank(vertical)
     local win = vim.api.nvim_open_win(buf, true, { vertical = vertical })
     vim.api.nvim_set_current_win(win)
 
-    local optset = require('user_api.util').optset
+    local optset = Util.optset
     optset('filetype', '', 'buf', buf)
     optset('buftype', '', 'buf', buf)
     optset('modifiable', true, 'buf', buf)
@@ -140,7 +152,7 @@ local function buf_del(force)
     local ft_triggers = { 'NvimTree', 'noice', 'trouble' }
     local pre_exc = { ft = { 'help', 'lazy', 'man', 'noice' }, bt = { 'help' } }
     local buf = vim.api.nvim_get_current_buf()
-    local prev_ft, prev_bt = require('user_api.util').ft_get(buf), require('user_api.util').bt_get(buf)
+    local prev_ft, prev_bt = Util.ft_get(buf), Util.bt_get(buf)
     if not force then
       force = prev_bt == 'terminal'
     end
@@ -150,7 +162,7 @@ local function buf_del(force)
       return
     end
 
-    if vim.list_contains(ft_triggers, require('user_api.util').ft_get(buf)) then
+    if vim.list_contains(ft_triggers, Util.ft_get(buf)) then
       vim.cmd.bprevious()
     end
   end
@@ -159,7 +171,26 @@ end
 local no_oped ---@type boolean
 
 ---@class User.Config.Keymaps
+---@field nop User.Config.Keymaps.NOP
 local M = {}
+
+setmetatable(M, {
+  __index = function(self, k) ---@param self User.Config.Keymaps
+    local raw = Util.get(self, k)
+    if raw ~= nil then
+      return raw
+    end
+
+    if type(k) ~= 'string' then
+      return
+    end
+
+    ---@cast k string
+    if require('user_api.check').module('user_api.config.keymaps.' .. k) then
+      return get(self, k, require('user_api.config.keymaps.' .. k))
+    end
+  end,
+})
 
 local keys = { ---@type AllModeMaps
   n = {
@@ -336,7 +367,6 @@ function M.set_leader(leader, local_leader, force)
     return
   end
 
-  local nop = require('user_api.maps').nop
   local vim_vars = { leader = '', localleader = '' }
   if leader:lower() == '<space>' then
     vim_vars.leader = ' '
@@ -358,6 +388,7 @@ function M.set_leader(leader, local_leader, force)
 
   --- No-op the target `<leader>` key
   local opts = { noremap = true, silent = true }
+  local nop = require('user_api.maps').nop
   nop(leader, opts, 'n')
   nop(leader, opts, 'v')
 
@@ -368,8 +399,7 @@ function M.set_leader(leader, local_leader, force)
     nop(local_leader, opts, 'v')
   end
 
-  vim.g.mapleader = vim_vars.leader
-  vim.g.maplocalleader = vim_vars.localleader
+  vim.g.mapleader, vim.g.maplocalleader = vim_vars.leader, vim_vars.localleader
   leader_set = true
 end
 
@@ -382,18 +412,16 @@ function M.delete(K, bufnr)
     bufnr = { bufnr, { 'number', 'nil' }, true },
   })
   bufnr = bufnr or nil
-  if vim.tbl_isemyty(K) then
-    return
-  end
-
-  local ditched_keys = {} ---@type User.Keymaps.Delete
-  for k, v in pairs(K) do
-    for _, key in ipairs(v) do
-      vim.keymap.del(k, key, bufnr and { buffer = bufnr } or {})
+  if not vim.tbl_isemyty(K) then
+    local ditched_keys = {} ---@type User.Keymaps.Delete
+    for k, v in pairs(K) do
+      for _, key in ipairs(v) do
+        vim.keymap.del(k, key, bufnr and { buffer = bufnr } or {})
+      end
+      ditched_keys[k] = v
     end
-    ditched_keys[k] = v
+    return ditched_keys
   end
-  return ditched_keys
 end
 
 ---@param new_keys AllModeMaps
@@ -440,7 +468,7 @@ function M.set(new_keys, opts)
       break
     end
     if vim.list_contains({ 'n', 'v' }, mode) then
-      require('user_api.maps').nop(require('user_api.config.keymaps.nop'), { noremap = false }, mode, '<leader>')
+      require('user_api.maps').nop(M.nop, { noremap = false }, mode, '<leader>')
     end
   end
 
@@ -452,16 +480,5 @@ function M.set(new_keys, opts)
   require('user_api.maps').map_dict(parsed_keys, 'wk.register', true, nil, opts.bufnr)
 end
 
-return setmetatable(M, { ---@type User.Config.Keymaps
-  __index = function(self, k)
-    local raw = rawget(self, k) or nil
-    if raw then
-      return raw
-    end
-
-    if require('user_api.check').module('user_api.config.keymaps.' .. k) then
-      return require('user_api.util').rawset(self, k, require('user_api.config.keymaps.' .. k))
-    end
-  end,
-})
+return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

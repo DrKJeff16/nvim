@@ -3,10 +3,43 @@
 local MODES = { 'n', 'i', 'v', 't', 'o', 'x', 'c', 'V' }
 local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
+local Util = require('user_api.util')
 local validate = require('user_api.check').validate
+
+---@generic T: table, F
+---@param t T
+---@param k any
+---@param fallback F
+---@return F fallback
+local function get(t, k, fallback)
+  return Util.get(t, k, function()
+    return Util.rawset(t, k, fallback)
+  end, true)
+end
 
 ---@diagnostic disable-next-line:missing-fields
 local M = {} ---@type User.Maps
+
+setmetatable(M, {
+  __index = function(self, k) ---@param self User.Maps
+    local raw = Util.get(self, k)
+    if raw ~= nil then
+      return raw
+    end
+
+    if type(k) ~= 'string' then
+      return
+    end
+
+    if require('user_api.check').module('user_api.maps.' .. k) then
+      return get(self, k, require('user_api.maps.' .. k))
+    end
+    if k == 'modes' then
+      return get(self, k, MODES)
+    end
+    require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
+  end,
+})
 
 function M.desc(desc, opts)
   validate({
@@ -17,7 +50,7 @@ function M.desc(desc, opts)
   opts = opts or {}
   opts.desc = desc
 
-  return require('user_api.maps.objects').new(opts)
+  return M.objects.new(opts)
 end
 
 function M.nop(T, opts, mode, prefix)
@@ -38,11 +71,11 @@ function M.nop(T, opts, mode, prefix)
   opts = opts or {}
   opts.silent = type(opts.silent) == 'boolean' and opts.silent or true
   if type(opts.buffer) == 'number' then
-    opts = require('user_api.util').strip_fields(opts, 'buffer')
+    opts = Util.strip_fields(opts, 'buffer')
   end
   prefix = prefix or ''
 
-  local func = require('user_api.maps.keymap')[mode]
+  local func = M.keymap[mode]
   if type(T) == 'string' then
     func(prefix .. T, '<Nop>', opts)
   else
@@ -67,7 +100,7 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
 
   local map_choices = { 'keymap', 'wk.register' }
   map_func = vim.list_contains(map_choices, map_func) and map_func or 'wk.register'
-  if not require('user_api.maps.wk').available() then
+  if not M.wk.available() then
     map_func = 'keymap'
   end
   mode = (mode and type(mode) == 'string' and vim.list_contains(MODES, mode)) and mode or 'n'
@@ -81,7 +114,7 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
     for mode_choice, t in pairs(T) do
       if vim.list_contains(MODES, mode_choice) then
         if map_func == 'keymap' then
-          func = require('user_api.maps.keymap')[mode_choice]
+          func = M.keymap[mode_choice]
           for lhs, v in pairs(t) do
             if v[2] and v[3] then
               func(lhs, v[2], v[3] or {})
@@ -136,7 +169,7 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
               tbl.silent = v[2].silent
             end
 
-            require('which-key').add(tbl)
+            pcall(require('which-key').add, vim.deepcopy(tbl))
           end
         end
       end
@@ -145,8 +178,8 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
   end
 
   ---@cast T AllMaps
-  if map_func == 'keymap' and require('user_api.maps.keymap')[mode] then
-    func = require('user_api.maps.keymap')[mode] --[[@as fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)]]
+  if map_func == 'keymap' and M.keymap[mode] then
+    func = M.keymap[mode] --[[@as fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)]]
     for lhs, v in pairs(T) do
       if v[2] and v[3] then
         func(lhs, v[2], v[3])
@@ -198,27 +231,10 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
         end
       end
 
-      require('which-key').add(tbl)
+      pcall(require('which-key').add, vim.deepcopy(tbl))
     end
   end
 end
 
-local Maps = setmetatable(M, { ---@type User.Maps
-  __index = function(self, k)
-    local raw = rawget(self, k) or nil
-    if raw then
-      return raw
-    end
-
-    if require('user_api.check').module('user_api.maps.' .. k) then
-      return require('user_api.util').rawset(self, k, require('user_api.maps.' .. k))
-    end
-    if k == 'modes' then
-      return require('user_api.util').rawset(self, k, MODES)
-    end
-    require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
-  end,
-})
-
-return Maps
+return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

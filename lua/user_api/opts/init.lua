@@ -1,21 +1,45 @@
 local ERROR = vim.log.levels.ERROR
 local INFO = vim.log.levels.INFO
 local validate = require('user_api.check').validate
+local Util = require('user_api.util')
+local Check = require('user_api.check')
+
+---@generic T: table, F
+---@param t T
+---@param k any
+---@param fallback F
+---@return F fallback
+local function get(t, k, fallback)
+  return Util.get(t, k, function()
+    return Util.rawset(t, k, fallback)
+  end, true)
+end
 
 local options, toggleable = {}, {} ---@type User.Opts.Spec, string[]
 
 ---@class User.Opts
+---@field all_opts User.Opts.AllOpts
+---@field config User.Opts.Spec
 local M = {}
 
----@return User.Opts.AllOpts all_opts
-local function get_all_opts()
-  return require('user_api.opts.all_opts')
-end
+setmetatable(M, {
+  __index = function(self, k) ---@param self User.Opts
+    local raw = Util.get(self, k)
+    if raw ~= nil then
+      return raw
+    end
 
----@return User.Opts.Spec defaults
-local function get_defaults()
-  return require('user_api.opts.config')
-end
+    if type(k) ~= 'string' then
+      return
+    end
+
+    ---@cast k string
+    if Check.module('user_api.opts.' .. k) then
+      return get(self, k, require('user_api.opts.' .. k))
+    end
+    require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
+  end,
+})
 
 ---@param lead string
 ---@param pos integer
@@ -42,7 +66,7 @@ local function gen_toggleable(short)
     short = false
   end
 
-  local valid, T = {}, get_all_opts() ---@type string[], User.Opts.AllOpts
+  local valid, T = {}, vim.deepcopy(M.all_opts) ---@type string[], User.Opts.AllOpts
   for _, opt in ipairs(vim.tbl_keys(T)) do
     if opt ~= '' and vim.list_contains({ 'no', 'yes', true, false }, vim.o[opt]) then
       table.insert(valid, opt)
@@ -82,16 +106,16 @@ local function long_opts_convert(T, verbose)
     return parsed_opts
   end
 
-  local ALL_OPTIONS = get_all_opts()
+  local ALL_OPTIONS = vim.deepcopy(M.all_opts)
   local keys = vim.tbl_keys(ALL_OPTIONS) ---@type string[]
   table.sort(keys)
   for opt, val in pairs(T) do
     if vim.list_contains(keys, opt) then
       parsed_opts[opt] = val
-    elseif not require('user_api.check').tbl_values({ opt }, ALL_OPTIONS) then
+    elseif not Check.tbl_values({ opt }, ALL_OPTIONS) then
       msg = ('%s- Option `%s` not valid!\n'):format(msg, opt) -- If neither long nor short (known) option, append to warning message
     else
-      local new_opt = require('user_api.check').tbl_values({ opt }, ALL_OPTIONS, true)
+      local new_opt = Check.tbl_values({ opt }, ALL_OPTIONS, true)
       if type(new_opt) == 'string' and new_opt ~= '' then
         parsed_opts[new_opt] = val
         verb_msg = ('%s%s ==> %s\n'):format(verb_msg, opt, new_opt)
@@ -142,7 +166,7 @@ end
 ---Set up `guicursor` so that cursor blinks.
 --- ---
 function M.set_cursor_blink()
-  if not require('user_api.check').in_console() then
+  if not Check.in_console() then
     M.optset({
       guicursor = 'n-v-c:block'
         .. ',i-ci-ve:ver25'
@@ -215,7 +239,7 @@ end
 
 function M.setup_maps()
   local desc = require('user_api.maps').desc
-  require('user_api.config.keymaps').set({
+  require('user_api.config').keymaps.set({
     n = {
       ['<leader>UO'] = { group = '+Options' },
       ['<leader>UOl'] = { print_set_opts, desc('Print options set by `user.opts`') },
@@ -244,7 +268,7 @@ function M.setup(override, verbose, cursor_blink)
     vim.tbl_deep_extend(
       'keep',
       long_opts_convert(override or {}, verbose),
-      vim.tbl_isempty(options) and long_opts_convert(get_defaults(), verbose) or options
+      vim.tbl_isempty(options) and long_opts_convert(M.config, verbose) or options
     ),
     verbose
   )
@@ -254,19 +278,5 @@ function M.setup(override, verbose, cursor_blink)
   end
 end
 
-local Opts = setmetatable(M, { ---@type User.Opts
-  __index = function(self, k)
-    local raw = rawget(self, k) or nil
-    if raw then
-      return raw
-    end
-
-    if require('user_api.check').module('user_api.opts.' .. k) then
-      return require('user_api.util').rawset(self, k, require('user_api.opts.' .. k))
-    end
-    require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
-  end,
-})
-
-return Opts
+return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

@@ -1,3 +1,16 @@
+local Util = require('user_api.util')
+
+---@generic T: table, F
+---@param t T
+---@param k any
+---@param fallback F
+---@return F fallback
+local function get(t, k, fallback)
+  return Util.get(t, k, function()
+    return Util.rawset(t, k, fallback)
+  end, true)
+end
+
 local timer = nil ---@type uv.uv_timer_t|nil|?
 
 local function make_timer()
@@ -61,6 +74,24 @@ end
 ---@field util User.Util
 local M = {}
 
+setmetatable(M, {
+  __index = function(self, k) ---@param self UserAPI
+    local raw = Util.get(self, k)
+    if raw ~= nil then
+      return raw
+    end
+
+    if type(k) ~= 'string' then
+      return
+    end
+
+    ---@cast k string
+    if require('user_api.check').module('user_api.' .. k) then
+      return get(self, k, require('user_api.' .. k))
+    end
+  end,
+})
+
 function M.disable_netrw()
   vim.g.loaded_netrw = 1
   vim.g.loaded_netrwPlugin = 1
@@ -77,18 +108,17 @@ function M.setup(commands, verbose)
     verbose = false
   end
 
-  require('user_api.commands').setup(commands or {}, verbose)
-  require('user_api.update').setup(verbose)
-  require('user_api.opts').setup(nil, verbose)
-  require('user_api.distro').setup(verbose)
-  require('user_api.config.neovide').setup(nil, nil, verbose)
-  require('user_api.pickers').setup(verbose)
+  M.commands.setup(commands or {}, verbose)
+  M.update.setup(verbose)
+  M.opts.setup(nil, verbose)
+  M.distro.setup(verbose)
+  M.config.neovide.setup(nil, nil, verbose)
+  M.pickers.setup(verbose)
 
-  local desc = require('user_api.maps').desc
-  require('user_api.config.keymaps').set({
+  M.config.keymaps.set({
     n = {
       ['<leader>U'] = { group = '+User API' },
-      ['<leader><leader>'] = { require('user_api.pickers').run, desc('Select Picker') },
+      ['<leader><leader>'] = { M.pickers.run, M.maps.desc('Select Picker') },
     },
   })
 
@@ -104,18 +134,5 @@ function M.setup(commands, verbose)
   })
 end
 
-local User = setmetatable(M, { ---@type UserAPI
-  __index = function(self, k)
-    local raw = rawget(self, k) or nil
-    if raw then
-      return raw
-    end
-
-    if require('user_api.check').module('user_api.' .. k) then
-      return require('user_api.util').rawset(self, k, require('user_api.' .. k))
-    end
-  end,
-})
-
-return User
+return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

@@ -1,4 +1,16 @@
 local validate = require('user_api.check.exists').validate
+local Util = require('user_api.util')
+
+---@generic T: table, F
+---@param t T
+---@param k any
+---@param fallback F
+---@return F fallback
+local function get(t, k, fallback)
+  return Util.get(t, k, function()
+    return Util.rawset(t, k, fallback)
+  end, true)
+end
 
 ---@param path string
 ---@param mod? string
@@ -23,6 +35,30 @@ end
 ---@field value User.Check.Value
 local M = {}
 
+setmetatable(M, {
+  __index = function(self, k) ---@param self User.Check
+    local raw = Util.get(self, k)
+    if raw ~= nil then
+      return raw
+    end
+
+    if type(k) ~= 'string' then
+      return
+    end
+
+    if require('user_api.check.exists').module('user_api.check.' .. k) then
+      return get(self, k, require('user_api.check.' .. k))
+    end
+    if self.value[k] then
+      return get(self, k, self.value[k])
+    end
+    if self.exists[k] then
+      return get(self, k, self.exists[k])
+    end
+    require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
+  end,
+})
+
 ---Check whether Neovim is running as root (`PID == 0`).
 --- ---
 ---@return boolean is_root
@@ -34,7 +70,7 @@ end
 --- ---
 ---@return boolean is_windows
 function M.is_windows()
-  return require('user_api.check.exists').vim_has('win32')
+  return M.exists.vim_has('win32')
 end
 
 ---@param path string
@@ -57,31 +93,8 @@ end
 function M.in_console()
   local env = vim.fn.environ() --[[@as table<string, string>]]
   -- FIXME: This is not a good enough check. Must find a better solution
-  return vim.list_contains({ 'linux' }, env.TERM) and not require('user_api.check.value').fields('DISPLAY', env)
+  return vim.list_contains({ 'linux' }, env['TERM']) and not M.value.fields('DISPLAY', env)
 end
 
-local Check = setmetatable(M, { ---@type User.Check
-  ---@param self User.Check
-  ---@param k integer|string
-  ---@return any value
-  __index = function(self, k)
-    local raw = rawget(self, k) or nil
-    if raw then
-      return raw
-    end
-
-    if require('user_api.check.exists').module('user_api.check.' .. k) then
-      return require('user_api.util').rawset(self, k, require('user_api.check.' .. k))
-    end
-    if require('user_api.check.value')[k] then
-      return require('user_api.util').rawset(self, k, require('user_api.check.value')[k])
-    end
-    if require('user_api.check.exists')[k] then
-      return require('user_api.util').rawset(self, k, require('user_api.check.exists')[k])
-    end
-    require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
-  end,
-})
-
-return Check
+return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

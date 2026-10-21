@@ -7,6 +7,36 @@ local validate = require('user_api.check.exists').validate
 ---@field string User.Util.String
 local M = {}
 
+---@generic T: table, F
+---@param t T
+---@param k any
+---@param fallback F
+---@return F fallback
+local function get(t, k, fallback)
+  return M.get(t, k, function()
+    return M.rawset(t, k, fallback)
+  end, true)
+end
+
+setmetatable(M, {
+  __index = function(self, k) ---@param self User.Util
+    local raw = M.get(self, k)
+    if raw ~= nil then
+      return raw
+    end
+
+    if type(k) ~= 'string' then
+      return
+    end
+
+    ---@cast k string
+    if require('user_api.check.exists').module('user_api.util.' .. k) then
+      return get(self, k, require('user_api.util.' .. k))
+    end
+    require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
+  end,
+})
+
 ---Get rid of all duplicates in input table.
 ---
 ---If table is empty, it'll just return it as-is.
@@ -562,19 +592,36 @@ function M.rawset(t, k, v)
   return v
 end
 
-local Util = setmetatable(M, { ---@type User.Util
-  __index = function(self, k)
-    local raw = rawget(self, k) or nil
-    if raw then
+---@generic T: table, F, K, V
+---@param t T<K, V>
+---@param k K
+---@param fallback F|fun(): raw: F
+---@param is_rawset boolean
+---@return F|V?
+---@overload fun(t: T<K, V>, k: K): raw: V?
+---@overload fun(t: T<K, V>, k: K, fallback: F): raw: F|V
+---@overload fun(t: T<K, V>, k: K, fallback: F, is_rawset: false): raw: F|V
+---@overload fun(t: T<K, V>, k: K, fallback: (fun(): raw: F), is_rawset: true): raw: F|V
+function M.get(t, k, fallback, is_rawset)
+  if is_rawset == nil then
+    is_rawset = false
+  end
+
+  if k ~= nil then
+    local raw = rawget(t, k) or nil --[[@as unknown|nil|?]]
+    if raw ~= nil or fallback == nil then
       return raw
     end
 
-    if require('user_api.check.exists').module('user_api.util.' .. k) then
-      return M.rawset(self, k, require('user_api.util.' .. k))
+    if is_rawset then
+      ---@cast fallback fun(): any
+      local _, res = pcall(fallback)
+      return res
     end
-    require('user_api.backtrace')(vim.log.levels.ERROR, ('Invalid key: `%s`'):format(k))
-  end,
-})
+    ---@cast fallback any
+    return fallback
+  end
+end
 
-return Util
+return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:
