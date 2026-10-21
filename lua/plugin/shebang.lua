@@ -2,8 +2,8 @@
 return { ---@type LazySpec
   'DrKJeff16/shebang.nvim',
   dev = true,
+  cmd = 'Shebang',
   version = false,
-  event = 'VeryLazy',
   config = function()
     require('shebang').setup({ auto_make_executable = false, env = true })
   end,
