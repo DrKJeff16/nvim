@@ -1,7 +1,7 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'Hdoc1509/gh-actions.nvim',
-  event = 'VeryLazy',
+  ft = 'yaml',
   version = false,
   dependencies = { 'nvim-treesitter/nvim-treesitter' },
   cond = require('user_api').check.executable('tree-sitter'),

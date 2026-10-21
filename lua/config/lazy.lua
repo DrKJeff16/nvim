@@ -396,7 +396,7 @@ function M.get_default_toggles()
     project = true,
     python_import = true,
     rainbow_delimiters = true,
-    real_icons = true,
+    real_icons = false,
     record_key = true,
     refactoring = false,
     refer = false,

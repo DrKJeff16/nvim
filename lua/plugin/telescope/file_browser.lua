@@ -1,5 +1,4 @@
 local Actions = require('telescope._extensions.file_browser.actions')
-local Finders = require('telescope._extensions.file_browser.finders')
 
 local FileBrowser = {}
 
@@ -17,8 +16,8 @@ FileBrowser.file_browser = {
   display_stat = { date = true, size = true, mode = true },
   git_status = true,
   quiet = false,
-  browse_files = Finders.browse_files,
-  browse_folders = Finders.browse_folders,
+  browse_files = require('telescope._extensions.file_browser.finders').browse_files,
+  browse_folders = require('telescope._extensions.file_browser.finders').browse_folders,
   follow_symlinks = false,
   hide_parent_dir = false,
   collapse_dirs = false,

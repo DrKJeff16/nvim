@@ -202,7 +202,7 @@ Config.lazy.setup({
   project = true,
   python_import = true,
   rainbow_delimiters = false,
-  real_icons = true,
+  real_icons = false,
   record_key = false,
   refer = false,
   referencer = false,
