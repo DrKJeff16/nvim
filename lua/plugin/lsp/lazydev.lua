@@ -8,10 +8,10 @@ return { ---@type LazySpec
   config = function()
     require('lazydev').setup({
       enabled = function(root_dir) ---@param root_dir string
-        local uv = vim.uv or vim.loop
+        local fs_stat = (vim.uv or vim.loop).fs_stat
         return not (
-          uv.fs_stat(vim.fs.joinpath(root_dir, '.luarc.json'))
-          or uv.fs_stat(vim.fs.joinpath(root_dir, 'luarc.json'))
+          fs_stat(vim.fs.joinpath(root_dir, '.luarc.json'))
+          or fs_stat(vim.fs.joinpath(root_dir, 'luarc.json'))
         )
       end,
       integrations = { lspconfig = true, cmp = true, coq = false },
@@ -23,6 +23,7 @@ return { ---@type LazySpec
         { path = 'shebang.nvim', mods = { 'shebang' } },
         { path = 'boolean-toggle.nvim', mods = { 'boolean-toggle' } },
         { path = 'snacks.nvim', mods = { 'snacks' } },
+        { path = 'plenary.nvim', mods = { 'plenary', 'luassert' } },
         { path = 'wezterm-types', mods = { 'wezterm' } },
       },
       runtime = vim.env.VIMRUNTIME,

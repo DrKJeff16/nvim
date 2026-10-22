@@ -1,5 +1,6 @@
 ---@module 'lazy'
 ---@module 'blink.lib'
+---@diagnostic disable:duplicate-set-field
 
 local User = require('user_api')
 
@@ -17,142 +18,152 @@ local function accept_nth(idx)
 end
 
 ---@class BUtil
-local BUtil = {}
+_G.BUtil = {}
 
-local Providers = { ---@type table<string, blink.cmp.SourceProviderConfigPartial>
-  cmdline = { module = 'blink.cmp.sources.cmdline' },
-  snippets = { max_items = 5, module = 'blink.cmp.sources.snippets', score_offset = -75 },
-  buffer = {
-    max_items = 5,
-    opts = {
-      enable_in_ex_commands = false,
-      get_bufnrs = function() ---@return integer[]
-        return vim
-          .iter(vim.api.nvim_list_wins())
-          :map(function(win) ---@param win integer
-            return vim.api.nvim_win_get_buf(win) ---@diagnostic disable-line:missing-return-value
-          end)
-          :filter(function(bufnr) ---@param bufnr integer
-            return vim.bo[bufnr].buftype ~= 'nofile'
-          end)
-          :totable()
-      end,
-      get_search_bufnrs = function() ---@return integer[]
-        return { vim.api.nvim_get_current_buf() }
-      end,
-      max_async_buffer_size = 200000,
-      max_sync_buffer_size = 20000,
-      max_total_buffer_size = 500000,
-      retention_order = { 'focused', 'visible', 'recency', 'largest' },
-      use_cache = true,
-    },
-    score_offset = -70,
-    ---@param ctx blink.cmp.Context
-    ---@param items blink.cmp.CompletionItem[]
-    transform_items = function(ctx, items)
-      local keyword = ctx.get_keyword()
-      if not (keyword:match('^%l') or keyword:match('^%u')) then
-        return items
-      end
+function _G.BUtil.gen_providers()
+  _G.BLINK_PROVIDERS = { ---@type table<string, blink.cmp.SourceProviderConfigPartial>
+    cmdline = { module = 'blink.cmp.sources.cmdline' },
+    snippets = { max_items = 5, module = 'blink.cmp.sources.snippets', score_offset = -75 },
+    buffer = {
+      max_items = 5,
+      opts = {
+        enable_in_ex_commands = false,
+        get_bufnrs = function() ---@return integer[]
+          return vim
+            .iter(vim.api.nvim_list_wins())
+            :map(function(win) ---@param win integer
+              return vim.api.nvim_win_get_buf(win) ---@diagnostic disable-line:missing-return-value
+            end)
+            :filter(function(bufnr) ---@param bufnr integer
+              return vim.bo[bufnr].buftype ~= 'nofile'
+            end)
+            :totable()
+        end,
+        get_search_bufnrs = function() ---@return integer[]
+          return { vim.api.nvim_get_current_buf() }
+        end,
+        max_async_buffer_size = 200000,
+        max_sync_buffer_size = 20000,
+        max_total_buffer_size = 500000,
+        retention_order = { 'focused', 'visible', 'recency', 'largest' },
+        use_cache = true,
+      },
+      score_offset = -70,
+      ---@param ctx blink.cmp.Context
+      ---@param items blink.cmp.CompletionItem[]
+      transform_items = function(ctx, items)
+        local keyword = ctx.get_keyword()
+        if not (keyword:match('^%l') or keyword:match('^%u')) then
+          return items
+        end
 
-      local seen, out = {}, {} ---@type table<string, boolean>, blink.cmp.CompletionItem[]
-      for _, item in ipairs(items) do
-        if item.insertText and item.insertText:match(keyword:match('^%l') and '^%u%l+$' or '^%l+$') then
-          local text = (keyword:match('^%u') ~= nil and string.upper or string.lower)(item.insertText:sub(1, 1))
-            .. item.insertText:sub(2)
-          item.insertText, item.label = text, text
+        local seen, out = {}, {} ---@type table<string, boolean>, blink.cmp.CompletionItem[]
+        for _, item in ipairs(items) do
+          if item.insertText and item.insertText:match(keyword:match('^%l') and '^%u%l+$' or '^%l+$') then
+            local text = (keyword:match('^%u') ~= nil and string.upper or string.lower)(item.insertText:sub(1, 1))
+              .. item.insertText:sub(2)
+            item.insertText, item.label = text, text
+          end
+          if not seen[item.insertText] then
+            seen[item.insertText] = true
+            table.insert(out, item)
+          end
         end
-        if not seen[item.insertText] then
-          seen[item.insertText] = true
-          table.insert(out, item)
-        end
-      end
-      return out
-    end,
-  },
-  path = {
-    module = 'blink.cmp.sources.path',
-    name = 'Path',
-    opts = {
-      get_cwd = function()
-        return (vim.uv or vim.loop).cwd() or vim.fn.getcwd()
+        return out
       end,
-      ignore_root_slash = false,
-      label_trailing_slash = true,
-      show_hidden_files_by_default = true,
-      trailing_slash = false,
     },
-    score_offset = 50,
-  },
-  lazydev = { module = 'lazydev.integrations.blink', name = 'LazyDev', score_offset = 100 },
-  lsp = { module = 'blink.cmp.sources.lsp', name = 'LSP', score_offset = 80 },
-  css_vars = {
-    module = 'css-vars.blink',
-    name = 'css-vars',
-    opts = { search_extensions = { '.js', '.ts', '.jsx', '.tsx' } },
-  },
-  sshconfig = { module = 'blink-cmp-sshconfig', name = 'SshConfig' },
-  git = {
-    enabled = function()
-      return vim.list_contains(
-        { 'git', 'gitcommit', 'gitattributes', 'gitrebase' },
-        User.util.ft_get(vim.api.nvim_get_current_buf())
-      )
-    end,
-    module = 'blink-cmp-git',
-    name = 'Git',
-  },
-  conventional_commits = {
-    enabled = function()
-      return User.util.ft_get(vim.api.nvim_get_current_buf()) == 'gitcommit'
-    end,
-    module = 'blink-cmp-conventional-commits',
-    name = 'CC',
-    score_offset = 100,
-  },
-  orgmode = { name = 'Org', module = 'orgmode.org.autocompletion.blink' },
-}
-local Sources = {} ---@type string[]
+    path = {
+      module = 'blink.cmp.sources.path',
+      name = 'Path',
+      opts = {
+        get_cwd = function()
+          return (vim.uv or vim.loop).cwd() or vim.fn.getcwd()
+        end,
+        ignore_root_slash = false,
+        label_trailing_slash = true,
+        show_hidden_files_by_default = true,
+        trailing_slash = false,
+      },
+      score_offset = 50,
+    },
+    lazydev = { module = 'lazydev.integrations.blink', name = 'LazyDev', score_offset = 100 },
+    lsp = { module = 'blink.cmp.sources.lsp', name = 'LSP', score_offset = 80 },
+    orgmode = { name = 'Org', module = 'orgmode.org.autocompletion.blink' },
+    css_vars = {
+      module = 'css-vars.blink',
+      name = 'css-vars',
+      opts = { search_extensions = { '.js', '.ts', '.jsx', '.tsx' } },
+    },
+    sshconfig = { module = 'blink-cmp-sshconfig', name = 'SshConfig' },
+    git = {
+      enabled = function()
+        return vim.list_contains({ 'git', 'gitcommit', 'gitattributes', 'gitrebase' }, vim.bo.ft)
+      end,
+      module = 'blink-cmp-git',
+      name = 'Git',
+    },
+    conventional_commits = {
+      enabled = function()
+        return vim.bo.ft == 'gitcommit'
+      end,
+      module = 'blink-cmp-conventional-commits',
+      name = 'CC',
+      score_offset = 100,
+    },
+    env = {
+      module = 'blink-cmp-env',
+      name = 'Env',
+      opts = {
+        item_kind = require('blink.cmp.types').CompletionItemKind.Variable,
+        show_braces = false,
+        show_documentation_window = true,
+      },
+    },
+  }
+
+  return _G.BLINK_PROVIDERS
+end
+
+_G.BLINK_SOURCES = {} ---@type string[]
 
 ---@param opts? { cmdline: boolean }| { terminal: boolean }
 ---@return string[] sources
-function BUtil.gen_sources(opts)
+_G.BUtil.gen_sources = function(opts)
   opts = opts or {}
 
+  _G.BLINK_SOURCES = {}
   if opts.cmdline then
-    Sources = (function()
+    _G.BLINK_SOURCES = (function()
       local type = vim.fn.getcmdtype()
-      if type == '/' or type == '?' then -- Search forward and backward
-        return { 'buffer' }
+      local res = {} ---@type string[]
+      if vim.list_contains({ '/', '?' }, type) then -- Search forward and backward
+        res = { 'buffer' }
+      elseif vim.list_contains({ ':', '@' }, type) then -- Commands
+        res = { 'cmdline', 'buffer' }
       end
-      if type == ':' or type == '@' then -- Commands
-        return { 'cmdline', 'buffer' }
-      end
-      return {}
+      return res
     end)()
-  elseif opts.terminal then
-    Sources = {}
-  else
-    Sources = { 'lazydev', 'lsp', 'path', 'buffer', 'snippets' } --[[@as string[]\]]
-
-    local ft = User.util.ft_get(vim.api.nvim_get_current_buf())
-    if ft == 'sshconfig' then
-      table.insert(Sources, 'sshconfig')
-    end
-    if vim.list_contains({ 'git', 'gitcommit', 'gitattributes', 'gitrebase' }, ft) then
-      table.insert(Sources, 'git')
-    end
-    if ft == 'gitcommit' then
-      table.insert(Sources, 'conventional_commits')
-    end
+  elseif not opts.terminal then
+    _G.BLINK_SOURCES = {
+      'lazydev',
+      'lsp',
+      'path',
+      'buffer',
+      'snippets',
+      'git',
+      'css_vars',
+      'conventional_commits',
+      'env',
+      'sshconfig',
+      'orgmode',
+    } --[[@as string[]\]]
   end
-  return Sources
+  return _G.BLINK_SOURCES
 end
 
 return { ---@type LazySpec[]
   {
     'L3MON4D3/LuaSnip',
-    event = 'InsertEnter',
     version = false,
     build = User.check.executable('make') and 'make install_jsregexp' or false,
     dependencies = { 'rafamadriz/friendly-snippets' },
@@ -162,26 +173,7 @@ return { ---@type LazySpec[]
     end,
   },
   {
-    'jdrupal-dev/css-vars.nvim',
-    ft = { 'css', 'less', 'scss' },
-    version = false,
-    dependencies = { 'saghen/blink.cmp' },
-  },
-  {
-    'Kaiser-Yang/blink-cmp-git',
-    ft = { 'git', 'gitcommit', 'gitattributes', 'gitconfig', 'gitignore', 'gitrebase' },
-    version = false,
-    dependencies = { 'saghen/blink.cmp' },
-  },
-  {
-    'disrupted/blink-cmp-conventional-commits',
-    ft = 'gitcommit',
-    version = false,
-    dependencies = { 'saghen/blink.cmp' },
-  },
-  {
     'saghen/blink.cmp',
-    event = 'InsertEnter',
     version = false,
     build = function()
       require('blink.cmp').build():wait(60000)
@@ -191,7 +183,7 @@ return { ---@type LazySpec[]
     config = function()
       require('blink.cmp').setup({
         enabled = function()
-          return not vim.list_contains({ 'picker-prompt' }, vim.bo[vim.api.nvim_get_current_buf()].filetype)
+          return not vim.list_contains({ 'picker-prompt' }, vim.bo.ft)
         end,
         keymap = {
           preset = 'cmdline',
@@ -207,7 +199,7 @@ return { ---@type LazySpec[]
           ['<A-9>'] = { accept_nth(9), 'fallback' },
           ['<C-Space>'] = {
             function(cmp)
-              return cmp.is_visible() and cmp.hide() or cmp.show({ providers = BUtil.gen_sources() })
+              return cmp.is_visible() and cmp.hide() or cmp.show({ providers = _G.BUtil.gen_sources() })
             end,
             'fallback',
           },
@@ -226,7 +218,7 @@ return { ---@type LazySpec[]
               return cmp.snippet_active() and cmp.snippet_backward()
                 or (
                   cmp.is_menu_visible() and cmp.select_prev()
-                  or (User.util.has_words_before() and cmp.show({ providers = BUtil.gen_sources() }) or false)
+                  or (User.util.has_words_before() and cmp.show({ providers = _G.BUtil.gen_sources() }) or false)
                 )
             end,
             'fallback',
@@ -236,7 +228,7 @@ return { ---@type LazySpec[]
               return cmp.snippet_active() and cmp.snippet_forward()
                 or (
                   cmp.is_menu_visible() and cmp.select_next()
-                  or (User.util.has_words_before() and cmp.show({ providers = BUtil.gen_sources() }) or false)
+                  or (User.util.has_words_before() and cmp.show({ providers = _G.BUtil.gen_sources() }) or false)
                 )
             end,
             'fallback',
@@ -325,8 +317,8 @@ return { ---@type LazySpec[]
           trigger = { show_in_snippet = true, show_on_trigger_character = true },
         },
         sources = {
-          default = BUtil.gen_sources(),
-          providers = Providers,
+          default = _G.BUtil.gen_sources(),
+          providers = _G.BUtil.gen_providers(),
           transform_items = function(_, items)
             return items
           end,
@@ -364,7 +356,7 @@ return { ---@type LazySpec[]
             ['<S-Tab>'] = {
               function(cmp)
                 if not cmp.is_menu_visible() and User.util.has_words_before() then
-                  return cmp.show({ providers = BUtil.gen_sources({ cmdline = true }) })
+                  return cmp.show({ providers = _G.BUtil.gen_sources({ cmdline = true }) })
                 end
                 if cmp.is_menu_visible() then
                   return cmp.select_prev()
@@ -376,7 +368,7 @@ return { ---@type LazySpec[]
             ['<Tab>'] = {
               function(cmp)
                 if not cmp.is_menu_visible() and User.util.has_words_before() then
-                  return cmp.show({ providers = BUtil.gen_sources({ cmdline = true }) })
+                  return cmp.show({ providers = _G.BUtil.gen_sources({ cmdline = true }) })
                 end
                 if cmp.is_menu_visible() then
                   return cmp.select_next()
@@ -396,9 +388,27 @@ return { ---@type LazySpec[]
     end,
   },
   {
+    'jdrupal-dev/css-vars.nvim',
+    ft = { 'css', 'less', 'scss' },
+    version = false,
+    cond = require('user_api').check.executable('rg'),
+    dependencies = { 'saghen/blink.cmp' },
+  },
+  {
+    'Kaiser-Yang/blink-cmp-git',
+    ft = { 'git', 'gitcommit', 'gitattributes', 'gitconfig', 'gitignore', 'gitrebase' },
+    version = false,
+    dependencies = { 'saghen/blink.cmp' },
+  },
+  {
+    'disrupted/blink-cmp-conventional-commits',
+    ft = 'gitcommit',
+    version = false,
+    dependencies = { 'saghen/blink.cmp' },
+  },
+  {
     'bydlw98/blink-cmp-env',
     dev = true,
-    event = 'InsertEnter',
     version = false,
     dependencies = { 'saghen/blink.cmp' },
   },
