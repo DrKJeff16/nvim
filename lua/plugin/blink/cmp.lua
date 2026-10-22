@@ -77,7 +77,7 @@ local Providers = { ---@type table<string, blink.cmp.SourceProviderConfigPartial
       get_cwd = function()
         return (vim.uv or vim.loop).cwd() or vim.fn.getcwd()
       end,
-      ignore_root_slash = true,
+      ignore_root_slash = false,
       label_trailing_slash = true,
       show_hidden_files_by_default = true,
       trailing_slash = false,
