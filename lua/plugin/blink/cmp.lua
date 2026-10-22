@@ -212,7 +212,7 @@ return { ---@type LazySpec[]
     build = function()
       require('blink.cmp').build():wait(60000)
     end,
-    cond = User.check.executable('cargo') and User.check.vim_has('nvim-0.12'),
+    cond = User.check.executable('cargo') and vim.fn.has('nvim-0.12') == 1,
     dependencies = { 'saghen/blink.lib', 'onsails/lspkind.nvim', 'L3MON4D3/LuaSnip' },
     config = function()
       require('blink.cmp').setup({
