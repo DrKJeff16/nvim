@@ -19,11 +19,104 @@ end
 ---@class BUtil
 local BUtil = {}
 
-local Providers = {} ---@type table<string, blink.cmp.SourceProviderConfigPartial>
+local Providers = { ---@type table<string, blink.cmp.SourceProviderConfigPartial>
+  cmdline = { module = 'blink.cmp.sources.cmdline' },
+  snippets = { max_items = 5, module = 'blink.cmp.sources.snippets', score_offset = -75 },
+  buffer = {
+    max_items = 5,
+    opts = {
+      enable_in_ex_commands = false,
+      get_bufnrs = function() ---@return integer[]
+        return vim
+          .iter(vim.api.nvim_list_wins())
+          :map(function(win) ---@param win integer
+            return vim.api.nvim_win_get_buf(win) ---@diagnostic disable-line:missing-return-value
+          end)
+          :filter(function(bufnr) ---@param bufnr integer
+            return vim.bo[bufnr].buftype ~= 'nofile'
+          end)
+          :totable()
+      end,
+      get_search_bufnrs = function() ---@return integer[]
+        return { vim.api.nvim_get_current_buf() }
+      end,
+      max_async_buffer_size = 200000,
+      max_sync_buffer_size = 20000,
+      max_total_buffer_size = 500000,
+      retention_order = { 'focused', 'visible', 'recency', 'largest' },
+      use_cache = true,
+    },
+    score_offset = -70,
+    ---@param ctx blink.cmp.Context
+    ---@param items blink.cmp.CompletionItem[]
+    transform_items = function(ctx, items)
+      local keyword = ctx.get_keyword()
+      if not (keyword:match('^%l') or keyword:match('^%u')) then
+        return items
+      end
+
+      local seen, out = {}, {} ---@type table<string, boolean>, blink.cmp.CompletionItem[]
+      for _, item in ipairs(items) do
+        if item.insertText and item.insertText:match(keyword:match('^%l') and '^%u%l+$' or '^%l+$') then
+          local text = (keyword:match('^%u') ~= nil and string.upper or string.lower)(item.insertText:sub(1, 1))
+            .. item.insertText:sub(2)
+          item.insertText, item.label = text, text
+        end
+        if not seen[item.insertText] then
+          seen[item.insertText] = true
+          table.insert(out, item)
+        end
+      end
+      return out
+    end,
+  },
+  path = {
+    module = 'blink.cmp.sources.path',
+    name = 'Path',
+    opts = {
+      get_cwd = function()
+        return (vim.uv or vim.loop).cwd() or vim.fn.getcwd()
+      end,
+      ignore_root_slash = true,
+      label_trailing_slash = true,
+      show_hidden_files_by_default = true,
+      trailing_slash = false,
+    },
+    score_offset = 50,
+  },
+  lazydev = { module = 'lazydev.integrations.blink', name = 'LazyDev', score_offset = 100 },
+  lsp = { module = 'blink.cmp.sources.lsp', name = 'LSP', score_offset = 80 },
+  css_vars = {
+    module = 'css-vars.blink',
+    name = 'css-vars',
+    opts = { search_extensions = { '.js', '.ts', '.jsx', '.tsx' } },
+  },
+  sshconfig = { module = 'blink-cmp-sshconfig', name = 'SshConfig' },
+  git = {
+    enabled = function()
+      return vim.list_contains(
+        { 'git', 'gitcommit', 'gitattributes', 'gitrebase' },
+        User.util.ft_get(vim.api.nvim_get_current_buf())
+      )
+    end,
+    module = 'blink-cmp-git',
+    name = 'Git',
+  },
+  conventional_commits = {
+    enabled = function()
+      return User.util.ft_get(vim.api.nvim_get_current_buf()) == 'gitcommit'
+    end,
+    module = 'blink-cmp-conventional-commits',
+    name = 'CC',
+    score_offset = 100,
+  },
+  orgmode = { name = 'Org', module = 'orgmode.org.autocompletion.blink' },
+}
 local Sources = {} ---@type string[]
 
 ---@param opts? { cmdline: boolean }| { terminal: boolean }
-function BUtil.reset_sources(opts)
+---@return string[] sources
+function BUtil.gen_sources(opts)
   opts = opts or {}
 
   if opts.cmdline then
@@ -37,142 +130,23 @@ function BUtil.reset_sources(opts)
       end
       return {}
     end)()
-    return
-  end
-  if opts.terminal then
+  elseif opts.terminal then
     Sources = {}
-    return
-  end
+  else
+    Sources = { 'lazydev', 'lsp', 'path', 'buffer', 'snippets' } --[[@as string[]\]]
 
-  Sources = { 'lazydev', 'lsp', 'path', 'buffer', 'snippets' } --[[@as string[]\]]
-
-  local ft = User.util.ft_get(vim.api.nvim_get_current_buf())
-  if ft == 'sshconfig' then
-    table.insert(Sources, 1, 'sshconfig')
+    local ft = User.util.ft_get(vim.api.nvim_get_current_buf())
+    if ft == 'sshconfig' then
+      table.insert(Sources, 'sshconfig')
+    end
+    if vim.list_contains({ 'git', 'gitcommit', 'gitattributes', 'gitrebase' }, ft) then
+      table.insert(Sources, 'git')
+    end
+    if ft == 'gitcommit' then
+      table.insert(Sources, 'conventional_commits')
+    end
   end
-  if ft == 'tex' then
-    table.insert(Sources, 1, 'latex')
-  end
-  if vim.list_contains({ 'git', 'gitcommit', 'gitattributes', 'gitrebase' }, ft) then
-    table.insert(Sources, 1, 'git')
-  end
-  if ft == 'gitcommit' then
-    table.insert(Sources, 1, 'conventional_commits')
-  end
-end
-
----@param opts? { cmdline: boolean }| { terminal: boolean }
----@return string[] sources
-function BUtil.gen_sources(opts)
-  BUtil.reset_sources(opts)
   return Sources
-end
-
-function BUtil.reset_providers()
-  Providers = {
-    cmdline = { module = 'blink.cmp.sources.cmdline' },
-    snippets = { max_items = 5, module = 'blink.cmp.sources.snippets', score_offset = -75 },
-    buffer = {
-      max_items = 5,
-      opts = {
-        enable_in_ex_commands = false,
-        get_bufnrs = function() ---@return integer[]
-          return vim
-            .iter(vim.api.nvim_list_wins())
-            :map(function(win) ---@param win integer
-              return vim.api.nvim_win_get_buf(win) ---@diagnostic disable-line:missing-return-value
-            end)
-            :filter(function(bufnr) ---@param bufnr integer
-              return vim.bo[bufnr].buftype ~= 'nofile'
-            end)
-            :totable()
-        end,
-        get_search_bufnrs = function() ---@return integer[]
-          return { vim.api.nvim_get_current_buf() }
-        end,
-        max_async_buffer_size = 200000,
-        max_sync_buffer_size = 20000,
-        max_total_buffer_size = 500000,
-        retention_order = { 'focused', 'visible', 'recency', 'largest' },
-        use_cache = true,
-      },
-      score_offset = -70,
-      ---@param ctx blink.cmp.Context
-      ---@param items blink.cmp.CompletionItem[]
-      transform_items = function(ctx, items)
-        local keyword = ctx.get_keyword()
-        if not (keyword:match('^%l') or keyword:match('^%u')) then
-          return items
-        end
-
-        local seen, out = {}, {} ---@type table<string, boolean>, blink.cmp.CompletionItem[]
-        for _, item in ipairs(items) do
-          if item.insertText and item.insertText:match(keyword:match('^%l') and '^%u%l+$' or '^%l+$') then
-            local text = (keyword:match('^%u') ~= nil and string.upper or string.lower)(item.insertText:sub(1, 1))
-              .. item.insertText:sub(2)
-            item.insertText, item.label = text, text
-          end
-          if not seen[item.insertText] then
-            seen[item.insertText] = true
-            table.insert(out, item)
-          end
-        end
-        return out
-      end,
-    },
-    path = {
-      module = 'blink.cmp.sources.path',
-      name = 'Path',
-      opts = {
-        get_cwd = function()
-          return (vim.uv or vim.loop).cwd() or vim.fn.getcwd()
-        end,
-        ignore_root_slash = true,
-        label_trailing_slash = true,
-        show_hidden_files_by_default = true,
-        trailing_slash = false,
-      },
-      score_offset = 50,
-    },
-    lazydev = { module = 'lazydev.integrations.blink', name = 'LazyDev', score_offset = 100 },
-    lsp = { module = 'blink.cmp.sources.lsp', name = 'LSP', score_offset = 80 },
-    css_vars = {
-      module = 'css-vars.blink',
-      name = 'css-vars',
-      opts = { search_extensions = { '.js', '.ts', '.jsx', '.tsx' } },
-    },
-    sshconfig = { module = 'blink-cmp-sshconfig', name = 'SshConfig' },
-    git = {
-      enabled = function()
-        return vim.list_contains(
-          { 'git', 'gitcommit', 'gitattributes', 'gitrebase' },
-          User.util.ft_get(vim.api.nvim_get_current_buf())
-        )
-      end,
-      module = 'blink-cmp-git',
-      name = 'Git',
-    },
-    conventional_commits = {
-      enabled = function()
-        return User.util.ft_get(vim.api.nvim_get_current_buf()) == 'gitcommit'
-      end,
-      module = 'blink-cmp-conventional-commits',
-      name = 'CC',
-      score_offset = 100,
-    },
-    latex = { module = 'blink-cmp-latex', name = 'Latex', opts = { insert_command = false } },
-    orgmode = { name = 'Org', module = 'orgmode.org.autocompletion.blink' },
-  }
-end
-
----@param P? table<string, blink.cmp.SourceProviderConfigPartial>
----@return table<string, blink.cmp.SourceProviderConfigPartial> providers
-function BUtil.gen_providers(P)
-  User.check.validate({ P = { P, { 'table', 'nil' }, true } })
-
-  BUtil.reset_providers()
-  Providers = vim.tbl_deep_extend('force', Providers, P or {}) --[[@as table<string, blink.cmp.SourceProviderConfigPartial>]]
-  return Providers
 end
 
 return { ---@type LazySpec[]
@@ -352,7 +326,7 @@ return { ---@type LazySpec[]
         },
         sources = {
           default = BUtil.gen_sources(),
-          providers = BUtil.gen_providers(),
+          providers = Providers,
           transform_items = function(_, items)
             return items
           end,
