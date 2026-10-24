@@ -5,13 +5,14 @@ local ERROR = vim.log.levels.ERROR
 local INFO = vim.log.levels.INFO
 local TRACE = vim.log.levels.TRACE
 local WARN = vim.log.levels.WARN
+local validate = require('user_api.check').validate
 
 ---@param msg string
 ---@param sel any
 ---@param space? boolean
 ---@return string msg
 local function format_sel(msg, sel, space)
-  require('user_api.check').validate({
+  validate({
     msg = { msg, { 'string' } },
     space = { space, { 'boolean', 'nil' }, true },
   })
@@ -19,8 +20,8 @@ local function format_sel(msg, sel, space)
     space = true
   end
 
-  if sel then
-    if vim.list_contains({ 'number', 'boolean' }, type(sel)) then
+  if sel ~= nil then
+    if type(sel) == 'number' or type(sel) == 'boolean' then
       sel = tostring(sel)
     elseif type(sel) ~= 'string' then
       sel = vim.inspect(sel)
@@ -35,15 +36,16 @@ end
 ---@param lvl 0|1|2|3|4
 ---@param ... any
 return function(lvl, ...)
-  require('user_api.check').validate({ lvl = { lvl, { 'number' } } })
+  validate({ lvl = { lvl, { 'number' } } })
   lvl = vim.list_contains({ DEBUG, INFO, WARN, TRACE, ERROR }, lvl) and lvl or INFO
-  if require('user_api.check').module('snacks') then
+
+  if _G.Snacks then
     local msg = ''
     for i = 1, select('#', ...) do
       msg = format_sel(msg, select(i, ...), i ~= 1)
     end
 
-    pcall(require('snacks').debug.backtrace, msg, { history = true, style = 'fancy', title = 'User API' })
+    pcall(_G.Snacks.debug.backtrace, msg, { history = true, style = 'fancy', title = 'User API' })
   end
 end
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

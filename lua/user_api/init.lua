@@ -19,32 +19,22 @@ local function make_timer()
   end
 
   local uv = vim.uv or vim.loop
-  timer = uv.new_timer()
-  if not timer then
-    return
-  end
-
+  timer = assert(uv.new_timer(), 'Unable to create timer')
   timer:start(
     1000,
     900000,
     vim.schedule_wrap(function()
       local logfile = vim.fs.joinpath(vim.fn.stdpath('state'), 'nvim.log')
-      local stat = uv.fs_stat(logfile)
-      if not stat or stat.size < math.floor(1048576 / 2) then -- 512MiB
+      local stat = assert(uv.fs_stat(logfile), 'Unable to get stats for logfile')
+      if stat.size < math.floor(1048576 / 2) then -- 512MiB
         return
       end
 
-      local fd = uv.fs_open(logfile, 'w', tonumber('644', 8))
-      if not fd then
-        return
-      end
-
-      local ok = uv.fs_ftruncate(fd, 0)
-      uv.fs_close(fd)
-
-      if ok then
+      local fd = assert(uv.fs_open(logfile, 'w', tonumber('644', 8)), 'Unable to open logfile')
+      if uv.fs_ftruncate(fd, 0) then
         vim.notify(('`%s` has been cleared!'):format(logfile), vim.log.levels.INFO)
       end
+      assert(uv.fs_close(fd), ('Unable to close file descriptor for logfile: `%s`'):format(logfile))
     end)
   )
 

@@ -35,7 +35,6 @@ function M.gen_augroups(names, clear)
     for _, name in ipairs(names) do
       augroups[name] = vim.api.nvim_create_augroup(name, { clear = clear })
     end
-    return augroups
   elseif type(names) == 'string' then
     augroups = { [names] = vim.api.nvim_create_augroup(names, { clear = clear }) }
   end
@@ -45,9 +44,10 @@ end
 ---@param T AuPair
 function M.au_pair(T)
   validate({ T = { T, { 'table' } } })
-  if not T.event or (type(T.event) ~= 'string' and type(T.event) ~= 'table') then
-    error(('(%s.au_pair): Event is neither a string nor a table'):format(MODSTR), ERROR)
-  end
+  assert(
+    T.event and (type(T.event) == 'string' or type(T.event) == 'table'),
+    ('(%s.au_pair): Event is neither a string nor a table'):format(MODSTR)
+  )
 
   vim.api.nvim_create_autocmd(T.event, T.opts)
 end
@@ -57,9 +57,10 @@ function M.au_from_arr(T)
   validate({ T = { T, { 'table' } } })
 
   for _, v in ipairs(T) do
-    if type(v.event) ~= 'string' and type(v.event) ~= 'table' then
-      error(('(%s.au_from_arr): Event is neither a string nor a table, skipping'):format(MODSTR), ERROR)
-    end
+    assert(
+      type(v.event) == 'string' or type(v.event) == 'table',
+      ('(%s.au_from_arr): Event is neither a string nor a table, skipping'):format(MODSTR)
+    )
     vim.api.nvim_create_autocmd(v.event, v.opts)
   end
 end
@@ -69,9 +70,10 @@ function M.au_from_dict(T)
   validate({ T = { T, { 'table' } } })
 
   for k, v in pairs(T) do
-    if type(k) ~= 'string' and type(v) ~= 'table' then
-      error(('(%s.au_from_arr): Dictionary key is not a string, skipping'):format(MODSTR), ERROR)
-    end
+    assert(
+      type(k) == 'string' or type(v) == 'table',
+      ('(%s.au_from_arr): Dictionary key is not a string, skipping'):format(MODSTR)
+    )
     vim.api.nvim_create_autocmd(k, v)
   end
 end
@@ -82,18 +84,16 @@ function M.au_repeated(T)
   for event, t in pairs(T) do
     if type(event) ~= 'string' then
       vim.notify(('(%s.au_repeated): Event is not a string, skipping'):format(MODSTR), ERROR)
-      return
-    end
-    if type(t) ~= 'table' then
+    elseif type(t) ~= 'table' then
       vim.notify(('(%s.au_repeated): Invalid options table, skipping'):format(MODSTR), ERROR)
-      return
-    end
-    for _, opts in ipairs(t) do
-      if type(opts) ~= 'table' then
-        vim.notify(('(%s.au_repeated): Option table is empty, skipping'):format(MODSTR), ERROR)
-        return
+    else
+      for _, opts in ipairs(t) do
+        if type(opts) ~= 'table' then
+          vim.notify(('(%s.au_repeated): Option table is empty, skipping'):format(MODSTR), ERROR)
+        else
+          vim.api.nvim_create_autocmd(event, opts)
+        end
       end
-      vim.api.nvim_create_autocmd(event, opts)
     end
   end
 end
@@ -113,18 +113,21 @@ function M.au_repeated_events(T)
     end
   end
 
-  ---@cast T AuRepeatEvents
-  if #T.events == 0 or #T.opts_tbl == 0 then
-    vim.notify(('(%s.au_repeated_events): Invalid autocmd tables'):format(MODSTR), WARN)
+  if not (T.events and T.opts_tbl) then
     return
   end
 
-  for _, opts in ipairs(T.opts_tbl) do
-    if type(opts) ~= 'table' or vim.tbl_isempty(opts) then
-      vim.notify(('(%s.au_repeated_events): Options are not a vaild table'):format(MODSTR), ERROR)
-      return
+  ---@cast T AuRepeatEvents
+  if #T.events == 0 or #T.opts_tbl == 0 then
+    vim.notify(('(%s.au_repeated_events): Invalid autocmd tables'):format(MODSTR), WARN)
+  else
+    for _, opts in ipairs(T.opts_tbl) do
+      if type(opts) ~= 'table' or vim.tbl_isempty(opts) then
+        vim.notify(('(%s.au_repeated_events): Options are not a vaild table, skipping'):format(MODSTR), ERROR)
+      else
+        vim.api.nvim_create_autocmd(T.events, opts)
+      end
     end
-    vim.api.nvim_create_autocmd(T.events, opts)
   end
 end
 

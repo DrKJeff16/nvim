@@ -47,24 +47,21 @@ function M.update(verbose)
           title = 'User API - Update',
         })
       end
-      return
-    end
-
-    if obj.stdout and obj.stdout:match('Already up to date') then
+    elseif obj.stdout and obj.stdout:match('Already up to date') then
       vim.notify('Jnvim is up to date!', INFO, {
         animate = true,
         hide_from_history = true,
         timeout = 1750,
         title = 'User API - Update',
       })
-      return
+    else
+      vim.notify('You need to restart Nvim!', WARN, {
+        animate = true,
+        hide_from_history = false,
+        timeout = 5000,
+        title = 'User API - Update',
+      })
     end
-    vim.notify('You need to restart Nvim!', WARN, {
-      animate = true,
-      hide_from_history = false,
-      timeout = 5000,
-      title = 'User API - Update',
-    })
   end)
 end
 
@@ -75,9 +72,15 @@ function M.setup(verbose)
     verbose = false
   end
 
-  require('user_api.commands').add_command('UserUpdate', function(ctx)
-    M.update(ctx.bang)
-  end, { bang = true, desc = 'Update Jnvim' }, verbose)
+  require('user_api.commands').add_command({
+    UserUpdate = {
+      callback = function(ctx)
+        M.update(ctx.bang)
+      end,
+      opts = { bang = true, desc = 'Update Jnvim' },
+      verbose = verbose,
+    },
+  })
 
   local desc = require('user_api.maps').desc
   require('user_api.config').keymaps.set({

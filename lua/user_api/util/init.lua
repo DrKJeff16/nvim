@@ -108,23 +108,26 @@ function M.optget(option, param, param_value)
     param_value = { param_value, { 'string', 'number', 'nil' }, true },
   })
   param = param or 'buf'
-  if not vim.list_contains({ 'scope', 'ft', 'buf', 'win' }, param) then
-    error(('Bad parameter: `%s`\nCan only accept `scope`, `ft`, `buf` or `win`!'):format(vim.inspect(param)))
-  end
+  assert(
+    vim.list_contains({ 'scope', 'ft', 'buf', 'win' }, param),
+    ('Bad parameter: `%s`\nCan only accept `scope`, `ft`, `buf` or `win`!'):format(vim.inspect(param))
+  )
   if param == 'scope' then
     param_value = param_value or 'local'
-    if not vim.list_contains({ 'global', 'local' }, param_value) then
-      error(('Bad param value `%s`\nCan only accept `global` or `local`!'):format(vim.inspect(param_value)))
-    end
+    assert(
+      vim.list_contains({ 'global', 'local' }, param_value),
+      ('Bad param value `%s`\nCan only accept `global` or `local`!'):format(vim.inspect(param_value))
+    )
   end
-  if param == 'ft' and (not param_value or type(param_value) ~= 'string') then
-    error('Missing/bad value for `ft` parameter!')
+  if param == 'ft' then
+    assert(param_value and type(param_value) == 'string', 'Missing/bad value for `ft` parameter!')
   end
-  if
-    vim.list_contains({ 'win', 'buf' }, param)
-    and not (param_value and type(param_value) == 'number' and require('user_api.check').is_int(param_value))
-  then
-    error('Missing/bad value for `win`/`buf` parameter!')
+  if vim.list_contains({ 'win', 'buf' }, param) then
+    assert(param_value ~= nil, 'Missing value for `win` / `buf` parameter')
+    assert(
+      type(param_value) == 'number' and require('user_api.check').is_int(param_value),
+      'Bad value for `win` / `buf` parameter'
+    )
   end
 
   if type(option) == 'string' then
@@ -134,12 +137,9 @@ function M.optget(option, param, param_value)
   local values = {} ---@type vim.bo|vim.wo
   for _, opt in ipairs(option) do
     local ok, res = pcall(vim.api.nvim_get_option_value, opt, { [param] = param_value })
-    if not (ok and res) then
-      error(('Invalid option: `%s`'):format(opt))
-    end
+    assert(ok and res, ('Invalid option: `%s`'):format(opt))
     values[opt] = res
   end
-
   return values
 end
 
@@ -157,28 +157,31 @@ function M.optset(option, value, param, param_value)
     param = { param, { 'string', 'nil' }, true },
     param_value = { param_value, { 'string', 'number', 'nil' }, true },
   })
-  if type(option) == 'table' and value ~= nil then
-    error('Bad option value spec!')
-  end
   param = param or 'buf'
-  if not vim.list_contains({ 'scope', 'filetype', 'buf', 'win' }, param) then
-    error(('Bad parameter: `%s`\nCan only accept `scope`, `filetype`, `buf` or `win`!'):format(vim.inspect(param)))
+  if type(option) == 'table' then
+    assert(value == nil, 'Bad option value spec!')
   end
+  assert(
+    vim.list_contains({ 'scope', 'filetype', 'buf', 'win' }, param),
+    ('Bad parameter: `%s`\nCan only accept `scope`, `filetype`, `buf` or `win`!'):format(vim.inspect(param))
+  )
+
   if param == 'scope' then
     ---@cast param_value 'global'|'local'
     param_value = param_value or 'local'
-    if not vim.list_contains({ 'global', 'local' }, param_value) then
-      error(('Bad param value `%s`\nCan only accept `global` or `local`!'):format(vim.inspect(param_value)))
-    end
+    assert(
+      vim.list_contains({ 'global', 'local' }, param_value),
+      ('Bad param value `%s`\nCan only accept `global` or `local`!'):format(vim.inspect(param_value))
+    )
   end
-  if param == 'filetype' and (not param_value or type(param_value) ~= 'string') then
-    error('Missing/bad value for `filetype` parameter!')
+  if param == 'filetype' then
+    assert(param_value and type(param_value) == 'string', 'Missing/bad value for `filetype` parameter!')
   end
-  if
-    vim.list_contains({ 'win', 'buf' }, param)
-    and not (param_value and type(param_value) == 'number' and require('user_api.check').is_int(param_value))
-  then
-    error('Missing/bad value for `win`/`buf` parameter!')
+  if vim.list_contains({ 'win', 'buf' }, param) then
+    assert(
+      param_value and type(param_value) == 'number' and require('user_api.check').is_int(param_value),
+      'Missing/bad value for `win`/`buf` parameter!'
+    )
   end
 
   if type(option) == 'string' then
@@ -228,32 +231,26 @@ function M.lstrip(char, str)
   end
 
   if type(char) == 'table' then
-    if #char > 0 then
-      for _, c in ipairs(char) do
-        if c:len() > str:len() then
-          return str
-        end
-        str = M.lstrip(c, str)
+    for _, c in ipairs(char) do
+      if c:len() > str:len() then
+        return str
       end
+      str = M.lstrip(c, str)
     end
-    return str
-  end
-
-  if not vim.startswith(str, char) or char:len() > str:len() then
-    return str
-  end
-
-  local i, len, new_str, other = 1, str:len(), '', false
-  while i <= len and i + char:len() - 1 <= len do
-    if str:sub(i, i + char:len() - 1) ~= char and not other then
-      other = true
+  elseif vim.startswith(str, char) or char:len() > str:len() then
+    local i, len, new_str, other = 1, str:len(), '', false
+    while i <= len and i + char:len() - 1 <= len do
+      if str:sub(i, i + char:len() - 1) ~= char and not other then
+        other = true
+      end
+      if other then
+        new_str = ('%s%s'):format(new_str, str:sub(i, i))
+      end
+      i = i + 1
     end
-    if other then
-      new_str = ('%s%s'):format(new_str, str:sub(i, i))
-    end
-    i = i + 1
+    str = new_str
   end
-  return new_str
+  return str
 end
 
 ---Right strip given a leading string (or list of strings) within a string, if any.
@@ -272,22 +269,16 @@ function M.rstrip(char, str)
   end
 
   if type(char) == 'table' then
-    if #char > 0 then
-      for _, c in ipairs(char) do
-        if c:len() > str:len() then
-          return str
-        end
-        str = M.rstrip(c, str)
+    for _, c in ipairs(char) do
+      if c:len() > str:len() then
+        return str
       end
+      str = M.rstrip(c, str)
     end
-    return str
+  elseif vim.startswith(str:reverse(), char) or char:len() > str:len() then
+    str = M.lstrip(char, str:reverse()):reverse()
   end
-
-  if not vim.startswith(str:reverse(), char) or char:len() > str:len() then
-    return str
-  end
-
-  return M.lstrip(char, str:reverse()):reverse()
+  return str
 end
 
 ---Strip given a leading string (or list of strings) within a string, if any, bidirectionally.
@@ -306,22 +297,16 @@ function M.strip(char, str)
   end
 
   if type(char) == 'table' then
-    if #char > 0 then
-      for _, c in ipairs(char) do
-        if c:len() > str:len() then
-          return str
-        end
-        str = M.strip(c, str)
+    for _, c in ipairs(char) do
+      if c:len() > str:len() then
+        return str
       end
+      str = M.strip(c, str)
     end
-    return str
+  elseif char:len() <= str:len() then
+    str = M.rstrip(char, M.lstrip(char, str))
   end
-
-  if char:len() > str:len() then
-    return str
-  end
-
-  return M.rstrip(char, M.lstrip(char, str))
+  return str
 end
 
 ---@param s string[]|string
@@ -378,8 +363,7 @@ function M.mv_tbl_values(T, steps, direction)
       local keys = vim.tbl_keys(t) --[[@as string[]\]]
       table.sort(keys)
 
-      local res = {} ---@type table<string, any>
-      local len = #keys
+      local res, len = {}, #keys ---@type table<string, any>, integer
       for i, v in ipairs(keys) do
         res[v] = t[keys[i == len and 1 or (i + 1)]]
       end
@@ -417,7 +401,6 @@ function M.strip_fields(T, fields)
   if type(fields) == 'string' or type(fields) == 'number' then
     if require('user_api.check').fields(fields, T) then
       for k in pairs(T) do
-        ---@cast k string|integer
         if k == fields then
           T[k] = nil
         end
@@ -425,7 +408,6 @@ function M.strip_fields(T, fields)
     end
   else
     for k in pairs(T) do
-      ---@cast k string|integer
       if vim.list_contains(fields, k) then
         T[k] = nil
       end
@@ -445,12 +427,10 @@ function M.strip_values(T, values, max_instances)
     values = { values, { 'table' } },
     max_instances = { max_instances, { 'table', 'nil' }, true },
   })
-
-  if vim.tbl_isempty(T) or #values == 0 then
-    error('(user_api.util.strip_values): Empty tables as args!')
-  end
-
   max_instances = max_instances or 0
+
+  assert(not vim.tbl_isempty(T) and #values > 0, 'Empty tables as args')
+
   local res, count = {}, 0 ---@type table<string, any>, integer
   for k, v in pairs(T) do
     -- Both arguments can't be true simultaneously
@@ -471,9 +451,12 @@ function M.strip_values(T, values, max_instances)
   return res
 end
 
----@param s? string
----@param bufnr? integer
----@return function setter
+---@param s string
+---@param bufnr integer
+---@return function callback
+---@overload fun()
+---@overload fun(s: string)
+---@overload fun(s: nil, bufnr: integer)
 function M.ft_set(s, bufnr)
   validate({
     s = { s, { 'string', 'nil' }, true },
@@ -485,16 +468,18 @@ function M.ft_set(s, bufnr)
   end
 end
 
----@param bufnr? integer
+---@param bufnr integer
 ---@return string|''|'acwrite'|'help'|'nofile'|'nowrite'|'prompt'|'quickfix'|'terminal' bt
+---@overload fun(): bt: string|''|'acwrite'|'help'|'nofile'|'nowrite'|'prompt'|'quickfix'|'terminal'
 function M.bt_get(bufnr)
   validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
 
   return vim.api.nvim_get_option_value('buftype', { buf = bufnr or vim.api.nvim_get_current_buf() })
 end
 
----@param bufnr? integer
+---@param bufnr integer
 ---@return string ft
+---@overload fun(): ft: string
 function M.ft_get(bufnr)
   validate({ bufnr = { bufnr, { 'number', 'nil' }, true } })
 
@@ -537,10 +522,10 @@ function M.displace_letter(c, direction)
     return 'a'
   end
 
-  local LOWER = vim.deepcopy(require('user_api.util.string').alphabet.lower_map)
-  local UPPER = vim.deepcopy(require('user_api.util.string').alphabet.upper_map)
+  local LOWER = M.string.alphabet.lower_map
+  local UPPER = M.string.alphabet.upper_map
   return M.mv_tbl_values(
-    require('user_api.check').fields(c, LOWER) and LOWER or UPPER,
+    vim.deepcopy(require('user_api.check').fields(c, LOWER) and LOWER or UPPER),
     1,
     direction == 'prev' and 'r' or 'l'
   )[c]

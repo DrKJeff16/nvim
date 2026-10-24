@@ -68,18 +68,17 @@ function M.setup(verbose)
     ['telescope.init'] = {
       'telescope',
       {
-        mod = 'telescope._extensions.picker_list',
         cb = function()
           require('telescope._extensions.picker_list').exports.picker_list()
         end,
+        mod = 'telescope._extensions.picker_list',
       },
     },
     snacks = {
       'snacks.nvim',
       {
-        mod = 'snacks.picker',
         cb = function()
-          require('snacks.picker').pickers({
+          _G.Snacks.picker.pickers({
             auto_close = true,
             auto_confirm = false,
             cwd = (vim.uv or vim.loop).cwd() or vim.fn.getcwd(),
@@ -89,24 +88,25 @@ function M.setup(verbose)
             ui_select = true,
           })
         end,
+        mod = 'snacks.picker',
       },
     },
     ['fzf-lua'] = {
       'fzf-lua',
       {
-        mod = 'fzf-lua.cmd',
         cb = function()
           require('fzf-lua.cmd').run_command('builtin')
         end,
+        mod = 'fzf-lua.cmd',
       },
     },
     picker = {
       'picker.nvim',
       {
-        mod = 'picker',
         cb = function()
           require('picker').open({})
         end,
+        mod = 'picker',
       },
     },
   }
@@ -129,11 +129,9 @@ function M.run()
 
   local keys = vim.tbl_keys(pickers) --[[@as string[]\]]
   vim.ui.select(keys, { prompt = 'Select The Desired Picker' }, function(item) ---@param item string
-    if not (item and vim.list_contains(keys, item)) then
-      return
+    if item and vim.list_contains(keys, item) then
+      pcall(pickers[item])
     end
-
-    pcall(pickers[item])
   end)
 end
 
