@@ -146,10 +146,10 @@ end
 ---@overload fun(option: string, value: any)
 ---@overload fun(option: table<string, any>)
 ---@overload fun(option: string, value: any, param: 'scope', param_value: 'local'|'global')
----@overload fun(option: string, value: any, param: 'ft', param_value: string)
+---@overload fun(option: string, value: any, param: 'filetype', param_value: string)
 ---@overload fun(option: string, value: any, param: 'buf'|'win', param_value: integer)
 ---@overload fun(option: table<string, any>, value: nil, param: 'scope', param_value: 'local'|'global')
----@overload fun(option: table<string, any>, value: nil, param: 'ft', param_value: string)
+---@overload fun(option: table<string, any>, value: nil, param: 'filetype', param_value: string)
 ---@overload fun(option: table<string, any>, value: nil, param: 'buf'|'win', param_value: integer)
 function M.optset(option, value, param, param_value)
   validate({
@@ -161,8 +161,8 @@ function M.optset(option, value, param, param_value)
     error('Bad option value spec!')
   end
   param = param or 'buf'
-  if not vim.list_contains({ 'scope', 'ft', 'buf', 'win' }, param) then
-    error(('Bad parameter: `%s`\nCan only accept `scope`, `ft`, `buf` or `win`!'):format(vim.inspect(param)))
+  if not vim.list_contains({ 'scope', 'filetype', 'buf', 'win' }, param) then
+    error(('Bad parameter: `%s`\nCan only accept `scope`, `filetype`, `buf` or `win`!'):format(vim.inspect(param)))
   end
   if param == 'scope' then
     ---@cast param_value 'global'|'local'
@@ -171,8 +171,8 @@ function M.optset(option, value, param, param_value)
       error(('Bad param value `%s`\nCan only accept `global` or `local`!'):format(vim.inspect(param_value)))
     end
   end
-  if param == 'ft' and (not param_value or type(param_value) ~= 'string') then
-    error('Missing/bad value for `ft` parameter!')
+  if param == 'filetype' and (not param_value or type(param_value) ~= 'string') then
+    error('Missing/bad value for `filetype` parameter!')
   end
   if
     vim.list_contains({ 'win', 'buf' }, param)
@@ -184,8 +184,22 @@ function M.optset(option, value, param, param_value)
   if type(option) == 'string' then
     vim.api.nvim_set_option_value(option, value, { [param] = param_value })
   else
+    local cb ---@type fun(opt: string, val: any)
+    if param == 'buf' then
+      cb = function(opt, val)
+        vim.bo[param_value][opt] = val
+      end
+    elseif param == 'win' then
+      cb = function(opt, val)
+        vim.wo[param_value][opt] = val
+      end
+    elseif vim.list_contains({ 'filetype', 'scope' }, param) then
+      cb = function(opt, val)
+        vim.api.nvim_set_option_value(opt, val, { [param] = param_value })
+      end
+    end
     for opt, val in pairs(option) do
-      vim.api.nvim_set_option_value(opt, val, { [param] = param_value })
+      assert(pcall(cb, opt, val), ('Unable to set option `%s` for `%s` level `%s`'):format(opt, param, param_value))
     end
   end
 end

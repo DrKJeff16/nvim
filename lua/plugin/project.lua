@@ -20,6 +20,7 @@ return { ---@type LazySpec
       exclude_dirs = {
         '/tmp/*',
         '/usr/*',
+        '~/',
         '~/.build/*',
         '~/.cache/*',
         '~/.cargo/*',

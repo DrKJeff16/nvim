@@ -2,6 +2,11 @@
 ---@field [1] fun(ctx: vim.api.keyset.create_user_command.command_args)
 ---@field [2]? vim.api.keyset.user_command
 
+---@class User.Commands.AddCommandSpec
+---@field callback fun(ctx: vim.api.keyset.create_user_command.command_args)
+---@field opts? vim.api.keyset.user_command
+---@field verbose? boolean
+
 local INFO = vim.log.levels.INFO
 local validate = require('user_api.check').validate
 
@@ -68,17 +73,11 @@ local commands = { ---@type table<string, User.Commands.CmdSpec>
         return
       end
 
-      local msg, title = '', ''
-      if vim.list_contains({ 'buffer', 'buf' }, arg) then
-        msg = ('%d'):format(curr.buffer)
-        title = 'Current Buffer'
-      elseif vim.list_contains({ 'window', 'win' }, arg) then
-        msg = ('%d'):format(curr.window)
-        title = 'Current Window'
-      elseif vim.list_contains({ 'tabpage', 'tab' }, arg) then
-        msg = ('%d'):format(curr.tabpage)
-        title = 'Current Tabpage'
-      end
+      local is_buf = vim.list_contains({ 'buffer', 'buf' }, arg)
+      local is_win = vim.list_contains({ 'window', 'win' }, arg)
+      local is_tab = vim.list_contains({ 'tabpage', 'tab' }, arg)
+      local msg = ('%d'):format(is_buf and curr.buffer or (is_win and curr.window or (is_tab and curr.tabpage or '')))
+      local title = is_buf and 'Current Buffer' or (is_win and 'Current Window' or (is_tab and 'Current Tabpage' or ''))
 
       vim.notify(msg, INFO, { title = title })
     end,
@@ -170,26 +169,53 @@ local commands = { ---@type table<string, User.Commands.CmdSpec>
   },
 }
 
----@param name string
+---@param name_or_cmds string|table<string, User.Commands.AddCommandSpec>
 ---@param cmd fun(ctx: vim.api.keyset.create_user_command.command_args)
----@param opts? vim.api.keyset.user_command
----@param verbose? boolean
-function M.add_command(name, cmd, opts, verbose)
-  validate({
-    name = { name, { 'string' } },
-    cmd = { cmd, { 'function' } },
-    opts = { opts, { 'table', 'nil' }, true },
-    verbose = { verbose, { 'boolean', 'nil' }, true },
-  })
-  if verbose == nil then
-    verbose = false
-  end
+---@param opts vim.api.keyset.user_command
+---@param verbose boolean
+---@overload fun(name_or_cmds: string, cmd: fun(ctx: vim.api.keyset.create_user_command.command_args))
+---@overload fun(name_or_cmds: string, cmd: fun(ctx: vim.api.keyset.create_user_command.command_args), opts: vim.api.keyset.user_command)
+---@overload fun(name_or_cmds: table<string, User.Commands.AddCommandSpec>)
+function M.add_command(name_or_cmds, cmd, opts, verbose)
+  validate({ name_or_cmds = { name_or_cmds, { 'string', 'table' } } })
 
-  M.setup({ [name] = { cmd, opts or {} } }, verbose)
+  if type(name_or_cmds) == 'string' then
+    validate({
+      cmd = { cmd, { 'function' } },
+      opts = { opts, { 'table', 'nil' }, true },
+      verbose = { verbose, { 'boolean', 'nil' }, true },
+    })
+
+    if verbose == nil then
+      verbose = false
+    end
+
+    M.setup({ [name_or_cmds] = { cmd, opts or {} } }, verbose)
+  else
+    for command, options in pairs(name_or_cmds) do
+      validate({
+        command = { command, { 'string' } },
+        options = { options, { 'table' } },
+        ['options.callback'] = { options.callback, { 'function' } },
+        ['options.opts'] = { options.opts, { 'table', 'nil' }, true },
+        ['options.verbose'] = { options.verbose, { 'boolean', 'nil' }, true },
+      })
+
+      if options.verbose == nil then
+        options.verbose = false
+      end
+
+      M.setup({ [command] = { options.callback, options.opts or {} } }, options.verbose)
+    end
+  end
 end
 
----@param cmds? table<string, User.Commands.CmdSpec>
----@param verbose? boolean
+---@param cmds table<string, User.Commands.CmdSpec>
+---@param verbose boolean
+---@overload fun()
+---@overload fun(cmds: table<string, User.Commands.CmdSpec>)
+---@overload fun(cmds: nil, verbose: boolean)
+---@overload fun(cmds: table<string, User.Commands.CmdSpec>, verbose: boolean)
 function M.setup(cmds, verbose)
   validate({
     cmds = { cmds, { 'table', 'nil' }, true },
