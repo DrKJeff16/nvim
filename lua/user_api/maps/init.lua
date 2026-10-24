@@ -1,7 +1,6 @@
 ---@module 'user_api.maps._meta'
 
 local MODES = { 'n', 'i', 'v', 't', 'o', 'x', 'c', 'V' }
-local ERROR = vim.log.levels.ERROR
 local WARN = vim.log.levels.WARN
 local Util = require('user_api.util')
 local validate = require('user_api.check').validate
@@ -94,9 +93,7 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
     bufnr = { bufnr, { 'number', 'nil' }, true },
   })
 
-  if type(T) ~= 'table' then
-    error("(user_api.maps.map_dict): Keys either aren't table or table is empty", ERROR)
-  end
+  assert(type(T) == 'table', 'Keys either are either not a table or an empty one')
 
   local map_choices = { 'keymap', 'wk.register' }
   map_func = vim.list_contains(map_choices, map_func) and map_func or 'wk.register'

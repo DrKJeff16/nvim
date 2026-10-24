@@ -37,9 +37,7 @@ local function switch_source_header(bufnr, client)
 
   ---@diagnostic disable-next-line:param-type-mismatch
   client:request(method_name, vim.lsp.util.make_text_document_params(bufnr), function(err, result)
-    if err then
-      error(tostring(err))
-    end
+    assert(not err, tostring(err))
     if not result then
       vim.notify('corresponding file cannot be determined')
     else

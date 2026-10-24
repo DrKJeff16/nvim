@@ -1,7 +1,5 @@
 ---@module 'lazy'
 
-local ERROR = vim.log.levels.ERROR
-
 ---@param direction 'next'|'prev'
 ---@param keywords string[]
 ---@return function
@@ -10,18 +8,17 @@ local function jump(direction, keywords)
     direction = { direction, { 'string' } },
     keywords = { keywords, { 'table' } },
   })
-  if not vim.list_contains({ 'next', 'prev' }, direction) then
-    error(('Invalid direction `%s`!'):format(direction), ERROR)
-  end
-  if vim.tbl_isempty(keywords) then
-    error('No available keywords!', ERROR)
-  end
+  assert(vim.list_contains({ 'next', 'prev' }, direction), ('Invalid direction `%s`!'):format(direction))
+  assert(#keywords > 0, 'No available keywords!')
 
   local direction_map = {
-    next = require('todo-comments').jump_next,
-    prev = require('todo-comments').jump_prev,
+    next = function()
+      require('todo-comments').jump_next()
+    end,
+    prev = function()
+      require('todo-comments').jump_prev()
+    end,
   }
-
   return direction_map[direction]
 end
 

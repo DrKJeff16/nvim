@@ -41,8 +41,7 @@ setmetatable(M, {
 ---
 ---If table is empty, it'll just return it as-is.
 ---
----If the data passed to the function is not a table,
----an error will be raised.
+---If the data passed to the function is not a table, an error will be raised.
 --- ---
 ---@generic T: table
 ---@param T T
@@ -571,9 +570,7 @@ end
 ---@return T reversed
 function M.reverse_tbl(T)
   validate({ T = { T, { 'table' } } })
-  if vim.tbl_isempty(T) then
-    error('(user_api.util.reverse_tbl): Empty table!')
-  end
+  assert(not vim.tbl_isempty(T), '(user_api.util.reverse_tbl): Empty table!')
 
   for i = 1, math.floor(#T / 2), 1 do
     T[i], T[#T - i + 1] = T[#T - i + 1], T[i]

@@ -22,9 +22,8 @@ local function type_fun(t)
       break
     end
   end
-  if ret then
-    error(('(%s.type_fun): Invalid type `%s`'):format(MODSTR, t), vim.log.levels.ERROR)
-  end
+
+  assert(not ret, ('(%s.type_fun): Invalid type `%s`'):format(MODSTR, t))
 
   ---@param var any
   ---@param multiple? boolean
@@ -256,20 +255,23 @@ function M.single_type_tbl(type_str, T)
     T = { T, { 'table' } },
   })
 
-  if not vim.list_contains({ 'boolean', 'function', 'number', 'string', 'table' }, type_str) then
-    error(('(%s.single_type_tbl): Wrong type `%s`.'):format(MODSTR, type_str))
-  end
+  assert(
+    vim.list_contains({ 'boolean', 'function', 'number', 'string', 'table' }, type_str),
+    ('(%s.single_type_tbl): Wrong type `%s`.'):format(MODSTR, type_str)
+  )
   if vim.tbl_isempty(T) then
     vim.notify(('(%s.single_type_tbl): Expected a non-empty table!'):format(MODSTR), vim.log.levels.ERROR)
     return false
   end
 
+  local res = true
   for _, v in pairs(T) do
     if (type_str == 'nil' and v ~= nil) or type(v) ~= type_str then
-      return false
+      res = false
+      break
     end
   end
-  return true
+  return res
 end
 
 ---Checks whether a certain `num` does not exceed table index range

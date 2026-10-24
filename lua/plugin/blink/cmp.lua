@@ -8,9 +8,7 @@ local User = require('user_api')
 ---@return fun(cmp: blink.cmp.API): result: boolean|nil|?
 local function accept_nth(idx)
   User.check.validate({ idx = { idx, { 'number' } } })
-  if not User.check.is_int(idx) then
-    error(('Bad index `%d`'):format(idx), vim.log.levels.ERROR)
-  end
+  assert(User.check.is_int(idx), ('Bad index `%d`'):format(idx))
 
   return function(cmp) ---@param cmp blink.cmp.API
     return cmp.accept({ index = idx })

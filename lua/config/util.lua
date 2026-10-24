@@ -1,5 +1,4 @@
 local MODSTR = 'config.util'
-local ERROR = vim.log.levels.ERROR
 local validate = require('user_api').check.validate
 
 ---@class Config.Util
@@ -13,9 +12,7 @@ function M.flag_installed(name, callback)
     name = { name, { 'string' } },
     callback = { callback, { 'function', 'nil' }, true },
   })
-  if name == '' then
-    error(('(%s.flag_installed): Unable to set `vim.g` var'):format(MODSTR), ERROR)
-  end
+  assert(name ~= '', ('(%s.flag_installed): Unable to set `vim.g` var'):format(MODSTR))
 
   return function()
     vim.g[(name:sub(1, 10) == 'installed_') and name or ('installed_' .. name)] = 1

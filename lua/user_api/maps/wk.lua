@@ -127,10 +127,9 @@ function M.convert(lhs, rhs, opts)
     rhs = { rhs, { 'string', 'function' } },
     opts = { opts, { 'table', 'nil' }, true },
   })
-  if not M.available() then
-    error('(user.maps.wk.convert): `which_key` not available', vim.log.levels.WARN)
-  end
   opts = opts or {}
+
+  assert(M.available(), '(user.maps.wk.convert): `which_key` not available')
 
   local res = { lhs, rhs } ---@type wk.Spec
   if type(opts.hidden) == 'boolean' then
