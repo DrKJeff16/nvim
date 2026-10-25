@@ -431,9 +431,6 @@ function M.set(new_keys, opts)
     new_keys = { new_keys, { 'table' } },
     opts = { opts, { 'table', 'nil' }, true },
   })
-  if vim.tbl_isempty(new_keys) then
-    return
-  end
 
   opts = opts or {}
   validate({
@@ -444,6 +441,7 @@ function M.set(new_keys, opts)
   if opts.defaults == nil then
     opts.defaults = false
   end
+
   if not leader_set then
     vim.notify('`keymaps.set_leader()` not called!', vim.log.levels.WARN)
   end
@@ -451,10 +449,21 @@ function M.set(new_keys, opts)
   local modes = require('user_api.maps').modes
   local parsed_keys = {} ---@type AllModeMaps
   for k, v in pairs(new_keys) do
+    ---@cast k string
+    ---@cast v AllMaps
     if not vim.list_contains(modes, k) then
       vim.notify(('Ignoring badly formatted table\n`%s`'):format(vim.inspect(new_keys)), vim.log.levels.WARN)
     else
-      parsed_keys[k] = v
+      parsed_keys[k] = parsed_keys[k] or {}
+      if not keys[k] then
+        parsed_keys[k] = v
+      else
+        for key, val in pairs(v) do
+          if not keys[k][key] then
+            parsed_keys[k][key] = val
+          end
+        end
+      end
     end
   end
 
@@ -477,7 +486,10 @@ function M.set(new_keys, opts)
   if opts.defaults and not defaults_mapped then
     parsed_keys, defaults_mapped = vim.deepcopy(keys), true
   end
-  require('user_api.maps').map_dict(parsed_keys, 'wk.register', true, nil, opts.bufnr)
+
+  vim.schedule(function()
+    require('user_api.maps').map_dict(parsed_keys, 'wk.register', true, nil, opts.bufnr)
+  end)
 end
 
 return M
