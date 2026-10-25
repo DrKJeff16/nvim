@@ -45,15 +45,12 @@ setmetatable(M, {
 --- ---
 ---@generic T: table
 ---@param T T
----@param key? string|integer
+---@param key any
 ---@return T NT
+---@overload fun(T: T): NT: T
 ---@nodiscard
 function M.dedup(T, key)
-  validate({
-    T = { T, { 'table' } },
-    key = { key, { 'string', 'nil' }, true },
-  })
-  key = (key and key ~= '') and key or nil
+  validate({ T = { T, { 'table' } } })
   if vim.tbl_isempty(T) then
     return T
   end
@@ -63,7 +60,7 @@ function M.dedup(T, key)
   for k, v in pairs(T) do
     local not_dup = false
     if type(v) == 'table' then
-      if not key then
+      if key == nil then
         not_dup = not vim.tbl_contains(NT, function(val)
           return vim.deep_equal(val, v)
         end, { predicate = true })
@@ -392,20 +389,15 @@ end
 ---@param fields (string|integer)[]|string|integer
 ---@return T T
 function M.strip_fields(T, fields)
-  validate({
-    T = { T, { 'table' } },
-    fields = { fields, { 'string', 'number', 'table' } },
-  })
+  validate({ T = { T, { 'table' } }, fields = { fields, { 'string', 'number', 'table' } } })
 
-  if type(fields) == 'string' or type(fields) == 'number' then
-    if require('user_api.check').fields(fields, T) then
-      for k in pairs(T) do
-        if k == fields then
-          T[k] = nil
-        end
+  if type(fields) == 'string' or type(fields) == 'number' and require('user_api.check').fields(fields, T) then
+    for k in pairs(T) do
+      if k == fields then
+        T[k] = nil
       end
     end
-  else
+  elseif type(fields) == 'table' then
     for k in pairs(T) do
       if vim.list_contains(fields, k) then
         T[k] = nil
@@ -417,9 +409,11 @@ end
 
 ---@generic T: table
 ---@param T T
----@param values any[]
----@param max_instances? integer
+---@param values table
+---@param max_instances integer
 ---@return T res
+---@overload fun(T: T, values: table): res: T
+---@nodiscard
 function M.strip_values(T, values, max_instances)
   validate({
     T = { T, { 'table' } },
@@ -433,18 +427,13 @@ function M.strip_values(T, values, max_instances)
   local res, count = {}, 0 ---@type table<string, any>, integer
   for k, v in pairs(T) do
     -- Both arguments can't be true simultaneously
-    if M.xor((max_instances == 0), (max_instances ~= 0 and max_instances > count)) then
-      if not vim.list_contains(values, v) and require('user_api.check').is_int(k) then
-        table.insert(res, v)
-      elseif not vim.list_contains(values, v) then
-        res[k] = v
-      else
-        count = count + 1
-      end
-    elseif require('user_api.check').is_int(k) then
+    local xor = M.xor((max_instances == 0), (max_instances ~= 0 and max_instances > count))
+    if ((xor and not vim.list_contains(values, v)) or not xor) and require('user_api.check').is_int(k) then
       table.insert(res, v)
-    else
+    elseif not xor or (xor and not vim.list_contains(values, v)) then
       res[k] = v
+    elseif xor and vim.list_contains(values, v) then
+      count = count + 1
     end
   end
   return res
@@ -453,9 +442,9 @@ end
 ---@param s string
 ---@param bufnr integer
 ---@return function callback
----@overload fun()
----@overload fun(s: string)
----@overload fun(s: nil, bufnr: integer)
+---@overload fun(): callback: function
+---@overload fun(s: string): callback: function
+---@overload fun(s: nil, bufnr: integer): callback: function
 function M.ft_set(s, bufnr)
   validate({
     s = { s, { 'string', 'nil' }, true },
@@ -504,30 +493,29 @@ function M.pop_values(T, V)
     return T
   end
 
-  local popped = table.remove(T, idx)
-  return T, popped
+  return T, table.remove(T, idx)
 end
 
 ---@param c string
----@param direction? 'next'|'prev'
+---@param direction 'next'|'prev'
 ---@return string displaced
+---@overload fun(c: string): displaced: string
+---@nodiscard
 function M.displace_letter(c, direction)
   validate({
     c = { c, { 'string' } },
     direction = { direction, { 'string', 'nil' }, true },
   })
   direction = vim.list_contains({ 'next', 'prev' }, direction) and direction or 'next'
-  if c == '' then
-    return 'a'
-  end
-
-  local LOWER = M.string.alphabet.lower_map
-  local UPPER = M.string.alphabet.upper_map
-  return M.mv_tbl_values(
-    vim.deepcopy(require('user_api.check').fields(c, LOWER) and LOWER or UPPER),
-    1,
-    direction == 'prev' and 'r' or 'l'
-  )[c]
+  return c == '' and 'a'
+    or M.mv_tbl_values(
+      vim.deepcopy(
+        require('user_api.check').fields(c, M.string.alphabet.lower_map) and M.string.alphabet.lower_map
+          or M.string.alphabet.upper_map
+      ),
+      1,
+      direction == 'prev' and 'r' or 'l'
+    )[c]
 end
 
 ---@overload fun(data: string): res: string
@@ -545,8 +533,8 @@ function M.discard_dups(data)
 
   local res ---@type string[]|string
   if type(data) == 'string' then
-    local i = 2
     res = data:sub(1, 1)
+    local i = 2
     while i < data:len() do
       local c = data:sub(i, i)
       if not res:match(c) then
@@ -570,7 +558,8 @@ end
 ---@return T reversed
 function M.reverse_tbl(T)
   validate({ T = { T, { 'table' } } })
-  assert(not vim.tbl_isempty(T), '(user_api.util.reverse_tbl): Empty table!')
+  assert(not vim.tbl_isempty(T), '(user_api.util.reverse_tbl): Empty table')
+  assert(vim.islist(T), '(user_api.util.reverse_tbl): Table is not list-like')
 
   for i = 1, math.floor(#T / 2), 1 do
     T[i], T[#T - i + 1] = T[#T - i + 1], T[i]
@@ -614,6 +603,7 @@ function M.get(t, k, fallback, is_rawset)
       local _, res = pcall(fallback)
       return res
     end
+
     ---@cast fallback any
     return fallback
   end

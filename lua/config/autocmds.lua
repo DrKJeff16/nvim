@@ -44,7 +44,7 @@ local augroup = -1 ---@type integer
 
 function M.setup()
   local desc = User.maps.desc
-  augroup = User.util.autocmd.gen_augroups('User_AU', true)['User_AU']
+  augroup = User.util.autocmd.gen_augroups({ { 'User_AU', true } }).User_AU
   User.util.autocmd.au_repeated_events({
     events = { 'FileType' },
     opts_tbl = {
@@ -102,7 +102,7 @@ function M.setup()
         callback = function(ev)
           if User.util.optget('filetype', 'buf', ev.buf) == 'checkhealth' then
             User.util.optset(
-              { wrap = true, number = false, signcolumn = 'no', list = false, colorcolumn = '' },
+              { colorcolumn = '', list = false, number = false, signcolumn = 'no', wrap = true },
               nil,
               'win',
               vim.api.nvim_get_current_win()

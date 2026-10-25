@@ -165,7 +165,7 @@ end
 
 ---Set up `guicursor` so that cursor blinks.
 --- ---
-function M.set_cursor_blink()
+local function set_cursor_blink()
   if not Check.in_console() then
     M.optset({
       guicursor = 'n-v-c:block'
@@ -212,7 +212,7 @@ function M.toggle(O, verbose)
   end
 end
 
-function M.setup_cmds()
+local function setup_cmds()
   local Commands = require('user_api.commands')
   Commands.add_command('OptsToggle', function(ctx)
     local cmds = {}
@@ -248,9 +248,15 @@ function M.setup_maps()
   })
 end
 
----@param override? User.Opts.Spec A table with custom options
----@param verbose? boolean Flag to make the function return a string with invalid values, if any
----@param cursor_blink? boolean Whether to enable cursor blinking
+---@param override User.Opts.Spec A table with custom options
+---@param verbose boolean Flag to make the function return a string with invalid values, if any
+---@param cursor_blink boolean Whether to enable cursor blinking
+---@overload fun()
+---@overload fun(override: User.Opts.Spec)
+---@overload fun(override: User.Opts.Spec, verbose: boolean)
+---@overload fun(override: User.Opts.Spec, verbose: nil, cursor_blink: boolean)
+---@overload fun(override: nil, verbose: boolean)
+---@overload fun(override: nil, verbose: boolean, cursor_blink: boolean)
 function M.setup(override, verbose, cursor_blink)
   validate({
     override = { override, { 'table', 'nil' }, true },
@@ -274,8 +280,19 @@ function M.setup(override, verbose, cursor_blink)
   )
 
   if cursor_blink then
-    M.set_cursor_blink()
+    set_cursor_blink()
   end
+
+  local desc = require('user_api.maps').desc
+  require('user_api.config').keymaps.set({
+    n = {
+      ['<leader>UO'] = { group = '+Options' },
+      ['<leader>UOl'] = { print_set_opts, desc('Print options set by `user.opts`') },
+      ['<leader>UOT'] = { ':OptsToggle ', desc('Prompt To Toggle Opts', { silent = false }) },
+    },
+  })
+
+  setup_cmds()
 end
 
 return M

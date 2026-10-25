@@ -1,38 +1,55 @@
 local validate = require('user_api.check').validate
 
+---@return boolean has
+local function has_spinner()
+  return package.loaded['spinner'] ~= nil or (pcall(require, 'spinner'))
+end
+
 ---@class SpinnerObj
 ---@field id string
 local O = {}
 O.__index = O
 
 function O:fail()
-  require('spinner').fail(self.id)
+  if has_spinner() then
+    require('spinner').fail(self.id)
+  end
 end
 
 function O:pause()
-  require('spinner').pause(self.id)
+  if has_spinner() then
+    require('spinner').pause(self.id)
+  end
 end
 
 function O:render()
-  require('spinner').render(self.id)
+  if has_spinner() then
+    require('spinner').render(self.id)
+  end
 end
 
 function O:reset()
-  require('spinner').reset(self.id)
+  if has_spinner() then
+    require('spinner').reset(self.id)
+  end
 end
 
 function O:start()
-  require('spinner').start(self.id)
+  if has_spinner() then
+    require('spinner').start(self.id)
+  end
 end
 
 ---@param force? boolean
 function O:stop(force)
-  validate({ force = { force, { 'boolean', 'nil' }, true } })
-  if force == nil then
-    force = false
-  end
+  if has_spinner() then
+    validate({ force = { force, { 'boolean', 'nil' }, true } })
+    if force == nil then
+      force = false
+    end
 
-  require('spinner').stop(self.id, force)
+    require('spinner').stop(self.id, force)
+  end
 end
 
 ---@class User.Util.Spinner
@@ -47,13 +64,13 @@ function M.new(id, opts)
     opts = { opts, { 'table' } },
   })
 
-  if not require('user_api.check').module('spinner') then
-    return
+  if has_spinner() then
+    require('spinner').config(id, opts)
+
+    local spinner = { id = id }
+    setmetatable(spinner, O)
+    return spinner
   end
-
-  require('spinner').config(id, opts)
-
-  return setmetatable({ id = id }, O)
 end
 
 return M

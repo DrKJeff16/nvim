@@ -37,12 +37,12 @@ require('user_api.opts').setup({
   equalalways = true,
   errorbells = false,
   expandtab = true,
-  fileformat = 'unix',
+  ff = 'unix',
   fileignorecase = not User.check.is_windows(),
   foldenable = false,
   foldmethod = 'manual',
-  formatoptions = 'jlnopw/',
-  helplang = 'en',
+  fo = 'jlnopw/',
+  hlg = 'en',
   hidden = true,
   hlsearch = true,
   ignorecase = false,
@@ -71,8 +71,8 @@ require('user_api.opts').setup({
   splitbelow = true,
   splitkeep = 'screen',
   splitright = true,
-  switchbuf = 'usetab',
-  tabstop = 4,
+  switchbuf = 'usetab,uselast',
+  ts = 4,
   title = true,
   wrap = false,
 }, false, true)
@@ -177,7 +177,7 @@ Config.lazy.setup({
   mini_pairs = false,
   mini_pick = false,
   mini_splitjoin = true,
-  mini_starter = false,
+  mini_starter = true,
   mini_test = false,
   mini_trailspace = true,
   music_player = false,
@@ -253,9 +253,6 @@ User.config.keymaps.set({
 
 -- Initialize the User API
 User.setup()
-User.opts.setup_cmds()
-User.opts.setup_maps()
-
 Config.autocmds.setup()
 
 Config.colorschemes('tokyonight')

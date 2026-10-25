@@ -10,32 +10,29 @@
 ---@alias AuRepeat table<string, vim.api.keyset.create_autocmd[]>
 ---@alias AuList AuPair[]
 
-local ERROR = vim.log.levels.ERROR
-local WARN = vim.log.levels.WARN
-local MODSTR = 'user_api.util.au'
 local validate = require('user_api.check').validate
 
 ---@class User.Util.Autocmd
 local M = {}
 
----@param names string[]|string
----@param clear? boolean
----@return table<string, integer> augroups
+---@overload fun(names: string): augroups: table<string, integer>
+---@overload fun(names: string, clear: boolean): augroups: table<string, integer>
+---@overload fun(names: { [1]: string, [2]?: boolean }[]): augroups: table<string, integer>
 function M.gen_augroups(names, clear)
   validate({
     names = { names, { 'string', 'table' } },
     clear = { clear, { 'boolean', 'nil' }, true },
   })
-  if clear == nil then
-    clear = true
-  end
 
   local augroups = {} ---@type table<string, integer>
-  if type(names) == 'table' and #names > 0 then
+  if type(names) == 'table' then
     for _, name in ipairs(names) do
-      augroups[name] = vim.api.nvim_create_augroup(name, { clear = clear })
+      augroups[name] = vim.api.nvim_create_augroup(name[1], { clear = name[2] })
     end
-  elseif type(names) == 'string' then
+  else
+    if clear == nil then
+      clear = true
+    end
     augroups = { [names] = vim.api.nvim_create_augroup(names, { clear = clear }) }
   end
   return augroups
@@ -43,11 +40,11 @@ end
 
 ---@param T AuPair
 function M.au_pair(T)
-  validate({ T = { T, { 'table' } } })
-  assert(
-    T.event and (type(T.event) == 'string' or type(T.event) == 'table'),
-    ('(%s.au_pair): Event is neither a string nor a table'):format(MODSTR)
-  )
+  validate({
+    T = { T, { 'table' } },
+    ['T.event'] = { T.event, { 'string', 'table' } },
+    ['T.opts'] = { T.opts, { 'table' } },
+  })
 
   vim.api.nvim_create_autocmd(T.event, T.opts)
 end
@@ -55,13 +52,10 @@ end
 ---@param T AuList
 function M.au_from_arr(T)
   validate({ T = { T, { 'table' } } })
+  assert(vim.islist(T), '(user_api.util.autocmd.au_from_arr): Table is not list-like')
 
   for _, v in ipairs(T) do
-    assert(
-      type(v.event) == 'string' or type(v.event) == 'table',
-      ('(%s.au_from_arr): Event is neither a string nor a table, skipping'):format(MODSTR)
-    )
-    vim.api.nvim_create_autocmd(v.event, v.opts)
+    M.au_pair(v)
   end
 end
 
@@ -70,30 +64,19 @@ function M.au_from_dict(T)
   validate({ T = { T, { 'table' } } })
 
   for k, v in pairs(T) do
-    assert(
-      type(k) == 'string' or type(v) == 'table',
-      ('(%s.au_from_arr): Dictionary key is not a string, skipping'):format(MODSTR)
-    )
-    vim.api.nvim_create_autocmd(k, v)
+    M.au_pair({ event = k, opts = v })
   end
 end
 
 ---@param T AuRepeat
 function M.au_repeated(T)
   validate({ T = { T, { 'table' } } })
+
   for event, t in pairs(T) do
-    if type(event) ~= 'string' then
-      vim.notify(('(%s.au_repeated): Event is not a string, skipping'):format(MODSTR), ERROR)
-    elseif type(t) ~= 'table' then
-      vim.notify(('(%s.au_repeated): Invalid options table, skipping'):format(MODSTR), ERROR)
-    else
-      for _, opts in ipairs(t) do
-        if type(opts) ~= 'table' then
-          vim.notify(('(%s.au_repeated): Option table is empty, skipping'):format(MODSTR), ERROR)
-        else
-          vim.api.nvim_create_autocmd(event, opts)
-        end
-      end
+    validate({ t = { t, { 'table' } } })
+
+    for _, opts in ipairs(t) do
+      M.au_pair({ event = event, opts = opts })
     end
   end
 end
@@ -101,32 +84,17 @@ end
 ---@param T AuRepeatEvents[]|AuRepeatEvents
 function M.au_repeated_events(T)
   validate({ T = { T, { 'table' } } })
-  if vim.tbl_isempty(T) then
-    vim.notify(('(%s.au_repeated_events): Not a valid table'):format(MODSTR), ERROR)
-    return
-  end
+  assert(not vim.tbl_isempty(T), '(user_api.util.au.au_repeated_events): Not a valid table')
 
   if vim.islist(T) then
-    ---@cast T AuRepeatEvents[]
     for _, au in ipairs(T) do
       M.au_repeated_events(au)
     end
-  end
+  elseif T.events and T.opts_tbl then
+    validate({ ['T.opts_tbl'] = { T.opts_tbl, { 'table' } } })
 
-  if not (T.events and T.opts_tbl) then
-    return
-  end
-
-  ---@cast T AuRepeatEvents
-  if #T.events == 0 or #T.opts_tbl == 0 then
-    vim.notify(('(%s.au_repeated_events): Invalid autocmd tables'):format(MODSTR), WARN)
-  else
     for _, opts in ipairs(T.opts_tbl) do
-      if type(opts) ~= 'table' or vim.tbl_isempty(opts) then
-        vim.notify(('(%s.au_repeated_events): Options are not a vaild table, skipping'):format(MODSTR), ERROR)
-      else
-        vim.api.nvim_create_autocmd(T.events, opts)
-      end
+      M.au_pair({ event = T.events, opts = opts })
     end
   end
 end

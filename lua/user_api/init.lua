@@ -112,6 +112,8 @@ function M.setup(commands, verbose)
     },
   })
 
+  M.util.notify.setup()
+
   make_timer()
 
   vim.filetype.add({
