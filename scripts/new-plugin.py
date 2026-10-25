@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 """Create a new Neovim plugin install config file."""
 
-import os
 import sys
 from argparse import ArgumentParser, Namespace
-from os.path import expanduser, isdir, isfile, realpath
+from os.path import expanduser, isdir, isfile, realpath, relpath
 from re import Pattern, compile
 from typing import Any
 
-TEMPLATE_PATH: str = "scripts/template.lua"
+TEMPLATE_PATH: str = realpath("scripts/template.lua")
 PREFIX: str = "./lua/plugin"
 
 
@@ -44,7 +43,7 @@ def die(code: int = 0, *msg, **kwargs) -> None:
     sys.exit(code)
 
 
-def copy_file_to_path(path: str) -> bool:
+def copy_file_to_path(path: str, verbose: bool) -> bool:
     """Copy the template file to the specified path."""
     path = realpath(f"{PREFIX}/{path}").rstrip(".")
     pattern: Pattern[str] = compile(path)
@@ -52,11 +51,14 @@ def copy_file_to_path(path: str) -> bool:
     if not pattern.match(r".*\.lua$"):
         path += ".lua"
 
-    with open(realpath(TEMPLATE_PATH), "r") as file:
+    with open(TEMPLATE_PATH, "r") as file:
         data = file.read()
 
     with open(path, "w") as file:
         file.write(data)
+
+        if verbose:
+            print(f"./{relpath(TEMPLATE_PATH)} ==> ./{relpath(path)}")
 
 
 def make_args(spec: list[ArgData]) -> tuple[ArgumentParser, Namespace]:
@@ -108,7 +110,7 @@ def main() -> int:
     edit: bool = ns.edit
     name: str = ns.name[0] if isinstance(ns.name, list) else ns.name
 
-    copy_file_to_path(name)
+    copy_file_to_path(name, verbose)
 
     return 0 if not edit else 1
 
