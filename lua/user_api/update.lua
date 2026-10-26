@@ -6,14 +6,15 @@ local validate = require('user_api.check').validate
 ---@class User.Update
 local M = {}
 
----@param verbose? boolean
+---@param verbose boolean
+---@overload fun()
 function M.update(verbose)
   validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
   if verbose == nil then
     verbose = false
   end
 
-  local spinner = require('user_api.util').spinner.new('user', { kind = 'cursor' })
+  local spinner = require('user_api.util.spinner').new('user', { kind = 'cursor' })
   if spinner then
     spinner:start()
   end

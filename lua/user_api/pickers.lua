@@ -1,9 +1,10 @@
+---@module 'snacks'
+
 ---@class (exact) User.Pickers.Spec
----@field mod string
 ---@field cb function
+---@field mod string
 
 local validate = require('user_api.check').validate
-local exists = require('user_api.check').module
 
 ---@class User.Pickers.Entry
 ---@field mod string
@@ -18,12 +19,13 @@ function P:new(spec)
     ['spec.cb'] = { spec.cb, { 'function' } },
   })
 
-  return setmetatable({ mod = spec.mod }, {
-    __index = self,
+  local entry = { mod = spec.mod } ---@type User.Pickers.Entry|function
+  setmetatable(entry, {
     __call = function()
       spec.cb()
     end,
   })
+  return entry
 end
 
 local pickers = {} ---@type table<string, User.Pickers.Entry|function>
@@ -48,7 +50,7 @@ function M.new_picker(mod, name, spec, verbose)
     verbose = false
   end
 
-  if exists(mod) then
+  if package.loaded[mod] ~= nil then
     pickers[name] = P:new(spec)
 
     if verbose then
@@ -65,7 +67,7 @@ function M.setup(verbose)
   end
 
   local Pickers = { ---@type table<string, { [1]: string , [2]: User.Pickers.Spec, [3]?: boolean }>
-    ['telescope.init'] = {
+    ['telescope._extensions.picker_list'] = {
       'telescope',
       {
         cb = function()
@@ -122,14 +124,17 @@ end
 
 function M.run()
   for name, picker in ipairs(pickers) do
-    if not exists(picker.mod) then
+    if picker.mod ~= '' and package.loaded[picker.mod] == nil then
       pickers[name] = nil
     end
   end
 
   local keys = vim.tbl_keys(pickers) --[[@as string[]\]]
   vim.ui.select(keys, { prompt = 'Select The Desired Picker' }, function(item) ---@param item string
-    if item and vim.list_contains(keys, item) then
+    if not (item and vim.list_contains(keys, item)) then
+      return
+    end
+    if item ~= 'Exit' then
       pcall(pickers[item])
     end
   end)

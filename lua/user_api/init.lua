@@ -43,7 +43,7 @@ local function make_timer()
     once = true,
     callback = function()
       if timer and timer:is_active() then
-        timer:stop()
+        assert(timer:stop() ~= nil, 'Unable to stop Neovim logfile cleanup timer')
         timer = nil
       end
     end,

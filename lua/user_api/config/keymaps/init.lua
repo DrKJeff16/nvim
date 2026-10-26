@@ -454,14 +454,10 @@ function M.set(new_keys, opts)
     if not vim.list_contains(modes, k) then
       vim.notify(('Ignoring badly formatted table\n`%s`'):format(vim.inspect(new_keys)), vim.log.levels.WARN)
     else
-      parsed_keys[k] = parsed_keys[k] or {}
-      if not keys[k] then
-        parsed_keys[k] = v
-      else
-        for key, val in pairs(v) do
-          if not keys[k][key] then
-            parsed_keys[k][key] = val
-          end
+      parsed_keys[k] = vim.tbl_deep_extend('force', parsed_keys[k] or {}, keys[k] or {})
+      for key, val in pairs(v) do
+        if keys[k] and not keys[k][key] then
+          parsed_keys[k][key] = val
         end
       end
     end
