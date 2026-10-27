@@ -351,7 +351,6 @@ return { ---@type LazySpec
         win = { style = 'input' },
       },
       layout = { enabled = true },
-      notifier = { enabled = true },
       notify = { enabled = true },
       styles = {
         input = {

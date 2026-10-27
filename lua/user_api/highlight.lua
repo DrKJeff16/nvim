@@ -1,8 +1,7 @@
 ---@alias HlDict table<string, vim.api.keyset.highlight>
+---@alias HlPair { name: string, opts: vim.api.keyset.highlight }
 
----@class HlPair
----@field name string
----@field opts vim.api.keyset.highlight
+local validate = require('user_api.check').validate
 
 ---A set of utilities to make Vim highlighting easier.
 --- ---
@@ -11,25 +10,23 @@ local M = {}
 
 ---@param name string The highlight group
 ---@param opts vim.api.keyset.highlight The highlight options
----@param ns? integer The highlighting namespace
+---@param ns integer The highlighting namespace
+---@overload fun(name: string, opts: vim.api.keyset.highlight)
 function M.hl(name, opts, ns)
-  require('user_api.check').validate({
+  validate({
     name = { name, { 'string' } },
     opts = { opts, { 'table' } },
     ns = { ns, { 'number', 'nil' }, true },
   })
 
-  if name and opts and type(name) == 'string' and type(opts) == 'table' then
-    vim.api.nvim_set_hl(ns or 0, name, opts)
-  end
+  vim.api.nvim_set_hl(ns or 0, name, opts)
 end
 
 ---Set highlight groups based on an array of `HlPair` type highlight groups.
 --- ---
 ---Example of a valid `HlPair` array:
 ---```lua
-------@type HlPair[]
----local T = {
+---local T = { ---@type HlPair[]
 ---  { name = 'HlGroup', opts = { fg = '...', ... } } ,
 ---  { name = 'HlGroupAlt', opts = { link = 'Normal' },
 ---  --- ...
@@ -38,17 +35,22 @@ end
 ---See more at `:h nvim_set_hl`.
 --- ---
 ---@param A HlPair[] The array of `HlPair` objects
----@param ns? integer
+---@param ns integer
+---@overload fun(A: HlPair[])
 function M.hl_from_arr(A, ns)
-  require('user_api.check').validate({
+  validate({
     A = { A, { 'table' } },
     ns = { ns, { 'number', 'nil' }, true },
   })
 
   for _, t in ipairs(A) do
-    if type(t.name) == 'string' and type(t.opts) == 'table' then
-      M.hl(t.name, t.opts, ns or nil)
-    end
+    validate({
+      t = { t, { 'table' } },
+      ['t.name'] = { t.name, { 'string' } },
+      ['t.opts'] = { t.opts, { 'table' } },
+    })
+
+    M.hl(t.name, t.opts, ns or nil)
   end
 end
 
@@ -56,8 +58,7 @@ end
 --- ---
 ---Example of a valid `HlDict` table:
 ---```lua
-------@type HlDict
----local T = {
+---local T = { ---@type HlDict
 ---  HlGroup = { fg = '...' },
 ---  HlGroupAlt = { link = 'Normal' },
 ---}
@@ -65,17 +66,21 @@ end
 ---To know what options are valid try `:h nvim_set_hl`.
 --- ---
 ---@param D HlDict
----@param ns? integer
+---@param ns integer
+---@overload fun(D: HlDict)
 function M.hl_from_dict(D, ns)
-  require('user_api.check').validate({
+  validate({
     D = { D, { 'table' } },
     ns = { ns, { 'number', 'nil' }, true },
   })
 
   for k, v in pairs(D) do
-    if type(k) == 'string' and type(v) == 'table' then
-      M.hl(k, v, ns or nil)
-    end
+    validate({
+      k = { k, { 'string' } },
+      v = { v, { 'table' } },
+    })
+
+    M.hl(k, v, ns or nil)
   end
 end
 

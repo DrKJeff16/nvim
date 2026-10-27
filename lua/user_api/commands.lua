@@ -13,12 +13,22 @@ local validate = require('user_api.check').validate
 ---@class User.Commands
 local M = {}
 
----@param txt? string
----@param bang? boolean
----@param nargs? integer|'+'|'?'|'*'
----@param complete? string|fun(a: string, b: string, c: integer): items: string[]
----@param bar? boolean
+---@param txt string
+---@param bang boolean
+---@param nargs integer|'+'|'?'|'*'
+---@param complete string|fun(a: string, b: string, c: integer): items: string[]
+---@param bar boolean
 ---@return vim.api.keyset.user_command opts
+---@overload fun(): opts: vim.api.keyset.user_command
+---@overload fun(txt: nil, bang: boolean): opts: vim.api.keyset.user_command
+---@overload fun(txt: nil, bang: boolean, nargs: integer|'+'|'?'|'*'): opts: vim.api.keyset.user_command
+---@overload fun(txt: nil, bang: boolean, nargs: integer|'+'|'?'|'*', bar: boolean): opts: vim.api.keyset.user_command
+---@overload fun(txt: string): opts: vim.api.keyset.user_command
+---@overload fun(txt: string, bang: boolean): opts: vim.api.keyset.user_command
+---@overload fun(txt: string, bang: boolean, nargs: integer|'+'|'?'|'*'): opts: vim.api.keyset.user_command
+---@overload fun(txt: string, bang: boolean, nargs: nil, bar: boolean): opts: vim.api.keyset.user_command
+---@overload fun(txt: string, bang: nil, nargs: integer|'+'|'?'|'*'): opts: vim.api.keyset.user_command
+---@overload fun(txt: string, bang: nil, nargs: integer|'+'|'?'|'*', bar: boolean): opts: vim.api.keyset.user_command
 function M.desc(txt, bang, nargs, complete, bar)
   validate({
     txt = { txt, { 'string', 'nil' }, true },
@@ -71,31 +81,26 @@ local commands = { ---@type table<string, User.Commands.CmdSpec>
       end
 
       local arg = ctx.fargs[1] ---@type 'buffer'|'buf'|'window'|'win'|'tab'|'tabpage'
-      if not vim.list_contains({ 'buffer', 'buf', 'window', 'win', 'tabpage', 'tab' }, arg) then
-        vim.notify(('(:Current) - Invalid argument `%s`!'):format(arg), vim.log.levels.ERROR)
-      else
-        local is_buf = vim.list_contains({ 'buffer', 'buf' }, arg)
-        local is_win = vim.list_contains({ 'window', 'win' }, arg)
-        local is_tab = vim.list_contains({ 'tabpage', 'tab' }, arg)
-        local msg = ('%d'):format(is_buf and curr.buffer or (is_win and curr.window or (is_tab and curr.tabpage or '')))
-        local title = is_buf and 'Current Buffer'
-          or (is_win and 'Current Window' or (is_tab and 'Current Tabpage' or ''))
+      assert(
+        vim.list_contains({ 'buffer', 'buf', 'window', 'win', 'tabpage', 'tab' }, arg),
+        ('(:Current) - Invalid argument `%s`'):format(arg)
+      )
+      local is_buf = vim.list_contains({ 'buffer', 'buf' }, arg)
+      local is_win = vim.list_contains({ 'window', 'win' }, arg)
+      local is_tab = vim.list_contains({ 'tabpage', 'tab' }, arg)
+      local msg = ('%d'):format(is_buf and curr.buffer or (is_win and curr.window or (is_tab and curr.tabpage or '')))
+      local title = is_buf and 'Current Buffer' or (is_win and 'Current Window' or (is_tab and 'Current Tabpage' or ''))
 
-        vim.notify(msg, INFO, { title = title })
-      end
+      vim.notify(msg, INFO, { title = title })
     end,
     M.desc('', false, '?', function(_, lead)
       local args = vim.split(lead, '%s+', { trimempty = false })
-      table.remove(args, 1)
-
-      if #args ~= 1 then
-        return {}
-      end
-
       local comp = {} ---@type string[]
-      for _, choice in ipairs({ 'buf', 'buffer', 'win', 'window', 'tab', 'tabpage' }) do
-        if vim.startswith(choice, args[1]) then
-          table.insert(comp, choice)
+      if #args == 2 and args[1]:sub(-1) ~= '!' then
+        for _, choice in ipairs({ 'buf', 'buffer', 'win', 'window', 'tab', 'tabpage' }) do
+          if vim.startswith(choice, args[2]) then
+            table.insert(comp, choice)
+          end
         end
       end
       return comp
@@ -125,6 +130,21 @@ local commands = { ---@type table<string, User.Commands.CmdSpec>
   Redir = {
     function(ctx)
       local bufnr = vim.api.nvim_create_buf(true, true)
+      local width, height = math.floor(vim.o.columns * 0.75), math.floor(vim.o.lines * 0.85)
+      local win = vim.api.nvim_open_win(bufnr, true, ctx.bang and { vertical = false } or {
+        border = 'single',
+        height = height,
+        width = width,
+        col = math.floor((vim.o.columns - width) / 2),
+        row = math.floor((vim.o.lines - height) / 2) - 1,
+        focusable = true,
+        relative = 'editor',
+        style = 'minimal',
+        title = ctx.args,
+        title_pos = 'center',
+        zindex = 100,
+      })
+
       vim.api.nvim_buf_set_lines(
         bufnr,
         0,
@@ -133,40 +153,21 @@ local commands = { ---@type table<string, User.Commands.CmdSpec>
         vim.split(vim.api.nvim_exec2(ctx.args, { output = true }).output, '\n', { trimempty = false })
       )
 
-      local win ---@type integer
-      if ctx.bang then
-        win = vim.api.nvim_open_win(bufnr, true, { vertical = false })
-      else
-        local width = math.floor(vim.o.columns * 0.75)
-        local height = math.floor(vim.o.lines * 0.85)
-        win = vim.api.nvim_open_win(bufnr, true, {
-          border = 'single',
-          height = height,
-          width = width,
-          col = math.floor((vim.o.columns - width) / 2),
-          row = math.floor((vim.o.lines - height) / 2) - 1,
-          focusable = true,
-          relative = 'editor',
-          style = 'minimal',
-          title = ctx.args,
-          title_pos = 'center',
-          zindex = 100,
-        })
-      end
+      vim.bo[bufnr].filetype = 'Redir'
+      vim.bo[bufnr].modified = false
+      vim.wo[win].number = false
+      vim.wo[win].signcolumn = 'no'
+      vim.wo[win].list = false
 
-      local optset = require('user_api.util').optset
-      optset('filetype', 'Redir', 'buf', bufnr)
-      optset('modified', false, 'buf', bufnr)
-      optset('number', false, 'win', win)
-      optset('signcolumn', 'no', 'win', win)
-      optset('list', false, 'win', win)
-
+      local desc = require('user_api.maps').desc
       vim.keymap.set('n', 'q', function()
         pcall(vim.api.nvim_buf_delete, bufnr, { force = true })
         pcall(vim.api.nvim_win_close, win, true)
-      end, { buffer = bufnr })
+      end, desc('Exit Redir buffer', { buf = bufnr }))
 
-      vim.cmd.wincmd('=')
+      vim.schedule(function()
+        vim.cmd.wincmd('=')
+      end)
     end,
     M.desc('Redirect command output to scratch buffer', true, '+', 'command'),
   },
@@ -216,7 +217,6 @@ end
 ---@overload fun()
 ---@overload fun(cmds: table<string, User.Commands.CmdSpec>)
 ---@overload fun(cmds: nil, verbose: boolean)
----@overload fun(cmds: table<string, User.Commands.CmdSpec>, verbose: boolean)
 function M.setup(cmds, verbose)
   validate({
     cmds = { cmds, { 'table', 'nil' }, true },
@@ -239,7 +239,8 @@ function M.setup(cmds, verbose)
     n = {
       ['<Leader>UC'] = { group = '+Commands' },
       ['<Leader>UCR'] = { ':Redir ', desc('Prompt to `Redir` command', { silent = false }) },
-      ['<M-r>'] = { ':Redir ', desc('Prompt `Redir`', { silent = false }) },
+      ['<M-r>'] = { ':Redir ', desc('Prompt `Redir` (float)', { silent = false }) },
+      ['<S-M-r>'] = { ':Redir! ', desc('Prompt `Redir` (split)', { silent = false }) },
     },
   })
 end
