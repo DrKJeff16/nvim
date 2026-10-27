@@ -6,11 +6,10 @@ return { ---@type LazySpec
   dependencies = { 'saghen/blink.lib' },
   cond = require('user_api').check.executable('cargo') and vim.fn.has('nvim-0.12') == 1,
   build = function()
-    require('blink.pairs').build({ force = true }):pwait(60000)
+    require('blink.pairs').build({ force = true }):pwait()
   end,
   config = function()
     require('blink.pairs').setup({
-      debug = false,
       highlights = {
         cmdline = true,
         enabled = true,
@@ -24,13 +23,7 @@ return { ---@type LazySpec
         },
         unmatched_group = 'BlinkPairsUnmatched',
       },
-      mappings = {
-        enabled = true,
-        cmdline = true,
-        disabled_filetypes = {},
-        wrap = { ['<C-b>'] = 'motion', ['<C-S-b>'] = 'motion_reverse' },
-        pairs = {},
-      },
+      mappings = { cmdline = true, enabled = true, wrap = { ['<C-b>'] = 'motion', ['<C-S-b>'] = 'motion_reverse' } },
     })
   end,
 }
