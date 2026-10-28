@@ -29,32 +29,31 @@ end
 
 ---@param lazy Lazy
 local function setup_keys(lazy)
-  local desc = require('user_api').maps.desc
-  require('user_api').config.keymaps.set({
+  User.config.keymaps.set({
     n = {
       ['<leader>L'] = { group = '+Lazy' },
       ['<leader>Le'] = { group = '+Edit Lazy File' },
       ['<leader>Lp'] = { group = '+Prompts' },
-      ['<leader>L<CR>'] = { ':Lazy ', desc('Prompt for `Lazy` Operation', { silent = false }) },
-      ['<leader>LC'] = { lazy.clean, desc('Clean Lazy Plugins') },
-      ['<leader>LL'] = { lazy.log, desc('Show Lazy Log') },
-      ['<leader>LP'] = { lazy.profile, desc('Show Lazy Profile') },
-      ['<leader>Lc'] = { lazy.check, desc('Check Lazy Plugins') },
-      ['<leader>Ld'] = { lazy.debug, desc('Debug Lazy Plugins') },
-      ['<leader>Lee'] = { key_variant('edit'), desc('Open `Lazy` File') },
-      ['<leader>Les'] = { key_variant('split'), desc('Open `Lazy` File Horizontal Window') },
-      ['<leader>Let'] = { key_variant('tabnew'), desc('Open `Lazy` File Tab') },
-      ['<leader>Lev'] = { key_variant('vsplit'), desc('Open `Lazy`File Vertical Window') },
-      ['<leader>Lh'] = { lazy.health, desc('Run Lazy checkhealth') },
-      ['<leader>Li'] = { lazy.install, desc('Install Lazy Plugins') },
-      ['<leader>Ll'] = { lazy.show, desc('Show Lazy Home') },
-      ['<leader>Lpb'] = { ':Lazy build ', desc('Prompt To Build', { silent = false }) },
-      ['<leader>Lpl'] = { ':Lazy load ', desc('Prompt To Load', { silent = false }) },
-      ['<leader>Lpr'] = { ':Lazy reload ', desc('Prompt To Reload', { silent = false }) },
-      ['<leader>Ls'] = { lazy.sync, desc('Sync Lazy Plugins') },
-      ['<leader>Lu'] = { lazy.update, desc('Update Lazy Plugins') },
-      ['<leader>Lx'] = { lazy.clear, desc('Clear Lazy Plugins') },
-      ['<leader>vhL'] = { lazy.health, desc('Run Lazy checkhealth') },
+      ['<leader>L<CR>'] = { ':Lazy ', User.maps.desc('Prompt for `Lazy` Operation', { silent = false }) },
+      ['<leader>LC'] = { lazy.clean, User.maps.desc('Clean Lazy Plugins') },
+      ['<leader>LL'] = { lazy.log, User.maps.desc('Show Lazy Log') },
+      ['<leader>LP'] = { lazy.profile, User.maps.desc('Show Lazy Profile') },
+      ['<leader>Lc'] = { lazy.check, User.maps.desc('Check Lazy Plugins') },
+      ['<leader>Ld'] = { lazy.debug, User.maps.desc('Debug Lazy Plugins') },
+      ['<leader>Lee'] = { key_variant('edit'), User.maps.desc('Open `Lazy` File') },
+      ['<leader>Les'] = { key_variant('split'), User.maps.desc('Open `Lazy` File Horizontal Window') },
+      ['<leader>Let'] = { key_variant('tabnew'), User.maps.desc('Open `Lazy` File Tab') },
+      ['<leader>Lev'] = { key_variant('vsplit'), User.maps.desc('Open `Lazy`File Vertical Window') },
+      ['<leader>Lh'] = { lazy.health, User.maps.desc('Run Lazy checkhealth') },
+      ['<leader>Li'] = { lazy.install, User.maps.desc('Install Lazy Plugins') },
+      ['<leader>Ll'] = { lazy.show, User.maps.desc('Show Lazy Home') },
+      ['<leader>Lpb'] = { ':Lazy build ', User.maps.desc('Prompt To Build', { silent = false }) },
+      ['<leader>Lpl'] = { ':Lazy load ', User.maps.desc('Prompt To Load', { silent = false }) },
+      ['<leader>Lpr'] = { ':Lazy reload ', User.maps.desc('Prompt To Reload', { silent = false }) },
+      ['<leader>Ls'] = { lazy.sync, User.maps.desc('Sync Lazy Plugins') },
+      ['<leader>Lu'] = { lazy.update, User.maps.desc('Update Lazy Plugins') },
+      ['<leader>Lx'] = { lazy.clear, User.maps.desc('Clear Lazy Plugins') },
+      ['<leader>vhL'] = { lazy.health, User.maps.desc('Run Lazy checkhealth') },
     },
   })
 end

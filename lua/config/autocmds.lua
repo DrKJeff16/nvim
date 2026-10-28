@@ -1,12 +1,11 @@
 local ERROR = vim.log.levels.ERROR
 local INFO = vim.log.levels.INFO
 local User = require('user_api')
-local validate = User.check.validate
 
 ---@param bufnr integer
 ---@return function cb
 local function run_formatter(formatter, bufnr)
-  validate({
+  User.check.validate({
     formatter = { formatter, { 'string' } },
     bufnr = { bufnr, { 'number' } },
   })
@@ -17,23 +16,18 @@ local function run_formatter(formatter, bufnr)
     end
 
     local path = User.util.rstrip('/', vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ':p'))
-    if vim.fn.filereadable(path) ~= 1 or vim.fn.filewritable(path) ~= 1 then
-      return
+    if vim.fn.filereadable(path) == 1 and vim.fn.filewritable(path) == 1 then
+      local sys_obj = vim.system({ formatter, path }, { text = true }):wait(10000)
+      if sys_obj.code ~= 0 then
+        vim.notify((sys_obj.stderr and sys_obj.stderr ~= '') and sys_obj.stderr or 'Failed to format!', ERROR)
+      else
+        local win = vim.api.nvim_get_current_win()
+        vim.cmd.edit()
+        vim.api.nvim_win_set_cursor(win, vim.api.nvim_win_get_cursor(win))
+
+        vim.notify('Formatted successfully!', INFO)
+      end
     end
-
-    local cmd = { formatter, path }
-    local sys_obj = vim.system(cmd, { text = true }):wait(10000)
-    if sys_obj.code ~= 0 then
-      vim.notify((sys_obj.stderr and sys_obj.stderr ~= '') and sys_obj.stderr or 'Failed to format!', ERROR)
-      return
-    end
-    vim.notify('Formatted successfully!', INFO)
-
-    local win = vim.api.nvim_get_current_win()
-    local pos = vim.api.nvim_win_get_cursor(win)
-
-    vim.cmd.edit()
-    vim.api.nvim_win_set_cursor(win, pos)
   end
 end
 

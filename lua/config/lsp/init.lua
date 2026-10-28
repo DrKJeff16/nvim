@@ -2,6 +2,18 @@
 
 local Clients = require('config.lsp.servers')
 local uv = vim.uv or vim.loop
+local User = require('user_api')
+
+---@generic T: table, F
+---@param t T
+---@param k any
+---@param fallback F
+---@return F fallback
+local function get(t, k, fallback)
+  return User.util.get(t, k, function()
+    return User.util.rawset(t, k, fallback)
+  end, true)
+end
 
 local timer = nil ---@type uv.uv_timer_t|nil|?
 
@@ -15,7 +27,25 @@ end
 ---@class Lsp.Server
 ---@field autocmd Lsp.SubMods.Autocmd
 ---@field kinds Lsp.SubMods.Kinds
-local Server = {}
+local M = {}
+
+setmetatable(M, {
+  __index = function(self, k) ---@param self Lsp.Server
+    local raw = User.util.get(self, k)
+    if raw ~= nil then
+      return raw
+    end
+
+    if type(k) ~= 'string' then
+      return
+    end
+
+    ---@cast k string
+    if User.check.module('config.lsp.' .. k) then
+      return get(self, k, require('config.lsp.' .. k))
+    end
+  end,
+})
 
 local function timer_cb()
   local logfile = vim.lsp.log.get_filename()
@@ -61,11 +91,14 @@ local function make_timer()
   end
 end
 
----@param old_caps? lsp.ClientCapabilities
+---@param caps lsp.ClientCapabilities
 ---@return lsp.ClientCapabilities caps
-function Server.make_capabilities(old_caps)
-  local caps = old_caps or {}
-  if require('user_api').check.module('blink.cmp') then
+---@overload fun(): caps: lsp.ClientCapabilities
+function M.make_capabilities(caps)
+  User.check.validate({ caps = { caps, { 'table', 'nil' }, true } })
+
+  caps = caps or {}
+  if User.check.module('blink.cmp') then
     caps = vim.tbl_deep_extend(
       'force',
       caps,
@@ -73,9 +106,10 @@ function Server.make_capabilities(old_caps)
       require('blink.cmp').get_lsp_capabilities({}, true)
     )
   end
-  if require('user_api').check.module('lsp-file-operations') then
+
+  if User.check.module('lsp-file-operations') then
     caps = vim.tbl_deep_extend('force', caps, require('lsp-file-operations').default_capabilities())
-  elseif require('user_api').check.module('nvim-file-operations.config') then
+  elseif User.check.module('nvim-file-operations.config') then
     caps = vim.tbl_deep_extend('force', caps, require('nvim-file-operations.config').default_capabilities())
   end
   return caps
@@ -84,10 +118,10 @@ end
 ---@param name string
 ---@param config vim.lsp.Config
 ---@return vim.lsp.Config config
-function Server.populate(name, config)
+function M.populate(name, config)
   config.capabilities = config.capabilities
-      and insert_client(config.capabilities, Server.make_capabilities(config.capabilities or {}))
-    or Server.make_capabilities()
+      and insert_client(config.capabilities, M.make_capabilities(config.capabilities or {}))
+    or M.make_capabilities()
 
   if vim.list_contains({ 'html', 'jsonls' }, name) then
     config.capabilities = insert_client(config.capabilities, {
@@ -106,15 +140,15 @@ function Server.populate(name, config)
     config.capabilities = insert_client(config.capabilities, {
       workspace = { didChangeWorkspaceFolders = { dynamicRegistration = true } },
     })
-  elseif name == 'lua_ls' and require('user_api').check.module('lazydev') then
+  elseif name == 'lua_ls' and User.check.module('lazydev') then
     config.root_dir = function(bufnr, on_dir)
       on_dir(require('lazydev').find_workspace(bufnr))
     end
-  elseif require('user_api').check.module('schemastore') and name == 'jsonls' then
+  elseif User.check.module('schemastore') and name == 'jsonls' then
     config.settings = insert_client(config.settings or {}, {
       json = { validate = { enable = true }, schemas = require('schemastore').json.schemas() },
     })
-  elseif require('user_api').check.module('schemastore') and name == 'yamlls' then
+  elseif User.check.module('schemastore') and name == 'yamlls' then
     config.settings = insert_client(config.settings or {}, {
       yaml = { schemaStore = { enable = false, url = '' }, schemas = require('schemastore').yaml.schemas() },
     })
@@ -122,11 +156,11 @@ function Server.populate(name, config)
   return config
 end
 
-function Server.setup()
+function M.setup()
   vim.lsp.protocol.TextDocumentSyncKind.Full = 1
   vim.lsp.protocol.TextDocumentSyncKind[1] = 'Full'
 
-  vim.lsp.config('*', { capabilities = Server.make_capabilities() })
+  vim.lsp.config('*', { capabilities = M.make_capabilities() })
 
   vim.diagnostic.config({
     float = true,
@@ -147,7 +181,7 @@ function Server.setup()
   vim.lsp.log.set_level(vim.log.levels.ERROR)
   for name, client in pairs(Clients) do
     if client then
-      vim.lsp.config(name, Server.populate(name, client))
+      vim.lsp.config(name, M.populate(name, client))
       if not vim.list_contains(client_names, name) then
         table.insert(client_names, name)
       end
@@ -159,53 +193,38 @@ function Server.setup()
 
   vim.lsp.enable(client_names)
 
-  local desc = require('user_api').maps.desc
-  require('user_api').config.keymaps.set({
+  User.config.keymaps.set({
     n = {
       ['<leader>l'] = { group = '+LSP' },
       ['<leader>lC'] = {
         function()
           vim.notify(vim.inspect(client_names))
         end,
-        desc('List Clients'),
+        User.maps.desc('List Clients'),
       },
     },
     v = { ['<leader>l'] = { group = '+LSP' } },
   })
 
-  require('config.lsp.autocmd').setup()
-  require('config.lsp.kinds').setup()
+  M.autocmd.setup()
+  M.kinds.setup()
 end
 
 ---@param config vim.lsp.Config
 ---@param name string
 ---@param exe? string
-function Server.add(config, name, exe)
-  require('user_api').check.validate({
+function M.add(config, name, exe)
+  User.check.validate({
     config = { config, { 'table' } },
     name = { name, { 'string' } },
     exe = { exe, { 'string', 'nil' }, true },
   })
 
-  if require('user_api').check.executable(exe or name) then
-    Clients[name] =
-      Server.populate(name, Clients[name] and vim.tbl_deep_extend('force', Clients[name], config) or config)
-    Server.setup()
+  if User.check.executable(exe or name) then
+    Clients[name] = M.populate(name, Clients[name] and vim.tbl_deep_extend('force', Clients[name], config) or config)
+    M.setup()
   end
 end
-
-local M = setmetatable(Server, { ---@type Lsp.Server
-  __index = function(self, k)
-    local raw = rawget(self, k) or nil
-    if raw then
-      return raw
-    end
-
-    if require('user_api').check.module('config.lsp.' .. k) then
-      return require('user_api').util.rawset(self, k, require('config.lsp.' .. k))
-    end
-  end,
-})
 
 return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

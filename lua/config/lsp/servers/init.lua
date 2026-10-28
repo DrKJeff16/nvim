@@ -1,18 +1,18 @@
+local User = require('user_api')
+
 ---@param name string
----@param exe? string
+---@param exe string
 ---@return vim.lsp.Config|nil|? config
+---@overload fun(name: string): config: vim.lsp.Config|nil|?
 local function server_load(name, exe)
-  require('user_api').check.validate({
+  User.check.validate({
     name = { name, 'string' },
     exe = { exe, { 'string', 'nil' }, true },
   })
   exe = (exe and exe ~= '') and exe or name
 
-  if require('user_api').check.executable(exe) then
-    local ok, mod = pcall(require, 'config.lsp.servers.' .. name) ---@type boolean, vim.lsp.Config|nil|?
-    if ok and mod then
-      return mod
-    end
+  if User.check.executable(exe) and User.check.module('config.lsp.servers.' .. name) then
+    return require('config.lsp.servers.' .. name)
   end
 end
 

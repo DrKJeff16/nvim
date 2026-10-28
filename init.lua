@@ -1,6 +1,5 @@
 local INFO = vim.log.levels.INFO
 local User = require('user_api')
-local Config = require('config')
 
 ---@param ... any
 function _G.notify_inspect(...)
@@ -80,7 +79,8 @@ require('user_api.opts').setup({
 ---Disable `netrw` regardless of whether `nvim_tree/neo_tree` exist or not.
 User.disable_netrw()
 
-Config.lazy.setup({
+local Config = require('config')
+Config('lazy', {
   Comment = true,
   alpha = false,
   autopairs = false,
@@ -253,19 +253,19 @@ User.config.keymaps.set({
 
 -- Initialize the User API
 User.setup()
-Config.autocmds.setup()
+Config('autocmds')
 
-Config.colorschemes('tokyonight')
--- Config.colorschemes('catppuccin')
--- Config.colorschemes('everblush')
--- Config.colorschemes('calvera')
--- Config.colorschemes('lavender')
--- Config.colorschemes('flow')
--- Config.colorschemes('thorn')
--- Config.colorschemes('nightfox')
--- Config.colorschemes('conifer')
--- Config.colorschemes('tokyodark')
--- Config.colorschemes('spaceduck')
+Config('colorschemes', 'tokyonight')
+-- Config('colorschemes', 'catppuccin')
+-- Config('colorschemes', 'everblush')
+-- Config('colorschemes', 'calvera')
+-- Config('colorschemes', 'lavender')
+-- Config('colorschemes', 'flow')
+-- Config('colorschemes', 'thorn')
+-- Config('colorschemes', 'nightfox')
+-- Config('colorschemes', 'conifer')
+-- Config('colorschemes', 'tokyodark')
+-- Config('colorschemes', 'spaceduck')
 
 if vim.fn.has('nvim-0.12') == 1 then
   vim.cmd.packadd('nohlsearch')
@@ -284,6 +284,6 @@ if vim.fn.has('nvim-0.12') == 1 then
   -- })
 end
 
-Config.lsp.setup()
+Config('lsp')
 
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:
