@@ -1,22 +1,23 @@
-local MODSTR = 'config.util'
-local validate = require('user_api').check.validate
+local User = require('user_api')
 
 ---@class Config.Util
 local M = {}
 
 ---@param name string
----@param callback? function
+---@param callback function
 ---@return function install_flag
+---@overload fun(name: string): install_flag: function
 function M.flag_installed(name, callback)
-  validate({
+  User.check.validate({
     name = { name, { 'string' } },
     callback = { callback, { 'function', 'nil' }, true },
   })
-  assert(name ~= '', ('(%s.flag_installed): Unable to set `vim.g` var'):format(MODSTR))
+  assert(name ~= '', 'Unable to set `vim.g` var')
 
   return function()
     vim.g[(name:sub(1, 10) == 'installed_') and name or ('installed_' .. name)] = 1
-    if callback and vim.is_callable(callback) then
+    if callback then
+      assert(vim.is_callable(callback), 'Callback is not callable')
       callback()
     end
   end
@@ -27,7 +28,7 @@ end
 ---@param mod_str string
 ---@return function module_call
 function M.require(mod_str)
-  validate({ mod_str = { mod_str, { 'string' } } })
+  User.check.validate({ mod_str = { mod_str, { 'string' } } })
 
   return function()
     pcall(require, mod_str)

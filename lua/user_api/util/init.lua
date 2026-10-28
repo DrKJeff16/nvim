@@ -93,10 +93,10 @@ end
 ---@overload fun(option: string, param: 'buf'|'win', param_value: integer): value: any
 ---@overload fun(option: string, param: 'ft', param_value: string): value: any
 ---@overload fun(option: string, param: 'scope', param_value: 'local'|'global'): value: any
----@overload fun(option: string[]): value: any
----@overload fun(option: string[], param: 'buf'|'win', param_value: integer): value: any
----@overload fun(option: string[], param: 'ft', param_value: string): value: any
----@overload fun(option: string[], param: 'scope', param_value: 'local'|'global'): value: any
+---@overload fun(option: string[]): value: table<string, any>
+---@overload fun(option: string[], param: 'buf'|'win', param_value: integer): value: table<string, any>
+---@overload fun(option: string[], param: 'ft', param_value: string): value: table<string, any>
+---@overload fun(option: string[], param: 'scope', param_value: 'local'|'global'): value: table<string, any>
 function M.optget(option, param, param_value)
   validate({
     option = { option, { 'string', 'table' } },
@@ -106,17 +106,17 @@ function M.optget(option, param, param_value)
   param = param or 'buf'
   assert(
     vim.list_contains({ 'scope', 'ft', 'buf', 'win' }, param),
-    ('Bad parameter: `%s`\nCan only accept `scope`, `ft`, `buf` or `win`!'):format(vim.inspect(param))
+    ('Bad parameter: `%s`\nCan only accept `scope`, `ft`, `buf` or `win`'):format(vim.inspect(param))
   )
   if param == 'scope' then
     param_value = param_value or 'local'
     assert(
       vim.list_contains({ 'global', 'local' }, param_value),
-      ('Bad param value `%s`\nCan only accept `global` or `local`!'):format(vim.inspect(param_value))
+      ('Bad param value `%s`\nCan only accept `global` or `local`'):format(vim.inspect(param_value))
     )
   end
   if param == 'ft' then
-    assert(param_value and type(param_value) == 'string', 'Missing/bad value for `ft` parameter!')
+    assert(param_value and type(param_value) == 'string', 'Missing/bad value for `ft` parameter')
   end
   if vim.list_contains({ 'win', 'buf' }, param) then
     assert(param_value ~= nil, 'Missing value for `win` / `buf` parameter')
@@ -155,11 +155,11 @@ function M.optset(option, value, param, param_value)
   })
   param = param or 'buf'
   if type(option) == 'table' then
-    assert(value == nil, 'Bad option value spec!')
+    assert(value == nil, 'Bad option value spec')
   end
   assert(
     vim.list_contains({ 'scope', 'filetype', 'buf', 'win' }, param),
-    ('Bad parameter: `%s`\nCan only accept `scope`, `filetype`, `buf` or `win`!'):format(vim.inspect(param))
+    ('Bad parameter: `%s`\nCan only accept `scope`, `filetype`, `buf` or `win`'):format(vim.inspect(param))
   )
 
   if param == 'scope' then
@@ -167,16 +167,16 @@ function M.optset(option, value, param, param_value)
     param_value = param_value or 'local'
     assert(
       vim.list_contains({ 'global', 'local' }, param_value),
-      ('Bad param value `%s`\nCan only accept `global` or `local`!'):format(vim.inspect(param_value))
+      ('Bad param value `%s`\nCan only accept `global` or `local`'):format(vim.inspect(param_value))
     )
   end
   if param == 'filetype' then
-    assert(param_value and type(param_value) == 'string', 'Missing/bad value for `filetype` parameter!')
+    assert(param_value and type(param_value) == 'string', 'Missing/bad value for `filetype` parameter')
   end
   if vim.list_contains({ 'win', 'buf' }, param) then
     assert(
       param_value and type(param_value) == 'number' and require('user_api.check').is_int(param_value),
-      'Missing/bad value for `win`/`buf` parameter!'
+      'Missing/bad value for `win` / `buf` parameter'
     )
   end
 
@@ -522,18 +522,13 @@ end
 ---@overload fun(data: string[]): res: string[]
 function M.discard_dups(data)
   if type(data) ~= 'string' and type(data) ~= 'table' then
-    vim.notify('Input is not valid!', vim.log.levels.ERROR, {
-      animate = true,
-      hide_from_history = false,
-      timeout = 2750,
-      title = '(user_api.util.discard_dups)',
-    })
+    vim.notify('Input is not valid', vim.log.levels.ERROR)
     return data
   end
 
   local res ---@type string[]|string
   if type(data) == 'string' then
-    res = data:sub(1, 1)
+    res = data:sub(1, 1) --[[@as string]]
     local i = 2
     while i < data:len() do
       local c = data:sub(i, i)
@@ -543,9 +538,9 @@ function M.discard_dups(data)
       i = i + 1
     end
   else
-    res = {}
+    res = {} --[[@as string[]\]]
     for k, v in pairs(data) do
-      if not vim.tbl_contains(res, v) then
+      if not vim.list_contains(res, v) then
         res[k] = v
       end
     end

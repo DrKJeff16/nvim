@@ -72,6 +72,7 @@
 ---@field lsp_file_operations? LazySpecImport
 ---@field lsp_lazydev? LazySpecImport
 ---@field lsp_lspsaga? LazySpecImport
+---@field lsp_schemastore? LazySpecImport
 ---@field lsp_toggle? LazySpecImport
 ---@field lspkind? LazySpecImport
 ---@field lualine? LazySpecImport
@@ -241,6 +242,7 @@
 ---@field lsp_file_operations? boolean
 ---@field lsp_lazydev? boolean
 ---@field lsp_lspsaga? boolean
+---@field lsp_schemastore? boolean
 ---@field lsp_toggle? boolean
 ---@field lspkind? boolean
 ---@field lualine? boolean

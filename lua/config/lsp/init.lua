@@ -144,14 +144,6 @@ function M.populate(name, config)
     config.root_dir = function(bufnr, on_dir)
       on_dir(require('lazydev').find_workspace(bufnr))
     end
-  elseif User.check.module('schemastore') and name == 'jsonls' then
-    config.settings = insert_client(config.settings or {}, {
-      json = { validate = { enable = true }, schemas = require('schemastore').json.schemas() },
-    })
-  elseif User.check.module('schemastore') and name == 'yamlls' then
-    config.settings = insert_client(config.settings or {}, {
-      yaml = { schemaStore = { enable = false, url = '' }, schemas = require('schemastore').yaml.schemas() },
-    })
   end
   return config
 end

@@ -69,7 +69,7 @@ function M.setup()
         end,
       },
       {
-        pattern = { 'help' },
+        pattern = 'help',
         group = augroup,
         callback = function(ev)
           if User.util.optget('ft', 'buf', ev.buf) ~= 'help' or User.util.optget('bt', 'buf', ev.buf) == 'help' then
