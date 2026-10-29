@@ -1,3 +1,5 @@
+---@module 'lazy'
+
 local User = require('user_api')
 
 ---@generic T: table, F
@@ -19,7 +21,7 @@ end
 ---@field util Config.Util
 
 ---@diagnostic disable-next-line:missing-fields
-local M = {} ---@type NvimConfig|(fun(mod: string))|(fun(mod: string, ...: any))
+local M = {} ---@type NvimConfig|(fun(mod: 'autocmds'))|(fun(mod: 'lsp'))|(fun(mod: 'colorschemes'))|(fun(mod: 'colorschemes', theme: string))|(fun(mod: 'lazy', spec: table<string, LazySpec|string|LazyPluginSpec|boolean>|LazyToggle))
 
 setmetatable(M, {
   __index = function(self, k) ---@param self NvimConfig

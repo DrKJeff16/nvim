@@ -5,7 +5,7 @@ local User = require('user_api')
 function _G.notify_inspect(...)
   local txt = '' ---@type string
   for i = 1, select('#', ...) do
-    local selection = select(i, ...)
+    local selection = select(i, ...) --[[@as string]]
     if selection == nil then
       selection = 'nil'
     elseif not vim.list_contains({ 'string', 'number', 'boolean' }, type(selection)) then
@@ -76,8 +76,7 @@ require('user_api.opts').setup({
   wrap = false,
 }, false, true)
 
----Disable `netrw` regardless of whether `nvim_tree/neo_tree` exist or not.
-User.disable_netrw()
+User.disable_netrw() ---Disable `netrw` regardless of whether `nvim_tree/neo_tree` exist or not
 
 local Config = require('config')
 Config('lazy', {
@@ -251,8 +250,8 @@ User.config.keymaps.set({
   v = { ['<C-/>'] = { ":'<,'>normal gcc<CR><Up>", User.maps.desc('Toggle Comment') } },
 }, { defaults = true })
 
--- Initialize the User API
-User.setup()
+User.setup() -- Initialize the User API
+
 Config('autocmds')
 
 Config('colorschemes', 'tokyonight')
@@ -269,9 +268,6 @@ Config('colorschemes', 'tokyonight')
 
 if vim.fn.has('nvim-0.12') == 1 then
   vim.cmd.packadd('nohlsearch')
-end
-
-if vim.fn.has('nvim-0.12') == 1 then
   vim.cmd.packadd('nvim.difftool')
   vim.cmd.packadd('nvim.undotree')
 
