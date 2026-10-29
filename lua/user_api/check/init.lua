@@ -1,4 +1,3 @@
-local validate = require('user_api.check.exists').validate
 local Util = require('user_api.util')
 
 ---@generic T: table, F
@@ -13,10 +12,11 @@ local function get(t, k, fallback)
 end
 
 ---@param path string
----@param mod? string
+---@param mod string
 ---@return string stripped
+---@overload fun(path: string): stripped: string
 local function strip_slash(path, mod)
-  validate({
+  require('user_api.check.exists').validate({
     path = { path, { 'string' } },
     mod = { mod, { 'string', 'nil' }, true },
   })
@@ -76,7 +76,7 @@ end
 ---@param path string
 ---@return boolean absolute
 function M.is_absolute(path)
-  validate({ path = { path, { 'string' } } })
+  M.exists.validate({ path = { path, { 'string' } } })
 
   return vim.list_contains(
     { strip_slash(path, ':p:~'), strip_slash(path), vim.fn.fnamemodify(path, ':p'), vim.fn.fnamemodify(path, ':p:~') },

@@ -266,9 +266,12 @@
 
 local exists = require('user_api').check.module
 
----@param theme? ''|'auto'|string
----@param force_auto? boolean
----@return string
+---@param theme ''|'auto'|string
+---@param force_auto boolean
+---@return string theme
+---@overload fun(): theme: string
+---@overload fun(theme: ''|'auto'|string): theme: string
+---@overload fun(theme: nil, force_auto: boolean): theme: string
 local function theme_select(theme, force_auto)
   require('user_api').check.validate({
     theme = { theme, { 'string', 'nil' } },

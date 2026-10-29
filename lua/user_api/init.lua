@@ -87,8 +87,11 @@ function M.disable_netrw()
   vim.g.loaded_netrwPlugin = 1
 end
 
----@param commands? table<string, User.Commands.CmdSpec>
----@param verbose? boolean
+---@param commands table<string, User.Commands.CmdSpec>
+---@param verbose boolean
+---@overload fun()
+---@overload fun(commands: table<string, User.Commands.CmdSpec>)
+---@overload fun(commands: nil, verbose: boolean)
 function M.setup(commands, verbose)
   require('user_api.check').validate({
     commands = { commands, { 'table', 'nil' }, true },

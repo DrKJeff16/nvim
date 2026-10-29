@@ -1,4 +1,5 @@
----Non-legacy validation spec (>=v0.11)
+---Non-legacy validation spec (`>=v0.11`).
+--- ---
 ---@class UserValidateSpec
 ---@field [1] any
 ---@field [2] vim.validate.Validator
@@ -7,13 +8,14 @@
 
 ---Exitstance checks.
 ---
----This contains many checkers for environment, modules, namespaces, etc.
----Also, simplified Vim functions can be found here.
+---This contains many checkers for environment, modules, namespaces, etc. Also, simplified
+---Vim functions can be found here.
 --- ---
 ---@class User.Check.Existance
 local M = {}
 
----Dynamic `vim.is_distro()` wrapper. Covers both legacy and newer implementations
+---Dynamic `vim.is_distro()` wrapper. Covers both legacy and newer implementations.
+--- ---
 ---@param T table<string, vim.validate.Spec|UserValidateSpec>
 function M.validate(T)
   local max = vim.fn.has('nvim-0.11') == 1 and 3 or 4
@@ -42,17 +44,20 @@ end
 function M.module(mod)
   M.validate({ mod = { mod, { 'string', 'table' } } })
 
+  local exists = true
   if type(mod) == 'string' then
-    return (pcall(require, mod))
-  end
+    exists = pcall(require, mod)
+  else
+    for i, v in ipairs(mod) do
+      M.validate({ ['mod_' .. i] = { v, { 'string' } } })
 
-  for i, v in ipairs(mod) do
-    M.validate({ ['mod_' .. i] = { v, { 'string' } } })
-    if not M.module(v) then
-      return false
+      if not M.module(v) then
+        exists = false
+        break
+      end
     end
   end
-  return true
+  return exists
 end
 
 ---@param expr string[]|string
@@ -60,17 +65,20 @@ end
 function M.vim_has(expr)
   M.validate({ expr = { expr, { 'string', 'table' } } })
 
+  local has = true
   if type(expr) == 'string' then
-    return vim.fn.has(expr) == 1
-  end
+    has = vim.fn.has(expr) == 1
+  else
+    for i, v in ipairs(expr) do
+      M.validate({ ['expr_' .. i] = { v, { 'string' } } })
 
-  for i, v in ipairs(expr) do
-    M.validate({ ['expr_' .. i] = { v, { 'string' } } })
-    if not M.vim_has(v) then
-      return false
+      if not M.vim_has(v) then
+        has = false
+        break
+      end
     end
   end
-  return true
+  return has
 end
 
 ---@param expr string[]|string
@@ -78,31 +86,33 @@ end
 function M.vim_exists(expr)
   M.validate({ expr = { expr, { 'string', 'table' } } })
 
+  local exists = true
   if type(expr) == 'string' then
-    return vim.fn.exists(expr) == 1
-  end
+    exists = vim.fn.exists(expr) == 1
+  else
+    for i, v in ipairs(expr) do
+      M.validate({ ['expr_' .. i] = { v, { 'string' } } })
 
-  for i, v in ipairs(expr) do
-    M.validate({ ['expr_' .. i] = { v, { 'string' } } })
-    if not M.vim_exists(v) then
-      return false
+      if not M.vim_exists(v) then
+        exists = false
+        break
+      end
     end
   end
-  return true
+  return exists
 end
 
 ---@param vars string[]|string
----@param callback? function
+---@param callback function
 ---@return boolean found
+---@overload fun(vars: string[]|string): found: boolean
 function M.env_vars(vars, callback)
   M.validate({
     vars = { vars, { 'string', 'table' } },
     callback = { callback, { 'function', 'nil' }, true },
   })
 
-  local environment = vim.fn.environ()
-  local res = false
-
+  local environment, res = vim.fn.environ(), false ---@type table<string, string>, boolean
   if type(vars) == 'string' then
     res = vim.fn.has_key(environment, vars) == 1
   else
@@ -113,9 +123,11 @@ function M.env_vars(vars, callback)
       end
     end
   end
+
   if not res and callback and vim.is_callable(callback) then
     callback()
   end
+
   return res
 end
 
@@ -124,16 +136,17 @@ end
 function M.executable(exe)
   M.validate({ exe = { exe, { 'string', 'table' } } })
 
+  local res = true
   if type(exe) == 'string' then
-    return vim.fn.executable(exe) == 1
-  end
+    res = vim.fn.executable(exe) == 1
+  else
+    for i, v in ipairs(exe) do
+      M.validate({ ['exe.' .. i] = { v, { 'string' } } })
 
-  local res = false
-  for i, v in ipairs(exe) do
-    M.validate({ ['exe.' .. i] = { v, { 'string' } } })
-    res = M.executable(v)
-    if not res then
-      break
+      if not M.executable(v) then
+        res = false
+        break
+      end
     end
   end
   return res

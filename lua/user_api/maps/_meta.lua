@@ -25,9 +25,12 @@ local Maps = {}
 ---@field silent? boolean
 ---@field unique? boolean
 
----@param desc? string
----@param opts? User.Maps.DescOpts
+---@param desc string
+---@param opts User.Maps.DescOpts
 ---@return User.Maps.Opts opts
+---@overload fun(): opts: User.Maps.Opts
+---@overload fun(desc: string): opts: User.Maps.Opts
+---@overload fun(desc: nil, opts: User.Maps.DescOpts): opts: User.Maps.Opts
 function Maps.desc(desc, opts) end
 
 ---@overload fun(T: AllMaps, map_func: 'keymap'|'wk.register')
@@ -40,6 +43,7 @@ function Maps.map_dict(T, map_func) end
 ---@overload fun(T: string[]|string)
 ---@overload fun(T: string[]|string, opts: User.Maps.Opts)
 ---@overload fun(T: string[]|string, opts: User.Maps.Opts, mode: MapModes)
----@overload fun(T: string[]|string, opts: User.Maps.Opts, mode?: MapModes, prefix: string)
+---@overload fun(T: string[]|string, opts: User.Maps.Opts, mode: MapModes, prefix: string)
+---@overload fun(T: string[]|string, opts: User.Maps.Opts, mode: nil, prefix: string)
 function Maps.nop(T) end
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

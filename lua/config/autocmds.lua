@@ -72,7 +72,7 @@ function M.setup()
         pattern = 'help',
         group = augroup,
         callback = function(ev)
-          if User.util.optget('ft', 'buf', ev.buf) ~= 'help' or User.util.optget('bt', 'buf', ev.buf) == 'help' then
+          if User.util.optget('bt', 'buf', ev.buf) == 'help' then
             User.util.optset(
               { signcolumn = 'no', number = false, colorcolumn = '', list = false },
               nil,
@@ -81,7 +81,7 @@ function M.setup()
             )
 
             vim.cmd.noh()
-            vim.cmd.wincmd('=')
+            vim.cmd.wincmd({ args = { '=' } })
 
             User.config.keymaps.set(
               { n = { q = { vim.cmd.helpclose, desc('Quit Help', { buf = ev.buf }) } } },

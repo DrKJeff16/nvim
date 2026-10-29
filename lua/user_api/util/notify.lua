@@ -28,9 +28,9 @@ local ERROR = vim.log.levels.ERROR
 local OFF = vim.log.levels.OFF
 local validate = require('user_api.check').validate
 
----Can't use `user_api.check.exists.module()` here as said module might
----end up requiring this module, so let's avoid an import loop, shall we?
+---Can't use `user_api.check.exists.module()` here as said module might end up requiring this module.
 --- ---
+---@see User.Check.Existance.module
 ---@param mod string The module `require()` string.
 ---@return boolean ok Whether the module exists.
 local function exists(mod)

@@ -176,7 +176,7 @@ function M.map_dict(T, map_func, has_modes, mode, bufnr)
 
   ---@cast T AllMaps
   if map_func == 'keymap' and M.keymap[mode] then
-    func = M.keymap[mode] --[[@as fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)]]
+    func = M.keymap[mode] --[[@as (fun(lhs: string, rhs: string|function))|(fun(lhs: string, rhs: string|function, opts: vim.keymap.set.Opts))]]
     for lhs, v in pairs(T) do
       if v[2] and v[3] then
         func(lhs, v[2], v[3])

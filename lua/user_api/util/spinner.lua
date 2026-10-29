@@ -40,7 +40,8 @@ function O:start()
   end
 end
 
----@param force? boolean
+---@param force boolean
+---@overload fun(self: SpinnerObj)
 function O:stop(force)
   if has_spinner() then
     validate({ force = { force, { 'boolean', 'nil' }, true } })
@@ -57,7 +58,7 @@ local M = {}
 
 ---@param id string
 ---@param opts spinner.Opts
----@return SpinnerObj|nil spinner
+---@return SpinnerObj|nil|? spinner
 function M.new(id, opts)
   validate({
     id = { id, { 'string' } },

@@ -25,8 +25,9 @@ local function make_import(mod, prefix)
   }
 end
 
----@param cmd? 'edit'|'tabnew'|'split'|'vsplit'
+---@param cmd 'edit'|'tabnew'|'split'|'vsplit'
 ---@return function command
+---@overload fun(): command: function
 local function key_variant(cmd)
   User.check.validate({ cmd = { cmd, { 'string', 'nil' }, true } })
   cmd = (cmd and vim.list_contains({ 'edit', 'tabnew', 'split', 'vsplit' }, cmd)) and cmd or 'edit'
@@ -461,7 +462,8 @@ end
 
 ---Sets up `lazy.nvim`. Only runs once!
 --- ---
----@param toggles? table<string, LazySpec|string|LazyPluginSpec|boolean>|LazyToggle
+---@param toggles table<string, LazySpec|string|LazyPluginSpec|boolean>|LazyToggle
+---@overload fun()
 function M.setup(toggles)
   require('user_api').check.validate({ toggles = { toggles, { 'table', 'nil' }, true } })
   toggles = vim.tbl_deep_extend('keep', toggles or {}, M.get_default_toggles())

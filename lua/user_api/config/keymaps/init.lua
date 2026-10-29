@@ -34,8 +34,9 @@ local function wincmd(cmd)
   end
 end
 
----@param force? boolean
+---@param force boolean
 ---@return function op
+---@overload fun(): op: function
 local function delete_file(force)
   validate({ force = { force, { 'boolean', 'nil' }, true } })
   if force == nil then
@@ -121,7 +122,8 @@ local function gen_checkhealth(check)
   end
 end
 
----@param vertical? boolean
+---@param vertical boolean
+---@overload fun()
 local function gen_fun_blank(vertical)
   validate({ vertical = { vertical, { 'boolean', 'nil' }, true } })
   if vertical == nil then
@@ -141,7 +143,8 @@ local function gen_fun_blank(vertical)
   end
 end
 
----@param force? boolean
+---@param force boolean
+---@overload fun()
 local function buf_del(force)
   validate({ force = { force, { 'boolean', 'nil' }, true } })
   if force == nil then
@@ -350,8 +353,11 @@ end
 ---Set both the `<leader>` and `<localleader>` keys.
 --- ---
 ---@param leader string `<leader>` key string (defaults to `<Space>`)
----@param local_leader? string `<localleader>` string (defaults to `<Space>`)
----@param force? boolean Force leader switch (defaults to `false`)
+---@param local_leader string `<localleader>` string (defaults to `<Space>`)
+---@param force boolean Force leader switch (defaults to `false`)
+---@overload fun(leader: string)
+---@overload fun(leader: string, local_leader: string)
+---@overload fun(leader: string, local_leader: nil, force: boolean)
 function M.set_leader(leader, local_leader, force)
   validate({
     leader = { leader, { 'string' } },
@@ -404,34 +410,38 @@ function M.set_leader(leader, local_leader, force)
 end
 
 ---@param K User.Keymaps.Delete
----@param bufnr? integer
+---@param bufnr integer
 ---@return User.Keymaps.Delete|nil|? deleted_keys
+---@overload fun(K: User.Keymaps.Delete): deleted_keys: User.Keymaps.Delete|nil|?
 function M.delete(K, bufnr)
   validate({
     K = { K, { 'table' } },
     bufnr = { bufnr, { 'number', 'nil' }, true },
   })
   bufnr = bufnr or nil
-  if not vim.tbl_isemyty(K) then
-    local ditched_keys = {} ---@type User.Keymaps.Delete
-    for k, v in pairs(K) do
-      for _, key in ipairs(v) do
-        vim.keymap.del(k, key, bufnr and { buffer = bufnr } or {})
-      end
-      ditched_keys[k] = v
-    end
-    return ditched_keys
+
+  if vim.tbl_isemyty(K) then
+    return
   end
+
+  local ditched_keys = {} ---@type User.Keymaps.Delete
+  for k, v in pairs(K) do
+    for _, key in ipairs(v) do
+      vim.keymap.del(k, key, bufnr and { buffer = bufnr } or {})
+    end
+    ditched_keys[k] = v
+  end
+  return ditched_keys
 end
 
 ---@param new_keys AllModeMaps
----@param opts? { bufnr?: integer, defaults?: boolean }
+---@param opts { bufnr?: integer, defaults?: boolean }
+---@overload fun(new_keys: AllModeMaps)
 function M.set(new_keys, opts)
   validate({
     new_keys = { new_keys, { 'table' } },
     opts = { opts, { 'table', 'nil' }, true },
   })
-
   opts = opts or {}
   validate({
     ['opts.bufnr'] = { opts.bufnr, { 'number', 'nil' }, true },

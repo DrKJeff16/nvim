@@ -66,7 +66,8 @@ function M.update(verbose)
   end)
 end
 
----@param verbose? boolean
+---@param verbose boolean
+---@overload fun()
 function M.setup(verbose)
   validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
   if verbose == nil then

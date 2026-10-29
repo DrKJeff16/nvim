@@ -1,5 +1,6 @@
 ---@class User.Maps.Opts: User.Maps.DescOpts, vim.keymap.set.Opts
 ---@field buffer? integer
+---@field private __index User.Maps.Opts|fun(self: User.Maps.Opts, key: any): value: any
 local M = {}
 
 ---@alias User.Maps.ValidOpts
@@ -101,10 +102,13 @@ local function validate_opts(T)
   return T
 end
 
----@param T? User.Maps.Opts|User.Maps.DescOpts
+---@param T User.Maps.Opts|User.Maps.DescOpts
 ---@return User.Maps.Opts new_object
+---@overload fun(): new_object: User.Maps.Opts
 function M.new(T)
-  return setmetatable(validate_opts(T), M)
+  local obj = validate_opts(T)
+  setmetatable(obj, M)
+  return obj
 end
 
 return M

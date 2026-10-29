@@ -1,6 +1,5 @@
 local INFO = vim.log.levels.INFO
-local desc = require('user_api').maps.desc
-local validate = require('user_api').check.validate
+local User = require('user_api')
 
 local function print_workspace_folders()
   local msg = ''
@@ -65,7 +64,6 @@ local function server_info()
 end
 
 ---@class Lsp.SubMods.Autocmd
----@field autocommands AuRepeat
 local M = {}
 
 local Keys = { ---@type AllModeMaps
@@ -73,44 +71,46 @@ local Keys = { ---@type AllModeMaps
     ['<leader>lS'] = { group = '+Server' },
     ['<leader>lf'] = { group = '+File Operations' },
     ['<leader>lw'] = { group = '+Workspace' },
-    ['<leader>lSS'] = { server_start, desc('Server Stop') },
-    ['<leader>lSi'] = { server_info, desc('Show LSP Info') },
-    ['<leader>lSr'] = { server_restart, desc('Server Restart') },
-    ['<leader>lSs'] = { server_stop, desc('Server Start') },
-    ['<leader>lc'] = { vim.lsp.buf.code_action, desc('Code Action') },
-    ['<leader>le'] = { vim.diagnostic.open_float, desc('Open Diagnostics Float') },
-    ['<leader>lfD'] = { vim.lsp.buf.declaration, desc('Declaration') },
-    ['<leader>lfR'] = { vim.lsp.buf.rename, desc('Rename...') },
-    ['<leader>lfS'] = { vim.lsp.buf.signature_help, desc('Signature Help') },
-    ['<leader>lfT'] = { vim.lsp.buf.type_definition, desc('Type Definition') },
-    ['<leader>lfd'] = { vim.lsp.buf.definition, desc('Definition') },
-    ['<leader>lff'] = { async_fmt, desc('Format File') },
-    ['<leader>lfi'] = { vim.lsp.buf.implementation, desc('Implementation') },
-    ['<leader>lfr'] = { vim.lsp.buf.references, desc('References') },
-    ['<leader>lq'] = { vim.diagnostic.setloclist, desc('Set Loclist') },
-    ['<leader>lwa'] = { vim.lsp.buf.add_workspace_folder, desc('Add Workspace Folder') },
-    ['<leader>lwl'] = { print_workspace_folders, desc('List Workspace Folders') },
-    ['<leader>lwr'] = { vim.lsp.buf.remove_workspace_folder, desc('Remove Workspace Folder') },
+    ['<leader>lSS'] = { server_start, User.maps.desc('Server Stop') },
+    ['<leader>lSi'] = { server_info, User.maps.desc('Show LSP Info') },
+    ['<leader>lSr'] = { server_restart, User.maps.desc('Server Restart') },
+    ['<leader>lSs'] = { server_stop, User.maps.desc('Server Start') },
+    ['<leader>lc'] = { vim.lsp.buf.code_action, User.maps.desc('Code Action') },
+    ['<leader>le'] = { vim.diagnostic.open_float, User.maps.desc('Open Diagnostics Float') },
+    ['<leader>lfD'] = { vim.lsp.buf.declaration, User.maps.desc('Declaration') },
+    ['<leader>lfR'] = { vim.lsp.buf.rename, User.maps.desc('Rename...') },
+    ['<leader>lfS'] = { vim.lsp.buf.signature_help, User.maps.desc('Signature Help') },
+    ['<leader>lfT'] = { vim.lsp.buf.type_definition, User.maps.desc('Type Definition') },
+    ['<leader>lfd'] = { vim.lsp.buf.definition, User.maps.desc('Definition') },
+    ['<leader>lff'] = { async_fmt, User.maps.desc('Format File') },
+    ['<leader>lfi'] = { vim.lsp.buf.implementation, User.maps.desc('Implementation') },
+    ['<leader>lfr'] = { vim.lsp.buf.references, User.maps.desc('References') },
+    ['<leader>lq'] = { vim.diagnostic.setloclist, User.maps.desc('Set Loclist') },
+    ['<leader>lwa'] = { vim.lsp.buf.add_workspace_folder, User.maps.desc('Add Workspace Folder') },
+    ['<leader>lwl'] = { print_workspace_folders, User.maps.desc('List Workspace Folders') },
+    ['<leader>lwr'] = { vim.lsp.buf.remove_workspace_folder, User.maps.desc('Remove Workspace Folder') },
   },
-  v = { ['<leader>lc'] = { vim.lsp.buf.code_action, desc('LSP Code Action') } },
+  v = { ['<leader>lc'] = { vim.lsp.buf.code_action, User.maps.desc('LSP Code Action') } },
 }
 
-M.autocommands = {
+local autocommands = { ---@type AuRepeat
   LspAttach = {
-    group = vim.api.nvim_create_augroup('UserLsp', { clear = false }),
-    callback = function(ev)
-      local client = vim.lsp.get_client_by_id(ev.data.client_id)
-      if not client then
-        return
-      end
+    {
+      group = vim.api.nvim_create_augroup('UserLsp', { clear = false }),
+      callback = function(ev)
+        local client = vim.lsp.get_client_by_id(ev.data.client_id)
+        if not client then
+          return
+        end
 
-      if client:supports_method('textDocument/hover', ev.buf) then
-        require('user_api').config.keymaps.set(
-          { n = { K = { vim.lsp.buf.hover, desc('Hover', { buf = ev.buf }) } } },
-          ev.buf
-        )
-      end
-    end,
+        if client:supports_method('textDocument/hover', ev.buf) then
+          User.config.keymaps.set(
+            { n = { K = { vim.lsp.buf.hover, User.maps.desc('Hover', { buf = ev.buf }) } } },
+            { bufnr = ev.buf }
+          )
+        end
+      end,
+    },
   },
   LspProgress = {
     {
@@ -123,13 +123,14 @@ M.autocommands = {
   },
 }
 
----@param override? AuRepeat
+---@param override AuRepeat
+---@overload fun()
 function M.setup(override)
-  validate({ override = { override, { 'table', 'nil' }, true } })
+  User.check.validate({ override = { override, { 'table', 'nil' }, true } })
 
-  M.autocommands = vim.tbl_deep_extend('keep', override or {}, M.autocommands)
-  require('user_api').util.autocmd.au_repeated(M.autocommands)
-  require('user_api').config.keymaps.set(Keys)
+  autocommands = vim.tbl_deep_extend('keep', override or {}, autocommands)
+  User.util.autocmd.au_repeated(autocommands)
+  User.config.keymaps.set(Keys)
 end
 
 return M

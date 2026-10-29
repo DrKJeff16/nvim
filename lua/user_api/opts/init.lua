@@ -58,8 +58,9 @@ local function toggle_completer(lead, _, pos)
   return valid
 end
 
----@param short? boolean
+---@param short boolean
 ---@return string[] valid
+---@overload fun(): valid: string[]
 local function gen_toggleable(short)
   validate({ short = { short, { 'boolean', 'nil' }, true } })
   if short == nil then
@@ -87,8 +88,9 @@ end
 toggleable = gen_toggleable(true)
 
 ---@param T User.Opts.Spec
----@param verbose? boolean
+---@param verbose boolean
 ---@return User.Opts.Spec parsed_opts
+---@overload fun(T: User.Opts.Spec): parsed_opts: User.Opts.Spec
 local function long_opts_convert(T, verbose)
   validate({
     T = { T, { 'table' } },
@@ -136,7 +138,8 @@ end
 ---Option setter for the aforementioned options dictionary.
 --- ---
 ---@param O User.Opts.Spec A dictionary with keys acting as `vim.o` fields, and values
----@param verbose? boolean Enable verbose printing if `true`
+---@param verbose boolean Enable verbose printing if `true`
+---@overload fun(O: User.Opts.Spec)
 function M.optset(O, verbose)
   validate({
     O = { O, { 'table' } },
@@ -185,7 +188,8 @@ local function print_set_opts()
 end
 
 ---@param O string[]|string
----@param verbose? boolean
+---@param verbose boolean
+---@overload fun(O: string[]|string)
 function M.toggle(O, verbose)
   validate({
     O = { O, { 'string', 'table' } },

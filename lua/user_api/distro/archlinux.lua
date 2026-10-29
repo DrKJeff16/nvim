@@ -1,7 +1,7 @@
 ---Modify runtimepath to also search the system-wide Vim directory
 ---(e.g. for Vim runtime files from Arch Linux packages)
 
-local RTPATHS = {
+local RTPATHS = { ---@type string[]
   '/usr/share/vim/vimfiles/after',
   '/usr/share/vim/vimfiles',
   '/usr/share/nvim/runtime',
@@ -21,23 +21,28 @@ function M.is_distro()
       table.insert(new_rtpaths, p)
     end
   end
-  if #new_rtpaths == 0 then
-    return false
-  end
 
-  RTPATHS = vim.deepcopy(new_rtpaths)
-  return true
+  local res ---@type boolean
+  if #new_rtpaths == 0 then
+    res = false
+  else
+    RTPATHS = vim.deepcopy(new_rtpaths)
+    res = true
+  end
+  return res
 end
 
 function M.setup()
-  if M.is_distro() then
-    for _, path in ipairs(RTPATHS) do
-      if vim.fn.isdirectory(path) == 1 then
-        vim.o.runtimepath = vim.o.runtimepath .. ',' .. path
-      end
-    end
-    pcall(vim.cmd.runtime, { args = { 'archlinux.vim' }, bang = true })
+  if not M.is_distro() then
+    return
   end
+
+  for _, path in ipairs(RTPATHS) do
+    if vim.fn.isdirectory(path) == 1 then
+      vim.o.runtimepath = vim.o.runtimepath .. ',' .. path
+    end
+  end
+  pcall(vim.cmd.runtime, { args = { 'archlinux.vim' }, bang = true })
 end
 
 return M

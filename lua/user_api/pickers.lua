@@ -36,7 +36,8 @@ local M = {}
 ---@param mod string
 ---@param name string
 ---@param spec User.Pickers.Spec
----@param verbose? boolean
+---@param verbose boolean
+---@overload fun(mod: string, name: string, spec: User.Pickers.Spec)
 function M.new_picker(mod, name, spec, verbose)
   validate({
     mod = { mod, { 'string' } },
@@ -59,7 +60,8 @@ function M.new_picker(mod, name, spec, verbose)
   end
 end
 
----@param verbose? boolean
+---@param verbose boolean
+---@overload fun()
 function M.setup(verbose)
   validate({ verbose = { verbose, { 'boolean', 'nil' }, true } })
   if verbose == nil then

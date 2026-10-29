@@ -1,7 +1,8 @@
 ---@module 'lazy'
 
----@param force? boolean
----@return function
+---@param force boolean
+---@return function callback
+---@overload fun(): callback: function
 local function gen_bdel(force)
   force = force ~= nil and force or false
   return function()

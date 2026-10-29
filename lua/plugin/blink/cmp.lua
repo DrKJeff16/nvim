@@ -124,8 +124,9 @@ end
 
 _G.BLINK_SOURCES = {} ---@type string[]
 
----@param opts? { cmdline: boolean }| { terminal: boolean }
+---@param opts { cmdline: boolean }| { terminal: boolean }
 ---@return string[] sources
+---@overload fun(): sources: string[]
 _G.BUtil.gen_sources = function(opts)
   opts = opts or {}
 

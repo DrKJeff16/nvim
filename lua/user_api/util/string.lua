@@ -169,22 +169,26 @@ setmetatable(M, {
 })
 
 ---@param str string
----@param use_dot? boolean
----@param triggers? string[]
+---@param use_dot boolean
+---@param triggers string[]
 ---@return string new_str
+---@overload fun(str: string): new_str: string
+---@overload fun(str: string, use_dot: boolean): new_str: string
+---@overload fun(str: string, use_dot: nil, triggers: string[]): new_str: string
 function M.capitalize(str, use_dot, triggers)
   require('user_api.check').validate({
     str = { str, { 'string' } },
     use_dot = { use_dot, { 'boolean', 'nil' }, true },
     triggers = { triggers, { 'table', 'nil' }, true },
   })
-  if str == '' then
-    return str
-  end
   if use_dot == nil then
     use_dot = false
   end
   triggers = vim.tbl_deep_extend('force', triggers or {}, { ' ', '' })
+
+  if str == '' then
+    return str
+  end
 
   local prev_char, new_str, i = '', '', 1
   local dot = true

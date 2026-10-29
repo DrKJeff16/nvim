@@ -13,8 +13,8 @@
 ---@field [2]? User.Maps.Opts
 
 ---@class KeyMapRhsDict
----@field rhs string|function
 ---@field opts? User.Maps.Opts
+---@field rhs string|function
 
 ---Array for `vim.keymap.set` arguments.
 --- ---
@@ -29,28 +29,29 @@
 ---@alias AllMaps table<string, KeyMapRhsArr|RegKey|RegPfx>
 
 ---@class AllModeMaps
----@field n? AllMaps
----@field i? AllMaps
----@field v? AllMaps
----@field t? AllMaps
----@field o? AllMaps
 ---@field V? AllMaps
+---@field i? AllMaps
+---@field n? AllMaps
+---@field o? AllMaps
+---@field t? AllMaps
+---@field v? AllMaps
 ---@field x? AllMaps
 
 ---@class KeyMapTbl
 ---@field lhs string
----@field rhs string|function
 ---@field opts? User.Maps.Opts
+---@field rhs string|function
 
 ---@alias KeyMapModeDict table<'n'|'i'|'v'|'t'|'o'|'x'|'V', KeyMapDict>
 ---@alias KeyMapModeDicts table<'n'|'i'|'v'|'t'|'o'|'x'|'V', KeyMapTbl[]>
 
 ---@param mode MapModes
----@return fun(lhs: string, rhs: string|function, opts?: vim.keymap.set.Opts)
+---@return (fun(lhs: string, rhs: string|function))|(fun(lhs: string, rhs: string|function, opts: vim.keymap.set.Opts))
 local function variant(mode)
   ---@param lhs string
   ---@param rhs string|function
-  ---@param opts? vim.keymap.set.Opts
+  ---@param opts vim.keymap.set.Opts
+  ---@overload fun(lhs: string, rhs: string|function)
   return function(lhs, rhs, opts)
     vim.keymap.set(mode, lhs, rhs, opts or {})
   end

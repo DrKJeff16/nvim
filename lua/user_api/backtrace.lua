@@ -9,8 +9,9 @@ local validate = require('user_api.check').validate
 
 ---@param msg string
 ---@param sel any
----@param space? boolean
+---@param space boolean
 ---@return string msg
+---@overload fun(msg: string, sel: any): msg: string
 local function format_sel(msg, sel, space)
   validate({
     msg = { msg, { 'string' } },

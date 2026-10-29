@@ -2,7 +2,8 @@
 
 ---@param htype string
 ---@param func function
----@param opts? ibl.hooks.options
+---@param opts ibl.hooks.options
+---@overload fun(htype: string, func: function)
 local function reg(htype, func, opts)
   require('ibl.hooks').register(htype, func, not opts or require('user_api').check.empty(opts) and nil or opts)
 end

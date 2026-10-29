@@ -306,8 +306,9 @@ function M.strip(char, str)
 end
 
 ---@param s string[]|string
----@param bufnr? integer
+---@param bufnr integer
 ---@return table<string, any> res
+---@overload fun(s: string[]|string): res: table<string, any>
 function M.get_opts_tbl(s, bufnr)
   validate({
     s = { s, { 'string', 'table' } },
@@ -328,9 +329,12 @@ end
 
 ---@generic T: table
 ---@param T T
----@param steps? integer
----@param direction? 'l'|'r'
+---@param steps integer
+---@param direction 'l'|'r'
 ---@return T res
+---@overload fun(T: T): res: T
+---@overload fun(T: T, steps: integer): res: T
+---@overload fun(T: T, steps: nil, direction: 'l'|'r'): res: T
 function M.mv_tbl_values(T, steps, direction)
   validate({
     T = { T, { 'table' } },

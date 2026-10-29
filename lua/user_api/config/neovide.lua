@@ -62,9 +62,13 @@ function M.check()
   return require('user_api.check.exists').executable('neovide') and vim.g.neovide or false
 end
 
----@param opacity? number
----@param transparency? number
----@param bg? string
+---@param opacity number
+---@param transparency number
+---@param bg string
+---@overload fun()
+---@overload fun(opacity: number)
+---@overload fun(opacity: number, transparency: number)
+---@overload fun(opacity: number, transparency: nil, bg: string)
 local function set_transparency(opacity, transparency, bg)
   require('user_api.check').validate({
     opacity = { opacity, { 'number', 'nil' }, true },
@@ -89,7 +93,7 @@ local function set_transparency(opacity, transparency, bg)
   g_opts.neovide_background_color = bg
 end
 
----@param O any[]
+---@param O table
 ---@param pfx string
 local function parse_g_opts(O, pfx)
   require('user_api.check').validate({
@@ -99,11 +103,10 @@ local function parse_g_opts(O, pfx)
   pfx = pfx:sub(1, 8) == 'neovide_' and pfx or 'neovide_'
 
   for k, v in ipairs(O) do
-    local key = pfx .. k
-    if require('user_api.check.value').is_tbl(v) then
-      parse_g_opts(v, key .. '_')
+    if type(v) == 'table' then
+      parse_g_opts(v, pfx .. k .. '_')
     else
-      g_opts[key] = v
+      g_opts[pfx .. k] = v
     end
   end
 end
@@ -124,9 +127,15 @@ function M.setup_maps()
   end
 end
 
----@param T? table
----@param transparent? boolean
----@param verbose? boolean
+---@param T table
+---@param transparent boolean
+---@param verbose boolean
+---@overload fun()
+---@overload fun(T: table)
+---@overload fun(T: table, transparent: boolean)
+---@overload fun(T: nil, transparent: boolean)
+---@overload fun(T: table, transparent: nil, verbose: boolean)
+---@overload fun(T: nil, transparent: boolean, verbose: boolean)
 function M.setup(T, transparent, verbose)
   require('user_api.check').validate({
     T = { T, { 'table', 'nil' }, true },
@@ -152,7 +161,9 @@ function M.setup(T, transparent, verbose)
 
   g_opts = {}
   T = vim.tbl_deep_extend('keep', T, Defaults.g)
+
   parse_g_opts(T, 'neovide_')
+
   if transparent then
     set_transparency()
   end

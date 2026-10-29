@@ -1,36 +1,40 @@
 ---The Vim modes used for `which-key` as a `string`
 ---@alias RegModes 'n'|'i'|'v'|'t'|'o'|'x'|'V'
 
----This is an abstraction of `vim.keymaps.set.Opts` (see `User.Maps.Opts`),
----with few extensions.
+---This is an abstraction of `vim.keymaps.set.Opts` (see `User.Maps.Opts`), with few extensions.
 ---
 ---This table defines a keymap that is used for grouping keymaps with an extra sequence.
 ---
----This class type is reserved for either direct usage with `which-key`, or most regularly
----for `User.maps.map_dict()` and anything in the `User.maps.wk` module.
+---This class type is reserved for either direct usage with `which-key`, or most regularly for
+---`User.maps.map_dict()` and anything in the `User.maps.wk` module.
+---
+---@see User.Maps.map_dict For the function this class is targeted for.
 --- ---
 ---@class RegKey
---- AKA `lhs` of a Vim Keymap.
----
+---A.K.A. `lhs` of a Vim Keymap.
+--- ---
 ---@field [1] string
---- AKA `rhs` of a Vim Keymap.
----
+---A.K.A. `rhs` of a Vim Keymap.
+--- ---
 ---@field [2] string|function
 ---@field [3]? User.Maps.Opts
---- Keymap's description.
----
----@field desc? string
 ---@field cond? boolean|fun(): cond: boolean
+---Keymap's description.
+--- ---
+---@field desc? string
 ---@field expand? fun(): spec: wk.Spec
---- If `true`, `which-key` will hide this keymap
---- **See `:h vim.keymap.set()` to find the other fields**
+---If `true`, `which-key` will hide this keymap.
+---
+---See `:h vim.keymap.set()` to find the other fields.
+--- ---
 ---@field hidden? boolean
 ---@field icon? string|wk.Icon|fun(): icon: wk.Icon|string
---- Any of the Vim modes: `'n'`, `'i'`, `'v'`, `'t'`, `'o'`, `'x'`, `'V'`
+---Any of the Vim modes: `'n'`, `'i'`, `'v'`, `'t'`, `'o'`, `'x'`, `'V'`.
+--- ---
 ---@field mode? RegModes
 ---@field proxy? string
 
---- A dictionary of string ==> `RegKey` class
+---A dictionary of string ==> `RegKey` class.
 ---
 ---This merely describes a dictionary of `RegKey` type objects
 ---
@@ -38,9 +42,7 @@
 ---
 ---```lua
 ----- DO NOT COPY THE CODE BELOW OUT OF THE BLUE!!!!
----
-------@type RegKeys
----local Keys = {
+---local Keys = { ---@type RegKeys
 ---    ['<leader>x'] = {
 ---        rhs()|'rhs',
 ---        { ... }, ---@see vim.keymap.set.Opts
@@ -51,6 +53,7 @@
 ---```
 --- ---
 ---@alias RegKeys table<string, RegKey>
+
 ---A dictionary of string ==> `RegPfx` class.
 ---
 ---This merely describes a dictionary of `RegPfx` type objects.
@@ -58,6 +61,7 @@
 ---**This is only valid if _`which-key`_ is installed.**
 ---
 ---@alias RegKeysNamed table<string, RegPfx>
+
 ---@alias ModeRegKeys table<MapModes, RegKeys>
 ---@alias ModeRegKeysNamed table<MapModes, RegKeysNamed>
 
@@ -65,11 +69,10 @@
 ---
 --- - **Warning:** If you remove the `group` field, it'll be parsed as any other table
 ---
----This class type is reserver for either direct usage with `which-key`, or most regularly
----for `User.maps.map_dict()` and anything in the `User.maps.wk` module.
+---This class type is reserver for either direct usage with `which-key`, or most regularly for
+---`User.maps.map_dict()` and anything in the `User.maps.wk` module.
 ---
----This table defines a keymap that is used for grouping keymaps with an extra sequence,
----for example:
+---This table defines a keymap that is used for grouping keymaps with an extra sequence, for example:
 ---
 ---```
 ---<leader>fs    <=== [ ] not a group
@@ -79,9 +82,7 @@
 ---**_EXAMPLE:_**
 ---
 ---```lua
----arbitrary_keys = {
----    ['<leader><leader>']= { group = '+Group1', buffer = 4, hidden = true },
----}
+---arbitrary_keys = { ['<leader><leader>']= { group = '+Group1', buffer = 4, hidden = true } }
 ---```
 ---
 --- - `group` (`string`): The name of the group. Optionally you can prepend a `+` to the name,
@@ -92,6 +93,9 @@
 ---
 ---See `:h vim.keymap.set()` to find the other fields.
 --- ---
+---@see vim.keymap
+---@see vim.keymap.set.Opts
+---@see User.maps.map_dict
 ---@class RegPfx: vim.keymap.set.Opts
 ---@field group? string
 ---@field hidden? boolean
@@ -109,18 +113,20 @@ local validate = require('user_api.check').validate
 local MODES = { 'V', 'i', 'n', 'o', 't', 'v', 'x' }
 
 ---`which_key` API entrypoints.
+--- ---
 ---@class User.Maps.WK
 local M = {}
 
 ---@return boolean available
 function M.available()
-  return require('user_api.check').module('which-key')
+  return package.loaded['which-key'] ~= nil
 end
 
 ---@param lhs string
 ---@param rhs string|function
----@param opts? User.Maps.Opts|vim.keymap.set.Opts|wk.Spec
+---@param opts User.Maps.Opts|vim.keymap.set.Opts|wk.Spec
 ---@return wk.Spec converted
+---@overload fun(lhs: string, rhs: string|function): converted: wk.Spec
 function M.convert(lhs, rhs, opts)
   validate({
     lhs = { lhs, { 'string' } },
@@ -160,18 +166,15 @@ function M.convert_dict(T)
 end
 
 ---@param T AllMaps
----@param opts? User.Maps.Opts|wk.Spec
----@return false|nil|? success
+---@param opts User.Maps.Opts|wk.Spec
+---@overload fun(T: AllMaps)
 function M.register(T, opts)
   validate({
     T = { T, { 'table' } },
     opts = { opts, { 'table', 'nil' }, true },
   })
 
-  if not M.available() then
-    vim.notify('(user.maps.wk.register): `which_key` unavailable', vim.log.levels.ERROR)
-    return false
-  end
+  assert(M.available(), '(user.maps.wk.register): `which_key` unavailable')
 
   opts = opts or require('user_api.maps.objects').new({ mode = 'n' })
   opts.mode = (opts.mode and type(opts.mode) == 'string' and vim.list_contains(MODES, opts.mode)) and opts.mode or 'n'
@@ -180,7 +183,7 @@ function M.register(T, opts)
   for _, val in pairs(T) do
     table.insert(filtered, val)
   end
-  require('which-key').add(filtered)
+  require('which-key').add(vim.deepcopy(filtered))
 end
 
 return M

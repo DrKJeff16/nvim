@@ -18,9 +18,15 @@ end
 local timer = nil ---@type uv.uv_timer_t|nil|?
 
 ---@param original lsp.ClientCapabilities
----@param inserts? lsp.ClientCapabilities
+---@param inserts lsp.ClientCapabilities
 ---@return lsp.ClientCapabilities client_caps
+---@overload fun(original: lsp.ClientCapabilities): client_caps: lsp.ClientCapabilities
 local function insert_client(original, inserts)
+  User.check.validate({
+    original = { original, { 'table' } },
+    inserts = { inserts, { 'table', 'nil' }, true },
+  })
+
   return vim.tbl_deep_extend('force', original, inserts or {})
 end
 
@@ -51,13 +57,10 @@ local function timer_cb()
   local logfile = vim.lsp.log.get_filename()
   local stat = uv.fs_stat(logfile)
   if stat and stat.size >= 2097152 then
-    local fd = uv.fs_open(logfile, 'w', tonumber('644', 8))
-    if fd then
-      uv.fs_ftruncate(fd, 0)
-      uv.fs_close(fd)
-
-      vim.notify('LSP Log has been cleared!', vim.log.levels.INFO)
-    end
+    local fd = assert(uv.fs_open(logfile, 'w', tonumber('644', 8)), 'Unable to open LSP log file')
+    assert(uv.fs_ftruncate(fd, 0), 'Unable to truncate LSP log file')
+    assert(uv.fs_close(fd), 'Unable to close file descriptor for LSP log file')
+    vim.notify('LSP Log has been cleared!', vim.log.levels.INFO)
   end
 end
 
@@ -68,27 +71,26 @@ local function make_timer()
     return
   end
 
-  timer = uv.new_timer()
-  if timer then
-    local group = vim.api.nvim_create_augroup('lsp_autoclear', { clear = true })
-    vim.api.nvim_create_autocmd({ 'VimLeavePre' }, {
-      group = group,
-      callback = function()
-        if timer and timer:is_active() then
-          timer:stop()
-          timer = nil
-        end
-      end,
-    })
-    vim.api.nvim_create_autocmd('VimEnter', {
-      group = group,
-      callback = function()
-        if timer and not timer:is_active() then
-          timer:start(10000, 900000, vim.schedule_wrap(timer_cb))
-        end
-      end,
-    })
-  end
+  timer = assert(uv.new_timer(), 'Unable to create timer')
+
+  local group = vim.api.nvim_create_augroup('lsp_autoclear', { clear = true })
+  vim.api.nvim_create_autocmd({ 'VimLeavePre' }, {
+    group = group,
+    callback = function()
+      if timer and timer:is_active() then
+        assert(timer:stop() ~= nil, 'Unable to stop LSP log cleanup timer')
+        timer = nil
+      end
+    end,
+  })
+  vim.api.nvim_create_autocmd('VimEnter', {
+    group = group,
+    callback = function()
+      if timer and not timer:is_active() then
+        assert(timer:start(10000, 900000, vim.schedule_wrap(timer_cb)) ~= nil, 'Unable to start LSP log cleanup timer')
+      end
+    end,
+  })
 end
 
 ---@param caps lsp.ClientCapabilities
@@ -204,7 +206,8 @@ end
 
 ---@param config vim.lsp.Config
 ---@param name string
----@param exe? string
+---@param exe string
+---@overload fun(config: vim.lsp.Config, name: string)
 function M.add(config, name, exe)
   User.check.validate({
     config = { config, { 'table' } },

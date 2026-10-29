@@ -1,12 +1,13 @@
 ---@alias Types 'string'|'number'|'function'|'boolean'|'table'
 ---@alias EmptyTypes 'string'|'number'|'integer'|'table'
 
-local MODSTR = 'user_api.check.value'
 local validate = require('user_api.check.exists').validate
 
 ---@param t Types
----@return fun(var: any, multiple?: boolean): boolean
+---@return (fun(var: any): res: boolean)|(fun(var: any, multiple: boolean): res: boolean)
 local function type_fun(t)
+  validate({ t = { t, { 'string' } } })
+
   local ALLOWED_TYPES = {
     is_bool = 'boolean',
     is_fun = 'function',
@@ -14,7 +15,6 @@ local function type_fun(t)
     is_str = 'string',
     is_tbl = 'table',
   }
-
   local ret, name = true, ''
   for k, _type in pairs(ALLOWED_TYPES) do
     if _type == t then
@@ -23,31 +23,36 @@ local function type_fun(t)
     end
   end
 
-  assert(not ret, ('(%s.type_fun): Invalid type `%s`'):format(MODSTR, t))
+  assert(not ret, ('Invalid type `%s`'):format(t))
 
   ---@param var any
-  ---@param multiple? boolean
+  ---@param multiple boolean
   ---@return boolean res
+  ---@overload fun(var: any): res: boolean
   return function(var, multiple)
     validate({ multiple = { multiple, { 'boolean', 'nil' }, true } })
     if multiple == nil then
       multiple = false
     end
 
+    local res = true
     if not multiple then
-      return var ~= nil and type(var) == t
-    end
-    if var == nil or type(var) ~= 'table' then
-      return false
-    end
-
-    for _, v in ipairs(var) do
-      if t == nil or type(v) ~= t then
-        vim.notify(('(%s.%s): Input is not a table (`multiple` is true)'):format(MODSTR, name), vim.log.levels.WARN)
-        return false
+      res = var ~= nil and type(var) == t
+    elseif var == nil or type(var) ~= 'table' then
+      res = false
+    else
+      for _, v in ipairs(var) do
+        if t == nil or type(v) ~= t then
+          vim.notify(
+            ('(user_api.check.value.%s): Input is not a table (`multiple` is `true`)'):format(name),
+            vim.log.levels.WARN
+          )
+          res = false
+          break
+        end
       end
     end
-    return true
+    return res
   end
 end
 
@@ -83,28 +88,30 @@ M.is_tbl = type_fun('table')
 ---i.e. _greater than or equal to `0` and a **whole number**_.
 --- ---
 ---@param var any Any data type to be checked if it's an integer
----@param multiple? boolean Tell the integer you're checking for multiple values. (Default: `false`)
+---@param multiple boolean Tell the integer you're checking for multiple values. (Default: `false`)
 ---@return boolean is_int
+---@overload fun(var: any): is_int: boolean
 function M.is_int(var, multiple)
   validate({ multiple = { multiple, { 'boolean', 'nil' }, true } })
   if multiple == nil then
     multiple = false
   end
 
+  local res = true
   if not multiple then
-    return type(var) == 'number' and var == math.floor(var) and var == math.ceil(var)
-  end
-  if type(var) ~= 'table' then
-    vim.notify(('(%s.is_int): Input is not a table (`multiple` is true)'):format(MODSTR), vim.log.levels.WARN)
-    return false
-  end
-
-  for _, v in ipairs(var) do
-    if not (type(v) == 'number' and v == math.floor(v) and v == math.ceil(v)) then
-      return false
+    res = type(var) == 'number' and var == math.floor(var) and var == math.ceil(var)
+  elseif type(var) ~= 'table' then
+    vim.notify('(user_api.check.value.is_int): Input is not a table (`multiple` is true)', vim.log.levels.WARN)
+    res = false
+  else
+    for _, v in ipairs(var) do
+      if not (type(v) == 'number' and v == math.floor(v) and v == math.ceil(v)) then
+        res = false
+        break
+      end
     end
   end
-  return true
+  return res
 end
 
 ---Returns whether one or more given string/number/table are **empty**.
@@ -119,9 +126,10 @@ end
 ---
 ---**THIS FUNCTION IS NOT RECURSIVE!**
 --- ---
----@param data (string|number)[]|string|number|table
----@param multiple? boolean
+---@param data string|number|table
+---@param multiple boolean
 ---@return boolean is_empty
+---@overload fun(data: string|number|table): is_empty: boolean
 function M.empty(data, multiple)
   validate({
     data = { data, { 'string', 'table', 'number' } },
@@ -131,26 +139,25 @@ function M.empty(data, multiple)
     multiple = false
   end
 
+  local res = false
   if type(data) == 'string' then
-    return data == ''
-  end
-  if type(data) == 'number' then
-    return data == 0
-  end
-  if not multiple then
-    return vim.tbl_isempty(data)
-  end
-  if vim.tbl_isempty(data) then
-    vim.notify(('(%s.empty): No values to check!'):format(MODSTR), vim.log.levels.WARN)
-    return true
-  end
-
-  for _, val in ipairs(data) do
-    if M.empty(val, false) then -- HACK: PASSING `false` TO AVOID RECURSIVE CHECKING
-      return true
+    res = data == ''
+  elseif type(data) == 'number' then
+    res = data == 0
+  elseif not multiple then
+    res = vim.tbl_isempty(data)
+  elseif vim.tbl_isempty(data) then
+    vim.notify('(user_api.check.value.empty): No values to check', vim.log.levels.WARN)
+    res = true
+  else
+    for _, val in ipairs(data) do
+      if M.empty(val, false) then -- HACK: PASSING `false` TO AVOID RECURSIVE CHECKING
+        res = true
+        break
+      end
     end
   end
-  return false
+  return res
 end
 
 ---Checks whether a certain number `num` is within a specified range.
@@ -158,8 +165,9 @@ end
 ---@param num number The number to be checked
 ---@param low number The low limit
 ---@param high number The high limit
----@param eq? { low: boolean, high: boolean } A table that defines how equalities will be made
+---@param eq { high?: boolean, low?: boolean } A table that defines how equalities will be made
 ---@return boolean in_range
+---@overload fun(num: number, low: number, high: number): in_range: boolean
 function M.num_range(num, low, high, eq)
   validate({
     num = { num, { 'number' } },
@@ -169,30 +177,38 @@ function M.num_range(num, low, high, eq)
   })
 
   eq = eq or { low = true, high = true }
-  if not M.is_bool(eq.high) then
+
+  validate({
+    ['eq.low'] = { eq.low, { 'boolean', 'nil' }, true },
+    ['eq.high'] = { eq.high, { 'boolean', 'nil' }, true },
+  })
+  if eq.high == nil then
     eq.high = true
   end
-  if not M.is_bool(eq.low) then
+  if eq.low == nil then
     eq.low = true
   end
+
   if low > high then
     low, high = high, low
   end
 
+  local res ---@type boolean
   if eq.high and eq.low then
-    return num >= low and num <= high
+    res = num >= low and num <= high
+  elseif eq.high and not eq.low then
+    res = num > low and num <= high
+  elseif not eq.high and eq.low then
+    res = num >= low and num < high
+  else
+    res = num > low and num < high
   end
-  if eq.high and not eq.low then
-    return num > low and num <= high
-  end
-  if not eq.high and eq.low then
-    return num >= low and num < high
-  end
-  return num > low and num < high
+  return res
 end
 
----@param field (string|integer)[]|string|integer
----@param T table<string|integer, any>
+---@generic K
+---@param field K
+---@param T table<K, any>
 ---@return boolean found
 function M.fields(field, T)
   validate({
@@ -200,23 +216,25 @@ function M.fields(field, T)
     T = { T, { 'table' } },
   })
 
+  local found = true
   if type(field) ~= 'table' then
-    return T[field] ~= nil
-  end
-
-  for _, v in ipairs(field) do
-    if not M.fields(v, T) then
-      return false
+    found = T[field] ~= nil
+  else
+    for _, v in ipairs(field) do
+      if not M.fields(v, T) then
+        found = false
+        break
+      end
     end
   end
-  return true
+  return found
 end
 
 ---@overload fun(values: any[]|table<string, any>, T: table): res: boolean
 ---@overload fun(values: any[]|table<string, any>, T: table, return_keys: false): res: boolean
----@overload fun(values: any[]|table<string, any>, T: table, return_keys: true): res: (string|integer)[]|string|integer
+---@overload fun(values: any[]|table<string, any>, T: table, return_keys: true): res: table|string|integer
 function M.tbl_values(values, T, return_keys)
-  require('user_api.check.exists').validate({
+  validate({
     values = { values, { 'table' } },
     T = { T, { 'table' } },
     return_keys = { return_keys, { 'boolean', 'nil' }, true },
@@ -225,7 +243,7 @@ function M.tbl_values(values, T, return_keys)
     return_keys = false
   end
 
-  local res = return_keys and {} or false ---@type boolean|string|integer|(string|integer)[]
+  local res = return_keys and {} or false ---@type boolean|string|integer|table
   for _, val in pairs(values) do
     for k, v in pairs(T) do
       if v == val then
@@ -250,25 +268,25 @@ end
 ---@param T table
 ---@return boolean is_single_type
 function M.single_type_tbl(type_str, T)
-  require('user_api.check.exists').validate({
+  validate({
     type_str = { type_str, { 'string' } },
     T = { T, { 'table' } },
   })
-
   assert(
     vim.list_contains({ 'boolean', 'function', 'number', 'string', 'table' }, type_str),
-    ('(%s.single_type_tbl): Wrong type `%s`.'):format(MODSTR, type_str)
+    ('(user_api.check.value.single_type_tbl): Wrong type `%s`.'):format(type_str)
   )
-  if vim.tbl_isempty(T) then
-    vim.notify(('(%s.single_type_tbl): Expected a non-empty table!'):format(MODSTR), vim.log.levels.ERROR)
-    return false
-  end
 
   local res = true
-  for _, v in pairs(T) do
-    if (type_str == 'nil' and v ~= nil) or type(v) ~= type_str then
-      res = false
-      break
+  if vim.tbl_isempty(T) then
+    vim.notify('(user_api.check.value.single_type_tbl): Expected a non-empty table!', vim.log.levels.ERROR)
+    res = false
+  else
+    for _, v in pairs(T) do
+      if (type_str == 'nil' and v ~= nil) or type(v) ~= type_str then
+        res = false
+        break
+      end
     end
   end
   return res
@@ -283,7 +301,7 @@ end
 ---@param T table
 ---@return boolean found
 function M.in_tbl_range(index, T)
-  require('user_api.check.exists').validate({
+  validate({
     index = { index, { 'number' } },
     T = { T, { 'table' } },
   })
