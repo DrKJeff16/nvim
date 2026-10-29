@@ -1,10 +1,7 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'rcarriga/nvim-notify',
-  lazy = false,
-  event = 'VeryLazy',
   version = false,
-  dependencies = { { 'DrKJeff16/plenary.nvim', dev = true } },
   cond = not require('user_api').check.in_console(),
   config = function()
     local Notify = require('notify')
@@ -23,18 +20,20 @@ return { ---@type LazySpec
     })
     vim.notify = Notify
 
-    if require('user_api').check.module('telescope.init') then
-      require('telescope').load_extension('notify')
+    vim.schedule(function()
+      if require('user_api').check.module('telescope.init') then
+        require('telescope').load_extension('notify')
 
-      local desc = require('user_api').maps.desc
-      require('user_api').config.keymaps.set({
-        n = {
-          ['<leader>N'] = { group = '+Notify' },
-          ['<leader><C-t>eN'] = { ':Telescope notify<CR>', desc('Notify Picker') },
-          ['<leader>NT'] = { ':Telescope notify<CR>', desc('Notify Telescope Picker') },
-        },
-      })
-    end
+        local desc = require('user_api').maps.desc
+        require('user_api').config.keymaps.set({
+          n = {
+            ['<leader>N'] = { group = '+Notify' },
+            ['<leader><C-t>eN'] = { ':Telescope notify<CR>', desc('Notify Picker') },
+            ['<leader>NT'] = { ':Telescope notify<CR>', desc('Notify Telescope Picker') },
+          },
+        })
+      end
+    end)
   end,
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

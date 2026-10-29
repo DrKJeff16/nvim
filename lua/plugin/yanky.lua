@@ -2,7 +2,6 @@
 return { ---@type LazySpec
   'gbprod/yanky.nvim',
   version = false,
-  event = 'VeryLazy',
   dependencies = { 'kkharji/sqlite.lua', 'folke/snacks.nvim' },
   config = function()
     require('yanky').setup({
@@ -21,13 +20,16 @@ return { ---@type LazySpec
       system_clipboard = { sync_with_ring = true },
       textobj = { enabled = true },
     })
-    if require('user_api').check.module('telescope') then
-      pcall(require('telescope').load_extension, 'yank_history')
-    end
 
     vim.keymap.set({ 'o', 'x' }, 'iy', function()
       require('yanky.textobj').last_put()
     end, {})
+
+    vim.schedule(function()
+      if require('user_api').check.module('telescope') then
+        pcall(require('telescope').load_extension, 'yank_history')
+      end
+    end)
   end,
   keys = {
     { 'y', '<Plug>(YankyYank)', mode = { 'n', 'x' }, desc = 'Yank Text' },

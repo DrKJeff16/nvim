@@ -74,18 +74,21 @@ return { ---@type LazySpec
     if vim.g.project_fzf_lua_loaded == 1 then
       keyset({ n = { ['<leader>pf'] = { ':Project fzf-lua<CR>', desc('Fzf-Lua Picker') } } })
     end
-    if package.loaded['telescope'] ~= nil then
-      require('telescope').load_extension('projects')
-      if vim.g.project_telescope_loaded == 1 then
-        keyset({ n = { ['<leader>pT'] = { ':Project telescope<CR>', desc('Telescope Picker') } } })
-      end
-    end
     if vim.g.project_snacks_loaded == 1 then
       keyset({ n = { ['<leader>pS'] = { ':Project snacks<CR>', desc('Snacks Picker') } } })
     end
     if vim.g.project_picker_loaded == 1 then
       keyset({ n = { ['<leader>pP'] = { ':Project picker<CR>', desc('picker.nvim Picker') } } })
     end
+
+    vim.schedule(function()
+      if require('user_api').check.module('telescope.init') then
+        require('telescope').load_extension('projects')
+        if vim.g.project_telescope_loaded == 1 then
+          keyset({ n = { ['<leader>pT'] = { ':Project telescope<CR>', desc('Telescope Picker') } } })
+        end
+      end
+    end)
   end,
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

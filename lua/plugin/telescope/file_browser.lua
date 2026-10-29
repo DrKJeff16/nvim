@@ -1,77 +1,79 @@
-local Actions = require('telescope._extensions.file_browser.actions')
+---@class TelescopeFileBrowser
+local M = {}
 
-local FileBrowser = {}
-
-FileBrowser.file_browser = {
-  cwd_to_path = true,
-  grouped = true,
-  files = true,
-  add_dirs = true,
-  depth = 1,
-  auto_depth = true,
-  select_buffer = false,
-  hidden = { file_browser = false, folder_browser = false },
-  respect_gitignore = require('user_api').check.executable('fd'),
-  use_fd = require('user_api').check.executable('fd'),
-  display_stat = { date = true, size = true, mode = true },
-  git_status = true,
-  quiet = false,
-  browse_files = require('telescope._extensions.file_browser.finders').browse_files,
-  browse_folders = require('telescope._extensions.file_browser.finders').browse_folders,
-  follow_symlinks = false,
-  hide_parent_dir = false,
-  collapse_dirs = false,
-  prompt_path = false,
-  dir_icon = '',
-  dir_icon_hl = 'Default',
-  no_ignore = false,
-  theme = 'ivy',
-  hijack_netrw = false,
-  mappings = {
-    i = {
-      ['<A-c>'] = Actions.create,
-      ['<A-d>'] = Actions.remove,
-      ['<A-m>'] = Actions.move,
-      ['<A-r>'] = Actions.rename,
-      ['<A-t>'] = Actions.change_cwd,
-      ['<A-y>'] = Actions.copy,
-      ['<BS>'] = Actions.backspace,
-      ['<C-e>'] = Actions.goto_home_dir,
-      ['<C-f>'] = Actions.toggle_browser,
-      ['<C-g>'] = Actions.goto_parent_dir,
-      ['<C-h>'] = Actions.toggle_hidden,
-      ['<C-o>'] = Actions.open,
-      ['<C-s>'] = Actions.toggle_all,
-      ['<C-w>'] = Actions.goto_cwd,
-      ['<S-CR>'] = Actions.create_from_prompt,
+function M.setup()
+  local Actions = require('telescope._extensions.file_browser.actions')
+  return {
+    cwd_to_path = true,
+    grouped = true,
+    files = true,
+    add_dirs = true,
+    depth = 1,
+    auto_depth = true,
+    select_buffer = false,
+    hidden = { file_browser = false, folder_browser = false },
+    respect_gitignore = require('user_api').check.executable('fd'),
+    use_fd = require('user_api').check.executable('fd'),
+    display_stat = { date = true, size = true, mode = true },
+    git_status = true,
+    quiet = false,
+    browse_files = require('telescope._extensions.file_browser.finders').browse_files,
+    browse_folders = require('telescope._extensions.file_browser.finders').browse_folders,
+    follow_symlinks = false,
+    hide_parent_dir = false,
+    collapse_dirs = false,
+    prompt_path = false,
+    dir_icon = '',
+    dir_icon_hl = 'Default',
+    no_ignore = false,
+    theme = 'ivy',
+    hijack_netrw = false,
+    mappings = {
+      i = {
+        ['<A-c>'] = Actions.create,
+        ['<A-d>'] = Actions.remove,
+        ['<A-m>'] = Actions.move,
+        ['<A-r>'] = Actions.rename,
+        ['<A-t>'] = Actions.change_cwd,
+        ['<A-y>'] = Actions.copy,
+        ['<BS>'] = Actions.backspace,
+        ['<C-e>'] = Actions.goto_home_dir,
+        ['<C-f>'] = Actions.toggle_browser,
+        ['<C-g>'] = Actions.goto_parent_dir,
+        ['<C-h>'] = Actions.toggle_hidden,
+        ['<C-o>'] = Actions.open,
+        ['<C-s>'] = Actions.toggle_all,
+        ['<C-w>'] = Actions.goto_cwd,
+        ['<S-CR>'] = Actions.create_from_prompt,
+      },
+      n = {
+        c = Actions.create,
+        d = Actions.remove,
+        e = Actions.goto_home_dir,
+        f = Actions.toggle_browser,
+        g = Actions.goto_parent_dir,
+        h = Actions.toggle_hidden,
+        m = Actions.move,
+        o = Actions.open,
+        r = Actions.rename,
+        s = Actions.toggle_all,
+        t = Actions.change_cwd,
+        w = Actions.goto_cwd,
+        y = Actions.copy,
+      },
     },
-    n = {
-      c = Actions.create,
-      d = Actions.remove,
-      e = Actions.goto_home_dir,
-      f = Actions.toggle_browser,
-      g = Actions.goto_parent_dir,
-      h = Actions.toggle_hidden,
-      m = Actions.move,
-      o = Actions.open,
-      r = Actions.rename,
-      s = Actions.toggle_all,
-      t = Actions.change_cwd,
-      w = Actions.goto_cwd,
-      y = Actions.copy,
-    },
-  },
-}
+  }
+end
 
-function FileBrowser.loadkeys()
+function M.loadkeys()
   local desc = require('user_api').maps.desc
   require('user_api').config.keymaps.set({
     n = {
-      ['<leader><C-T>eb'] = { require('telescope').extensions.file_browser.file_browser, desc('File Browser') },
-      ['<leader>ff'] = { require('telescope').extensions.file_browser.file_browser, desc('Telescope File Browser') },
+      ['<leader><C-T>eb'] = { ':Telescope file_browser<CR>', desc('File Browser') },
+      ['<leader>f<A-f>'] = { ':Telescope file_browser<CR>', desc('Telescope File Browser') },
     },
   })
 end
 
-return FileBrowser
+return M
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:

@@ -13,14 +13,13 @@ end
 return { ---@type LazySpec[]
   {
     'nvim-telescope/telescope.nvim',
+    lazy = false,
     version = false,
-    dependencies = {
-      { 'DrKJeff16/plenary.nvim', dev = true },
-    },
+    dependencies = { { 'DrKJeff16/plenary.nvim', dev = true } },
     cond = vim.fn.has('nvim-0.12') == 1,
     config = function()
       local Actions = require('telescope.actions')
-      local exists = require('user_api').check.module
+      local User = require('user_api')
 
       local vimgrep_arguments = vim.deepcopy(require('telescope.config').values.vimgrep_arguments or {})
       local extra_args = { '--hidden', '--glob', '!**/.git/*', '!**/.ropeproject/*', '!**/.mypy_cache/*' }
@@ -77,30 +76,24 @@ return { ---@type LazySpec[]
         },
       }
 
-      if exists('trouble.sources.telescope') then
-        local open_with_trouble = require('trouble.sources.telescope').open
-        Opts.defaults.mappings.i['<C-T>'] = open_with_trouble
-        Opts.defaults.mappings.n['<C-T>'] = open_with_trouble
-      end
-      if exists('plugin.telescope.file_browser') then
-        Opts.extensions.file_browser = require('plugin.telescope.file_browser').file_browser
+      if User.check.module('plugin.telescope.file_browser') then
+        Opts.extensions.file_browser = require('plugin.telescope.file_browser').setup()
         require('plugin.telescope.file_browser').loadkeys()
       end
 
-      require('telescope').setup(Opts)
+      local Telescope = require('telescope')
+      Telescope.setup(Opts)
 
       local function load_ext(name) ---@param name string
-        require('telescope').load_extension(name)
-        -- Make sure `picker_list` doesn't load itself
-        if name == 'picker_list' then
+        Telescope.load_extension(name)
+        if name == 'picker_list' then -- Make sure `picker_list` doesn't load itself
           vim.g.telescope_picker_list_loaded = 1
-        elseif exists('telescope._extensions.picker_list.main') then
-          -- If `picker_list` is loaded, also register extension with it
+        elseif User.check.module('telescope._extensions.picker_list.main') then -- If `picker_list` is loaded, also register extension with it
           require('telescope._extensions.picker_list.main').register(name)
         end
       end
 
-      local desc = require('user_api').maps.desc
+      local desc = User.maps.desc
       local Keys = { ---@type AllMaps
         ['<leader><C-t>'] = { group = '+Telescope' },
         ['<leader><C-t>b'] = { group = '+Builtins' },
@@ -130,18 +123,10 @@ return { ---@type LazySpec[]
           'picker_list',
           keys = { ['<leader><C-t>eP'] = { run_map('picker_list'), desc('Picker List') } },
         },
-        ['telescope._extensions.repo'] = {
-          'repo',
-          keys = {
-            ['<leader><C-t>er'] = { run_map('repo list'), desc('Repo') },
-            ['<leader>GT'] = { run_map('repo list'), desc('Telescope Repo') },
-          },
-        },
       }
       for mod, ext in pairs(known_exts) do
-        local extension = ext[1] or ''
-        if exists(mod) and extension ~= '' then
-          load_ext(extension)
+        if User.check.module(mod) and ext[1] ~= nil then
+          load_ext(ext[1])
           if ext.keys then
             for lhs, v in pairs(ext.keys) do
               Keys[lhs] = v
@@ -150,7 +135,7 @@ return { ---@type LazySpec[]
         end
       end
 
-      require('user_api').config.keymaps.set({ n = Keys })
+      User.config.keymaps.set({ n = Keys })
 
       vim.api.nvim_create_autocmd('User', {
         group = vim.api.nvim_create_augroup('UserTelescope', { clear = true }),

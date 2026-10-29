@@ -8,24 +8,24 @@ return { ---@type LazySpec
   config = function()
     require('scope').setup({
       hooks = {
-        pre_tab_leave = function()
-          vim.api.nvim_exec_autocmds('User', { pattern = 'ScopeTabLeavePre' })
-        end,
         post_tab_enter = function()
           vim.api.nvim_exec_autocmds('User', { pattern = 'ScopeTabEnterPost' })
+        end,
+        pre_tab_leave = function()
+          vim.api.nvim_exec_autocmds('User', { pattern = 'ScopeTabLeavePre' })
         end,
       },
     })
 
-    if require('user_api').check.module('telescope') then
-      require('telescope').load_extension('scope')
-      local desc = require('user_api').maps.desc
-      require('user_api').config.keymaps.set({
-        n = {
-          ['<leader><C-t>eS'] = { ':Telescope scope buffers<CR>', desc('Scope Buffers Picker') },
-        },
-      })
-    end
+    vim.schedule(function()
+      if require('user_api').check.module('telescope.init') then
+        require('telescope').load_extension('scope')
+        local desc = require('user_api').maps.desc
+        require('user_api').config.keymaps.set({
+          n = { ['<leader><C-t>eS'] = { ':Telescope scope buffers<CR>', desc('Scope Buffers Picker') } },
+        })
+      end
+    end)
   end,
 }
 -- vim: set ts=2 sts=2 sw=2 et ai si sta:
