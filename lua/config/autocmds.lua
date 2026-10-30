@@ -107,7 +107,7 @@ function M.setup()
             n = {
               q = {
                 function()
-                  vim.cmd.bdelete({ range = { ev.buf }, bang = true })
+                  vim.cmd.bdelete({ bang = true })
                 end,
                 desc('Quit Buffer', { buf = ev.buf }),
               },
