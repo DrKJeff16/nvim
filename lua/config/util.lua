@@ -26,12 +26,28 @@ end
 ---A `config` function to call your plugin from a `lazy` spec.
 --- ---
 ---@param mod_str string
----@return function module_call
-function M.require(mod_str)
-  User.check.validate({ mod_str = { mod_str, { 'string' } } })
+---@param ret boolean
+---@return unknown|nil|? module
+---@overload fun(mod_str: string): module_call: function
+---@overload fun(mod_str: string, ret: false): module_call: function
+function M.require(mod_str, ret)
+  User.check.validate({
+    mod_str = { mod_str, { 'string' } },
+    ret = { ret, { 'boolean', 'nil' }, true },
+  })
+  if ret == nil then
+    ret = false
+  end
 
-  return function()
-    pcall(require, mod_str)
+  if not ret then
+    return function()
+      pcall(require, mod_str)
+    end
+  end
+
+  local ok, mod = pcall(require, mod_str)
+  if ok and mod then
+    return mod
   end
 end
 
