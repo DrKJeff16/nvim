@@ -5,6 +5,7 @@
 import sys
 from argparse import ArgumentParser, Namespace
 from os.path import expanduser, isdir, isfile, realpath, relpath
+from pathlib import Path
 from re import Pattern, compile
 from typing import Any
 
@@ -43,7 +44,13 @@ def die(code: int = 0, *msg, **kwargs) -> None:
     sys.exit(code)
 
 
-def copy_file_to_path(path: str, verbose: bool) -> bool:
+def create_parents(path: str) -> None:
+    """Create parent directories, if needed."""
+    path = "/".join(realpath(f"{PREFIX}/{path}").rstrip(".").split("/")[:-1])
+    Path(path).mkdir(parents=True, exist_ok=True)
+
+
+def copy_file_to_path(path: str, verbose: bool) -> None:
     """Copy the template file to the specified path."""
     path = realpath(f"{PREFIX}/{path}").rstrip(".")
     pattern: Pattern[str] = compile(path)
@@ -110,6 +117,7 @@ def main() -> int:
     edit: bool = ns.edit
     name: str = ns.name[0] if isinstance(ns.name, list) else ns.name
 
+    create_parents(name)
     copy_file_to_path(name, verbose)
 
     return 0 if not edit else 1
