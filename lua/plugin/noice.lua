@@ -5,7 +5,7 @@ return { ---@type LazySpec
   event = 'VeryLazy',
   version = false,
   dependencies = { 'MunifTanjim/nui.nvim' },
-  cond = not require('user_api').check.in_console(),
+  cond = not (require('user_api').check.in_console() or require('user_api').config.neovide.check()),
   config = function()
     require('noice').setup({
       all = { filter = {}, opts = { enter = true, format = 'details' }, view = 'split' },
