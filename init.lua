@@ -37,7 +37,7 @@ require('user_api.opts').setup({
   errorbells = false,
   expandtab = true,
   ff = 'unix',
-  fileignorecase = not User.check.is_windows(),
+  fileignorecase = User.check.is_windows(),
   foldenable = false,
   foldmethod = 'manual',
   fo = 'jlnopw/',
