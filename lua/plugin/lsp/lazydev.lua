@@ -1,6 +1,7 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'folke/lazydev.nvim',
+  dev = true,
   ft = 'lua',
   version = false,
   dependencies = { { 'DrKJeff16/wezterm-types', lazy = true, dev = true, version = false } },

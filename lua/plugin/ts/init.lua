@@ -166,10 +166,8 @@ return { ---@type LazySpec
     vim.api.nvim_create_autocmd('FileType', {
       group = vim.api.nvim_create_augroup('TsInstall', { clear = true }),
       pattern = patterns,
-      callback = function(ev)
+      callback = function()
         vim.treesitter.start()
-
-        vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
       end,
     })
 
