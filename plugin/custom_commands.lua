@@ -66,3 +66,4 @@ User.commands.add_command({
   Nvimrc = { callback = open_file(vim.fs.joinpath(vim.fn.stdpath('config'), 'init.lua')) },
   Vimrc = { callback = open_file(vim.fs.joinpath(HOME, '.vimrc')) },
 })
+-- vim: set ts=2 sts=2 sw=2 et ai si sta:
