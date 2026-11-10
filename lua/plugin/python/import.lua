@@ -1,10 +1,10 @@
 ---@module 'lazy'
 return { ---@type LazySpec
   'kiyoon/python-import.nvim',
+  ft = 'python',
   version = false,
   cond = require('user_api').check.executable('uv'),
   build = 'uv tool install . --force --reinstall',
-  ft = 'python',
   config = function()
     require('python_import').setup({})
     vim.api.nvim_create_autocmd('FileType', {
@@ -14,24 +14,22 @@ return { ---@type LazySpec
         local Api = require('python_import.api')
         local desc = require('user_api').maps.desc
         require('user_api').config.keymaps.set({
+          i = { ['<M-\\>'] = { Api.add_import_current_word_and_notify, desc('Add Python Import', { buf = ev.buf }) } },
           n = {
             ['<M-\\>'] = { Api.add_import_current_word_and_notify, desc('Add Python Import', { buf = ev.buf }) },
             ['<leader>i'] = { group = 'Python Import', buffer = ev.buf },
-            ['<leader>it'] = { Api.add_rich_traceback, desc('Add Rich Traceback', { buf = ev.buf }) },
             ['<leader>ii'] = {
               Api.add_import_current_word_and_move_cursor,
               desc('Add python import and move cursor', { buf = ev.buf }),
             },
-          },
-          i = {
-            ['<M-\\>'] = { Api.add_import_current_word_and_notify, desc('Add Python Import', { buf = ev.buf }) },
+            ['<leader>it'] = { Api.add_rich_traceback, desc('Add Rich Traceback', { buf = ev.buf }) },
           },
           x = {
+            ['<M-\\>'] = { Api.add_import_current_selection_and_notify, desc('Add Python Import', { buf = ev.buf }) },
             ['<leader>i'] = {
               Api.add_import_current_selection_and_move_cursor,
               desc('Add Python Import and Move Cursor', { buf = ev.buf }),
             },
-            ['<M-\\>'] = { Api.add_import_current_selection_and_notify, desc('Add Python Import', { buf = ev.buf }) },
           },
         }, { bufnr = ev.buf })
       end,

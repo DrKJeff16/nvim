@@ -206,7 +206,7 @@ Config('lazy', {
   refer = false,
   referencer = false,
   replua = false,
-  scope = false,
+  scope = true,
   screenkey = true,
   scrollbar = false,
   shebang = true,

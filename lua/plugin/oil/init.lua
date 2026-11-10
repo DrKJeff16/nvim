@@ -1,6 +1,6 @@
 ---@module 'lazy'
 
-function _G.get_oil_winbar()
+function _G._get_oil_winbar()
   local bufnr = vim.api.nvim_win_get_buf(vim.g.statusline_winid)
   local dir = require('oil').get_current_dir(bufnr)
   return dir and vim.fn.fnamemodify(dir, ':~') or vim.api.nvim_buf_get_name(bufnr)
@@ -68,7 +68,7 @@ return { ---@type LazySpec
       skip_confirm_for_simple_edits = false,
       use_default_keymaps = true,
       view_options = {
-        case_insensitive = false,
+        case_insensitive = vim.o.fileignorecase,
         is_hidden_file = function(name)
           return name:match('^%.') ~= nil
         end,
@@ -85,7 +85,7 @@ return { ---@type LazySpec
         list = false,
         signcolumn = 'no',
         spell = false,
-        winbar = '%!v:lua.get_oil_winbar()',
+        winbar = '%!v:lua._get_oil_winbar()',
         wrap = false,
       },
     })

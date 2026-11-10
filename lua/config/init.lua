@@ -21,7 +21,7 @@ end
 ---@field util Config.Util
 
 ---@diagnostic disable-next-line:missing-fields
-local M = {} ---@type NvimConfig|(fun(mod: 'autocmds'))|(fun(mod: 'lsp'))|(fun(mod: 'colorschemes'))|(fun(mod: 'colorschemes', theme: string))|(fun(mod: 'lazy', spec: table<string, LazySpec|string|LazyPluginSpec|boolean>|LazyToggle))
+local M = {} ---@type NvimConfig|fun(mod: 'autocmds'|'lsp'|'colorschemes')|fun(mod: 'colorschemes', theme: string)|fun(mod: 'lazy', spec: table<string, LazySpec|string|LazyPluginSpec|boolean>|LazyToggle)
 
 setmetatable(M, {
   __index = function(self, k) ---@param self NvimConfig
@@ -46,7 +46,7 @@ setmetatable(M, {
   __call = function(self, mod, ...)
     User.check.validate({ mod = { mod, { 'string' } } })
 
-    local module = self[mod] --[[@as Config.Autocmds|(fun())|(fun(color: string))|Config.Lazy|Lsp.Server]]
+    local module = self[mod] --[[@as Config.Autocmds|Config.Lazy|Lsp.Server|fun()|fun(color: string)]]
     assert(module ~= nil, ('Unable to locate `%s`'):format(mod))
     if vim.is_callable(module) then
       ---@cast module (fun()|fun(color: string))
