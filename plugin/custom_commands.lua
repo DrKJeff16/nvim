@@ -1,10 +1,10 @@
-if vim.g.custom_commands_loaded == 1 then
+local User = require('user_api')
+
+if vim.g.custom_commands_loaded == 1 or User.check.is_windows() then
   return
 end
 
 vim.g.custom_commands_loaded = 1
-
-local User = require('user_api')
 
 ---@param path string
 ---@return function callback
@@ -15,13 +15,12 @@ local function open_file(path)
     assert(vim.fn.isdirectory(path) ~= 1, 'Refusing to edit directory!')
 
     local parent = vim.fn.fnameescape(vim.fn.fnamemodify(path, ':p:h'))
-    local ok ---@type boolean
+    local ok = nil ---@type boolean|nil|?
     if package.loaded['project'] ~= nil then
       ok = require('project').set_pwd({ dir = parent, method = 'custom' })
-      if not ok then
-        ok = pcall(vim.api.nvim_set_current_dir, parent)
-      end
-    else
+    end
+
+    if ok == nil then
       ok = pcall(vim.api.nvim_set_current_dir, parent)
     end
 
@@ -29,35 +28,29 @@ local function open_file(path)
       return
     end
 
-    assert(vim.fn.fnameescape(vim.fn.fnamemodify(path, ':p:t')) ~= '', 'Cannot edit empty target!')
+    local target = vim.fn.fnameescape(vim.fn.fnamemodify(path, ':p:t'))
+    assert(target ~= '', 'Cannot edit empty target')
     assert(
-      (pcall(vim.cmd.tabedit, { args = { vim.fn.fnameescape(vim.fn.fnamemodify(path, ':p:t')) } })),
+      pcall(vim.cmd.tabedit, { args = { target } }),
       ('Unable to edit `%s`'):format(vim.fn.fnamemodify(path, ':~'))
     )
 
-    if #vim.api.nvim_list_tabpages() < 1 then
-      return
+    if #vim.api.nvim_list_tabpages() > 1 then
+      local bufnr, target_tab = vim.api.nvim_get_current_buf(), vim.api.nvim_get_current_tabpage()
+      vim.api.nvim_create_autocmd({ 'BufDelete', 'BufWipeout' }, {
+        group = vim.api.nvim_create_augroup('Bashrc', { clear = true }),
+        buffer = bufnr,
+        callback = function()
+          if #vim.api.nvim_list_tabpages() > 1 and vim.api.nvim_get_current_tabpage() == target_tab then
+            pcall(vim.cmd.tabclose, { bang = true })
+          end
+        end,
+      })
     end
-
-    local bufnr, target_tab = vim.api.nvim_get_current_buf(), vim.api.nvim_get_current_tabpage()
-    vim.api.nvim_create_autocmd('BufDelete', {
-      group = vim.api.nvim_create_augroup('Bashrc', { clear = true }),
-      buffer = bufnr,
-      once = true,
-      callback = function()
-        if #vim.api.nvim_list_tabpages() > 1 and vim.api.nvim_get_current_tabpage() == target_tab then
-          pcall(vim.cmd.tabclose)
-        end
-      end,
-    })
   end
 end
 
-if User.check.is_windows() then
-  return
-end
-
-local HOME = vim.fn.environ()['HOME'] or vim.fn.expand('~')
+local HOME = vim.fn.environ().HOME or vim.fn.expand('~') --[[@as string]]
 User.commands.add_command({
   Bashrc = { callback = open_file(vim.fs.joinpath(HOME, '.bashrc')) },
   Edals = { callback = open_file(vim.fs.joinpath(HOME, '.bash_aliases')) },

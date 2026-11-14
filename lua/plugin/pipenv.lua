@@ -4,7 +4,7 @@ return { ---@type LazySpec
   dev = true,
   version = false,
   event = 'VeryLazy',
-  dependencies = { 'wsdjeg/job.nvim', 'wsdjeg/picker.nvim', 'xieyonn/spinner.nvim' },
+  dependencies = { { 'wsdjeg/job.nvim', dev = true }, 'wsdjeg/picker.nvim', 'xieyonn/spinner.nvim' },
   cond = require('user_api').check.executable('pipenv'),
   config = function()
     require('pipenv').setup({

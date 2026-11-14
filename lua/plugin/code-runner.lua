@@ -2,7 +2,7 @@
 return { ---@type LazySpec
   'wsdjeg/code-runner.nvim',
   version = false,
-  dependencies = { 'wsdjeg/job.nvim', 'wsdjeg/notify.nvim' },
+  dependencies = { { 'wsdjeg/job.nvim', dev = true }, 'wsdjeg/notify.nvim' },
   config = function()
     require('code-runner').setup({
       enter_win = false,

@@ -1,6 +1,6 @@
 ---@module 'lazy'
 return { ---@type LazySpec
-  'DrKJeff16/triforce.nvim',
+  'gisketch/triforce.nvim',
   dev = true,
   version = false,
   event = 'VeryLazy',
