@@ -11,6 +11,8 @@ return { ---@type LazySpec
         { path = Project.util.strip_slash('~/Documents'), name = 'Documents' },
         { path = Project.util.strip_slash('~/.bin'), name = 'Custom Scripts' },
         { path = Project.util.strip_slash('~/.env.d') },
+        { path = Project.util.strip_slash('~/Projects/nvim/project.nvim'), name = 'project.nvim' },
+        { path = Project.util.strip_slash('~/Projects/nvim/triforce.nvim'), name = 'triforce.nvim' },
         { path = Project.util.strip_slash('~/.config/bat'), name = 'bat Config' },
         { path = Project.util.strip_slash('~/.config/fastfetch'), name = 'fastfetch Config' },
         { path = Project.util.strip_slash('~/.config/ghostty'), name = 'ghostty Config' },
