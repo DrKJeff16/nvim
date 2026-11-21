@@ -133,6 +133,7 @@
 ---@field refer? LazySpecImport
 ---@field referencer? LazySpecImport
 ---@field replua? LazySpecImport
+---@field satellite? LazySpecImport
 ---@field scope? LazySpecImport
 ---@field screenkey? LazySpecImport
 ---@field scrollbar? LazySpecImport
@@ -303,6 +304,7 @@
 ---@field refer? boolean
 ---@field referencer? boolean
 ---@field replua? boolean
+---@field satellite? boolean
 ---@field scope? boolean
 ---@field screenkey? boolean
 ---@field scrollbar? boolean
