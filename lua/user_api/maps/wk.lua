@@ -119,7 +119,7 @@ local M = {}
 
 ---@return boolean available
 function M.available()
-  return package.loaded['which-key'] ~= nil
+  return require('user_api.check').module('which-key')
 end
 
 ---@param lhs string
